@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/grip2.dir/main.cpp.o CMakeFiles/grip2.dir/src/GUI/mainwindow.cpp.o CMakeFiles/grip2.dir/src/GUI/moc_mainwindow.cxx.o  -o ../bin/grip2 -rdynamic -lQtGui -lQtCore 

@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+641e646649e541d43b8bae256483498a src/GUI/moc_mainwindow.cxx
+9fada2723bca247425ae293bbaa841f7 src/GUI/moc_toolbar.cxx
