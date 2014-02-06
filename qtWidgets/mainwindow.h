@@ -47,6 +47,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <viewer_widget.h>
 
 class QAction;
 class QActionGroup;
@@ -60,6 +61,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     void Toolbar();
+    ViewerWidget* viewWidget;
 
 private slots:
     void load();

@@ -62,8 +62,8 @@ MainWindow::MainWindow()
     createOsgWindow();
 
     setWindowTitle(tr("Grip2"));
-    setMinimumSize(860, 640);
-    //resize(480, 320);
+    //setMinimumSize(860, 640);
+    resize(480, 320);
 }
 
 void MainWindow::Toolbar()
@@ -268,7 +268,7 @@ void MainWindow::createMenus()
 
 void MainWindow::createOsgWindow()
 {
-    ViewerWidget* viewWidget = new ViewerWidget();
+    viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     setCentralWidget(viewWidget);
     osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));

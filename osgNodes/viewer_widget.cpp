@@ -5,13 +5,11 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     setThreadingModel(threadingModel);
 
     QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), osgDB::readNodeFile("../grip2/data/robot.osg"));
-//        QWidget* widget2 = addViewWidget( createCamera(0,0,50,50), osgDB::readNodeFile("../grip2/data/robot.osg"));
 
     QGridLayout* grid = new QGridLayout;
-    grid->addWidget( widget1, 0, 0 );
-//        grid->addWidget( widget2, 1, 0 );
-    setLayout( grid );
-    connect( &_timer, SIGNAL(timeout()), this, SLOT(update()) );
+    grid->addWidget(widget1, 0, 0);
+    setLayout(grid);
+    connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
     _timer.start( 10 );
 }
 
@@ -27,7 +25,7 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
     cameraManipulator->setAllowThrow(false);
     view->setCameraManipulator(cameraManipulator);
 
-    osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>( camera->getGraphicsContext() );
+    osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());
     return gw ? gw->getGLWidget() : NULL;
 }
 
