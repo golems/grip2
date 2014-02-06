@@ -77,18 +77,28 @@ void MainWindow::Toolbar()
     QPixmap rightSideViewIcon((const char**) rightSideView_xpm);
 
     QToolBar *toolbar = addToolBar("main toolbar");
-    toolbar->addAction(QIcon(openIcon), "Open Scene (Ctrl + O)");
-    toolbar->addAction(QIcon(redoIcon), "Load last viewed scene (Ctrl + Shift + Q)");
+    QAction *open = toolbar->addAction(QIcon(openIcon), "Open Scene (Ctrl + O)");
+    QAction *redo = toolbar->addAction(QIcon(redoIcon), "Load last viewed scene (Ctrl + Shift + Q)");
     toolbar->addSeparator();
-    toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
-    toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
+    QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
+    QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
     toolbar->addSeparator();
-    toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
-    toolbar->addAction(QIcon(filmIcon), "Export film sequence");
+    QAction *camera = toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
+    QAction *film = toolbar->addAction(QIcon(filmIcon), "Export film sequence");
     toolbar->addSeparator();
-    toolbar->addAction(QIcon(frontViewIcon), "View scene from front");
-    toolbar->addAction(QIcon(topViewIcon), "View scene from top");
-    toolbar->addAction(QIcon(rightSideViewIcon), "View scene from right");
+    QAction *front = toolbar->addAction(QIcon(frontViewIcon), "View scene from front");
+    QAction *top = toolbar->addAction(QIcon(topViewIcon), "View scene from top");
+    QAction *rightSide = toolbar->addAction(QIcon(rightSideViewIcon), "View scene from right");
+
+    connect(open, SIGNAL(triggered()), this, SLOT(load()));
+    connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
+    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    connect(camera, SIGNAL(triggered()), this, SLOT());
+    connect(film, SIGNAL(triggered()), this, SLOT());
+    connect(front, SIGNAL(triggered()), this, SLOT(front()));
+    connect(top, SIGNAL(triggered()), this, SLOT(top()));
+    connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
 }
 
 
