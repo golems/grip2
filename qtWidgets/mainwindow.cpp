@@ -271,6 +271,6 @@ void MainWindow::createOsgWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     setCentralWidget(viewWidget);
-    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
-    viewWidget->addView(cameraView);
+//    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
+//    viewWidget->addView(cameraView);
 }
