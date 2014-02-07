@@ -3,7 +3,7 @@
  * All rights reserved.
  *
  * Author: Shailesh Lohia <shailesh.lohia@gatech.edu>
- * Date: Jan 2014
+ * Date: Feb 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
@@ -42,84 +42,17 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef TREE_VIEW_H
+#define TREE_VIEW_H
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include <QtGui>
 
-#include <QMainWindow>
-#include <viewer_widget.h>
-#include <tree_view.h>
-
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
-
-class MainWindow : public QMainWindow
+class TreeView
 {
-    Q_OBJECT
-
 public:
-    MainWindow();
-    void Toolbar();
-    ViewerWidget* viewWidget;
-    TreeView* treeviewer;
-    QDockWidget *tree;
-
-private slots:
-    void load();
-    void quickLoad();
-    void saveScene();
-    void close();
-    void exit();
-    void front();
-    void top();
-    void side();
-    void startSimulation();
-    void stopSimulation();
-    void simulateSingleStep();
-    void renderDuringSimulation();
-    void white();
-    void black();
-    void resetCamera();
-    void xga1024x768();
-    void vga640x480();
-    void hd1280x720();
-    void about();
-
-private:
-    void createActions();
-    void createMenus();
-    void createOsgWindow();
-    void createTreeView();
-
-    QMenu *fileMenu;
-    QMenu *viewMenu;
-    QMenu *simulationMenu;
-    QMenu *settingsMenu;
-    QMenu *renderMenu;
-    QMenu *helpMenu;
-    QMenu *backgroundMenu;
-    QActionGroup *colorGroup;
-    QAction *loadAct;
-    QAction *quickLoadAct;
-    QAction *saveSceneAct;
-    QAction *closeAct;
-    QAction *exitAct;
-    QAction *frontAct;
-    QAction *topAct;
-    QAction *sideAct;
-    QAction *startSimulationAct;
-    QAction *stopSimulationAct;
-    QAction *simulateSingleStepAct;
-    QAction *renderDuringSimulationAct;
-    QAction *whiteAct;
-    QAction *blackAct;
-    QAction *resetCameraAct;
-    QAction *xga1024x768Act;
-    QAction *vga640x480Act;
-    QAction *hd1280x720Act;
-    QAction *aboutAct;
+    TreeView(){}
+    TreeView(QWidget *parent);
+    QTreeWidget *treeView;
 };
 
-#endif // MAINWINDOW_H
+#endif // TREE_VIEW_H

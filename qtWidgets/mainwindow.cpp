@@ -44,6 +44,9 @@
 
 #include <QtGui>
 #include "mainwindow.h"
+#include "tree_view.h"
+#include "viewer_widget.h"
+//including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
 #include "icons/simulate.xpm"
@@ -53,17 +56,19 @@
 #include "icons/frontView.xpm"
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
-#include "viewer_widget.h"
+
 
 MainWindow::MainWindow()
 {
     createActions();
     createMenus();
     createOsgWindow();
+    createTreeView();
+
 
     setWindowTitle(tr("Grip2"));
     //setMinimumSize(860, 640);
-    resize(480, 320);
+    resize(860, 640);
 }
 
 void MainWindow::Toolbar()
@@ -96,8 +101,8 @@ void MainWindow::Toolbar()
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
     connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-    connect(camera, SIGNAL(triggered()), this, SLOT());
-    connect(film, SIGNAL(triggered()), this, SLOT());
+    connect(camera, SIGNAL(triggered()), this, SLOT(load()));
+    connect(film, SIGNAL(triggered()), this, SLOT(load()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
@@ -273,4 +278,13 @@ void MainWindow::createOsgWindow()
     setCentralWidget(viewWidget);
 //    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
 //    viewWidget->addView(cameraView);
+}
+
+void MainWindow::createTreeView()
+{
+    tree = new QDockWidget(tr("Object Viewer"), this);
+    //tree->setFloating(true);
+    treeviewer = new TreeView(tree);
+    tree->setWidget(treeviewer->treeView);
+    addDockWidget(Qt::RightDockWidgetArea, tree);
 }
