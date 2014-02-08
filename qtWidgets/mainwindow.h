@@ -66,6 +66,8 @@ public:
     TreeView* treeviewer;
     QDockWidget *tree;
 
+    osg::Matrixd frontView, sideView, topView;
+
 private slots:
     void load();
     void quickLoad();

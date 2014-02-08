@@ -46,6 +46,7 @@
 #include "mainwindow.h"
 #include "tree_view.h"
 #include "viewer_widget.h"
+#include <osg/io_utils>
 //including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
@@ -64,7 +65,6 @@ MainWindow::MainWindow()
     createMenus();
     createOsgWindow();
     createTreeView();
-
 
     setWindowTitle(tr("Grip2"));
     //setMinimumSize(860, 640);
@@ -114,9 +114,18 @@ void MainWindow::quickLoad(){}
 void MainWindow::saveScene(){}
 void MainWindow::close(){}
 void MainWindow::exit(){}
-void MainWindow::front(){}
-void MainWindow::top(){}
-void MainWindow::side(){}
+void MainWindow::front()
+{
+    viewWidget->setViewMatrix(0, frontView);
+}
+void MainWindow::top()
+{
+    viewWidget->setViewMatrix(0, topView);
+}
+void MainWindow::side()
+{
+    viewWidget->setViewMatrix(0, sideView);
+}
 void MainWindow::startSimulation(){}
 void MainWindow::stopSimulation(){}
 void MainWindow::simulateSingleStep(){}
@@ -276,6 +285,14 @@ void MainWindow::createOsgWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     setCentralWidget(viewWidget);
+    frontView = viewWidget->getViewMatrix();
+    sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));
+    topView = frontView * osg::Matrixd(osg::Quat(-90*M_PI/180, osg::Vec3f(1, 0, 0)));
+    std::cout << "frontView\n" << frontView
+              << "\ntopView\n" << topView
+              << "\nsideView\n" << sideView
+              << std::endl;
+//    viewWidget->getView(0)->getCamera()->setV
 //    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
 //    viewWidget->addView(cameraView);
 }

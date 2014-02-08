@@ -1,11 +1,11 @@
 #include "viewer_widget.h"
+#include <osg/io_utils>
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
     setThreadingModel(threadingModel);
 
     QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), osgDB::readNodeFile("../grip2/data/robot.osg"));
-
     QGridLayout* grid = new QGridLayout;
     grid->addWidget(widget1, 0, 0);
     setLayout(grid);
@@ -53,4 +53,21 @@ osg::Camera* ViewerWidget::createCamera(int x, int y, int w, int h, const std::s
     camera->setProjectionMatrixAsPerspective(
         30.0f, static_cast<double>(traits->width)/static_cast<double>(traits->height), 1.0f, 10000.0f);
     return camera.release();
+}
+
+osg::Matrixd ViewerWidget::getViewMatrix()
+{
+    osg::Matrixd m = getView(0)->getCameraManipulator()->getMatrix();
+    return m;
+}
+
+void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
+{
+    uint numViews = this->getNumViews();
+    if(i < numViews) {
+        this->getView(i)->getCameraManipulator()->setByMatrix(m);
+    } else {
+        std::cerr << "Error. You tried to change view " << i << ", but there are only "
+                  << numViews << " views" << std::endl;
+    }
 }

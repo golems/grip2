@@ -11,6 +11,7 @@
 #include <osgGA/OrbitManipulator>
 #include <osgDB/ReadFile>
 #include <osgQt/GraphicsWindowQt>
+#include <osg/io_utils>
 #include "osgUtils.h"
 #include <iostream>
 
@@ -35,6 +36,10 @@ public:
     QWidget* addViewWidget(osg::Camera* camera, osg::Node* scene);
 
     osg::Camera* createCamera(int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
+
+    osg::Matrixd getViewMatrix();
+    void setViewMatrix(uint i, osg::Matrixd m);
+
 
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }

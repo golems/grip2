@@ -49,7 +49,7 @@ add_library(${PROJECT_NAME} SHARED ${osg_lib_source})
 #                BUILD GRIP
 #-----------------------------------------------
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${QT_WIDGETS_DIR}/mainwindow.h)
-set(GUI_SRC ${QT_WIDGETS_DIR}/mainwindow.cpp)
+file(GLOB GUI_SRC ${QT_WIDGETS_DIR}/*.h ${QT_WIDGETS_DIR}/*.cpp)
 add_executable(grip ${PROJECT_SOURCE_DIR}/grip.cpp ${GUI_SRC} ${GUI_MOC_HEADERS})
 target_link_libraries(grip ${QT_LIBRARIES} ${PROJECT_NAME} ${OPENSCENEGRAPH_LIBRARIES})
 
