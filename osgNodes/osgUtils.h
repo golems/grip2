@@ -16,6 +16,8 @@
  */
 osgViewer::View* createView(int x, int y, int w, int h, osg::Node* scene = NULL);
 
+osg::Node* createNode();
 
+void addNodeToScene(osg::Group* scene);
 
 #endif // OSG_UTILS_H

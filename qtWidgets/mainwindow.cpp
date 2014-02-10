@@ -126,8 +126,21 @@ void MainWindow::side()
 {
     viewWidget->setViewMatrix(0, sideView);
 }
-void MainWindow::startSimulation(){}
-void MainWindow::stopSimulation(){}
+void MainWindow::startSimulation()
+{
+    osg::Vec3f eye, center, up;
+    viewWidget->getView(0)->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+    std::cerr << "View Matrix"
+              << "\n\tEye: " << eye
+              << "\n\tCenter: " << center
+              << "\n\tUp: " << up
+              << std::endl;
+}
+void MainWindow::stopSimulation()
+{
+    addNodeToScene(viewWidget->getView(0)->getSceneData()->asGroup());
+}
+
 void MainWindow::simulateSingleStep(){}
 void MainWindow::renderDuringSimulation(){}
 void MainWindow::white(){}

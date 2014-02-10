@@ -40,6 +40,9 @@ public:
     osg::Matrixd getViewMatrix();
     void setViewMatrix(uint i, osg::Matrixd m);
 
+    void addNodeToScene(osg::Node *node, uint viewNum=0);
+
+    void addCenterAxes();
 
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }

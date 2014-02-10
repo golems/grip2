@@ -1,11 +1,23 @@
 #include "viewer_widget.h"
 #include <osg/io_utils>
+#include "osgUtils.h"
+
+osg::Node* getSceneData()
+{
+    osg::Group* root = new osg::Group();
+    root->setDataVariance(osg::Object::DYNAMIC);
+    osg::Node* robot = osgDB::readNodeFile("../grip2/data/robot.osg");
+    root->addChild(robot);
+    return root;
+}
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
     setThreadingModel(threadingModel);
 
-    QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), osgDB::readNodeFile("../grip2/data/robot.osg"));
+    osg::Node* sceneData = getSceneData();
+
+    QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), sceneData);
     QGridLayout* grid = new QGridLayout;
     grid->addWidget(widget1, 0, 0);
     setLayout(grid);
@@ -19,8 +31,8 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
     view->setCamera(camera);
     addView(view);
 
-    view->setSceneData( scene );
-    view->addEventHandler( new osgViewer::StatsHandler );
+    view->setSceneData(scene);
+    view->addEventHandler(new osgViewer::StatsHandler);
     osgGA::OrbitManipulator* cameraManipulator = new osgGA::OrbitManipulator();
     cameraManipulator->setAllowThrow(false);
     view->setCameraManipulator(cameraManipulator);
@@ -70,4 +82,21 @@ void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
         std::cerr << "Error. You tried to change view " << i << ", but there are only "
                   << numViews << " views" << std::endl;
     }
+}
+
+void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
+{
+    osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+    if(scene != scene) {
+        std::cerr << "Error! Can not convert from osg::Node to osg::Group."
+                  << std::endl;
+    } else {
+        scene->addChild(node);
+    }
+}
+
+void ViewerWidget::addCenterAxes()
+{
+    osg::Node* axes = createNode();
+    addNodeToScene(axes);
 }
