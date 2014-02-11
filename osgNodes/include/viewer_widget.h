@@ -13,6 +13,8 @@
 #include <osgQt/GraphicsWindowQt>
 #include <osg/io_utils>
 #include "osgUtils.h"
+
+// System includes
 #include <iostream>
 
 /**
@@ -41,8 +43,11 @@ public:
     void setViewMatrix(uint i, osg::Matrixd m);
 
     void addNodeToScene(osg::Node *node, uint viewNum=0);
+    void setBackgroundColor(const osg::Vec4& color, uint viewNum=0);
 
     void addCenterAxes();
+
+    osg::Node* getSceneData();
 
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }
@@ -51,6 +56,8 @@ protected:
 
     // Timer for update the interface
     QTimer _timer;
+
+    bool viewNumIsValid(uint viewNum);
 };
 
 #endif // VIEWER_WIDGET_H

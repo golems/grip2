@@ -128,24 +128,25 @@ void MainWindow::side()
 }
 void MainWindow::startSimulation()
 {
-    osg::Vec3f eye, center, up;
-    viewWidget->getView(0)->getCamera()->getViewMatrixAsLookAt(eye, center, up);
-    std::cerr << "View Matrix"
-              << "\n\tEye: " << eye
-              << "\n\tCenter: " << center
-              << "\n\tUp: " << up
-              << std::endl;
 }
 void MainWindow::stopSimulation()
 {
-    addNodeToScene(viewWidget->getView(0)->getSceneData()->asGroup());
 }
 
 void MainWindow::simulateSingleStep(){}
 void MainWindow::renderDuringSimulation(){}
-void MainWindow::white(){}
-void MainWindow::black(){}
-void MainWindow::resetCamera(){}
+void MainWindow::white()
+{
+    viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
+}
+void MainWindow::black()
+{
+    viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
+}
+void MainWindow::resetCamera()
+{
+}
+
 void MainWindow::xga1024x768(){}
 void MainWindow::vga640x480(){}
 void MainWindow::hd1280x720(){}

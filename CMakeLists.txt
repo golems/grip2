@@ -25,33 +25,34 @@ set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
 
 
 #-----------------------------------------------
-#                SET VARIABLES
+#            INCLUDES & LIBRARIES
 #-----------------------------------------------
-# Set include directories
-set(QT_WIDGETS_DIR ${PROJECT_SOURCE_DIR}/qtWidgets)
-set(OSG_NODES_DIR ${PROJECT_SOURCE_DIR}/osgNodes)
+# Include top-level include directory
+include_directories(include)
 
-include_directories(include ${QT_WIDGETS_DIR} ${OSG_NODES_DIR})
-#link_directories(${QT_WIDGETS_DIR} ${OSG_NODES_DIR})
+# Add QT Widgets library
+add_subdirectory(qtWidgets)
+include_directories(qtWidgets/include)
 
+# Add OpenSceneGraph Nodes library
+add_subdirectory(osgNodes)
+include_directories(osgNodes/include)
 
-#-----------------------------------------------
-#               SET LIBRARIRES
-#-----------------------------------------------
-# OpenSceneGraph Nodes Library
-file(GLOB osg_lib_source ${OSG_NODES_DIR}/*.cpp ${OSG_NODES_DIR}/*.h)
+# Add Main Window library
+QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/mainwindow.h)
+file(GLOB GUI_SRC include/*.h src/*.cpp)
+add_library(mainwindow ${GUI_MOC_HEADERS} ${GUI_SRC})
+target_link_libraries(mainwindow qtWidgets osgNodes)
 
-# Add source libraries to project library
-add_library(${PROJECT_NAME} SHARED ${osg_lib_source})
+# Set project libraries variable
+set(project_libs qtWidgets osgNodes mainwindow)
 
 
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
-QT4_WRAP_CPP(GUI_MOC_HEADERS ${QT_WIDGETS_DIR}/mainwindow.h)
-file(GLOB GUI_SRC ${QT_WIDGETS_DIR}/*.h ${QT_WIDGETS_DIR}/*.cpp)
-add_executable(grip ${PROJECT_SOURCE_DIR}/grip.cpp ${GUI_SRC} ${GUI_MOC_HEADERS})
-target_link_libraries(grip ${QT_LIBRARIES} ${PROJECT_NAME} ${OPENSCENEGRAPH_LIBRARIES})
+add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
+target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 
 #-----------------------------------------------
@@ -68,7 +69,7 @@ foreach(utest_src_file ${unit_tests_source})
     get_filename_component(test_base ${utest_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}")
     add_executable(${test_base} ${utest_src_file})
-    target_link_libraries(${test_base} ${PROJECT_NAME} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
+    target_link_libraries(${test_base} ${project_libs} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
     add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
     add_dependencies(check ${test_base})
