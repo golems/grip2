@@ -3,6 +3,8 @@
 #include "osgUtils.h"
 #include "Axes.h"
 #include "CameraCallback.h"
+#include "CameraManipulator.h"
+#include "Grid.h"
 
 osg::Node* ViewerWidget::getSceneData()
 {
@@ -17,16 +19,19 @@ osg::Node* ViewerWidget::getSceneData()
     root->addChild(tf);
 
     // Axes for center of rotation
-    osg::MatrixTransform* axesTF = new osg::MatrixTransform();
-    axesTF->setDataVariance(osg::Object::DYNAMIC);
-    CameraData* cameraData = new CameraData;
+    osg::MatrixTransform* gridTF = new osg::MatrixTransform();
+    gridTF->setDataVariance(osg::Object::DYNAMIC);
+//    CameraData* cameraData = new CameraData;
 //    axesTF->setUserData(this->getView(0)->getCamera());
-    axesTF->setUserData(cameraData);
-    osg::Geode* axesGeode = new osg::Geode();
-    Axes* axes = new Axes(2);
-    axesGeode->addDrawable(axes);
-    axesTF->addChild(axesGeode);
-    root->addChild(axesTF);
+//    gridTF->setUserData(cameraData);
+    osg::Geode* gridGeode = new osg::Geode();
+    Grid* grid = new Grid(20, 20, 3, osg::Vec4(1, 1, 1, 1));
+    gridGeode->addDrawable(grid);
+    gridTF->addChild(gridGeode);
+    osg::Matrix* m = new osg::Matrix;
+    m->makeTranslate(0, 0, -2.5);
+    gridTF->setMatrix(*m);
+    root->addChild(gridTF);
 
     return root;
 }
@@ -60,8 +65,9 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     view->addEventHandler(new osgViewer::StatsHandler);
 
-    osgGA::OrbitManipulator* cameraManipulator = new osgGA::OrbitManipulator();
-    cameraManipulator->setAllowThrow(false);
+    CameraManipulator* cameraManipulator = new CameraManipulator();
+//    osgGA::OrbitManipulator* cameraManipulator = new osgGA::OrbitManipulator();
+//    cameraManipulator->setAllowThrow(false);
     view->setCameraManipulator(cameraManipulator);
     std::cerr << "Center: " << cameraManipulator->getCenter() << std::endl;
 
@@ -90,7 +96,7 @@ osg::Camera* ViewerWidget::createCamera(int x, int y, int w, int h, const std::s
 
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
     camera->setGraphicsContext(new osgQt::GraphicsWindowQt(traits.get()));
-    camera->setClearColor(osg::Vec4(0.2, 0.2, 0.6, 1.0));
+    camera->setClearColor(osg::Vec4(0.0, 0.0, 0.0, 1.0));
     camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
     camera->setProjectionMatrixAsPerspective(
         30.0f, static_cast<double>(traits->width)/static_cast<double>(traits->height), 1.0f, 10000.0f);
@@ -105,16 +111,11 @@ osg::Matrixd ViewerWidget::getViewMatrix()
 
 void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
 {
-    uint numViews = this->getNumViews();
-    if(i < numViews) {
-
+    if(viewNumIsValid(i)) {
         this->getView(i)->getCameraManipulator()->setByMatrix(m);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
             dynamic_cast<osgGA::OrbitManipulator*>(this->getView(0)->getCameraManipulator());
         c->setCenter(osg::Vec3f(0, 0, 0));
-    } else {
-        std::cerr << "Error. You tried to change view " << i << ", but there are only "
-                  << numViews << " views" << std::endl;
     }
 }
 
@@ -139,6 +140,15 @@ void ViewerWidget::setBackgroundColor(const osg::Vec4 &color, uint viewNum)
 {
     if(viewNumIsValid(viewNum)) {
         this->getView(viewNum)->getCamera()->setClearColor(color);
+    }
+}
+
+osgGA::CameraManipulator* ViewerWidget::getCameraManipulator(uint viewNum)
+{
+    if(viewNumIsValid(viewNum)) {
+        return this->getView(viewNum)->getCameraManipulator();
+    } else {
+        return NULL;
     }
 }
 

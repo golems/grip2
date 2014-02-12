@@ -145,6 +145,7 @@ void MainWindow::black()
 }
 void MainWindow::resetCamera()
 {
+    viewWidget->getCameraManipulator()->home(1.0);
 }
 
 void MainWindow::xga1024x768(){}

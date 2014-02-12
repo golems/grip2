@@ -44,7 +44,7 @@ public:
 
     void addNodeToScene(osg::Node *node, uint viewNum=0);
     void setBackgroundColor(const osg::Vec4& color, uint viewNum=0);
-
+    osgGA::CameraManipulator* getCameraManipulator(uint viewNum=0);
     void addCenterAxes();
 
     osg::Node* getSceneData();
