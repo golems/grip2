@@ -1,0 +1,1447 @@
+<?xml version="1.0" ?>
+<kinbody name="drchubo_v2">
+    <body name="Body_Torso">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_Torso_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>8.95351612284</total>
+            <inertia>0.0971157016638 -0.000131502652256 -0.000536351319855
+-0.000131502652256 0.0782182891826 0.000190893230364
+-0.000536351319855 0.000190893230364 0.102805257612</inertia>
+            <com>0.00186303110078 -0.000700932863028 0.144864941081</com>
+        </mass>
+    </body>
+    <body name="Body_LSP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LSP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.512814669817</total>
+            <inertia>0.00105971934904 0.000159674623034 -8.62192186715e-07
+0.000159674623034 0.00101602821932 6.29668843068e-06
+-8.62192186715e-07 6.29668843068e-06 0.00161449029531</inertia>
+            <com>0.0125095477278 0.0682567187642 -0.00010129669296</com>
+        </mass>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <translation>0.001 0.1305 0.2061</translation>
+    </body>
+    <joint name="LSP" type="hinge">
+        <body>Body_Torso</body>
+        <body>Body_LSP</body>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <anchor>0.001 0.1305 0.2061</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LSR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LSR_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.478101234588</total>
+            <inertia>0.000470991608415 -9.09015530395e-08 -1.2195757229e-05
+-9.09015530395e-08 0.00056865982748 7.94197935321e-06
+-1.2195757229e-05 7.94197935321e-06 0.000377112142445</inertia>
+            <com>-0.0353989625514 -0.000442459951968 -0.0177626332999</com>
+        </mass>
+        <offsetfrom>Body_LSP</offsetfrom>
+        <translation>0.033 0.099 0.0</translation>
+    </body>
+    <joint name="LSR" type="hinge">
+        <body>Body_LSP</body>
+        <body>Body_LSR</body>
+        <offsetfrom>Body_LSP</offsetfrom>
+        <anchor>0.033 0.099 0.0</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-15.0 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LSY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LSY_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.3520653945</total>
+            <inertia>0.0134777313254 -2.51384514258e-05 -0.000850780329961
+-2.51384514258e-05 0.0134238053664 0.00027096457354
+-0.000850780329961 0.00027096457354 0.00109460289062</inertia>
+            <com>0.00596307108671 -0.0022316583599 -0.162009947411</com>
+        </mass>
+        <offsetfrom>Body_LSR</offsetfrom>
+        <translation>-0.033 0.0 -0.027</translation>
+    </body>
+    <joint name="LSY" type="hinge">
+        <body>Body_LSR</body>
+        <body>Body_LSY</body>
+        <offsetfrom>Body_LSR</offsetfrom>
+        <anchor>-0.033 0.0 -0.027</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-114.6 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LEP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LEP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.267758871202</total>
+            <inertia>0.000341774590609 -8.94704764294e-07 5.48147249702e-05
+-8.94704764294e-07 0.000322402837807 2.93006728476e-06
+5.48147249702e-05 2.93006728476e-06 0.000239480055722</inertia>
+            <com>-0.0257144533591 0.000806178520289 -0.0417853587165</com>
+        </mass>
+        <offsetfrom>Body_LSY</offsetfrom>
+        <translation>0.03 0.0 -0.273</translation>
+    </body>
+    <joint name="LEP" type="hinge">
+        <body>Body_LSY</body>
+        <body>Body_LEP</body>
+        <offsetfrom>Body_LSY</offsetfrom>
+        <anchor>0.03 0.0 -0.273</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-151 11.5</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LWY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LWY_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.37072161762</total>
+            <inertia>0.0138917492746 -3.54251778004e-06 7.93094448069e-06
+-3.54251778004e-06 0.0118173705529 -0.00394273246628
+7.93094448069e-06 -0.00394273246628 0.00267824831844</inertia>
+            <com>3.99379011693e-05 0.0577379856358 -0.151718765023</com>
+        </mass>
+        <offsetfrom>Body_LEP</offsetfrom>
+        <translation>-0.03 0.0 -0.052</translation>
+    </body>
+    <joint name="LWY" type="hinge">
+        <body>Body_LEP</body>
+        <body>Body_LWY</body>
+        <offsetfrom>Body_LEP</offsetfrom>
+        <anchor>-0.03 0.0 -0.052</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LWP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LWP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.294902574333</total>
+            <inertia>0.000715165417978 -1.51543969241e-06 -4.37551165446e-06
+-1.51543969241e-06 0.000574579884043 -5.5583549066e-05
+-4.37551165446e-06 -5.5583549066e-05 0.000301632100474</inertia>
+            <com>-0.000378739071218 0.0108882434913 0.0170093706107</com>
+        </mass>
+        <offsetfrom>Body_LWY</offsetfrom>
+        <translation>0.0 0.0 -0.2618</translation>
+    </body>
+    <joint name="LWP" type="hinge" circular="true">
+        <body>Body_LWY</body>
+        <body>Body_LWP</body>
+        <offsetfrom>Body_LWY</offsetfrom>
+        <anchor>0.0 0.0 -0.2618</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-180 180</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LWR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LWR_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.474006924727</total>
+            <inertia>0.000397832341494 2.62847439474e-06 -1.84132721696e-05
+2.62847439474e-06 0.00031058557487 -5.74611340451e-06
+-1.84132721696e-05 -5.74611340451e-06 0.000251799615334</inertia>
+            <com>0.00526734472243 -0.00165481505248 -0.0476967183847</com>
+        </mass>
+        <offsetfrom>Body_LWP</offsetfrom>
+        <translation>0.0 0.0 -0.0275</translation>
+        <rotationaxis>0 0 1 89.9999999997</rotationaxis>
+    </body>
+    <joint name="LWR" type="hinge">
+        <body>Body_LWP</body>
+        <body>Body_LWR</body>
+        <offsetfrom>Body_LWP</offsetfrom>
+        <anchor>0.0 0.0 -0.0275</anchor>
+        <rotationaxis>0 0 1 89.9999999997</rotationaxis>
+        <axis>0 0 1</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="leftPalm">
+        <mass type="custom">
+            <total>0.1</total>
+            <inertia>0.0001 0.0 0.0
+0.0 0.0001 0.0
+0.0 0.0 0.0001</inertia>
+            <com>0.0 0.0 0.0</com>
+        </mass>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <translation>0.0 0.0 -0.0905</translation>
+        <rotationaxis>1 0 0 89.9999999997</rotationaxis>
+    </body>
+    <joint enable="false" name="LWR_dummy" type="hinge">
+        <limits>0 0</limits>
+        <body>Body_LWR</body>
+        <body>leftPalm</body>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <anchor>0.0 0.0 -0.0905</anchor>
+        <rotationaxis>1 0 0 89.9999999997</rotationaxis>
+    </joint>
+    <body name="Body_LF11">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF1.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 -3.61896654973e-09 2.45166522675e-07
+-3.61896654973e-09 6.02432212426e-06 1.21167394757e-09
+2.45166522675e-07 1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 -0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <translation>0.023 -0.012 -0.0755</translation>
+    </body>
+    <joint name="LF11" type="hinge">
+        <body>Body_LWR</body>
+        <body>Body_LF11</body>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <anchor>0.023 -0.012 -0.0755</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF12">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF2.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 -2.32805891508e-09 5.14105106917e-08
+-2.32805891508e-09 2.2681336966e-06 -4.92964124838e-09
+5.14105106917e-08 -4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_LF11</offsetfrom>
+        <translation>-0.002 -0.0105 -0.042</translation>
+    </body>
+    <joint name="LF12" type="hinge">
+        <body>Body_LF11</body>
+        <body>Body_LF12</body>
+        <offsetfrom>Body_LF11</offsetfrom>
+        <anchor>-0.002 -0.0105 -0.042</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF13">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF3.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 -4.42104180096e-09 1.38024261682e-07
+-4.42104180096e-09 2.40973096927e-06 -2.82215020077e-08
+1.38024261682e-07 -2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_LF12</offsetfrom>
+        <translation>-0.0014 0.0 -0.03</translation>
+    </body>
+    <joint name="LF13" type="hinge">
+        <body>Body_LF12</body>
+        <body>Body_LF13</body>
+        <offsetfrom>Body_LF12</offsetfrom>
+        <anchor>-0.0014 0.0 -0.03</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_TSY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_TSY_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>3.85811444191</total>
+            <inertia>0.0199734074243 -0.00013227939477 0.000176686191583
+-0.00013227939477 0.0085778641786 0.000147644598532
+0.000176686191583 0.000147644598532 0.0237690845805</inertia>
+            <com>-0.0160702033923 -0.00217130156789 -0.0329438544914</com>
+        </mass>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <translation>0.0 0.0 0.0</translation>
+    </body>
+    <joint name="TSY" type="hinge">
+        <body>Body_Torso</body>
+        <body>Body_TSY</body>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <anchor>0.0 0.0 0.0</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-90.0 90.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LHY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LHY_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.02665437744</total>
+            <inertia>0.00249606232939 -2.76272075666e-09 -0.000829704581049
+-2.76272075666e-09 0.00377324783995 5.7913276862e-10
+-0.000829704581049 5.7913276862e-10 0.00212819781063</inertia>
+            <com>0.0378123600719 2.54097696217e-08 -0.116128242308</com>
+        </mass>
+        <offsetfrom>Body_TSY</offsetfrom>
+        <translation>0.0 0.0885 -0.023</translation>
+    </body>
+    <joint name="LHY" type="hinge">
+        <body>Body_TSY</body>
+        <body>Body_LHY</body>
+        <offsetfrom>Body_TSY</offsetfrom>
+        <anchor>0.0 0.0885 -0.023</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-110.0 110.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LHR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LHR_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.37473370901</total>
+            <inertia>0.00222021321391 3.01344959315e-05 0.000214745489876
+3.01344959315e-05 0.00208177057869 6.99363261904e-05
+0.000214745489876 6.99363261904e-05 0.00174245289623</inertia>
+            <com>0.00473723996484 -0.00482931760303 -0.032556369283</com>
+        </mass>
+        <offsetfrom>Body_LHY</offsetfrom>
+        <translation>0.0 0.0 -0.141</translation>
+    </body>
+    <joint name="LHR" type="hinge">
+        <body>Body_LHY</body>
+        <body>Body_LHR</body>
+        <offsetfrom>Body_LHY</offsetfrom>
+        <anchor>0.0 0.0 -0.141</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-29.8 29.8</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LHP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LHP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>3.39708806381</total>
+            <inertia>0.0610144402595 -0.000679183163268 -0.00115726366946
+-0.000679183163268 0.0588960128286 0.00381190200426
+-0.00115726366946 0.00381190200426 0.00864106131258</inertia>
+            <com>0.0139820973756 0.0119128547059 -0.190050892708</com>
+        </mass>
+        <offsetfrom>Body_LHR</offsetfrom>
+        <translation>0.0 0.0 0.0</translation>
+    </body>
+    <joint name="LHP" type="hinge">
+        <body>Body_LHR</body>
+        <body>Body_LHP</body>
+        <offsetfrom>Body_LHR</offsetfrom>
+        <anchor>0.0 0.0 0.0</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-90 92.2</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LKP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LKP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.25133149222</total>
+            <inertia>0.0176853262864 5.97588040759e-05 0.000242087956452
+5.97588040759e-05 0.0161941871477 2.05953671058e-05
+0.000242087956452 2.05953671058e-05 0.00355046513294</inertia>
+            <com>0.0167128425968 -0.00423174064898 -0.163547981621</com>
+        </mass>
+        <offsetfrom>Body_LHP</offsetfrom>
+        <translation>0.0 0.0 -0.3299</translation>
+    </body>
+    <joint name="LKP" type="hinge">
+        <body>Body_LHP</body>
+        <body>Body_LKP</body>
+        <offsetfrom>Body_LHP</offsetfrom>
+        <anchor>0.0 0.0 -0.3299</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-4.0 149.5</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LAP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LAP_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>2.00597218063</total>
+            <inertia>0.00317573590934 -0.000303977332269 -0.000298327569679
+-0.000303977332269 0.0034724356878 -0.000320093631729
+-0.000298327569679 -0.000320093631729 0.00367965746071</inertia>
+            <com>0.0148223972691 0.0100562738748 0.00997467775305</com>
+        </mass>
+        <offsetfrom>Body_LKP</offsetfrom>
+        <translation>0.0 0.0 -0.33</translation>
+    </body>
+    <joint name="LAP" type="hinge">
+        <body>Body_LKP</body>
+        <body>Body_LAP</body>
+        <offsetfrom>Body_LKP</offsetfrom>
+        <anchor>0.0 0.0 -0.33</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-97.4 97.4</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="Body_LAR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LAR_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.06815376654</total>
+            <inertia>0.00372790935829 3.13391462968e-05 -0.000480888102686
+3.13391462968e-05 0.00607005664614 -9.42514897869e-05
+-0.000480888102686 -9.42514897869e-05 0.00420512438203</inertia>
+            <com>0.0165455008794 0.0021608598221 -0.095291506213</com>
+        </mass>
+        <offsetfrom>Body_LAP</offsetfrom>
+        <translation>0.0 0.0 0.0</translation>
+    </body>
+    <joint name="LAR" type="hinge">
+        <body>Body_LAP</body>
+        <body>Body_LAR</body>
+        <offsetfrom>Body_LAP</offsetfrom>
+        <anchor>0.0 0.0 0.0</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-90.0 90.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <body name="leftFoot">
+        <mass type="custom">
+            <total>0.1</total>
+            <inertia>0.0001 -0.0 0.0
+-0.0 0.0001 -0.0
+0.0 -0.0 0.0001</inertia>
+            <com>0.0 -0.0 0.0</com>
+        </mass>
+        <offsetfrom>Body_LAR</offsetfrom>
+        <translation>0.0 0.0 -0.1371</translation>
+    </body>
+    <joint enable="false" name="LAR_dummy" type="hinge">
+        <limits>0 0</limits>
+        <body>Body_LAR</body>
+        <body>leftFoot</body>
+        <offsetfrom>Body_LAR</offsetfrom>
+        <anchor>0.0 0.0 -0.1371</anchor>
+    </joint>
+    <body name="Body_NKY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_NKY_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.170508153366</total>
+            <inertia>0.000101054047459 -6.00968902823e-07 -2.18923858833e-06
+-6.00968902823e-07 0.000105642534004 5.06882999847e-07
+-2.18923858833e-06 5.06882999847e-07 0.000105863654256</inertia>
+            <com>-0.0132341759355 -0.000264833073564 0.0409690989083</com>
+        </mass>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <translation>0.001 0.0 0.2598</translation>
+    </body>
+    <joint name="NKY" type="hinge">
+        <body>Body_Torso</body>
+        <body>Body_NKY</body>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <anchor>0.001 0.0 0.2598</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-114.6 114.6</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_NK1">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_NK1_merged.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.657803087875</total>
+            <inertia>0.00461193404989 2.06037288508e-05 -3.18942823947e-08
+2.06037288508e-05 0.00189695830912 8.97757680458e-05
+-3.18942823947e-08 8.97757680458e-05 0.00293465680409</inertia>
+            <com>-0.000519835312275 -0.112505098179 -9.33147645172e-05</com>
+        </mass>
+        <offsetfrom>Body_NKY</offsetfrom>
+        <translation>0.0 0.0 0.0298</translation>
+        <rotationaxis>1 0 0 -90.0</rotationaxis>
+    </body>
+    <joint name="NK1" type="hinge">
+        <body>Body_NKY</body>
+        <body>Body_NK1</body>
+        <offsetfrom>Body_NKY</offsetfrom>
+        <anchor>0.0 0.0 0.0298</anchor>
+        <rotationaxis>1 0 0 -90.0</rotationaxis>
+        <axis>0 0 1</axis>
+        <limitsdeg>-114.6 114.6</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_NK2">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_NK2.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.250303289297</total>
+            <inertia>0.000202848165256 -2.85613884398e-07 4.40238729548e-06
+-2.85613884398e-07 0.000189595993253 4.2100514679e-07
+4.40238729548e-06 4.2100514679e-07 0.000145991865918</inertia>
+            <com>0.00619110883709 0.000180362999793 -0.00925441765146</com>
+        </mass>
+        <offsetfrom>Body_NK1</offsetfrom>
+        <translation>0.0 -0.086 0.0</translation>
+        <rotationaxis>1 0 0 90.0</rotationaxis>
+        <rotationaxis>0 0 1 -90.0</rotationaxis>
+    </body>
+    <joint name="NK2" type="hinge">
+        <body>Body_NK1</body>
+        <body>Body_NK2</body>
+        <offsetfrom>Body_NK1</offsetfrom>
+        <anchor>0.0 -0.086 0.0</anchor>
+        <rotationaxis>1 0 0 90.0</rotationaxis>
+        <rotationaxis>0 0 1 -90.0</rotationaxis>
+        <axis>0 1 0</axis>
+        <limitsdeg>-114.6 114.6</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF21">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF1.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 -3.61896654973e-09 2.45166522675e-07
+-3.61896654973e-09 6.02432212426e-06 1.21167394757e-09
+2.45166522675e-07 1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 -0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <translation>0.023 0.033 -0.0755</translation>
+    </body>
+    <joint name="LF21" type="hinge">
+        <body>Body_LWR</body>
+        <body>Body_LF21</body>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <anchor>0.023 0.033 -0.0755</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF22">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF2.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 -2.32805891508e-09 5.14105106917e-08
+-2.32805891508e-09 2.2681336966e-06 -4.92964124838e-09
+5.14105106917e-08 -4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_LF21</offsetfrom>
+        <translation>-0.002 -0.0105 -0.042</translation>
+    </body>
+    <joint name="LF22" type="hinge">
+        <body>Body_LF21</body>
+        <body>Body_LF22</body>
+        <offsetfrom>Body_LF21</offsetfrom>
+        <anchor>-0.002 -0.0105 -0.042</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF23">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF3.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 -4.42104180096e-09 1.38024261682e-07
+-4.42104180096e-09 2.40973096927e-06 -2.82215020077e-08
+1.38024261682e-07 -2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_LF22</offsetfrom>
+        <translation>-0.0014 0.0 -0.03</translation>
+    </body>
+    <joint name="LF23" type="hinge">
+        <body>Body_LF22</body>
+        <body>Body_LF23</body>
+        <offsetfrom>Body_LF22</offsetfrom>
+        <anchor>-0.0014 0.0 -0.03</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF31">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF1.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 -3.61896654973e-09 2.45166522675e-07
+-3.61896654973e-09 6.02432212426e-06 1.21167394757e-09
+2.45166522675e-07 1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 -0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <translation>-0.023 -0.0105 -0.0755</translation>
+        <rotationaxis>0 0 1 180.0</rotationaxis>
+    </body>
+    <joint name="LF31" type="hinge">
+        <body>Body_LWR</body>
+        <body>Body_LF31</body>
+        <offsetfrom>Body_LWR</offsetfrom>
+        <anchor>-0.023 -0.0105 -0.0755</anchor>
+        <rotationaxis>0 0 1 180.0</rotationaxis>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF32">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF2.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 -2.32805891508e-09 5.14105106917e-08
+-2.32805891508e-09 2.2681336966e-06 -4.92964124838e-09
+5.14105106917e-08 -4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_LF31</offsetfrom>
+        <translation>-0.002 -0.0105 -0.042</translation>
+    </body>
+    <joint name="LF32" type="hinge">
+        <body>Body_LF31</body>
+        <body>Body_LF32</body>
+        <axis>0 -1 0</axis>
+        <offsetfrom>Body_LF31</offsetfrom>
+        <anchor>-0.002 -0.0105 -0.042</anchor>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_LF33">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_LF3.stl 1</data>
+            <translation>0.0 0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 -4.42104180096e-09 1.38024261682e-07
+-4.42104180096e-09 2.40973096927e-06 -2.82215020077e-08
+1.38024261682e-07 -2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_LF32</offsetfrom>
+        <translation>-0.0014 0.0 -0.03</translation>
+    </body>
+    <joint name="LF33" type="hinge">
+        <body>Body_LF32</body>
+        <body>Body_LF33</body>
+        <offsetfrom>Body_LF32</offsetfrom>
+        <anchor>-0.0014 0.0 -0.03</anchor>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <body name="Body_RSP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RSP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.512814669817</total>
+            <inertia>0.00105971934904 -0.000159674623034 -8.62192186715e-07
+-0.000159674623034 0.00101602821932 -6.29668843068e-06
+-8.62192186715e-07 -6.29668843068e-06 0.00161449029531</inertia>
+            <com>0.0125095477278 -0.0682567187642 -0.00010129669296</com>
+        </mass>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <translation>0.001 -0.1305 0.2061</translation>
+    </body>
+    <body name="Body_RSR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RSR_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.478101234588</total>
+            <inertia>0.000470991608415 9.09015530395e-08 -1.2195757229e-05
+9.09015530395e-08 0.00056865982748 -7.94197935321e-06
+-1.2195757229e-05 -7.94197935321e-06 0.000377112142445</inertia>
+            <com>-0.0353989625514 0.000442459951968 -0.0177626332999</com>
+        </mass>
+        <offsetfrom>Body_RSP</offsetfrom>
+        <translation>0.033 -0.099 0.0</translation>
+    </body>
+    <body name="Body_RSY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RSY_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.3520653945</total>
+            <inertia>0.0134777313254 2.51384514258e-05 -0.000850780329961
+2.51384514258e-05 0.0134238053664 -0.00027096457354
+-0.000850780329961 -0.00027096457354 0.00109460289062</inertia>
+            <com>0.00596307108671 0.0022316583599 -0.162009947411</com>
+        </mass>
+        <offsetfrom>Body_RSR</offsetfrom>
+        <translation>-0.033 -0.0 -0.027</translation>
+    </body>
+    <body name="Body_REP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_REP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.267758871202</total>
+            <inertia>0.000341774590609 8.94704764294e-07 5.48147249702e-05
+8.94704764294e-07 0.000322402837807 -2.93006728476e-06
+5.48147249702e-05 -2.93006728476e-06 0.000239480055722</inertia>
+            <com>-0.0257144533591 -0.000806178520289 -0.0417853587165</com>
+        </mass>
+        <offsetfrom>Body_RSY</offsetfrom>
+        <translation>0.03 0.0 -0.273</translation>
+    </body>
+    <body name="Body_RWY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RWY_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.37072161762</total>
+            <inertia>0.0138917492746 3.54251778004e-06 7.93094448069e-06
+3.54251778004e-06 0.0118173705529 0.00394273246628
+7.93094448069e-06 0.00394273246628 0.00267824831844</inertia>
+            <com>3.99379011693e-05 -0.0577379856358 -0.151718765023</com>
+        </mass>
+        <offsetfrom>Body_REP</offsetfrom>
+        <translation>-0.03 0.0 -0.052</translation>
+    </body>
+    <body name="Body_RWP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RWP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.294902574333</total>
+            <inertia>0.000715165417978 1.51543969241e-06 -4.37551165446e-06
+1.51543969241e-06 0.000574579884043 5.5583549066e-05
+-4.37551165446e-06 5.5583549066e-05 0.000301632100474</inertia>
+            <com>-0.000378739071218 -0.0108882434913 0.0170093706107</com>
+        </mass>
+        <offsetfrom>Body_RWY</offsetfrom>
+        <translation>0.0 -0.0 -0.2618</translation>
+    </body>
+    <body name="Body_RWR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RWR_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.474006924727</total>
+            <inertia>0.000397832341494 -2.62847439474e-06 -1.84132721696e-05
+-2.62847439474e-06 0.00031058557487 5.74611340451e-06
+-1.84132721696e-05 5.74611340451e-06 0.000251799615334</inertia>
+            <com>0.00526734472243 0.00165481505248 -0.0476967183847</com>
+        </mass>
+        <offsetfrom>Body_RWP</offsetfrom>
+        <translation>0.0 -0.0 -0.0275</translation>
+        <rotationaxis>0 0 1 -89.9999999997</rotationaxis>
+    </body>
+    <body name="rightPalm">
+        <mass type="custom">
+            <total>0.1</total>
+            <inertia>0.0001 -0.0 0.0
+-0.0 0.0001 -0.0
+0.0 -0.0 0.0001</inertia>
+            <com>0.0 0.0 0.0</com>
+        </mass>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <translation>0.0 -0.0 -0.0905</translation>
+        <rotationaxis>1 0 0 89.9999999997</rotationaxis>
+    </body>
+    <body name="Body_RF11">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF1.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 3.61896654973e-09 2.45166522675e-07
+3.61896654973e-09 6.02432212426e-06 -1.21167394757e-09
+2.45166522675e-07 -1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <translation>0.023 0.012 -0.0755</translation>
+    </body>
+    <body name="Body_RF12">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF2.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 2.32805891508e-09 5.14105106917e-08
+2.32805891508e-09 2.2681336966e-06 4.92964124838e-09
+5.14105106917e-08 4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 -0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_RF11</offsetfrom>
+        <translation>-0.002 0.0105 -0.042</translation>
+    </body>
+    <body name="Body_RF13">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF3.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 4.42104180096e-09 1.38024261682e-07
+4.42104180096e-09 2.40973096927e-06 2.82215020077e-08
+1.38024261682e-07 2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 -0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_RF12</offsetfrom>
+        <translation>-0.0014 -0.0 -0.03</translation>
+    </body>
+    <body name="Body_RHY">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RHY_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.02665437744</total>
+            <inertia>0.00249606232939 2.76272075666e-09 -0.000829704581049
+2.76272075666e-09 0.00377324783995 -5.7913276862e-10
+-0.000829704581049 -5.7913276862e-10 0.00212819781063</inertia>
+            <com>0.0378123600719 -2.54097696217e-08 -0.116128242308</com>
+        </mass>
+        <offsetfrom>Body_TSY</offsetfrom>
+        <translation>0.0 -0.0885 -0.023</translation>
+    </body>
+    <body name="Body_RHR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RHR_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.37473370901</total>
+            <inertia>0.00222021321391 -3.01344959315e-05 0.000214745489876
+-3.01344959315e-05 0.00208177057869 -6.99363261904e-05
+0.000214745489876 -6.99363261904e-05 0.00174245289623</inertia>
+            <com>0.00473723996484 0.00482931760303 -0.032556369283</com>
+        </mass>
+        <offsetfrom>Body_RHY</offsetfrom>
+        <translation>0.0 -0.0 -0.141</translation>
+    </body>
+    <body name="Body_RHP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RHP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>3.39708806381</total>
+            <inertia>0.0610144402595 0.000679183163268 -0.00115726366946
+0.000679183163268 0.0588960128286 -0.00381190200426
+-0.00115726366946 -0.00381190200426 0.00864106131258</inertia>
+            <com>0.0139820973756 -0.0119128547059 -0.190050892708</com>
+        </mass>
+        <offsetfrom>Body_RHR</offsetfrom>
+        <translation>0.0 -0.0 0.0</translation>
+    </body>
+    <body name="Body_RKP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RKP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.25133149222</total>
+            <inertia>0.0176853262864 -5.97588040759e-05 0.000242087956452
+-5.97588040759e-05 0.0161941871477 -2.05953671058e-05
+0.000242087956452 -2.05953671058e-05 0.00355046513294</inertia>
+            <com>0.0167128425968 0.00423174064898 -0.163547981621</com>
+        </mass>
+        <offsetfrom>Body_RHP</offsetfrom>
+        <translation>0.0 -0.0 -0.3299</translation>
+    </body>
+    <body name="Body_RAP">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RAP_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>2.00597218063</total>
+            <inertia>0.00317573590934 0.000303977332269 -0.000298327569679
+0.000303977332269 0.0034724356878 0.000320093631729
+-0.000298327569679 0.000320093631729 0.00367965746071</inertia>
+            <com>0.0148223972691 -0.0100562738748 0.00997467775305</com>
+        </mass>
+        <offsetfrom>Body_RKP</offsetfrom>
+        <translation>0.0 -0.0 -0.33</translation>
+    </body>
+    <body name="Body_RAR">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RAR_merged.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>1.06815376654</total>
+            <inertia>0.00372790935829 -3.13391462968e-05 -0.000480888102686
+-3.13391462968e-05 0.00607005664614 9.42514897869e-05
+-0.000480888102686 9.42514897869e-05 0.00420512438203</inertia>
+            <com>0.0165455008794 -0.0021608598221 -0.095291506213</com>
+        </mass>
+        <offsetfrom>Body_RAP</offsetfrom>
+        <translation>0.0 -0.0 0.0</translation>
+    </body>
+    <body name="rightFoot">
+        <mass type="custom">
+            <total>0.1</total>
+            <inertia>0.0001 -0.0 0.0
+-0.0 0.0001 -0.0
+0.0 -0.0 0.0001</inertia>
+            <com>0.0 -0.0 0.0</com>
+        </mass>
+        <offsetfrom>Body_RAR</offsetfrom>
+        <translation>0.0 0.0 -0.1371</translation>
+    </body>
+    <body name="Body_RF21">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF1.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 3.61896654973e-09 2.45166522675e-07
+3.61896654973e-09 6.02432212426e-06 -1.21167394757e-09
+2.45166522675e-07 -1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <translation>0.023 -0.033 -0.0755</translation>
+    </body>
+    <body name="Body_RF22">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF2.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 2.32805891508e-09 5.14105106917e-08
+2.32805891508e-09 2.2681336966e-06 4.92964124838e-09
+5.14105106917e-08 4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 -0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_RF21</offsetfrom>
+        <translation>-0.002 0.0105 -0.042</translation>
+    </body>
+    <body name="Body_RF23">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF3.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 4.42104180096e-09 1.38024261682e-07
+4.42104180096e-09 2.40973096927e-06 2.82215020077e-08
+1.38024261682e-07 2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 -0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_RF22</offsetfrom>
+        <translation>-0.0014 -0.0 -0.03</translation>
+    </body>
+    <body name="Body_RF31">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF1.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 3.61896654973e-09 2.45166522675e-07
+3.61896654973e-09 6.02432212426e-06 -1.21167394757e-09
+2.45166522675e-07 -1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <translation>-0.023 0.0105 -0.0755</translation>
+        <rotationaxis>0 0 1 -180.0</rotationaxis>
+    </body>
+    <body name="Body_RF32">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF2.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 2.32805891508e-09 5.14105106917e-08
+2.32805891508e-09 2.2681336966e-06 4.92964124838e-09
+5.14105106917e-08 4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 -0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_RF31</offsetfrom>
+        <translation>-0.002 0.0105 -0.042</translation>
+    </body>
+    <body name="Body_RF33">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF3.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 4.42104180096e-09 1.38024261682e-07
+4.42104180096e-09 2.40973096927e-06 2.82215020077e-08
+1.38024261682e-07 2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 -0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_RF32</offsetfrom>
+        <translation>-0.0014 -0.0 -0.03</translation>
+    </body>
+    <body name="Body_RF41">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF1.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0209635645692</total>
+            <inertia>5.79877083007e-06 3.61896654973e-09 2.45166522675e-07
+3.61896654973e-09 6.02432212426e-06 -1.21167394757e-09
+2.45166522675e-07 -1.21167394757e-09 1.7824535577e-06</inertia>
+            <com>4.08082421145e-06 0.0103654579068 -0.0223572146584</com>
+        </mass>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <translation>-0.023 0.0555 -0.0755</translation>
+        <rotationaxis>0 0 1 -180.0</rotationaxis>
+    </body>
+    <body name="Body_RF42">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF2.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0121177256078</total>
+            <inertia>2.50372945958e-06 2.32805891508e-09 5.14105106917e-08
+2.32805891508e-09 2.2681336966e-06 4.92964124838e-09
+5.14105106917e-08 4.92964124838e-09 1.22101156826e-06</inertia>
+            <com>0.000130946971761 -0.000226771833385 -0.0135375370531</com>
+        </mass>
+        <offsetfrom>Body_RF41</offsetfrom>
+        <translation>-0.002 0.0105 -0.042</translation>
+    </body>
+    <body name="Body_RF43">
+        <geometry type="trimesh">
+            <data>../meshes/convhull_RF3.stl 1</data>
+            <translation>0.0 -0.0 0.0</translation>
+        </geometry>
+        <mass type="custom">
+            <total>0.0163435127658</total>
+            <inertia>2.3533837372e-06 4.42104180096e-09 1.38024261682e-07
+4.42104180096e-09 2.40973096927e-06 2.82215020077e-08
+1.38024261682e-07 2.82215020077e-08 9.6975889664e-07</inertia>
+            <com>0.000169386130302 -0.000356898419659 -0.0163165219752</com>
+        </mass>
+        <offsetfrom>Body_RF42</offsetfrom>
+        <translation>-0.0014 -0.0 -0.03</translation>
+    </body>
+    <joint name="RSP" type="hinge">
+        <body>Body_Torso</body>
+        <body>Body_RSP</body>
+        <offsetfrom>Body_Torso</offsetfrom>
+        <anchor>0.001 -0.1305 0.2061</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RSR" type="hinge">
+        <body>Body_RSP</body>
+        <body>Body_RSR</body>
+        <offsetfrom>Body_RSP</offsetfrom>
+        <anchor>0.033 -0.099 0.0</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-179.9 15.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RSY" type="hinge">
+        <body>Body_RSR</body>
+        <body>Body_RSY</body>
+        <offsetfrom>Body_RSR</offsetfrom>
+        <anchor>-0.033 -0.0 -0.027</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-179.9 114.6</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="REP" type="hinge">
+        <body>Body_RSY</body>
+        <body>Body_REP</body>
+        <offsetfrom>Body_RSY</offsetfrom>
+        <anchor>0.03 0.0 -0.273</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-151 11.5</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RWY" type="hinge">
+        <body>Body_REP</body>
+        <body>Body_RWY</body>
+        <offsetfrom>Body_REP</offsetfrom>
+        <anchor>-0.03 0.0 -0.052</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RWP" type="hinge" circular="true">
+        <body>Body_RWY</body>
+        <body>Body_RWP</body>
+        <offsetfrom>Body_RWY</offsetfrom>
+        <anchor>0.0 -0.0 -0.2618</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-180 180</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RWR" type="hinge">
+        <body>Body_RWP</body>
+        <body>Body_RWR</body>
+        <offsetfrom>Body_RWP</offsetfrom>
+        <anchor>0.0 -0.0 -0.0275</anchor>
+        <rotationaxis>0 0 1 -89.9999999997</rotationaxis>
+        <axis>0 0 1</axis>
+        <limitsdeg>-179.9 179.9</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint enable="false" name="RWR_dummy" type="hinge">
+        <limits>0 0</limits>
+        <body>Body_RWR</body>
+        <body>rightPalm</body>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <anchor>0.0 -0.0 -0.0905</anchor>
+        <rotationaxis>1 0 0 89.9999999997</rotationaxis>
+    </joint>
+    <joint name="RF11" type="hinge">
+        <body>Body_RWR</body>
+        <body>Body_RF11</body>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <anchor>0.023 0.012 -0.0755</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF12" type="hinge">
+        <body>Body_RF11</body>
+        <body>Body_RF12</body>
+        <offsetfrom>Body_RF11</offsetfrom>
+        <anchor>-0.002 0.0105 -0.042</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF13" type="hinge">
+        <body>Body_RF12</body>
+        <body>Body_RF13</body>
+        <offsetfrom>Body_RF12</offsetfrom>
+        <anchor>-0.0014 -0.0 -0.03</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RHY" type="hinge">
+        <body>Body_TSY</body>
+        <body>Body_RHY</body>
+        <offsetfrom>Body_TSY</offsetfrom>
+        <anchor>0.0 -0.0885 -0.023</anchor>
+        <axis>0 0 1</axis>
+        <limitsdeg>-110.0 110.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RHR" type="hinge">
+        <body>Body_RHY</body>
+        <body>Body_RHR</body>
+        <offsetfrom>Body_RHY</offsetfrom>
+        <anchor>0.0 -0.0 -0.141</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-29.8 29.8</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RHP" type="hinge">
+        <body>Body_RHR</body>
+        <body>Body_RHP</body>
+        <offsetfrom>Body_RHR</offsetfrom>
+        <anchor>0.0 -0.0 0.0</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-90 92.2</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RKP" type="hinge">
+        <body>Body_RHP</body>
+        <body>Body_RKP</body>
+        <offsetfrom>Body_RHP</offsetfrom>
+        <anchor>0.0 -0.0 -0.3299</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-4.0 149.5</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RAP" type="hinge">
+        <body>Body_RKP</body>
+        <body>Body_RAP</body>
+        <offsetfrom>Body_RKP</offsetfrom>
+        <anchor>0.0 -0.0 -0.33</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-97.4 97.4</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint name="RAR" type="hinge">
+        <body>Body_RAP</body>
+        <body>Body_RAR</body>
+        <offsetfrom>Body_RAP</offsetfrom>
+        <anchor>0.0 -0.0 0.0</anchor>
+        <axis>1 0 0</axis>
+        <limitsdeg>-90.0 90.0</limitsdeg>
+        <maxvel>10.0</maxvel>
+        <maxtorque>100.0</maxtorque>
+    </joint>
+    <joint enable="false" name="RAR_dummy" type="hinge">
+        <limits>0 0</limits>
+        <body>Body_RAR</body>
+        <body>rightFoot</body>
+        <offsetfrom>Body_RAR</offsetfrom>
+        <anchor>0.0 0.0 -0.1371</anchor>
+    </joint>
+    <joint name="RF21" type="hinge">
+        <body>Body_RWR</body>
+        <body>Body_RF21</body>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <anchor>0.023 -0.033 -0.0755</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF22" type="hinge">
+        <body>Body_RF21</body>
+        <body>Body_RF22</body>
+        <offsetfrom>Body_RF21</offsetfrom>
+        <anchor>-0.002 0.0105 -0.042</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF23" type="hinge">
+        <body>Body_RF22</body>
+        <body>Body_RF23</body>
+        <offsetfrom>Body_RF22</offsetfrom>
+        <anchor>-0.0014 -0.0 -0.03</anchor>
+        <axis>0 1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF31" type="hinge">
+        <body>Body_RWR</body>
+        <body>Body_RF31</body>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <anchor>-0.023 0.0105 -0.0755</anchor>
+        <rotationaxis>0 0 1 -180.0</rotationaxis>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF32" type="hinge">
+        <body>Body_RF31</body>
+        <body>Body_RF32</body>
+        <offsetfrom>Body_RF31</offsetfrom>
+        <anchor>-0.002 0.0105 -0.042</anchor>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF33" type="hinge">
+        <body>Body_RF32</body>
+        <body>Body_RF33</body>
+        <offsetfrom>Body_RF32</offsetfrom>
+        <anchor>-0.0014 -0.0 -0.03</anchor>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF41" type="hinge">
+        <body>Body_RWR</body>
+        <body>Body_RF41</body>
+        <offsetfrom>Body_RWR</offsetfrom>
+        <anchor>-0.023 0.0555 -0.0755</anchor>
+        <rotationaxis>0 0 1 -180.0</rotationaxis>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF42" type="hinge">
+        <body>Body_RF41</body>
+        <body>Body_RF42</body>
+        <offsetfrom>Body_RF41</offsetfrom>
+        <anchor>-0.002 0.0105 -0.042</anchor>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <joint name="RF43" type="hinge">
+        <body>Body_RF42</body>
+        <body>Body_RF43</body>
+        <offsetfrom>Body_RF42</offsetfrom>
+        <anchor>-0.0014 -0.0 -0.03</anchor>
+        <axis>0 -1 0</axis>
+        <limitsdeg>-85.9 5.7</limitsdeg>
+        <maxvel>2.0</maxvel>
+        <maxtorque>10.0</maxtorque>
+    </joint>
+    <adjacent>Body_RWR rightPalm</adjacent>
+    <adjacent>Body_LEP Body_LWY</adjacent>
+    <adjacent>Body_LWP Body_LWR</adjacent>
+    <adjacent>Body_LF31 Body_LF32</adjacent>
+    <adjacent>Body_LWY Body_LWP</adjacent>
+    <adjacent>Body_LHR Body_LHP</adjacent>
+    <adjacent>Body_NKY Body_NK1</adjacent>
+    <adjacent>Body_NK1 Body_NK2</adjacent>
+    <adjacent>Body_RF12 Body_RF13</adjacent>
+    <adjacent>Body_RF11 Body_RF12</adjacent>
+    <adjacent>Body_RWR Body_RF11</adjacent>
+    <adjacent>Body_Torso Body_TSY</adjacent>
+    <adjacent>Body_RWR Body_RF31</adjacent>
+    <adjacent>Body_LHP Body_LKP</adjacent>
+    <adjacent>Body_RF31 Body_RF32</adjacent>
+    <adjacent>Body_LSY Body_LEP</adjacent>
+    <adjacent>Body_RHP Body_RKP</adjacent>
+    <adjacent>Body_RWP Body_RWR</adjacent>
+    <adjacent>Body_LF32 Body_LF33</adjacent>
+    <adjacent>Body_LSP Body_LSR</adjacent>
+    <adjacent>Body_RF32 Body_RF33</adjacent>
+    <adjacent>Body_Torso Body_LSP</adjacent>
+    <adjacent>Body_RAP Body_RAR</adjacent>
+    <adjacent>Body_RSY Body_REP</adjacent>
+    <adjacent>Body_LWR Body_LF31</adjacent>
+    <adjacent>Body_LSR Body_LSY</adjacent>
+    <adjacent>Body_RAR rightFoot</adjacent>
+    <adjacent>Body_RKP Body_RAP</adjacent>
+    <adjacent>Body_LWR Body_LF21</adjacent>
+    <adjacent>Body_LF21 Body_LF22</adjacent>
+    <adjacent>Body_LF22 Body_LF23</adjacent>
+    <adjacent>Body_RF21 Body_RF22</adjacent>
+    <adjacent>Body_RF22 Body_RF23</adjacent>
+    <adjacent>Body_RWR Body_RF21</adjacent>
+    <adjacent>Body_LHY Body_LHR</adjacent>
+    <adjacent>Body_LWR leftPalm</adjacent>
+    <adjacent>Body_RWR Body_RF41</adjacent>
+    <adjacent>Body_RF41 Body_RF42</adjacent>
+    <adjacent>Body_RF42 Body_RF43</adjacent>
+    <adjacent>Body_RSR Body_RSY</adjacent>
+    <adjacent>Body_TSY Body_LHY</adjacent>
+    <adjacent>Body_TSY Body_RHY</adjacent>
+    <adjacent>Body_LAR leftFoot</adjacent>
+    <adjacent>Body_Torso Body_RSP</adjacent>
+    <adjacent>Body_RHY Body_RHR</adjacent>
+    <adjacent>Body_RWY Body_RWP</adjacent>
+    <adjacent>Body_LWR Body_LF11</adjacent>
+    <adjacent>Body_LF12 Body_LF13</adjacent>
+    <adjacent>Body_LF11 Body_LF12</adjacent>
+    <adjacent>Body_RSP Body_RSR</adjacent>
+    <adjacent>Body_RHR Body_RHP</adjacent>
+    <adjacent>Body_Torso Body_NKY</adjacent>
+    <adjacent>Body_REP Body_RWY</adjacent>
+    <adjacent>Body_LKP Body_LAP</adjacent>
+    <adjacent>Body_LAP Body_LAR</adjacent>
+    <adjacent>Body_RHY Body_RHP</adjacent>
+    <adjacent>Body_NK1 Body_Torso</adjacent>
+    <adjacent>Body_RWR Body_RWY</adjacent>
+    <adjacent>Body_RAR Body_RKP</adjacent>
+    <adjacent>Body_LHY Body_LHP</adjacent>
+    <adjacent>Body_LWR Body_LWY</adjacent>
+    <adjacent>Body_RSY Body_RSP</adjacent>
+    <adjacent>Body_LAR Body_LKP</adjacent>
+    <adjacent>Body_LSY Body_LSP</adjacent>
+</kinbody>

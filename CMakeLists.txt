@@ -5,8 +5,9 @@ project(grip2)
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Debug")
-set(BUILD_FLAGS "-std=c++0x -Wreturn-type -Wno-enum-compare -Wall -03")
-
+set(BUILD_FLAGS "-std=c++0x -Wreturn-type -Wno-enum-compare -Wall")
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #-----------------------------------------------
 #                FIND PACKAGES
@@ -23,6 +24,17 @@ include_directories(${OpenSceneGraph_INCLUDE_DIRS})
 add_definitions(${OpenSourceGraph_DEFINITIONS})
 set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
 
+# Find Eigen3
+find_package(Eigen REQUIRED)
+include_directories(${EIGEN_INCLUDE_DIRS})
+add_definitions(${EIGEN_DEFINITIONS})
+
+# Find DART
+set(CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/share/dart")
+find_package(DART REQUIRED)
+include_directories(${DART_INCLUDE_DIRS})
+link_directories(${DART_LIBRARY_DIRS})
+
 
 #-----------------------------------------------
 #            INCLUDES & LIBRARIES
@@ -38,14 +50,21 @@ include_directories(qtWidgets/include)
 add_subdirectory(osgNodes)
 include_directories(osgNodes/include)
 
+# Add DART OSG library
+add_subdirectory(dartOsg)
+include_directories(dartOsg/include)
+
+# Set project libraries variable
+set(project_libs qtWidgets osgNodes dartOsg)
+
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/mainwindow.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
 add_library(mainwindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainwindow qtWidgets osgNodes)
+target_link_libraries(mainwindow ${project_libs})
 
 # Set project libraries variable
-set(project_libs qtWidgets osgNodes mainwindow)
+set(project_libs ${project_libs} mainwindow)
 
 
 #-----------------------------------------------

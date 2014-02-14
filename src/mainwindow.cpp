@@ -145,7 +145,7 @@ void MainWindow::black()
 }
 void MainWindow::resetCamera()
 {
-    viewWidget->getCameraManipulator()->home(1.0);
+    viewWidget->setCameraToHomePosition();
 }
 
 void MainWindow::xga1024x768(){}

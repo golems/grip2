@@ -4,9 +4,11 @@ cmake_minimum_required(VERSION 2.8.3)
 #                FIND PACKAGES
 #-----------------------------------------------
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
-add_definitions(${QT_DEFINITIONS})
-include(${QT_USE_FILE})
+if(Qt4_NOT_FOUND)
+    find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+    add_definitions(${QT_DEFINITIONS})
+    include(${QT_USE_FILE})
+endif()
 
 include_directories(include)
 
