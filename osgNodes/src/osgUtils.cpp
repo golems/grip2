@@ -118,3 +118,4 @@ osg::Node* createNode()
 
     return rootTF;
 }
+

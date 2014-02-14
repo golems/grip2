@@ -42,6 +42,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 #include "SkeletonNode.h"
+#include "osgAssimpSceneReader.h"
 
 using namespace dart;
 
@@ -54,12 +55,12 @@ SkeletonNode::SkeletonNode(dynamics::Skeleton& robot, float axisLength) :
 void SkeletonNode::_update()
 {
 
+//    while()
 }
 
 osg::Geode* SkeletonNode::_makeBodyNodeGeode(dynamics::BodyNode& node)
 {
-    osg::Geode* bodyNode = new osg::Geode;
-//    node.getVisualizationShape()
+//    osg::Geode* bodyNode = new osg::Geode;
 }
 
 osg::MatrixTransform* SkeletonNode::_makeJointGeode(dynamics::Joint& joint)
