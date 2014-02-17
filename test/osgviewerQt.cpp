@@ -1,4 +1,4 @@
-#include "viewer_widget.h"
+#include "ViewerWidget.h"
 #include "QApplication"
 #include <osg/io_utils>
 

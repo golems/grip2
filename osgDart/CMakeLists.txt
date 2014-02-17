@@ -28,5 +28,5 @@ include_directories(include)
 #-----------------------------------------------
 # DART OpenSceneGraph Nodes Library
 file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
-add_library(dartOsg ${srcs})
-target_link_libraries(dartOsg ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+add_library(osgDart ${srcs})
+target_link_libraries(osgDart ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})

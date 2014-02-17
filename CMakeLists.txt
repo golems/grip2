@@ -51,11 +51,11 @@ add_subdirectory(osgNodes)
 include_directories(osgNodes/include)
 
 # Add DART OSG library
-add_subdirectory(dartOsg)
-include_directories(dartOsg/include)
+add_subdirectory(osgDart)
+include_directories(osgDart/include)
 
 # Set project libraries variable
-set(project_libs qtWidgets osgNodes dartOsg)
+set(project_libs qtWidgets osgNodes osgDart)
 
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/mainwindow.h)

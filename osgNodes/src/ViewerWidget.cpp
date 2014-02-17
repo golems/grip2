@@ -43,7 +43,7 @@
  */
 
 
-#include "viewer_widget.h"
+#include "ViewerWidget.h"
 #include <osg/io_utils>
 #include "osgUtils.h"
 #include "Axes.h"

@@ -45,7 +45,7 @@
 #include <QtGui>
 #include "mainwindow.h"
 #include "tree_view.h"
-#include "viewer_widget.h"
+#include "ViewerWidget.h"
 #include <osg/io_utils>
 //including the icons for the toolbar
 #include "icons/open.xpm"

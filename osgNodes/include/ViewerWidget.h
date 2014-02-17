@@ -42,6 +42,10 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file ViewerWidget.h
+ * \brief Class that is an osgViewer::CompositeViewer as a QWidget
+ */
 
 #ifndef VIEWER_WIDGET_H
 #define VIEWER_WIDGET_H
@@ -59,12 +63,13 @@
 #include <osg/io_utils>
 #include "osgUtils.h"
 
-// System includes
+// Standard Library includes
 #include <iostream>
 
 /**
- * \class ViewerWidget, which inherits from QWidget and osgViewer::CompositeViewer.
- * This class creates a osgQt::GraphicsWindowQt and puts in inside a composite viewer
+ * \class ViewerWidget ViewerWidget.h
+ * \brief Class which inherits from QWidget and osgViewer::CompositeViewer.
+ * This class creates a osgQt::GraphicsWindowQt and puts it inside a composite viewer
  */
 class ViewerWidget : public QWidget, public osgViewer::CompositeViewer
 {

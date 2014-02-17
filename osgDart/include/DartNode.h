@@ -42,65 +42,61 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SKELETONNODE_H
-#define SKELETONNODE_H
+/**
+ * \file DartNode.h
+ * \brief Class that is a subclass of osg::Group, which is the main\n
+ * object for DART visualization in OpenSceneGraph
+ */
 
-// Grip includes
-#include "Axes.h"
+#ifndef DARTNODE_H
+#define DARTNODE_H
 
-// Dart includes
+// DART includes
+#include <dart/utils/urdf/DartLoader.h>
 #include <dart/dynamics/Skeleton.h>
-#include <dart/dynamics/BodyNode.h>
 #include <dart/dynamics/Joint.h>
+#include <dart/dynamics/BodyNode.h>
 
 // OpenSceneGraph includes
 #include <osg/Geode>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
-#include <osg/CullFace>
 
 using namespace dart;
 
 /**
- * \class SkeletonNode, which inherits osg::Group
+ * \class DartNode DartNode.h
+ * \brief Class that is a subclass of osg::Group, which is the main
+ * object for DART visualization in OpenSceneGraph
  */
-class SkeletonNode : public osg::Group
+class DartNode : public osg::Group
 {
 public:
 
     /**
-     * \brief Constructor for SkeletonNode
+     * \brief Constructor for DartNode
      */
-    SkeletonNode(dynamics::Skeleton& robot, float axisLength=0.2);
+    DartNode();
 
+    /**
+     * \brief Add a robot to the DartNode
+     * \param robot New robot to add to the DartNode
+     * \return Index (size_t) of the newly added robot
+     */
+    size_t addRobot(dynamics::Skeleton& robot);
+
+    /**
+     * \brief Get robot via index (size_t)
+     * \param robotIndex Index of the robot you want
+     * \return a dart::dynamics::Skeleton robot
+     */
+    dynamics::Skeleton getRobot(size_t robotIndex);
+    
 protected:
 
-    //---------------------------------------------------
-    //           PROTECTED MEMBER FUNCTIONS
-    //---------------------------------------------------
-    /**
-     * \brief Update the skeleton
-     */
-    void _update();
+    /// Standard vector of pointers to Skeletons
+    std::vector<dynamics::Skeleton*> _robots;
 
-    /**
-     * \brief Create osg::Geode object from DART BodyNode
-     */
-    osg::Geode* _makeBodyNodeGeode(dynamics::BodyNode& node);
-
-    /**
-     * \brief Create osg::MatrixTransform from DART Joint
-     */
-    osg::MatrixTransform* _makeJointGeode(dynamics::Joint& joint);
-
-
-    //---------------------------------------------------
-    //           PROTECTED MEMBER VARIABLES
-    //---------------------------------------------------
-    std::vector<osg::Geode*> _bodyNodes;
-    std::vector<osg::MatrixTransform*> _joints;
-
-    float _axisLength;
 };
 
-#endif // SKELETONNODE_H
+#endif // DARTNODE_H

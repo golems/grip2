@@ -21,25 +21,30 @@ int main(int argc, char** argv)
 {
     std::cerr << "Starting Robot-Test" << std::endl;
 
-    // Load urdf model of the robot
     utils::DartLoader loader;
-    dynamics::Skeleton* robot;
-    robot = loader.parseSkeleton("../models/drchubo_v2/robots/drchubo_v2.urdf");
 
-    // Check if it loaded correctly
+    // Load robot model from urdf and check if valid
+    dynamics::Skeleton* robot = loader.parseSkeleton("../models/drchubo_v2/robots/drchubo_v2.urdf");
     if(!robot) {
-        std::cerr << "Error parsing urdf" << std::endl;
+        std::cerr << "Error parsing robot urdf" << std::endl;
         return -1;
     } else {
-        std::cerr << "Successfully parsed urdf" << std::endl;
+        std::cerr << "Successfully parsed robot urdf" << std::endl;
+    }
+
+    // Load world model from urdf and check if valid
+    simulation::World* world = loader.parseWorld("/home/pete/otherRepos/grip-samples/scenes/cubesWorld.urdf");
+    if(!world) {
+        std::cerr << "Error parsing world urdf" << std::endl;
+        return -1;
+    } else {
+        std::cerr << "Successfully parsed world urdf" << std::endl;
     }
 
     // Print robot meta information
-    osgAssimpSceneReader assimpReader;
-
     osg::Group* root = new osg::Group();
-    std::cerr << "Name: " << robot->getName() << "\n" << std::endl;
-    if(1) {
+    if(0) {
+        std::cerr << "Name: " << robot->getName() << "\n" << std::endl;
         for(int i=0; i<robot->getNumBodyNodes(); ++i) {
             dynamics::BodyNode* node = robot->getBodyNode(i);
             std::cerr << "BodyNode " << i << ": " << node->getName();
@@ -54,10 +59,11 @@ int main(int argc, char** argv)
             }
             if(node->getNumVisualizationShapes()) {
             for(int j=0; j<node->getNumVisualizationShapes(); ++j) {
+                std::cerr << "\t\tj = " << j << std::endl;
                 dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(j);
                 const aiScene* mesh = meshShape->getMesh();
                 std::cerr << "\n\tnum verts: " << mesh->mMeshes[j]->mNumVertices << std::endl;
-                osg::Node* n = assimpReader.traverseAIScene(mesh, mesh->mRootNode);
+                osg::Node* n = osgAssimpSceneReader::traverseAIScene(mesh, mesh->mRootNode);
                 root->addChild(n);
             }
             }
@@ -65,6 +71,27 @@ int main(int argc, char** argv)
         }
     }
 
+    // Print world meta information
+    if(1) {
+        std::cerr << "Number of skeletons: " << world->getNumSkeletons() << std::endl;
+        for(int i=0; i<world->getNumSkeletons(); ++i) {
+            dynamics::Skeleton* skel = world->getSkeleton(i);
+            std::cerr << "Number of BodyNodes in skeleton " << i << ": " << skel->getNumBodyNodes() << std::endl;
+            for(int j=0; j<skel->getNumBodyNodes(); ++j) {
+                dynamics::BodyNode* node = skel->getBodyNode(j);
+                if(node->getNumVisualizationShapes()) {
+                    for(int k=0; k<node->getNumVisualizationShapes(); ++k) {
+                        dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(k);
+                        const aiScene* mesh = meshShape->getMesh();
+                        osg::Node* n = osgAssimpSceneReader::traverseAIScene(mesh, mesh->mRootNode);
+                        root->addChild(n);
+                    }
+                }
+            }
+        }
+    }
+
+    // Add osg::Group to a view and view to a viewer
     osgViewer::View* view = createView(0, 0, 500, 500, root);
     view->setUpViewOnSingleScreen(0);
     osgViewer::CompositeViewer* viewer = new osgViewer::CompositeViewer();

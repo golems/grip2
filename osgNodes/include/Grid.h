@@ -42,12 +42,22 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file Grid.h
+ * \brief Class for creating an OpenSceneGraph osg::Geometry\n
+ * grid of user-specified width, depth and grid square size.
+ */
 
 #ifndef GRID_H
 #define GRID_H
 
 #include <osg/Geometry>
 
+/**
+ * \class Grid Grid.h
+ * \brief Class for creating an OpenSceneGraph osg::Geomtry grid
+ * of user-specified width, depth and grid square size.
+ */
 class Grid : public osg::Geometry
 {
 public:

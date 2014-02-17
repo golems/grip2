@@ -47,7 +47,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <viewer_widget.h>
+#include <ViewerWidget.h>
 #include <tree_view.h>
 
 class QAction;
