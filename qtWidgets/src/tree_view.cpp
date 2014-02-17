@@ -54,3 +54,8 @@ TreeView::TreeView(QWidget *parent)
     childitm->setText(0, "child test");
     itm->addChild(childitm);
 }
+
+TreeView::~TreeView()
+{
+    delete treeView;
+}

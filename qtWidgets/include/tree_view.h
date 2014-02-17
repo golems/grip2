@@ -52,6 +52,7 @@ class TreeView
 public:
     TreeView(){}
     TreeView(QWidget *parent);
+    ~TreeView();
     QTreeWidget *treeView;
 };
 
