@@ -48,6 +48,10 @@
 
 #include <osgViewer/View>
 #include <osgGA/OrbitManipulator>
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+
+namespace osgUtils {
 
 /**
  * \brief Creates a osgViewer::View pointer with the specified location
@@ -64,5 +68,43 @@ osgViewer::View* createView(int x, int y, int w, int h, osg::Node* scene = NULL)
 osg::Node* createNode();
 
 void addNodeToScene(osg::Group* scene);
+
+/**
+ * \brief Convert Eigen::Isometry3d matrix to an osg::Matrix.
+ * osg::Matrix is transposed.
+ * \return osg::Matrix
+ */
+inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3d& tf)
+{
+    osg::Matrix output;
+    for(ushort i=0; i<4; ++i)
+        for(ushort j=0; j<4; ++j)
+            output(i,j) = tf(j,i);
+    return output;
+}
+
+/**
+ * \brief Convert Eigen::Isometry3f matrix to an osg::Matrix.
+ * osg::Matrix is transposed.
+ * \return osg::Matrix
+ */
+inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3f& tf)
+{
+    osg::Matrix output;
+    for(ushort i=0; i<4; ++i)
+        for(ushort j=0; j<4; ++j)
+            output(i,j) = tf(j,i);
+    return output;
+}
+
+inline osg::Vec3d eigToOsgVec(const Eigen::Vector3d& vec)
+{
+    osg::Vec3d output;
+    for(ushort i=0; i<3; ++i) {
+        output[i] = vec[i];
+    }
+}
+
+} // end of osgUtils namespace
 
 #endif // OSG_UTILS_H

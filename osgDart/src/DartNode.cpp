@@ -43,18 +43,48 @@
  */
 
 #include "DartNode.h"
+#include "SkeletonNode.h"
 
 using namespace dart;
+using namespace osgDart;
 
 DartNode::DartNode(){}
 
 size_t DartNode::addRobot(dynamics::Skeleton& robot)
 {
     _robots.push_back(&robot);
+
+    osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(robot);
+    this->addChild(skel);
+
     return _robots.size()-1;
 }
 
-dynamics::Skeleton DartNode::getRobot(size_t robotIndex)
+dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
 {
+    if(robotIndexIsValid(robotIndex)) {
+        return _robots[robotIndex];
+    } else {
+        return NULL;
+    }
+}
 
+bool DartNode::robotIndexIsValid(size_t robotIndex)
+{
+    if(robotIndex < _robots.size() && robotIndex >= 0) {
+        return true;
+    } else {
+        std::cerr << "Requested an invalid robot index of " << robotIndex
+                  << " at line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return false;
+    }
+}
+
+void DartNode::printRobotInfo(size_t robotIndex)
+{
+    std::cout << "Robot[" << robotIndex << "]: "
+              << "\n\tName: " << _robots[robotIndex]->getName()
+              << "\n\tBodyNodes: " << _robots[robotIndex]->getNumBodyNodes()
+              <<
+    std::endl;
 }

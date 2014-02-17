@@ -66,6 +66,11 @@
 
 using namespace dart;
 
+namespace osgDart {
+
+typedef std::map<dynamics::Joint*, osg::MatrixTransform*> JointMatrixMap;
+typedef std::map<dynamics::BodyNode*, osg::Group*> BodyNodeGroupMap;
+
 /**
  * \class SkeletonNode SkeletonNode.h
  * \brief Class which inherits osg::Group
@@ -87,17 +92,21 @@ protected:
     /**
      * \brief Update the skeleton
      */
-    void _update();
+    void _createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyNode);
+
+    void _recursiveUpdate(osg::MatrixTransform* rootTF, dynamics::BodyNode& bodyNode);
+
+    osg::MatrixTransform* _addRootJointNode(dynamics::Joint& rootJoint);
 
     /**
      * \brief Create osg::Geode object from DART BodyNode
      */
-    osg::Geode* _makeBodyNodeGeode(dynamics::BodyNode& node);
+    osg::Group* _makeBodyNodeGeode(dynamics::BodyNode& node);
 
     /**
      * \brief Create osg::MatrixTransform from DART Joint
      */
-    osg::MatrixTransform* _makeJointGeode(dynamics::Joint& joint);
+    osg::MatrixTransform* _makeJointNode(dynamics::Joint& joint);
 
 
     //---------------------------------------------------
@@ -106,7 +115,12 @@ protected:
     std::vector<osg::Geode*> _bodyNodes;
     std::vector<osg::MatrixTransform*> _joints;
 
+    JointMatrixMap _jointMatrixMap;
+    BodyNodeGroupMap _bodyNodeGroupMap;
+
     float _axisLength;
 };
+
+} // end osgDart namespace
 
 #endif // SKELETONNODE_H

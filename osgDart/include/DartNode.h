@@ -64,6 +64,8 @@
 
 using namespace dart;
 
+namespace osgDart {
+
 /**
  * \class DartNode DartNode.h
  * \brief Class that is a subclass of osg::Group, which is the main
@@ -90,13 +92,18 @@ public:
      * \param robotIndex Index of the robot you want
      * \return a dart::dynamics::Skeleton robot
      */
-    dynamics::Skeleton getRobot(size_t robotIndex);
+    dynamics::Skeleton* getRobot(size_t robotIndex);
+
+    void printRobotInfo(size_t robotIndex);
     
 protected:
 
     /// Standard vector of pointers to Skeletons
     std::vector<dynamics::Skeleton*> _robots;
 
+    bool robotIndexIsValid(size_t robotIndex);
 };
+
+} // end namespace osgDart
 
 #endif // DARTNODE_H

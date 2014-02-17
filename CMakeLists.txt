@@ -35,7 +35,6 @@ find_package(DART REQUIRED)
 include_directories(${DART_INCLUDE_DIRS})
 link_directories(${DART_LIBRARY_DIRS})
 
-
 #-----------------------------------------------
 #            INCLUDES & LIBRARIES
 #-----------------------------------------------

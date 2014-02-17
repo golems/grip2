@@ -175,11 +175,11 @@ void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
     }
 }
 
-void ViewerWidget::addCenterAxes()
-{
-    osg::Node* axes = createNode();
-    addNodeToScene(axes);
-}
+//void ViewerWidget::addCenterAxes()
+//{
+//    osg::Node* axes = osgUtils::createNode();
+//    addNodeToScene(axes);
+//}
 
 void ViewerWidget::setBackgroundColor(const osg::Vec4 &color, uint viewNum)
 {

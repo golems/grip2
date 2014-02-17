@@ -73,6 +73,7 @@
  */
 class ViewerWidget : public QWidget, public osgViewer::CompositeViewer
 {
+
 public:
     /**
      * \brief Constructor for ViewerWidget class
@@ -114,7 +115,7 @@ public:
 
     void setCameraToHomePosition(uint viewNum=0);
 
-    void addCenterAxes();
+//    void addCenterAxes();
 
     osg::Node* getSceneData();
 
@@ -136,5 +137,6 @@ protected:
      */
     bool viewNumIsValid(uint viewNum);
 };
+
 
 #endif // VIEWER_WIDGET_H
