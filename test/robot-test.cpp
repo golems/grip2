@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     }
 
     // Load world model from urdf and check if valid
-    simulation::World* world = loader.parseWorld("/home/pete/otherRepos/grip-samples/scenes/cubesWorld.urdf");
+    simulation::World* world = loader.parseWorld("../../../otherRepos/grip-samples/scenes/cubesWorld.urdf");
     if(!world) {
         std::cerr << "Error parsing world urdf" << std::endl;
         return -1;

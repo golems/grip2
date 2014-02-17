@@ -57,7 +57,7 @@ osg::Node* ViewerWidget::getSceneData()
     osg::Group* root = new osg::Group();
 
     // Add robot
-    osg::Node* robot = osgDB::readNodeFile("../grip2/data/robot.osg");
+    osg::Node* robot = osgDB::readNodeFile("../data/robot.osg");
     osg::MatrixTransform* tf = new osg::MatrixTransform();
     tf->addChild(robot);
     std::cerr << "tf:\n" << tf->getMatrix() << std::endl;
@@ -73,9 +73,9 @@ osg::Node* ViewerWidget::getSceneData()
     Grid* grid = new Grid(20, 20, 3, osg::Vec4(1, 1, 1, 1));
     gridGeode->addDrawable(grid);
     gridTF->addChild(gridGeode);
-    osg::Matrix* m = new osg::Matrix;
-    m->makeTranslate(0, 0, -2.5);
-    gridTF->setMatrix(*m);
+    osg::Matrix m;
+    m.makeTranslate(0, 0, -2.5);
+    gridTF->setMatrix(m);
     root->addChild(gridTF);
 
     return root;
