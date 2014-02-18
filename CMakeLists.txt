@@ -9,6 +9,7 @@ set(BUILD_FLAGS "-std=c++0x -Wreturn-type -Wno-enum-compare -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+
 #-----------------------------------------------
 #                FIND PACKAGES
 #-----------------------------------------------
@@ -35,8 +36,9 @@ find_package(DART REQUIRED)
 include_directories(${DART_INCLUDE_DIRS})
 link_directories(${DART_LIBRARY_DIRS})
 
+
 #-----------------------------------------------
-#            INCLUDES & LIBRARIES
+#      INCLUDES & SUBDIRECTORY LIBRARIRES
 #-----------------------------------------------
 # Include top-level include directory
 include_directories(include)

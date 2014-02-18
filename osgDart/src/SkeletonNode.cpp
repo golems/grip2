@@ -41,6 +41,13 @@
  *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *   POSSIBILITY OF SUCH DAMAGE.
  */
+
+#ifdef DEBUG_BUILD
+#define DEBUG(x) do { std::cerr << x; } while (0); std::endl;
+#else
+#define DEBUG(x)
+#endif
+
 #include "SkeletonNode.h"
 #include "osgAssimpSceneReader.h"
 #include <assimp/scene.h>
@@ -71,6 +78,7 @@ void SkeletonNode::_createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyN
 
 void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode)
 {
+    DEBUG("Recursively building robot");
     // For every child node of the bodyNode, add its parent joint's TF to the bodyNode's parent joint's TF
     // and add a TF for the child node to its parent joint's TF.
     // Add parent joint with its TF from its parent body node
@@ -81,12 +89,12 @@ void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::Bod
     jointTF->addChild(bodyNodeTF);
     bodyNodeTF->addChild(_makeBodyNodeGeode(bodyNode));
 
-    std::cerr << "Added \n\tJoint " << bodyNode.getParentJoint()->getName() << " at \n" << bodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
-              << "\n\tBody " << bodyNode.getName() << " at " << bodyNode.getLocalCOM().transpose()
-              << "\n\tChilds " << bodyNode.getNumChildBodyNodes()
-              << std::endl;
+//    std::cerr << "Added \n\tJoint " << bodyNode.getParentJoint()->getName() << " at \n" << bodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
+//              << "\n\tBody " << bodyNode.getName() << " at " << bodyNode.getLocalCOM().transpose()
+//              << "\n\tChilds " << bodyNode.getNumChildBodyNodes()
+//              << std::endl;
     for(int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
-        std::cerr << "\t\t" << bodyNode.getChildBodyNode(i)->getName() << std::endl;
+//        std::cerr << "\t\t" << bodyNode.getChildBodyNode(i)->getName() << std::endl;
 
     }
 
@@ -102,8 +110,8 @@ void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::Bod
         childBodyNodeTF->setMatrix(_getBodyNodeMatrix(childBodyNode));
         joint2TF->addChild(childBodyNodeTF);
         childBodyNodeTF->addChild(_makeBodyNodeGeode(childBodyNode));
-        std::cerr << "Added \n\tJoint " << childBodyNode.getParentJoint()->getName() << " at \n" << childBodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
-                  << "\n\tBody " << childBodyNode.getName() << " at " << childBodyNode.getLocalCOM().transpose() << std::endl;
+//        std::cerr << "Added \n\tJoint " << childBodyNode.getParentJoint()->getName() << " at \n" << childBodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
+//                  << "\n\tBody " << childBodyNode.getName() << " at " << childBodyNode.getLocalCOM().transpose() << std::endl;
         _recursiveUpdate(joint2TF, childBodyNode);
     }
 }

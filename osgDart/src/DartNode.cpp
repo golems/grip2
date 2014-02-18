@@ -50,6 +50,29 @@ using namespace osgDart;
 
 DartNode::DartNode(){}
 
+dynamics::Skeleton* DartNode::getRobot(std::string urdfFile)
+{
+    // Load robot model from urdf and check if valid
+    utils::DartLoader loader;
+    dynamics::Skeleton* robot = loader.parseSkeleton("../models/drchubo_v2/robots/drchubo_v2.urdf");
+    if(!robot) {
+        std::cerr << "Error parsing robot urdf" << std::endl;
+        exit(-1);
+    } else {
+        std::cerr << "Successfully parsed robot urdf" << std::endl;
+        return robot;
+    }
+}
+
+size_t DartNode::addRobot(std::string urdfFile)
+{
+    dynamics::Skeleton* robot = getRobot(urdfFile);
+    if(robot) {
+        std::cerr << "Adding robot" << std::endl;
+        addRobot(*robot);
+    }
+}
+
 size_t DartNode::addRobot(dynamics::Skeleton& robot)
 {
     _robots.push_back(&robot);

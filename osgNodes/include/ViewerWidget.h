@@ -117,7 +117,7 @@ public:
 
 //    void addCenterAxes();
 
-    osg::Node* getSceneData();
+    void addGrid(uint width, uint depth, uint gridSize);
 
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }

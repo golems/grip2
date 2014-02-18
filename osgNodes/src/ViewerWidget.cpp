@@ -51,34 +51,12 @@
 #include "CameraManipulator.h"
 #include "Grid.h"
 
-osg::Node* ViewerWidget::getSceneData()
+void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
-    // Add root
-    osg::Group* root = new osg::Group();
-
-    // Add robot
-    osg::Node* robot = osgDB::readNodeFile("../data/robot.osg");
-    osg::MatrixTransform* tf = new osg::MatrixTransform();
-    tf->addChild(robot);
-    std::cerr << "tf:\n" << tf->getMatrix() << std::endl;
-    root->addChild(tf);
-
-    // Axes for center of rotation
-    osg::MatrixTransform* gridTF = new osg::MatrixTransform();
-    gridTF->setDataVariance(osg::Object::DYNAMIC);
-//    CameraData* cameraData = new CameraData;
-//    axesTF->setUserData(this->getView(0)->getCamera());
-//    gridTF->setUserData(cameraData);
     osg::Geode* gridGeode = new osg::Geode();
-    Grid* grid = new Grid(20, 20, 3, osg::Vec4(1, 1, 1, 1));
+    Grid* grid = new Grid(width, depth, gridSize, osg::Vec4(1, 1, 1, 1));
     gridGeode->addDrawable(grid);
-    gridTF->addChild(gridGeode);
-    osg::Matrix m;
-    m.makeTranslate(0, 0, -2.5);
-    gridTF->setMatrix(m);
-    root->addChild(gridTF);
-
-    return root;
+    addNodeToScene(gridGeode);
 }
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
@@ -86,7 +64,8 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     setThreadingModel(threadingModel);
 
     // Create scene data
-    osg::Node* sceneData = getSceneData();
+//    osg::Node* sceneData = getSceneData();
+    osg::Group* sceneData = new osg::Group;
 
     // Create view widget with camera and scene data
     QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), sceneData);
@@ -111,8 +90,6 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
     view->addEventHandler(new osgViewer::StatsHandler);
 
     CameraManipulator* cameraManipulator = new CameraManipulator();
-//    osgGA::OrbitManipulator* cameraManipulator = new osgGA::OrbitManipulator();
-//    cameraManipulator->setAllowThrow(false);
     view->setCameraManipulator(cameraManipulator);
     std::cerr << "Center: " << cameraManipulator->getCenter() << std::endl;
 

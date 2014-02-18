@@ -58,6 +58,8 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 #include <QString>
+#include "Grid.h"
+#include "DartNode.h"
 
 MainWindow::MainWindow()
 {
@@ -299,6 +301,13 @@ void MainWindow::createOsgWindow()
 {
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
+    // Add grid
+    viewWidget->addGrid(20, 20, 3);
+    // Add robot
+    osgDart::DartNode* dartNode = new osgDart::DartNode();
+    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
+    viewWidget->addNodeToScene(dartNode);
+    // Add view widget to app
     setCentralWidget(viewWidget);
     frontView = viewWidget->getViewMatrix();
     sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));

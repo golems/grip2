@@ -80,6 +80,9 @@ public:
      */
     DartNode();
 
+    dynamics::Skeleton* getRobot(std::string urdfFile);
+    size_t addRobot(std::string urdfFile);
+
     /**
      * \brief Add a robot to the DartNode
      * \param robot New robot to add to the DartNode
