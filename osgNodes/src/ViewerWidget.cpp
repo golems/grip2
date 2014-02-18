@@ -91,7 +91,6 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     CameraManipulator* cameraManipulator = new CameraManipulator();
     view->setCameraManipulator(cameraManipulator);
-    std::cerr << "Center: " << cameraManipulator->getCenter() << std::endl;
 
     osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());
     return gw ? gw->getGLWidget() : NULL;

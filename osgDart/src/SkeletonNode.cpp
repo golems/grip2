@@ -69,11 +69,22 @@ void SkeletonNode::_createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyN
 {
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
+    osg::MatrixTransform* root = _placeRootOfSkeleton(rootBodyNode);
+    this->addChild(root);
+
     osg::MatrixTransform* rootTF = _addRootJointNode(*rootBodyNode.getParentJoint());
-    this->addChild(rootTF);
+    root->addChild(rootTF);
 
     _recursiveUpdate(rootTF, rootBodyNode);
 
+}
+
+osg::MatrixTransform* SkeletonNode::_placeRootOfSkeleton(dynamics::BodyNode& rootBodyNode)
+{
+    osg::Matrix rootMatrix = osgUtils::eigToOsgMatrix(rootBodyNode.getWorldTransform());
+    osg::MatrixTransform* rootTF = new osg::MatrixTransform();
+    rootTF->setMatrix(rootMatrix);
+    return rootTF;
 }
 
 void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode)
@@ -119,7 +130,6 @@ void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::Bod
 osg::MatrixTransform* SkeletonNode::_addRootJointNode(dynamics::Joint& rootJoint)
 {
     _jointMatrixMap[&rootJoint] = _makeJointNode(rootJoint);
-    this->addChild(_jointMatrixMap[&rootJoint]);
     return _jointMatrixMap[&rootJoint];
 }
 

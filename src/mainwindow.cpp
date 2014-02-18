@@ -306,16 +306,13 @@ void MainWindow::createOsgWindow()
     // Add robot
     osgDart::DartNode* dartNode = new osgDart::DartNode();
     dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
+//    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/cubesWorld.urdf");
     viewWidget->addNodeToScene(dartNode);
     // Add view widget to app
     setCentralWidget(viewWidget);
     frontView = viewWidget->getViewMatrix();
     sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));
     topView = frontView * osg::Matrixd(osg::Quat(-90*M_PI/180, osg::Vec3f(1, 0, 0)));
-    std::cout << "frontView\n" << frontView
-              << "\ntopView\n" << topView
-              << "\nsideView\n" << sideView
-              << std::endl;
 //    viewWidget->getView(0)->getCamera()->setV
 //    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
 //    viewWidget->addView(cameraView);

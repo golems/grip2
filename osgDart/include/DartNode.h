@@ -56,6 +56,7 @@
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/BodyNode.h>
+#include <dart/simulation/World.h>
 
 // OpenSceneGraph includes
 #include <osg/Geode>
@@ -80,8 +81,10 @@ public:
      */
     DartNode();
 
-    dynamics::Skeleton* getRobot(std::string urdfFile);
-    size_t addRobot(std::string urdfFile);
+    dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
+    simulation::World* parseWorldUrdf(std::string urdfFile);
+    int addWorld(std::string urdfFile);
+    int addRobot(std::string urdfFile);
 
     /**
      * \brief Add a robot to the DartNode
@@ -89,6 +92,7 @@ public:
      * \return Index (size_t) of the newly added robot
      */
     size_t addRobot(dynamics::Skeleton& robot);
+    size_t addWorld(simulation::World& world);
 
     /**
      * \brief Get robot via index (size_t)

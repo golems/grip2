@@ -93,6 +93,7 @@ protected:
      * \brief Update the skeleton
      */
     void _createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyNode);
+    osg::MatrixTransform* _placeRootOfSkeleton(dynamics::BodyNode& rootBodyNode);
 
     /**
      * \brief Pass in osg::MatrixTransform corresponding to parent Joint and its BodyNode
