@@ -66,7 +66,7 @@ MainWindow::MainWindow()
     createOsgWindow();
     createTreeView();
 
-    setWindowTitle("Grip2");
+    setWindowTitle(tr("Grip2"));
     //setMinimumSize(860, 640);
     resize(860, 640);
 }
@@ -156,91 +156,91 @@ void MainWindow::about(){}
 void MainWindow::createActions()
 {
     //loadAct
-    loadAct = new QAction("&Load", this);
+    loadAct = new QAction(tr("&Load"), this);
     loadAct->setShortcut(Qt::CTRL + Qt::Key_O);
-    loadAct->setStatusTip("Load scene");
+    loadAct->setStatusTip(tr("Load scene"));
     connect(loadAct, SIGNAL(triggered()), this, SLOT(load()));
 
 
     //quickLoadAct
-    quickLoadAct = new QAction("&Quick Load", this);
+    quickLoadAct = new QAction(tr("&Quick Load"), this);
     quickLoadAct->setShortcut(Qt::SHIFT + Qt::CTRL + Qt::Key_Q);
-    quickLoadAct->setStatusTip("Load last scene");
+    quickLoadAct->setStatusTip(tr("Load last scene"));
     connect(quickLoadAct, SIGNAL(triggered()), this, SLOT(quickLoad()));
 
     //saveSceneAct
-    saveSceneAct = new QAction("&Save Scene", this);
+    saveSceneAct = new QAction(tr("&Save Scene"), this);
     saveSceneAct->setShortcut(Qt::CTRL + Qt::Key_S);
-    saveSceneAct->setStatusTip("Save Scene");
+    saveSceneAct->setStatusTip(tr("Save Scene"));
     connect(saveSceneAct, SIGNAL(triggered()), this, SLOT(saveScene()));
 
     //closeAct
-    closeAct = new QAction("&Close", this);
+    closeAct = new QAction(tr("&Close"), this);
     closeAct->setShortcut(Qt::CTRL + Qt::Key_C);
-    closeAct->setStatusTip("Close Scene");
+    closeAct->setStatusTip(tr("Close Scene"));
     connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
     //exitAct
-    exitAct = new QAction("&Exit", this);
+    exitAct = new QAction(tr("&Exit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
-    exitAct->setStatusTip("Exit the application");
+    exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, SIGNAL(triggered()), this, SLOT(exit()));
 
     //frontAct
-    frontAct = new QAction("Front", this);
-    frontAct->setStatusTip("Camera Front View");
+    frontAct = new QAction(tr("Front"), this);
+    frontAct->setStatusTip(tr("Camera Front View"));
     connect(frontAct, SIGNAL(triggered()), this, SLOT(front()));
 
     //topAct
-    topAct = new QAction("Top", this);
-    topAct->setStatusTip("Camera Top View");
+    topAct = new QAction(tr("Top"), this);
+    topAct->setStatusTip(tr("Camera Top View"));
     connect(topAct, SIGNAL(triggered()), this, SLOT(top()));
 
     //sideAct
-    sideAct = new QAction("Side", this);
-    sideAct->setStatusTip("Camera Side View");
+    sideAct = new QAction(tr("Side"), this);
+    sideAct->setStatusTip(tr("Camera Side View"));
     connect(sideAct, SIGNAL(triggered()), this, SLOT(side()));
 
     //startSimulationAct
-    startSimulationAct = new QAction("Start Simulation", this);
+    startSimulationAct = new QAction(tr("Start Simulation"), this);
     connect(startSimulationAct, SIGNAL(triggered()), this, SLOT(startSimulation()));
 
     //stopSimulationAct
-    stopSimulationAct = new QAction("Stop Simulation", this);
+    stopSimulationAct = new QAction(tr("Stop Simulation"), this);
     connect(stopSimulationAct, SIGNAL(triggered()), this, SLOT(stopSimulation()));
 
     //simulateSingleStepAct
-    simulateSingleStepAct = new QAction("Simulate Single Step", this);
-    simulateSingleStepAct->setStatusTip("Simulates one step at a time");
+    simulateSingleStepAct = new QAction(tr("Simulate Single Step"), this);
+    simulateSingleStepAct->setStatusTip(tr("Simulates one step at a time"));
     connect(simulateSingleStepAct, SIGNAL(triggered()), this, SLOT(simulateSingleStep()));
 
     //renderDuringSimulationAct
-    renderDuringSimulationAct = new QAction("Render during Simulation", this);
+    renderDuringSimulationAct = new QAction(tr("Render during Simulation"), this);
     connect(renderDuringSimulationAct, SIGNAL(triggered()), this, SLOT(renderDuringSimulation()));
 
     //whiteAct
-    whiteAct = new QAction("White", this);
+    whiteAct = new QAction(tr("White"), this);
     connect(whiteAct, SIGNAL(triggered()), this, SLOT(white()));
 
     //BlackAct
-    blackAct = new QAction("Black", this);
+    blackAct = new QAction(tr("Black"), this);
     connect(blackAct, SIGNAL(triggered()), this, SLOT(black()));
 
     //resetCameraAct
-    resetCameraAct = new QAction("Reset Camera", this);
-    resetCameraAct->setStatusTip("Reset Camera Angle");
+    resetCameraAct = new QAction(tr("Reset Camera"), this);
+    resetCameraAct->setStatusTip(tr("Reset Camera Angle"));
     connect(resetCameraAct, SIGNAL(triggered()), this, SLOT(resetCamera()));
 
     //xga1024x768Act
-    xga1024x768Act = new QAction("XGA 1024 x 768", this);
+    xga1024x768Act = new QAction(tr("XGA 1024 x 768"), this);
     connect(xga1024x768Act, SIGNAL(triggered()), this, SLOT(xga1024x768()));
 
     //vga640x480Act
-    vga640x480Act = new QAction("VGA 640 x 768", this);
+    vga640x480Act = new QAction(tr("VGA 640 x 768"), this);
     connect(vga640x480Act, SIGNAL(triggered()), this, SLOT(vga640x480()));
 
     //hd1280x720Act
-    hd1280x720Act = new QAction("HD 1280 x 720", this);
+    hd1280x720Act = new QAction(tr("HD 1280 x 720"), this);
     connect(hd1280x720Act, SIGNAL(triggered()), this, SLOT(hd1280x720()));
 
     //aboutAct
@@ -252,7 +252,7 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
     //fileMenu
-    fileMenu = menuBar()->addMenu("&File");
+    fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(loadAct);
     fileMenu->addAction(quickLoadAct);
     fileMenu->addAction(saveSceneAct);
@@ -261,37 +261,37 @@ void MainWindow::createMenus()
     fileMenu->addAction(exitAct);
 
     //viewMenu
-    viewMenu = menuBar()->addMenu("&View");
+    viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction(frontAct);
     viewMenu->addAction(topAct);
     viewMenu->addAction(sideAct);
 
     //simulationMenu
-    simulationMenu = menuBar()->addMenu("Sim&ulate");
+    simulationMenu = menuBar()->addMenu(tr("Sim&ulate"));
     simulationMenu->addAction(startSimulationAct);
     simulationMenu->addAction(stopSimulationAct);
     simulationMenu->addSeparator();
     simulationMenu->addAction(simulateSingleStepAct);
 
     //settingsMenu
-    settingsMenu = menuBar()->addMenu("&Settings");
+    settingsMenu = menuBar()->addMenu(tr("&Settings"));
     settingsMenu->addAction(renderDuringSimulationAct);
     //adding background menu in settings menu
     //backgroundMenu
-    backgroundMenu = settingsMenu->addMenu("Background");
+    backgroundMenu = settingsMenu->addMenu(tr("Background"));
     backgroundMenu->addAction(whiteAct);
     backgroundMenu->addAction(blackAct);
     //settings Menu contd...
     settingsMenu->addAction(resetCameraAct);
 
     //renderMenu
-    renderMenu = menuBar()->addMenu("&Render");
+    renderMenu = menuBar()->addMenu(tr("&Render"));
     renderMenu->addAction(xga1024x768Act);
     renderMenu->addAction(vga640x480Act);
     renderMenu->addAction(hd1280x720Act);
 
     //helpMenu
-    helpMenu = menuBar()->addMenu("&Help");
+    helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
 }
 
@@ -314,7 +314,7 @@ void MainWindow::createOsgWindow()
 
 void MainWindow::createTreeView()
 {
-    tree = new QDockWidget("Object Viewer", this);
+    tree = new QDockWidget(tr("Object Viewer"), this);
     //tree->setFloating(true);
     treeviewer = new TreeView(tree);
     tree->setWidget(treeviewer->treeView);
