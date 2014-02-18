@@ -94,7 +94,11 @@ protected:
      */
     void _createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyNode);
 
-    void _recursiveUpdate(osg::MatrixTransform* rootTF, dynamics::BodyNode& bodyNode);
+    /**
+     * \brief Pass in osg::MatrixTransform corresponding to parent Joint and its BodyNode
+     * and it will recursively add osg::MatrixTransforms and Geode for all the children
+     */
+    void _recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode);
 
     osg::MatrixTransform* _addRootJointNode(dynamics::Joint& rootJoint);
 
@@ -107,12 +111,13 @@ protected:
      * \brief Create osg::MatrixTransform from DART Joint
      */
     osg::MatrixTransform* _makeJointNode(dynamics::Joint& joint);
+    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode& node);
 
 
     //---------------------------------------------------
     //           PROTECTED MEMBER VARIABLES
     //---------------------------------------------------
-    std::vector<osg::Geode*> _bodyNodes;
+    std::vector<osg::Group*> _bodyNodes;
     std::vector<osg::MatrixTransform*> _joints;
 
     JointMatrixMap _jointMatrixMap;

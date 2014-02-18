@@ -173,7 +173,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     osg::ref_ptr<osg::MatrixTransform> mt;
     mt = new osg::MatrixTransform;
     mt->setMatrix( osg::Matrixf((float*)&m));
-    std::cerr << "\tNumChildren: " << aiNode->mNumChildren << std::endl;
+//    std::cerr << "\tNumChildren: " << aiNode->mNumChildren << std::endl;
     for(uint n=0; n<aiNode->mNumChildren; ++n)
     {
         osg::Node* child = traverseAIScene(aiScene, aiNode->mChildren[n]);

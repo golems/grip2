@@ -68,7 +68,7 @@ osgViewer::View* osgUtils::createView(int x, int y, int w, int h, osg::Node* sce
     return view;
 }
 
-void addNodeToScene(osg::Group* scene)
+void osgUtils::addNodeToScene(osg::Group* scene)
 {
     scene->addChild(osgUtils::createNode());
 }
@@ -118,6 +118,3 @@ osg::Node* osgUtils::createNode()
 
     return rootTF;
 }
-
-
-

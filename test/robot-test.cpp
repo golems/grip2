@@ -138,7 +138,7 @@ int testDartNode()
 
     osgDart::DartNode* dartNode = new osgDart::DartNode();
     dartNode->addRobot(robot);
-    dartNode->printRobotInfo(0);
+//    dartNode->printRobotInfo(0);
 
     render(dartNode);
 }
