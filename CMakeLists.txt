@@ -9,6 +9,14 @@ set(BUILD_FLAGS "-std=c++0x -Wreturn-type -Wno-enum-compare -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+# Define preprocessor macro for Debug printing in Debug mode
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Building in \"Debug\" mode. Defining DEBUG_BUILD macro.")
+    add_definitions(-DDEBUG_BUILD)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Building in \"Release\" mode.")
+else()
+endif()
 
 #-----------------------------------------------
 #                FIND PACKAGES

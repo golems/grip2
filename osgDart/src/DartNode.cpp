@@ -42,6 +42,11 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef DEBUG_BUILD
+#define DEBUG(x) do { std::cerr << x; } while (0); std::cerr << std::endl;
+#else
+#define DEBUG(x)
+#endif
 #include "DartNode.h"
 #include "SkeletonNode.h"
 
@@ -59,7 +64,7 @@ dynamics::Skeleton* DartNode::parseRobotUrdf(std::string urdfFile)
         std::cerr << "Error parsing robot urdf " << urdfFile << std::endl;
         return NULL;
     } else {
-        std::cerr << "Successfully parsed robot urdf " << urdfFile << std::endl;
+        DEBUG("Successfully parsed robot urdf " << urdfFile);
         return robot;
     }
 }
@@ -73,7 +78,7 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
         std::cerr << "Error parsing world urdf " << urdfFile << std::endl;
         return NULL;
     } else {
-        std::cerr << "Successfully parsed world urdf " << urdfFile << std::endl;
+        DEBUG("Successfully parsed world urdf " << urdfFile);
         return world;
     }
 }
@@ -142,10 +147,10 @@ void DartNode::printRobotInfo(size_t robotIndex)
 
 size_t DartNode::addWorld(simulation::World& world)
 {
-    std::cerr << "Added world:" << std::endl;
+    DEBUG("Added world with the following objects:");
     for(int i=0; i<world.getNumSkeletons(); ++i) {
         _robots.push_back(world.getSkeleton(i));
-        std::cerr << "\t" << world.getSkeleton(i)->getName() << std::endl;
+        DEBUG("    " << world.getSkeleton(i)->getName());
         osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(*world.getSkeleton(i));
         this->addChild(skel);
     }

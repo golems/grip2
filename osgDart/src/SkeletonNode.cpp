@@ -43,7 +43,7 @@
  */
 
 #ifdef DEBUG_BUILD
-#define DEBUG(x) do { std::cerr << x; } while (0); std::endl;
+#define DEBUG(x) do { std::cerr << x; } while (0); std::cerr << std::endl;
 #else
 #define DEBUG(x)
 #endif
@@ -89,7 +89,6 @@ osg::MatrixTransform* SkeletonNode::_placeRootOfSkeleton(dynamics::BodyNode& roo
 
 void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode)
 {
-    DEBUG("Recursively building robot");
     // For every child node of the bodyNode, add its parent joint's TF to the bodyNode's parent joint's TF
     // and add a TF for the child node to its parent joint's TF.
     // Add parent joint with its TF from its parent body node
