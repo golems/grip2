@@ -22,9 +22,13 @@ endif()
 #                FIND PACKAGES
 #-----------------------------------------------
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui Qt3Support QtXml REQUIRED)
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
+# we need this to be able to include headers produced by uic in our code
+# (CMAKE_BINARY_DIR holds a path to the build directory, while INCLUDE_DIRECTORIES() works just like INCLUDEPATH from qmake)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+message(STATUS "Cmake binary dir: " ${CMAKE_BINARY_DIR})
 
 # Find OpenSceneGraph
 find_package(OpenSceneGraph 2.8 REQUIRED
@@ -50,6 +54,7 @@ link_directories(${DART_LIBRARY_DIRS})
 #-----------------------------------------------
 # Include top-level include directory
 include_directories(include)
+include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 
 # Add QT Widgets library
 add_subdirectory(qtWidgets)
