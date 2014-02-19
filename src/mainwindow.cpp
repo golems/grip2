@@ -305,8 +305,8 @@ void MainWindow::createOsgWindow()
     viewWidget->addGrid(20, 20, 1);
     // Add robot
     osgDart::DartNode* dartNode = new osgDart::DartNode();
-//    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
+    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
+//    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
     viewWidget->addNodeToScene(dartNode);
     // Add view widget to app
     setCentralWidget(viewWidget);

@@ -42,10 +42,15 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file Axes.h
+ * \brief Class that subclasses osg::Geode to create x,y,z axes
+ */
 
 #ifndef AXES_H
 #define AXES_H
 
+// OpenSceneGraph includes
 #include <osg/Geode>
 #include <osg/PositionAttitudeTransform>
 #include <osgViewer/Viewer>
@@ -53,10 +58,18 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+/**
+ * \class Axes Axes.h
+ * \brief Class that subclasses osg::Geode to create x,y,z axes
+ */
 class Axes : public osg::Geometry
 {
 public:
-    
+
+    /**
+     * \brief Constructor for Axes.
+     * \param scale Scale factor for length of axes
+     */
     inline Axes(float scale = 1)
     {
         _verts = new osg::Vec3Array;
@@ -67,13 +80,18 @@ public:
         setScale(scale);
     }
     
-    inline void setScale(float new_scale)
+    /**
+     * \brief Set the scale factor of the axes
+     * \param newScale New scale factor the axes
+     * \return void
+     */
+    inline void setScale(float newScale)
     {
         (*_verts)[0] = osg::Vec3(0,0,0);
-        (*_verts)[1] = osg::Vec3(new_scale,0,0);
-        (*_verts)[2] = osg::Vec3(0,new_scale,0);
-        (*_verts)[3] = osg::Vec3(0,0,new_scale);
-        (*_verts)[4] = osg::Vec3(new_scale,new_scale,0);
+        (*_verts)[1] = osg::Vec3(newScale,0,0);
+        (*_verts)[2] = osg::Vec3(0,newScale,0);
+        (*_verts)[3] = osg::Vec3(0,0,newScale);
+        (*_verts)[4] = osg::Vec3(newScale,newScale,0);
         
         setVertexArray(_verts);
     }
@@ -81,6 +99,10 @@ public:
     
 protected:
     
+    /**
+     * \brief Define the axes elements
+     * \return void
+     */
     inline void _setElements()
     {
         osg::DrawElementsUShort* x_elem =
@@ -119,7 +141,10 @@ protected:
         setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
     }
     
+    /// Array of vertices defining the endpoints of the axes
     osg::Vec3Array* _verts;
+
+    /// Array of colors defining the color the axes
     osg::Vec4Array* _colors;
     
 };

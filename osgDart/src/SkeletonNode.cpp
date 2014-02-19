@@ -69,25 +69,25 @@ void SkeletonNode::_createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyN
 {
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
-    osg::MatrixTransform* root = _placeRootOfSkeleton(rootBodyNode);
+    osg::MatrixTransform* root = _placeRootOfSkeletonInWorld(rootBodyNode);
     this->addChild(root);
 
-    osg::MatrixTransform* rootTF = _addRootJointNode(*rootBodyNode.getParentJoint());
+    osg::MatrixTransform* rootTF = _makeJointNode(*rootBodyNode.getParentJoint());
     root->addChild(rootTF);
 
-    _recursiveUpdate(rootTF, rootBodyNode);
+    _addSkeletonObjectsRecursivley(rootTF, rootBodyNode);
 
 }
 
-osg::MatrixTransform* SkeletonNode::_placeRootOfSkeleton(dynamics::BodyNode& rootBodyNode)
+osg::MatrixTransform* SkeletonNode::_placeRootOfSkeletonInWorld(dynamics::BodyNode& rootBodyNode)
 {
-    osg::Matrix rootMatrix = osgUtils::eigToOsgMatrix(rootBodyNode.getWorldTransform());
+    osg::Matrix rootMatrix = osgGolems::eigToOsgMatrix(rootBodyNode.getWorldTransform());
     osg::MatrixTransform* rootTF = new osg::MatrixTransform();
     rootTF->setMatrix(rootMatrix);
     return rootTF;
 }
 
-void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode)
+void SkeletonNode::_addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode)
 {
     // For every child node of the bodyNode, add its parent joint's TF to the bodyNode's parent joint's TF
     // and add a TF for the child node to its parent joint's TF.
@@ -97,14 +97,15 @@ void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::Bod
     osg::MatrixTransform* bodyNodeTF = new osg::MatrixTransform;
     bodyNodeTF->setMatrix(_getBodyNodeMatrix(bodyNode));
     jointTF->addChild(bodyNodeTF);
-    bodyNodeTF->addChild(_makeBodyNodeGeode(bodyNode));
+    bodyNodeTF->addChild(_makeBodyNodeGroup(bodyNode));
 
-//    std::cerr << "Added \n\tJoint " << bodyNode.getParentJoint()->getName() << " at \n" << bodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
-//              << "\n\tBody " << bodyNode.getName() << " at " << bodyNode.getLocalCOM().transpose()
-//              << "\n\tChilds " << bodyNode.getNumChildBodyNodes()
-//              << std::endl;
+    DEBUG("Added: \nJoint " << bodyNode.getParentJoint()->getName()
+            << " at \n" << bodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
+            << "\nBody " << bodyNode.getName() << " at " << bodyNode.getLocalCOM().transpose()
+            << "\nChilds " << bodyNode.getNumChildBodyNodes());
+
     for(int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
-//        std::cerr << "\t\t" << bodyNode.getChildBodyNode(i)->getName() << std::endl;
+        DEBUG("\t\t" << bodyNode.getChildBodyNode(i)->getName());
 
     }
 
@@ -119,21 +120,18 @@ void SkeletonNode::_recursiveUpdate(osg::MatrixTransform* jointTF, dynamics::Bod
         osg::MatrixTransform* childBodyNodeTF = new osg::MatrixTransform;
         childBodyNodeTF->setMatrix(_getBodyNodeMatrix(childBodyNode));
         joint2TF->addChild(childBodyNodeTF);
-        childBodyNodeTF->addChild(_makeBodyNodeGeode(childBodyNode));
-//        std::cerr << "Added \n\tJoint " << childBodyNode.getParentJoint()->getName() << " at \n" << childBodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
-//                  << "\n\tBody " << childBodyNode.getName() << " at " << childBodyNode.getLocalCOM().transpose() << std::endl;
-        _recursiveUpdate(joint2TF, childBodyNode);
+        childBodyNodeTF->addChild(_makeBodyNodeGroup(childBodyNode));
+
+        DEBUG("Added \nJoint " << childBodyNode.getParentJoint()->getName()
+                << " at \n" << childBodyNode.getParentJoint()->getTransformFromParentBodyNode().matrix()
+                << "\nBody " << childBodyNode.getName()
+                << " at " << childBodyNode.getLocalCOM().transpose());
+
+        _addSkeletonObjectsRecursivley(joint2TF, childBodyNode);
     }
 }
 
-osg::MatrixTransform* SkeletonNode::_addRootJointNode(dynamics::Joint& rootJoint)
-{
-    _jointMatrixMap[&rootJoint] = _makeJointNode(rootJoint);
-    return _jointMatrixMap[&rootJoint];
-}
-
-
-osg::Group* SkeletonNode::_makeBodyNodeGeode(dynamics::BodyNode& node)
+osg::Group* SkeletonNode::_makeBodyNodeGroup(dynamics::BodyNode& node)
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap[&node] = new osg::Group;
@@ -156,7 +154,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGeode(dynamics::BodyNode& node)
 osg::Matrix SkeletonNode::_getBodyNodeMatrix(dynamics::BodyNode& bodyNode)
 {
     osg::Matrix m;
-    m.makeTranslate(osgUtils::eigToOsgVec(bodyNode.getLocalCOM()));
+    m.makeTranslate(osgGolems::eigToOsgVec(bodyNode.getLocalCOM()));
     return m;
 }
 
@@ -164,7 +162,7 @@ osg::MatrixTransform* SkeletonNode::_makeJointNode(dynamics::Joint& joint)
 {
     // Create osg::MatrixTransform, set it using the Joint's TF from its parent BodyNode
     _jointMatrixMap[&joint] = new osg::MatrixTransform;
-    _jointMatrixMap[&joint]->setMatrix(osgUtils::eigToOsgMatrix(joint.getTransformFromParentBodyNode()));
+    _jointMatrixMap[&joint]->setMatrix(osgGolems::eigToOsgMatrix(joint.getTransformFromParentBodyNode()));
 
     // Add Joint osg::MatrixTransform to class array, and set data variance to dynamics
     _joints.push_back(_jointMatrixMap[&joint]);
@@ -181,11 +179,11 @@ osg::MatrixTransform* SkeletonNode::_makeJointNode(dynamics::Joint& joint)
                            Joint                osg::MatrixTransfrom
                   ----------------------
                   |                    |
-              BodyNode              BodyNode    osg::Geode
+              BodyNode              BodyNode    osg::Group
                   |                    |
                 Joint                Joint      osg::MatrixTransform
                   |                    |
-              BodyNode              BodyNode    osg::Geode
+              BodyNode              BodyNode    osg::Group
 
 Make group from rootBodyNode.
 

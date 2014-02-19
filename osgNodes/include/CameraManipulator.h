@@ -42,17 +42,42 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file CameraManipulator.h
+ * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
+ * It sets up desired behavior for robot simulator.
+ */
 
 #ifndef CAMERA_MANIPULATOR_H
 #define CAMERA_MANIPULATOR_H
 
+// OpenSceneGraph includes
 #include <osgGA/OrbitManipulator>
 
+/**
+ * \class CameraManipulator CameraManipulator.h
+ * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
+ * It sets up desired behavior for robot simulator.
+ */
 class CameraManipulator : public osgGA::OrbitManipulator
 {
 public:
+
+    /**
+     * \brief Constructor for CameraManipulator class
+     */
     CameraManipulator();
+
+    /**
+     * \brief Destructor for CameraManipulator class
+     */
     ~CameraManipulator();
+
+    /**
+     * \brief Set the camera manipulator's center of rotation
+     * \param center osg::Vec3 specifying x,y,z coordinates of center of rotation
+     * \return void
+     */
     void setCenter(osg::Vec3 center);
 
 protected:

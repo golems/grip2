@@ -89,9 +89,10 @@ int DartNode::addWorld(std::string urdfFile)
     simulation::World* world = parseWorldUrdf(urdfFile);
     if(world) {
         addWorld(*world);
+        return 1;
     } else {
         std::cerr << "Not adding world" << std::endl;
-        return -1;
+        return 0;
     }
 }
 
@@ -100,8 +101,9 @@ int DartNode::addRobot(std::string urdfFile)
     dynamics::Skeleton* robot = parseRobotUrdf(urdfFile);
     if(robot) {
         addRobot(*robot);
+        return 1;
     } else {
-        return -1;
+        return 0;
     }
 }
 
@@ -125,14 +127,14 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
     }
 }
 
-bool DartNode::robotIndexIsValid(size_t robotIndex)
+int DartNode::robotIndexIsValid(size_t robotIndex)
 {
     if(robotIndex < _robots.size() && robotIndex >= 0) {
-        return true;
+        return 1;
     } else {
         std::cerr << "Requested an invalid robot index of " << robotIndex
                   << " at line " << __LINE__ << " of " << __FILE__ << std::endl;
-        return false;
+        return 0;
     }
 }
 

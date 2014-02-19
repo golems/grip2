@@ -43,7 +43,7 @@ dynamics::Skeleton* getRobot()
 void render(osg::Node* root)
 {
     // Add osg::Group to a view and view to a viewer
-    osgViewer::View* view = osgUtils::createView(0, 0, 800, 800, root);
+    osgViewer::View* view = osgGolems::createView(0, 0, 800, 800, root);
     osgViewer::CompositeViewer* viewer = new osgViewer::CompositeViewer();
     viewer->addView(view);
     while(!viewer->done()) {
