@@ -60,6 +60,8 @@
 #include <QString>
 #include "Grid.h"
 #include "DartNode.h"
+#include "visualizer.h"
+#include "ui_visualizer.h"
 
 MainWindow::MainWindow()
 {
@@ -67,10 +69,23 @@ MainWindow::MainWindow()
     createMenus();
     createOsgWindow();
     createTreeView();
+    createTabs();
+
+ /* test for tab display */
+ //   QDockWidget *widget = new QDockWidget(this);
+ //   Ui_Visualizer::setupUi(widget);
+ //   this->addDockWidget(Qt::BottomDockWidgetArea, widget);
+ //   widget->show();
+
 
     setWindowTitle(tr("Grip2"));
     //setMinimumSize(860, 640);
     resize(860, 640);
+}
+
+
+MainWindow::~MainWindow()
+{
 }
 
 void MainWindow::Toolbar()
@@ -325,4 +340,19 @@ void MainWindow::createTreeView()
     treeviewer = new TreeView(tree);
     tree->setWidget(treeviewer->treeView);
     addDockWidget(Qt::RightDockWidgetArea, tree);
+}
+
+void MainWindow::createTabs()
+{
+    setDockOptions(QMainWindow::AnimatedDocks);
+    QDockWidget *widget = new QDockWidget(this);
+    //visualizer_ui.setupUi(widget);
+    Ui_Visualizer::setupUi(widget);
+    //setMainWidget(widget);
+    //Ui_Visualizer::setupUi(this);
+    this->addDockWidget(Qt::BottomDockWidgetArea, widget);
+    widget->show();
+
+    // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
+ 
 }

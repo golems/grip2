@@ -49,22 +49,27 @@
 #include <QMainWindow>
 #include <ViewerWidget.h>
 #include <tree_view.h>
+#include "ui_visualizer.h"
 
 class QAction;
 class QActionGroup;
 class QLabel;
 class QMenu;
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow , private Ui::Visualizer
 {
     Q_OBJECT
 
 public:
+    //MainWindow(QWidget *parent = 0);
     MainWindow();
+    ~MainWindow();
     void Toolbar();
     ViewerWidget* viewWidget;
     TreeView* treeviewer;
     QDockWidget *tree;
+    Visualizer *visualizertab;
+    //QDockWidget *visualizertab;
 
     osg::Matrixd frontView, sideView, topView;
 
@@ -94,6 +99,7 @@ private:
     void createMenus();
     void createOsgWindow();
     void createTreeView();
+    void createTabs();
 
     QMenu *fileMenu;
     QMenu *viewMenu;
