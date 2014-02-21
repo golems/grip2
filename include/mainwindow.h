@@ -50,13 +50,14 @@
 #include <ViewerWidget.h>
 #include <tree_view.h>
 #include "ui_visualizer.h"
+#include "ui_inspector.h"
 
 class QAction;
 class QActionGroup;
 class QLabel;
 class QMenu;
 
-class MainWindow : public QMainWindow , private Ui::Visualizer
+class MainWindow : public QMainWindow , private Ui::Visualizer, private Ui::Inspector
 {
     Q_OBJECT
 
@@ -69,6 +70,7 @@ public:
     TreeView* treeviewer;
     QDockWidget *tree;
     Visualizer *visualizertab;
+    Inspector  *inspectortab;
     //QDockWidget *visualizertab;
 
     osg::Matrixd frontView, sideView, topView;

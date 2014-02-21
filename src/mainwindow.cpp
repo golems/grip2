@@ -62,6 +62,8 @@
 #include "DartNode.h"
 #include "visualizer.h"
 #include "ui_visualizer.h"
+#include "inspector.h"
+#include "ui_inspector.h"
 
 MainWindow::MainWindow()
 {
@@ -345,13 +347,23 @@ void MainWindow::createTreeView()
 void MainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
-    QDockWidget *widget = new QDockWidget(this);
+    QDockWidget *viztabwidget = new QDockWidget(this);
     //visualizer_ui.setupUi(widget);
-    Ui_Visualizer::setupUi(widget);
+    Ui_Visualizer::setupUi(viztabwidget);
     //setMainWidget(widget);
     //Ui_Visualizer::setupUi(this);
-    this->addDockWidget(Qt::BottomDockWidgetArea, widget);
-    widget->show();
+    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
+    //viztabwidget->show();
+
+    QDockWidget *instabwidget = new QDockWidget(this);
+    Ui_Inspector::setupUi(instabwidget);
+    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
+    //instabwidget->show();
+
+    tabifyDockWidget(instabwidget, viztabwidget);
+    viztabwidget->show();
+    viztabwidget->raise();
+
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
  
