@@ -65,6 +65,8 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+#include "SkeletonNode.h"
+
 using namespace dart;
 
 /**
@@ -156,6 +158,8 @@ public:
      * \return void
      */
     void printRobotInfo(size_t robotIndex);
+
+    void update();
     
 protected:
 
@@ -178,6 +182,7 @@ protected:
 
     /// Standard vector of pointers to Skeletons
     std::vector<dynamics::Skeleton*> _robots;
+    std::vector<SkeletonNode*> _skeletonNodes;
 
 };
 

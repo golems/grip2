@@ -304,9 +304,9 @@ void MainWindow::createOsgWindow()
     // Add grid
     viewWidget->addGrid(20, 20, 1);
     // Add robot
-    osgDart::DartNode* dartNode = new osgDart::DartNode();
+    dartNode = new osgDart::DartNode();
     dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-//    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
+//    dartNode->addRobot("../../../otherRepos/grip/scenes/SchunkArmHand.urdf");
     viewWidget->addNodeToScene(dartNode);
     // Add view widget to app
     setCentralWidget(viewWidget);
@@ -316,6 +316,11 @@ void MainWindow::createOsgWindow()
 //    viewWidget->getView(0)->getCamera()->setV
 //    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
 //    viewWidget->addView(cameraView);
+//    dynamics::Skeleton* robot = dartNode->getRobot(0);
+//    int legJoints[] = {2};
+//    std::vector<int> legDofs(legJoints, legJoints + 1);
+//    Eigen::VectorXd legValues(1);
+//    legValues << M_PI/4;
 }
 
 void MainWindow::createTreeView()

@@ -49,6 +49,7 @@
 #include <QMainWindow>
 #include <ViewerWidget.h>
 #include <tree_view.h>
+#include "DartNode.h"
 
 class QAction;
 class QActionGroup;
@@ -65,6 +66,7 @@ public:
     ViewerWidget* viewWidget;
     TreeView* treeviewer;
     QDockWidget *tree;
+    osgDart::DartNode* dartNode;
 
     osg::Matrixd frontView, sideView, topView;
 

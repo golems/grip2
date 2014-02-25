@@ -96,6 +96,11 @@ public:
      */
     SkeletonNode(dynamics::Skeleton& robot, float axisLength=0.2);
 
+    /**
+     * \brief Update SkeletonNode based on Skeleton transforms
+     */
+    void update();
+
 protected:
 
     //---------------------------------------------------------------
@@ -147,6 +152,17 @@ protected:
      */
     osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode& node);
 
+    /**
+     * \brief Update SkeletonNode recursively based on Skeleton transforms
+     */
+    void _updateRecursively(dynamics::BodyNode &bodyNode);
+
+    /**
+     * \brief Get root body node
+     */
+
+    dynamics::BodyNode* getRootBodyNode();
+
 
     //---------------------------------------------------------------
     //                    PROTECTED VARIABLES
@@ -163,6 +179,8 @@ protected:
 
     /// Map from dart::dynamics::BodyNode* to osg::Group*
     BodyNodeGroupMap _bodyNodeGroupMap;
+
+    dynamics::BodyNode* _rootBodyNode;
 
     /// Length of joint axes visualization
     float _axisLength;

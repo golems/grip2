@@ -55,6 +55,13 @@ using namespace osgDart;
 
 DartNode::DartNode(){}
 
+void DartNode::update()
+{
+    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+        _skeletonNodes[i]->update();
+    }
+}
+
 dynamics::Skeleton* DartNode::parseRobotUrdf(std::string urdfFile)
 {
     // Load robot model from urdf and check if valid

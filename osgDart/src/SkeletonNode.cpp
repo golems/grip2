@@ -60,13 +60,27 @@ using namespace dart;
 using namespace osgDart;
 
 SkeletonNode::SkeletonNode(dynamics::Skeleton& robot, float axisLength) :
-    _axisLength(axisLength)
+    _axisLength(axisLength),
+    _rootBodyNode(NULL)
 {
     _createSkeletonFromRootBodyNode(*robot.getRootBodyNode());
 }
 
+void SkeletonNode::update()
+{
+
+    _updateRecursively(*_rootBodyNode);
+}
+
+dynamics::BodyNode* SkeletonNode::getRootBodyNode()
+{
+    return _rootBodyNode;
+}
+
 void SkeletonNode::_createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyNode)
 {
+    _rootBodyNode = &rootBodyNode;
+
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
     osg::MatrixTransform* root = _placeRootOfSkeletonInWorld(rootBodyNode);
@@ -128,6 +142,20 @@ void SkeletonNode::_addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF,
                 << " at " << childBodyNode.getLocalCOM().transpose());
 
         _addSkeletonObjectsRecursivley(joint2TF, childBodyNode);
+    }
+}
+
+void SkeletonNode::_updateRecursively(dynamics::BodyNode &bodyNode)
+{
+    // Get child node and update its transform. Then get its children and update theirs
+    JointMatrixMap::const_iterator m = _jointMatrixMap.find(bodyNode.getParentJoint());
+    if(m != _jointMatrixMap.end()) {
+        _jointMatrixMap[bodyNode.getParentJoint()]->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getParentJoint()->getTransformFromParentBodyNode()));
+
+        for(size_t i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+            _updateRecursively(*bodyNode.getChildBodyNode(i));
+        }
+
     }
 }
 
