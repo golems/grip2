@@ -63,14 +63,34 @@
 class osgAssimpSceneReader : public osgDB::ReaderWriter
 {
 public:
+    /**
+     * \brief Constructor. Not needed since the only public function is static
+     */
     osgAssimpSceneReader();
 
+    /**
+     * \brief Virtual destructor
+     */
     virtual ~osgAssimpSceneReader();
 
+    /**
+     * \brief Traverse the aiScene object and convert aiScene nodes to osg::Nodes and add then
+     * to a main osg::MatrixTransform that contains all the nodes.
+     * \param aiScene Assimp scene to get material data from
+     * \param aiNode Assimp node to traverse and get Node info from
+     * \return osg::Node pointer which contains the Node and all the child nodes inside a MatrixTransform
+     */
     static osg::Node* traverseAIScene(const struct aiScene* aiScene, const struct aiNode* aiNode);
 
 protected:
-    void createMaterialData( osg::StateSet* ss, const aiMaterial* aiMtl) const;
+    /**
+     * \brief Extract material data from aiMaterial and add it to the osg::StateSet
+     * \param ss osg::StateSet pointer to add material data to
+     * \param aiMtl Assimp Material to get material data from
+     * \return void
+     */
+    static void createMaterialData(osg::StateSet* ss, const aiMaterial* aiMtl);
+
 };
 
 #endif // OSG_ASSIMP_SCENEREADER_H
