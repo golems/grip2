@@ -74,10 +74,10 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type JointMatrixMap, which maps dart::dynamics::Joint* to osg::MatrixTransform*
-typedef std::map<dynamics::Joint*, osg::MatrixTransform*> JointMatrixMap;
+typedef std::map<dynamics::Joint*, osg::ref_ptr<osg::MatrixTransform> > JointMatrixMap;
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
-typedef std::map<dynamics::BodyNode*, osg::Group*> BodyNodeGroupMap;
+typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
 
 /**
  * \class SkeletonNode SkeletonNode.h
@@ -94,7 +94,7 @@ public:
     /**
      * \brief Constructor for SkeletonNode
      */
-    SkeletonNode(dynamics::Skeleton& robot, float axisLength=0.2);
+    SkeletonNode(dynamics::Skeleton* robot, float axisLength=0.2);
 
     /**
      * \brief Update SkeletonNode based on Skeleton transforms
@@ -109,7 +109,7 @@ protected:
     /**
      * \brief Update the skeleton
      */
-    void _createSkeletonFromRootBodyNode(dynamics::BodyNode& rootBodyNode);
+    void _createSkeletonFromRootBodyNode(dynamics::BodyNode *rootBodyNode);
 
     /**
      * \brief Place the root of the Skeleton in the world using the passed in BodyNode's
@@ -117,13 +117,13 @@ protected:
      * \param rootBodyNode The dart::dynamics::BodyNode root to place in the world
      * \return osg::MatrixTransform* This is returned in order to add children nodes to it.
      */
-    osg::MatrixTransform* _placeRootOfSkeletonInWorld(dynamics::BodyNode& rootBodyNode);
+    osg::MatrixTransform* _placeRootOfSkeletonInWorld(dynamics::BodyNode *rootBodyNode);
 
     /**
      * \brief Pass in osg::MatrixTransform corresponding to parent Joint and its BodyNode
      * and it will recursively add osg::MatrixTransforms and Geode for all the children
      */
-    void _addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode& bodyNode);
+    void _addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode *bodyNode);
 
     /**
      * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
@@ -133,7 +133,7 @@ protected:
      * \param node dart::dynamics::BodyNode of which to make an osg::Group*
      * \return osg::Group* The osg::Group* corresponding the dart::dynamics::BodyNode
      */
-    osg::Group* _makeBodyNodeGroup(dynamics::BodyNode& node);
+    osg::Group* _makeBodyNodeGroup(dynamics::BodyNode *node);
 
     /**
      * \brief Create osg::MatrixTransform* from a dart::dynamics::Joint passed in by reference.
@@ -141,7 +141,7 @@ protected:
      * \param joint dart::dynamics::Joint for which to create an osg::MatrixTransform*
      * \return osg::MatrixTransform pointer corresponding to the dart::dynamics::Joint passed in
      */
-    osg::MatrixTransform* _makeJointNode(dynamics::Joint& joint);
+    osg::MatrixTransform* _makeJointNode(dynamics::Joint *joint);
 
     /**
      * \brief Get the local center of mass of the BodyNode relative to its parent joint,
@@ -150,16 +150,18 @@ protected:
      * \param node The dynamics::BodyNode of which to get the local center of mass
      * \return osg::Matrix defining the local center of mass of the BodyNode relative to its parent joint
      */
-    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode& node);
+    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode *node);
 
     /**
      * \brief Update SkeletonNode recursively based on Skeleton transforms
      */
-    void _updateRecursively(dynamics::BodyNode &bodyNode);
+    void _updateRecursively(dynamics::BodyNode *bodyNode);
 
     /**
      * \brief Get root body node
      */
+
+    void moveJoint();
 
     dynamics::BodyNode* getRootBodyNode();
 
@@ -169,10 +171,10 @@ protected:
     //---------------------------------------------------------------
 
     /// Array of osg::Group pointers for the dart::dynamics::BodyNode visualization objects
-    std::vector<osg::Group*> _bodyNodes;
+    std::vector<osg::ref_ptr<osg::Group> > _bodyNodes;
 
     /// Array of osg::MatrixTransform pointers for the dart::dynamics::Joint visualization objects
-    std::vector<osg::MatrixTransform*> _joints;
+    std::vector<osg::ref_ptr<osg::MatrixTransform> > _joints;
 
     /// Map from dart::dynamics::Joint* to osg::MatrixTransform*
     JointMatrixMap _jointMatrixMap;

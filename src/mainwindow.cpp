@@ -60,6 +60,7 @@
 #include <QString>
 #include "Grid.h"
 #include "DartNode.h"
+#include <dart/utils/urdf/DartLoader.h>
 
 MainWindow::MainWindow()
 {
@@ -299,28 +300,25 @@ void MainWindow::createMenus()
 
 void MainWindow::createOsgWindow()
 {
-    viewWidget = new ViewerWidget();
-    viewWidget->setGeometry(100, 100, 800, 600);
-    // Add grid
-    viewWidget->addGrid(20, 20, 1);
     // Add robot
     dartNode = new osgDart::DartNode();
     dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-//    dartNode->addRobot("../../../otherRepos/grip/scenes/SchunkArmHand.urdf");
+//    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
+    dynamics::Skeleton* robot = dartNode->getRobot();
+    std::cerr << "Robot: " << robot->getName() << std::endl;
+
+    std::vector<int> ind(1);
+    ind[0] = robot->getJoint("LKP")->getGenCoord(0)->getSkeletonIndex();
+    Eigen::VectorXd q(1);
+    q[0] = M_PI/4;
+    robot->setConfig(ind, q);
+
+    std::cerr << "Adding viewer widget" << std::endl;
+    viewWidget = new ViewerWidget();
+    viewWidget->setGeometry(100, 100, 800, 600);
+    viewWidget->addGrid(20, 20, 1);
     viewWidget->addNodeToScene(dartNode);
-    // Add view widget to app
     setCentralWidget(viewWidget);
-    frontView = viewWidget->getViewMatrix();
-    sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));
-    topView = frontView * osg::Matrixd(osg::Quat(-90*M_PI/180, osg::Vec3f(1, 0, 0)));
-//    viewWidget->getView(0)->getCamera()->setV
-//    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
-//    viewWidget->addView(cameraView);
-//    dynamics::Skeleton* robot = dartNode->getRobot(0);
-//    int legJoints[] = {2};
-//    std::vector<int> legDofs(legJoints, legJoints + 1);
-//    Eigen::VectorXd legValues(1);
-//    legValues << M_PI/4;
 }
 
 void MainWindow::createTreeView()

@@ -133,7 +133,7 @@ public:
      * \param robot New robot to add to the DartNode
      * \return Index (size_t) of the newly added robot
      */
-    size_t addRobot(dynamics::Skeleton& robot);
+    size_t addRobot(dynamics::Skeleton* robot);
 
     /**
      * \brief Add a world to the DartNode. The world may consist
@@ -143,14 +143,16 @@ public:
      * that contains one or more dart::dynamics::Skeleton objects.
      * \return Index of the last object added
      */
-    size_t addWorld(simulation::World& world);
+    size_t addWorld(simulation::World *world);
 
     /**
      * \brief Get robot via index (size_t)
      * \param robotIndex Index of the robot you want
      * \return a dart::dynamics::Skeleton robot
      */
-    dynamics::Skeleton* getRobot(size_t robotIndex);
+    dynamics::Skeleton* getRobot(size_t robotIndex=0);
+
+    simulation::World* getWorld();
 
     /**
      * \brief Print out meta information of the robot
@@ -181,6 +183,7 @@ protected:
     //---------------------------------------------------------------
 
     /// Standard vector of pointers to Skeletons
+    simulation::World* _world;
     std::vector<dynamics::Skeleton*> _robots;
     std::vector<SkeletonNode*> _skeletonNodes;
 

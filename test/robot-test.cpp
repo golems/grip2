@@ -133,17 +133,59 @@ int testUrdfParsing()
 int testDartNode()
 {
     // Load robot model from urdf and check if valid
-    dynamics::Skeleton robot = *getRobot();
+    dynamics::Skeleton* robot = getRobot();
 
     osgDart::DartNode* dartNode = new osgDart::DartNode();
     dartNode->addRobot(robot);
-//    dartNode->printRobotInfo(0);
+
+    std::cerr << "Pre State\n" << robot->getConfig().transpose() << std::endl;
+    std::cerr << "Pre TF\n" << robot->getJoint("LHP")->getTransformFromParentBodyNode().matrix() << std::endl;
+
+    Eigen::VectorXd qq(1);
+    qq[0] = M_PI/4;
+
+    std::vector<int> index(1);
+    index[0] = robot->getJoint("LHP")->getGenCoord(0)->getSkeletonIndex();
+    std::cerr << "index " << index[0] << std::endl;
+    robot->setConfig(index, qq);
+    std::cerr << "supposedly LHP: " << robot->getJoint(3)->getName() << std::endl;
+
+    robot->getBodyNode("Body_LHP")->getChildBodyNode(0)->updateTransform();
+    robot->getBodyNode("Body_LHP")->updateTransform();
+
+    std::cerr << "Post State\n" << robot->getConfig().transpose() << std::endl;
+    std::cerr << "Post TF\n" << robot->getJoint("LHP")->getLocalTransform().matrix() << std::endl;
+
 
     render(dartNode);
+
+}
+
+int testDart()
+{
+    simulation::World* world = new simulation::World();
+    dynamics::Skeleton* robot = getRobot();
+    world->addSkeleton(robot);
+    std::cerr << robot->getName() << "\n"
+              << "\thas " << robot->getNumGenCoords() << " generalized coordinate\n"
+              << "\tLHP: " << robot->getJoint("LHP")->get_q()
+              << std::endl;
+
+    Eigen::VectorXd q(1);
+    q[0] = M_PI/2;
+    robot->getJoint("LHP")->set_q(q);
+
+    std::cerr << "LHP: " << robot->getJoint("LHP")->get_q() << std::endl;
+
+    Eigen::VectorXd config = robot->getState();
+    std::cerr << "Robot config: \n" << config.transpose() << std::endl;
+
+    return 0;
 }
 
 int main(int argc, char** argv)
 {
 //    testUrdfParsing();
     testDartNode();
+//    testDart();
 }
