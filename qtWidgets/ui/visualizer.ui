@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>906</width>
-    <height>169</height>
+    <width>1034</width>
+    <height>188</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,25 @@
    <layout class="QHBoxLayout" name="horizontalLayout_8">
     <item>
      <widget class="QGroupBox" name="groupBox">
+      <property name="styleSheet">
+       <string notr="true">border: 2px solid gray; 
+     border-radius: 3px; </string>
+      </property>
       <property name="title">
        <string>Mesh Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="topMargin">
+        <number>27</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QCheckBox" name="checkBox">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show Collision Mesh</string>
            </property>
@@ -49,6 +60,10 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QCheckBox" name="checkBox_2">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Render using Collision Mesh</string>
            </property>
@@ -100,14 +115,25 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
+      <property name="styleSheet">
+       <string notr="true">border: 2px solid gray; 
+     border-radius: 3px; </string>
+      </property>
       <property name="title">
        <string>Dynamics Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="topMargin">
+        <number>27</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QCheckBox" name="checkBox_3">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show Contact Forces</string>
            </property>
@@ -132,6 +158,10 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QCheckBox" name="checkBox_4">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show Projected Center of Mass</string>
            </property>
@@ -156,6 +186,10 @@
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QCheckBox" name="checkBox_7">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show Actual Center of Mass</string>
            </property>
@@ -207,14 +241,25 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_3">
+      <property name="styleSheet">
+       <string notr="true">border: 2px solid gray; 
+     border-radius: 3px; </string>
+      </property>
       <property name="title">
        <string>Frame Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="topMargin">
+        <number>27</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QCheckBox" name="checkBox_5">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show Joint Axes</string>
            </property>
@@ -239,6 +284,10 @@
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QCheckBox" name="checkBox_6">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
            <property name="text">
             <string>Show BodyNode Frames</string>
            </property>
