@@ -2,6 +2,14 @@
 #include <iostream>
 #include <cstdio>
 
+// DART includes
+#include <dart/utils/urdf/DartLoader.h>
+#include <dart/dynamics/Skeleton.h>
+#include <dart/dynamics/Joint.h>
+#include <dart/dynamics/BodyNode.h>
+#include <dart/simulation/World.h>
+
+using namespace dart;
 using namespace std;
 
 Tree_View::Tree_View(QWidget *parent) :
@@ -45,5 +53,20 @@ void Tree_View::addChild(QString name, QString pname)
     else
     {
         cout<<"Parent not found in QTreeWidget"<<endl;
+    }
+}
+
+void Tree_View::populateTreeView(osgDart::DartNode *world, int numRobots)
+{
+    for (int i = 0; i<= numRobots; i++)
+    {
+        cout<<"In the tree view populate method "<<numRobots<<endl;
+        dynamics::Skeleton* skel = world->getRobot(i);
+        addParent(QString::fromStdString(skel->getName()));
+
+        for (int j = 0; j<skel->getNumBodyNodes(); j++)
+        {
+            addChild(QString::fromStdString(skel->getBodyNode(j)->getName()), QString::fromStdString(skel->getName()));
+        }
     }
 }
