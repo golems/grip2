@@ -47,6 +47,12 @@
 #else
 #define DEBUG(x)
 #endif
+
+// DART includes
+#include <dart/utils/urdf/DartLoader.h>
+#include <dart/utils/sdf/SdfParser.h>
+
+// osgDart includes
 #include "DartNode.h"
 #include "SkeletonNode.h"
 #include "DartNodeCallback.h"
@@ -80,6 +86,19 @@ dynamics::Skeleton* DartNode::parseRobotUrdf(std::string urdfFile)
     }
 }
 
+simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
+{
+    utils::SdfParser loader;
+    simulation::World* world = loader.readSdfFile(sdfFile);
+    if(!world) {
+        std::cerr << "Error parsing world sdf " << sdfFile << std::endl;
+        return NULL;
+    } else {
+        DEBUG("Successfully parsed world sdf " << sdfFile);
+        return world;
+    }
+}
+
 simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 {
     // Load world model from urdf and check if valid
@@ -95,9 +114,21 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 }
 
 
-int DartNode::addWorld(std::string urdfFile)
+int DartNode::addWorldFromUrdf(std::string urdfFile)
 {
     simulation::World* world = parseWorldUrdf(urdfFile);
+    if(world) {
+        addWorld(world);
+        return 1;
+    } else {
+        std::cerr << "Not adding world" << std::endl;
+        return 0;
+    }
+}
+
+int DartNode::addWorldFromSdf(std::string sdfFile)
+{
+    simulation::World* world = parseWorldSdf(sdfFile);
     if(world) {
         addWorld(world);
         return 1;
@@ -140,9 +171,10 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
     if(robotIndexIsValid(robotIndex)) {
         return _world->getSkeleton(robotIndex);;
     } else {
-        std::cerr << "Requested invalid robot index of " << robotIndex
-                  << ". There are only " << _world->getNumSkeletons() << " robots in this DartNode"
-                  << std::endl;
+        if(_world) {
+            std::cerr << " There are only " << _world->getNumSkeletons() << " robots in this DartNode"
+                      << std::endl;
+        }
         return NULL;
     }
 }
@@ -185,11 +217,13 @@ size_t DartNode::addWorld(simulation::World* world)
         DEBUG("This DartNode already has a world object. Not going to create another one");
     }
 
-    DEBUG("Added world with the following objects:");
+    DEBUG("Added world with the following " << world->getNumSkeletons() << " objects:");
     for(int i=0; i<world->getNumSkeletons(); ++i) {
         _robots.push_back(world->getSkeleton(i));
         DEBUG("    " << world->getSkeleton(i)->getName());
+        std::cerr << "returninigasdgasdf" << std::endl;
         osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(world->getSkeleton(i));
+        std::cerr << "sfasdfasdfasdf" << std::endl;
         _skeletonNodes.push_back(skel);
         this->addChild(skel);
     }

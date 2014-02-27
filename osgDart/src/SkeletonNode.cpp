@@ -176,7 +176,25 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(dynamics::BodyNode* node)
     for(int i=0; i<node->getNumVisualizationShapes(); ++i) {
         dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(i);
         const aiScene* aiscene = meshShape->getMesh();
-        _bodyNodeGroupMap[node]->addChild(osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode));
+        std::cerr << "Getting mesh" << std::endl;
+        aiNode* ainode = NULL;
+        if(aiscene) {
+            try {
+                ainode = aiscene->mRootNode;
+            } catch(std::exception const& e) {
+                std::cout << "Exception: " << e.what() << std::endl;
+            }
+            if(ainode) {
+                std::cerr << "Grabbing mesh from aiScene" << std::endl;
+                _bodyNodeGroupMap[node]->addChild(osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode));
+            } else {
+                std::cerr << "Error: aiNode no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
+                exit(1);
+            }
+        } else {
+            std::cerr << "Error: aiScene no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
+            exit(1);
+        }
     }
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic

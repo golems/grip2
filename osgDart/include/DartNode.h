@@ -54,7 +54,6 @@
 #define DARTNODE_H
 
 // DART includes
-#include <dart/utils/urdf/DartLoader.h>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/BodyNode.h>
@@ -65,6 +64,7 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+// osgDart includes
 #include "SkeletonNode.h"
 
 using namespace dart;
@@ -104,6 +104,8 @@ public:
      */
     dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
 
+    simulation::World* parseWorldSdf(std::string sdfFile);
+
     /**
      * \brief Create a dart::simulation::World pointer from a world urdf file
      * using DART's DartLoader.
@@ -118,7 +120,9 @@ public:
      * \param urdfFile The name of the urdf file
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int addWorld(std::string urdfFile);
+    int addWorldFromUrdf(std::string urdfFile);
+
+    int addWorldFromSdf(std::string sdfFile);
 
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
