@@ -47,10 +47,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <iostream>
+#include <cstdio>
 #include <ViewerWidget.h>
 #include <tree_view.h>
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
+#include "ui_tree_view.h"
+
+using namespace std;
 
 class QAction;
 class QActionGroup;
@@ -67,8 +72,8 @@ public:
     ~MainWindow();
     void Toolbar();
     ViewerWidget* viewWidget;
-    TreeView* treeviewer;
-    QDockWidget *tree;
+    Tree_View* treeviewer;
+    //QDockWidget *tree;
     Visualizer *visualizertab;
     Inspector  *inspectortab;
     //QDockWidget *visualizertab;
@@ -102,6 +107,8 @@ private:
     void createOsgWindow();
     void createTreeView();
     void createTabs();
+    void doLoad(string fileName);
+    int saveText(string scenepath, const char* llfile);
 
     QMenu *fileMenu;
     QMenu *viewMenu;
