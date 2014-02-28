@@ -309,18 +309,19 @@ void MainWindow::createOsgWindow()
     // Add robot
     dartNode = new osgDart::DartNode();
 //    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-    dartNode->addWorldFromUrdf("/home/pete/otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
-//    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum_with_base.world");
+//    dartNode->addWorldFromUrdf("/home/pete/otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
+    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum_with_base.world");
+//    dartNode->addWorldFromSdf("../models/pr2/pr2.sdf");
     std::cerr << "loaded" << std::endl;
     dynamics::Skeleton* robot;
     if(robot = dartNode->getRobot()) {
         std::cerr << "Robot: " << robot->getName() << std::endl;
 
-        std::vector<int> ind(1);
-        ind[0] = robot->getJoint("LKP")->getGenCoord(0)->getSkeletonIndex();
-        Eigen::VectorXd q(1);
-        q[0] = M_PI/4;
-        robot->setConfig(ind, q);
+//        std::vector<int> ind(1);
+//        ind[0] = robot->getJoint("LKP")->getGenCoord(0)->getSkeletonIndex();
+//        Eigen::VectorXd q(1);
+//        q[0] = M_PI/4;
+//        robot->setConfig(ind, q);
         viewWidget->addNodeToScene(dartNode);
     } else {
         std::cerr << "Didn't find a robot" << std::endl;

@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version='1.4'>
+ <world name="default">
   <model name='pr2'>
     <static>0</static>
     <link name='base_footprint'>
@@ -3033,4 +3034,5 @@
       </axis>
     </joint>
   </model>
+</world>
 </sdf>

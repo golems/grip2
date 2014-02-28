@@ -48,28 +48,37 @@
 #define DEBUG(x)
 #endif
 
+// Local includes
 #include "SkeletonNode.h"
 #include "osgAssimpSceneReader.h"
-#include <assimp/scene.h>
-#include <dart/dynamics/MeshShape.h>
+#include "osgUtils.h"
+
+// DART includes
 #include <dart/dynamics/BodyNode.h>
 #include <dart/dynamics/Joint.h>
-#include "osgUtils.h"
+#include <dart/dynamics/Shape.h>
+#include <dart/dynamics/BoxShape.h>
+#include <dart/dynamics/EllipsoidShape.h>
+#include <dart/dynamics/CylinderShape.h>
+#include <dart/dynamics/MeshShape.h>
+
+// OpenSceneGraph includes
+#include <osg/Shape>
+#include <osg/ShapeDrawable>
+
+// Assimp includes
+#include <assimp/scene.h>
+
 
 using namespace dart;
 using namespace osgDart;
 
-void SkeletonNode::moveJoint()
-{
-//    std::cerr << "Joint name: " << _rootBodyNode->getChildBodyNode(0)->getParentJoint()->getName() << std::endl;
-}
 
 SkeletonNode::SkeletonNode(dynamics::Skeleton* robot, float axisLength) :
     _axisLength(axisLength),
     _rootBodyNode(NULL)
 {
     _createSkeletonFromRootBodyNode(robot->getRootBodyNode());
-    moveJoint();
 }
 
 void SkeletonNode::update()
@@ -173,35 +182,100 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(dynamics::BodyNode* node)
     _bodyNodeGroupMap[node] = new osg::Group;
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
-    for(int i=0; i<node->getNumVisualizationShapes(); ++i) {
-        dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(i);
-        const aiScene* aiscene = meshShape->getMesh();
-        std::cerr << "Getting mesh" << std::endl;
-        aiNode* ainode = NULL;
-        if(aiscene) {
-            try {
-                ainode = aiscene->mRootNode;
-            } catch(std::exception const& e) {
-                std::cout << "Exception: " << e.what() << std::endl;
-            }
-            if(ainode) {
-                std::cerr << "Grabbing mesh from aiScene" << std::endl;
-                _bodyNodeGroupMap[node]->addChild(osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode));
-            } else {
-                std::cerr << "Error: aiNode no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
-                exit(1);
-            }
-        } else {
-            std::cerr << "Error: aiScene no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
-            exit(1);
-        }
-    }
+    _addShapesFromBodyNode(node);
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
     _bodyNodes.push_back(_bodyNodeGroupMap[node]);
 
     // Return the osg::Group version of the BodyNode
     return _bodyNodeGroupMap[node];
+}
+
+void SkeletonNode::_addShapesFromBodyNode(dynamics::BodyNode* node)
+{
+    // Loop through visualization shapes and create nodes and add them to a MatrixTransform
+    for(int i=0; i<node->getNumVisualizationShapes(); ++i) {
+        std::cerr << "Shape = ";
+        switch (node->getVisualizationShape(i)->getShapeType()) {
+            case dynamics::Shape::BOX: {
+                std::cerr << "Box" << std::endl;
+                dynamics::BoxShape* shape = (dynamics::BoxShape*)node->getVisualizationShape(i);
+                std::cerr << "Dims: " << shape->getDim().transpose() << std::endl;
+
+                osg::Vec3f size = osgGolems::eigToOsgVec(shape->getDim());
+                osg::ShapeDrawable* osgShape =
+                        new osg::ShapeDrawable(new osg::Box(osgGolems::eigToOsgVec(shape->getOffset()), size.x(), size.y(), size.z()));
+                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
+                osgShape->setColor(color);
+
+                osg::Geode* geode = new osg::Geode;
+                geode->addDrawable(osgShape);
+
+                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
+                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
+                shapeTF->addChild(geode);
+                _bodyNodeGroupMap[node]->addChild(shapeTF);
+                break;
+            }
+            case dynamics::Shape::ELLIPSOID:/* {
+                std::cerr << "Ellipsoid" << std::endl;
+//                dynamics::EllipsoidShape* shape = (dynamics::EllipsoidShape*)node->getVisualizationShape(i);
+//                osg::Vec3f size = osgGolems::eigToOsgVec(shape->getDim());
+//                osg::ShapeDrawable* osgBox =
+//                        new osg::ShapeDrawable(new osg::EllipsoidModel((osgGolems::eigToOsgVec(shape->getOffset()), size.x(), size.y(), size.z()));
+//                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
+//                osgBox->setColor(color);
+
+//                osg::Geode* geode = new osg::Geode;
+//                geode->addDrawable(osgBox);
+
+//                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
+//                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
+//                shapeTF->addChild(geode);
+//                _bodyNodeGroupMap[node]->addChild(shapeTF);
+                break;
+            }*/
+            case dynamics::Shape::CYLINDER: {
+                std::cerr << "Cylinder" << std::endl;
+                dynamics::CylinderShape* shape = (dynamics::CylinderShape*)node->getVisualizationShape(i);
+                osg::ShapeDrawable* osgShape =
+                        new osg::ShapeDrawable(new osg::Cylinder(osgGolems::eigToOsgVec(shape->getOffset()), (float)shape->getRadius(), (float)shape->getHeight()));
+                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
+                osgShape->setColor(color);
+
+                osg::Geode* geode = new osg::Geode;
+                geode->addDrawable(osgShape);
+
+                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
+                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
+                shapeTF->addChild(geode);
+                _bodyNodeGroupMap[node]->addChild(shapeTF);
+                break;
+            }
+            case dynamics::Shape::MESH: {
+                std::cerr << "Mesh" << std::endl;
+                dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(i);
+                const aiScene* aiscene = meshShape->getMesh();
+                aiNode* ainode = NULL;
+                if(aiscene) {
+                    try {
+                        ainode = aiscene->mRootNode;
+                    } catch(std::exception const& e) {
+                        std::cout << "Exception: " << e.what() << std::endl;
+                    }
+                    if(ainode) {
+                        _bodyNodeGroupMap[node]->addChild(osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode));
+                    } else {
+                        std::cerr << "Error: aiNode no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
+                        exit(1);
+                    }
+                } else {
+                    std::cerr << "Error: aiScene no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
+                    exit(1);
+                }
+            }
+        }
+    }
 }
 
 osg::Matrix SkeletonNode::_getBodyNodeMatrix(dynamics::BodyNode* bodyNode)

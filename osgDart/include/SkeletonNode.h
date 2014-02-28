@@ -109,7 +109,7 @@ protected:
     /**
      * \brief Update the skeleton
      */
-    void _createSkeletonFromRootBodyNode(dynamics::BodyNode *rootBodyNode);
+    void _createSkeletonFromRootBodyNode(dynamics::BodyNode* rootBodyNode);
 
     /**
      * \brief Place the root of the Skeleton in the world using the passed in BodyNode's
@@ -117,13 +117,13 @@ protected:
      * \param rootBodyNode The dart::dynamics::BodyNode root to place in the world
      * \return osg::MatrixTransform* This is returned in order to add children nodes to it.
      */
-    osg::MatrixTransform* _placeRootOfSkeletonInWorld(dynamics::BodyNode *rootBodyNode);
+    osg::MatrixTransform* _placeRootOfSkeletonInWorld(dynamics::BodyNode* rootBodyNode);
 
     /**
      * \brief Pass in osg::MatrixTransform corresponding to parent Joint and its BodyNode
      * and it will recursively add osg::MatrixTransforms and Geode for all the children
      */
-    void _addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode *bodyNode);
+    void _addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode* bodyNode);
 
     /**
      * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
@@ -133,7 +133,9 @@ protected:
      * \param node dart::dynamics::BodyNode of which to make an osg::Group*
      * \return osg::Group* The osg::Group* corresponding the dart::dynamics::BodyNode
      */
-    osg::Group* _makeBodyNodeGroup(dynamics::BodyNode *node);
+    osg::Group* _makeBodyNodeGroup(dynamics::BodyNode* node);
+
+    void _addShapesFromBodyNode(dynamics::BodyNode* node);
 
     /**
      * \brief Create osg::MatrixTransform* from a dart::dynamics::Joint passed in by reference.
@@ -141,7 +143,7 @@ protected:
      * \param joint dart::dynamics::Joint for which to create an osg::MatrixTransform*
      * \return osg::MatrixTransform pointer corresponding to the dart::dynamics::Joint passed in
      */
-    osg::MatrixTransform* _makeJointNode(dynamics::Joint *joint);
+    osg::MatrixTransform* _makeJointNode(dynamics::Joint* joint);
 
     /**
      * \brief Get the local center of mass of the BodyNode relative to its parent joint,
@@ -150,12 +152,12 @@ protected:
      * \param node The dynamics::BodyNode of which to get the local center of mass
      * \return osg::Matrix defining the local center of mass of the BodyNode relative to its parent joint
      */
-    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode *node);
+    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode* node);
 
     /**
      * \brief Update SkeletonNode recursively based on Skeleton transforms
      */
-    void _updateRecursively(dynamics::BodyNode *bodyNode);
+    void _updateRecursively(dynamics::BodyNode* bodyNode);
 
     /**
      * \brief Get root body node
