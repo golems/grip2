@@ -347,22 +347,27 @@ void MainWindow::createTreeView()
 void MainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
+    setDockOptions(QMainWindow::VerticalTabs);
+
     QDockWidget *viztabwidget = new QDockWidget(this);
     //visualizer_ui.setupUi(widget);
     Ui_Visualizer::setupUi(viztabwidget);
     //setMainWidget(widget);
     //Ui_Visualizer::setupUi(this);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-    //viztabwidget->show();
+    //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
-    QDockWidget *instabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(instabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
-    //instabwidget->show();
+    QDockWidget *inspectabwidget = new QDockWidget(this);
+    Ui_Inspector::setupUi(inspectabwidget);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+    //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
-    tabifyDockWidget(instabwidget, viztabwidget);
+    tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
     viztabwidget->raise();
+    //viztabwidget->set
 
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea

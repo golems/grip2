@@ -18,8 +18,17 @@
     <item>
      <widget class="QGroupBox" name="groupBox_5">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Position</string>
@@ -129,8 +138,17 @@ border-radius: 3px; </string>
     <item>
      <widget class="QGroupBox" name="groupBox_4">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Position</string>
@@ -240,8 +258,17 @@ border-radius: 3px; </string>
     <item>
      <widget class="QGroupBox" name="groupBox_3">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-     border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Orientation</string>

@@ -18,8 +18,17 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-     border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Mesh Options</string>
@@ -116,8 +125,17 @@
     <item>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-     border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Dynamics Options</string>
@@ -242,8 +260,17 @@
     <item>
      <widget class="QGroupBox" name="groupBox_3">
       <property name="styleSheet">
-       <string notr="true">border: 2px solid gray; 
-     border-radius: 3px; </string>
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
       </property>
       <property name="title">
        <string>Frame Options</string>
