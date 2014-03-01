@@ -158,6 +158,8 @@ protected:
      * \brief Update SkeletonNode recursively based on Skeleton transforms
      */
     void _updateRecursively(dynamics::BodyNode* bodyNode);
+    osg::Node* _convertShapeToOsgNode(dynamics::Shape* inputShape);
+    osg::Node* _convertMeshToOsgNode(dynamics::Shape* mesh);
 
     /**
      * \brief Get root body node
@@ -184,6 +186,7 @@ protected:
     /// Map from dart::dynamics::BodyNode* to osg::Group*
     BodyNodeGroupMap _bodyNodeGroupMap;
 
+    /// Root BodyNode
     dynamics::BodyNode* _rootBodyNode;
 
     /// Length of joint axes visualization

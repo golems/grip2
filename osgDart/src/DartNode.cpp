@@ -221,9 +221,7 @@ size_t DartNode::addWorld(simulation::World* world)
     for(int i=0; i<world->getNumSkeletons(); ++i) {
         _robots.push_back(world->getSkeleton(i));
         DEBUG("    " << world->getSkeleton(i)->getName());
-        std::cerr << "returninigasdgasdf" << std::endl;
         osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(world->getSkeleton(i));
-        std::cerr << "sfasdfasdfasdf" << std::endl;
         _skeletonNodes.push_back(skel);
         this->addChild(skel);
     }

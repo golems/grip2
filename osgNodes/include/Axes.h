@@ -58,6 +58,8 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+namespace osgGolems {
+
 /**
  * \class Axes Axes.h
  * \brief Class that subclasses osg::Geode to create x,y,z axes
@@ -70,13 +72,13 @@ public:
      * \brief Constructor for Axes.
      * \param scale Scale factor for length of axes
      */
-    inline Axes(float scale = 1)
+    inline Axes(float scale = 0.1, bool addPlanes=false)
     {
         _verts = new osg::Vec3Array;
         _colors = new osg::Vec4Array;
         _verts->resize(5);
         
-        _setElements();
+        _setElements(addPlanes);
         setScale(scale);
     }
     
@@ -103,7 +105,7 @@ protected:
      * \brief Define the axes elements
      * \return void
      */
-    inline void _setElements()
+    inline void _setElements(bool addPlanes)
     {
         osg::DrawElementsUShort* x_elem =
                 new osg::DrawElementsUShort(osg::PrimitiveSet::LINES, 0);
@@ -123,19 +125,21 @@ protected:
         addPrimitiveSet(z_elem);
         _colors->push_back(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
 
-        osg::DrawElementsUShort* plane_top =
-                new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
-        plane_top->push_back(0); plane_top->push_back(1);
-        plane_top->push_back(4); plane_top->push_back(2);
-        addPrimitiveSet(plane_top);
-        _colors->push_back(osg::Vec4(0.6f,0.6f,1.0f,0.5));
+        if(addPlanes) {
+            osg::DrawElementsUShort* plane_top =
+                    new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
+            plane_top->push_back(0); plane_top->push_back(1);
+            plane_top->push_back(4); plane_top->push_back(2);
+            addPrimitiveSet(plane_top);
+            _colors->push_back(osg::Vec4(0.6f,0.6f,1.0f,0.5));
 
-        osg::DrawElementsUShort* plane_bottom =
-                new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
-        plane_bottom->push_back(0); plane_bottom->push_back(2);
-        plane_bottom->push_back(4); plane_bottom->push_back(1);
-        addPrimitiveSet(plane_bottom);
-        _colors->push_back(osg::Vec4(1.0f,1.0f,0.6f,0.5f));
+            osg::DrawElementsUShort* plane_bottom =
+                    new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
+            plane_bottom->push_back(0); plane_bottom->push_back(2);
+            plane_bottom->push_back(4); plane_bottom->push_back(1);
+            addPrimitiveSet(plane_bottom);
+            _colors->push_back(osg::Vec4(1.0f,1.0f,0.6f,0.5f));
+        }
         
         setColorArray(_colors);
         setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
@@ -148,5 +152,7 @@ protected:
     osg::Vec4Array* _colors;
     
 };
+
+} // end namespace osgGolems
 
 #endif // AXES_H

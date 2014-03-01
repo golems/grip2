@@ -67,6 +67,7 @@ MainWindow::MainWindow()
     createActions();
     createMenus();
     createOsgWindow();
+    gray();
     createTreeView();
 
     setWindowTitle(tr("Grip2"));
@@ -142,6 +143,11 @@ void MainWindow::white()
 {
     viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
 }
+void MainWindow::gray()
+{
+    viewWidget->setBackgroundColor(osg::Vec4(.5, .5, .5, 1));
+}
+
 void MainWindow::black()
 {
     viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
@@ -225,6 +231,10 @@ void MainWindow::createActions()
     whiteAct = new QAction(tr("White"), this);
     connect(whiteAct, SIGNAL(triggered()), this, SLOT(white()));
 
+    //grayAct
+    grayAct = new QAction(tr("Gray"), this);
+    connect(grayAct, SIGNAL(triggered()), this, SLOT(gray()));
+
     //BlackAct
     blackAct = new QAction(tr("Black"), this);
     connect(blackAct, SIGNAL(triggered()), this, SLOT(black()));
@@ -283,6 +293,7 @@ void MainWindow::createMenus()
     //backgroundMenu
     backgroundMenu = settingsMenu->addMenu(tr("Background"));
     backgroundMenu->addAction(whiteAct);
+    backgroundMenu->addAction(grayAct);
     backgroundMenu->addAction(blackAct);
     //settings Menu contd...
     settingsMenu->addAction(resetCameraAct);
@@ -308,20 +319,21 @@ void MainWindow::createOsgWindow()
 
     // Add robot
     dartNode = new osgDart::DartNode();
-//    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
 //    dartNode->addWorldFromUrdf("/home/pete/otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
-    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum_with_base.world");
-//    dartNode->addWorldFromSdf("../models/pr2/pr2.sdf");
+//    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum.world");
+    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
+//    dartNode->addWorldFromSdf("../../../otherRepos/gazebo_models/simple_arm/model.sdf");
+//    dartNode->addRobot("../models/test.urdf");
     std::cerr << "loaded" << std::endl;
     dynamics::Skeleton* robot;
     if(robot = dartNode->getRobot()) {
         std::cerr << "Robot: " << robot->getName() << std::endl;
 
-//        std::vector<int> ind(1);
-//        ind[0] = robot->getJoint("LKP")->getGenCoord(0)->getSkeletonIndex();
-//        Eigen::VectorXd q(1);
-//        q[0] = M_PI/4;
-//        robot->setConfig(ind, q);
+        std::vector<int> ind(1);
+        ind[0] = robot->getJoint("LSP")->getGenCoord(0)->getSkeletonIndex();
+        Eigen::VectorXd q(1);
+        q[0] = .3;
+        robot->setConfig(ind, q);
         viewWidget->addNodeToScene(dartNode);
     } else {
         std::cerr << "Didn't find a robot" << std::endl;

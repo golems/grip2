@@ -50,8 +50,8 @@
 
 // Local includes
 #include "SkeletonNode.h"
-#include "osgAssimpSceneReader.h"
 #include "osgUtils.h"
+#include "osgDartShapes.h"
 
 // DART includes
 #include <dart/dynamics/BodyNode.h>
@@ -66,13 +66,8 @@
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 
-// Assimp includes
-#include <assimp/scene.h>
-
-
 using namespace dart;
 using namespace osgDart;
-
 
 SkeletonNode::SkeletonNode(dynamics::Skeleton* robot, float axisLength) :
     _axisLength(axisLength),
@@ -84,7 +79,7 @@ SkeletonNode::SkeletonNode(dynamics::Skeleton* robot, float axisLength) :
 void SkeletonNode::update()
 {
     // First update root joint transform, which places the skeleton relative to the world
-    _jointMatrixMap[_rootBodyNode->getParentJoint()]->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode->getParentJoint()->getTransformFromParentBodyNode()));
+    _jointMatrixMap.at(_rootBodyNode->getParentJoint())->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode->getParentJoint()->getTransformFromParentBodyNode()));
 
     // Then recursively update all the children of the root body node
     for(int i=0; i<_rootBodyNode->getNumChildBodyNodes(); ++i) {
@@ -106,8 +101,12 @@ void SkeletonNode::_createSkeletonFromRootBodyNode(dynamics::BodyNode* rootBodyN
     osg::MatrixTransform* root = _placeRootOfSkeletonInWorld(rootBodyNode);
     this->addChild(root);
 
+    // Add root joint to root
     osg::MatrixTransform* rootTF = _makeJointNode(rootBodyNode->getParentJoint());
     root->addChild(rootTF);
+
+    // Add root bodynode to root joint
+    rootTF->addChild(_makeBodyNodeGroup(rootBodyNode));
 
     _addSkeletonObjectsRecursivley(rootTF, rootBodyNode);
 
@@ -123,28 +122,6 @@ osg::MatrixTransform* SkeletonNode::_placeRootOfSkeletonInWorld(dynamics::BodyNo
 
 void SkeletonNode::_addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode* bodyNode)
 {
-    // For every child node of the bodyNode, add its parent joint's TF to the bodyNode's parent joint's TF
-    // and add a TF for the child node to its parent joint's TF.
-    // Add parent joint with its TF from its parent body node
-
-    // Add body node with position as Local COM relative to its parent joint
-    osg::MatrixTransform* bodyNodeTF = new osg::MatrixTransform;
-    bodyNodeTF->setMatrix(_getBodyNodeMatrix(bodyNode));
-    jointTF->addChild(bodyNodeTF);
-    bodyNodeTF->addChild(_makeBodyNodeGroup(bodyNode));
-
-    DEBUG("Added: \n\tJoint: " << bodyNode->getParentJoint()->getName()
-          << "\n\tBody: " << bodyNode->getName()
-          << "\n\tChildren: ");
-//            << " at \n" << bodyNode->getParentJoint()->getTransformFromParentBodyNode().matrix()
-//            << "\n\tBody " << bodyNode->getName() << " at " << bodyNode->getLocalCOM().transpose()
-//            << "\nChilds " << bodyNode->getNumChildBodyNodes());
-
-    for(int i=0; i<bodyNode->getNumChildBodyNodes(); ++i) {
-        DEBUG("\t    " << bodyNode->getChildBodyNode(i)->getName());
-
-    }
-
     // Add child BodyNodes to parent Joint
     for(int i=0; i<bodyNode->getNumChildBodyNodes(); ++i) {
         // Get child BodyNode and add its parent Joint to the grandparent Joint
@@ -154,7 +131,6 @@ void SkeletonNode::_addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF,
 
         // Create TF for child BodyNode and add BodyNode mesh to it
         osg::MatrixTransform* childBodyNodeTF = new osg::MatrixTransform;
-        childBodyNodeTF->setMatrix(_getBodyNodeMatrix(childBodyNode));
         joint2TF->addChild(childBodyNodeTF);
         childBodyNodeTF->addChild(_makeBodyNodeGroup(childBodyNode));
 
@@ -167,7 +143,7 @@ void SkeletonNode::_updateRecursively(dynamics::BodyNode* bodyNode)
     // Get child node and update its transform. Then get its children and update theirs
     JointMatrixMap::const_iterator m = _jointMatrixMap.find(bodyNode->getParentJoint());
     if(m != _jointMatrixMap.end()) {
-        _jointMatrixMap[bodyNode->getParentJoint()]->setMatrix(osgGolems::eigToOsgMatrix(bodyNode->getParentJoint()->getLocalTransform()));
+        _jointMatrixMap.at(bodyNode->getParentJoint())->setMatrix(osgGolems::eigToOsgMatrix(bodyNode->getParentJoint()->getLocalTransform()));
 
         for(size_t i=0; i<bodyNode->getNumChildBodyNodes(); ++i) {
             _updateRecursively(bodyNode->getChildBodyNode(i));
@@ -179,100 +155,32 @@ void SkeletonNode::_updateRecursively(dynamics::BodyNode* bodyNode)
 osg::Group* SkeletonNode::_makeBodyNodeGroup(dynamics::BodyNode* node)
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
-    _bodyNodeGroupMap[node] = new osg::Group;
+    _bodyNodeGroupMap.insert(std::make_pair(node, new osg::Group));
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addShapesFromBodyNode(node);
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
-    _bodyNodes.push_back(_bodyNodeGroupMap[node]);
+    _bodyNodes.push_back(_bodyNodeGroupMap.at(node));
 
     // Return the osg::Group version of the BodyNode
-    return _bodyNodeGroupMap[node];
+    return _bodyNodeGroupMap.at(node);
 }
 
 void SkeletonNode::_addShapesFromBodyNode(dynamics::BodyNode* node)
 {
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     for(int i=0; i<node->getNumVisualizationShapes(); ++i) {
-        std::cerr << "Shape = ";
         switch (node->getVisualizationShape(i)->getShapeType()) {
-            case dynamics::Shape::BOX: {
-                std::cerr << "Box" << std::endl;
-                dynamics::BoxShape* shape = (dynamics::BoxShape*)node->getVisualizationShape(i);
-                std::cerr << "Dims: " << shape->getDim().transpose() << std::endl;
-
-                osg::Vec3f size = osgGolems::eigToOsgVec(shape->getDim());
-                osg::ShapeDrawable* osgShape =
-                        new osg::ShapeDrawable(new osg::Box(osgGolems::eigToOsgVec(shape->getOffset()), size.x(), size.y(), size.z()));
-                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
-                osgShape->setColor(color);
-
-                osg::Geode* geode = new osg::Geode;
-                geode->addDrawable(osgShape);
-
-                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
-                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
-                shapeTF->addChild(geode);
-                _bodyNodeGroupMap[node]->addChild(shapeTF);
-                break;
-            }
-            case dynamics::Shape::ELLIPSOID:/* {
-                std::cerr << "Ellipsoid" << std::endl;
-//                dynamics::EllipsoidShape* shape = (dynamics::EllipsoidShape*)node->getVisualizationShape(i);
-//                osg::Vec3f size = osgGolems::eigToOsgVec(shape->getDim());
-//                osg::ShapeDrawable* osgBox =
-//                        new osg::ShapeDrawable(new osg::EllipsoidModel((osgGolems::eigToOsgVec(shape->getOffset()), size.x(), size.y(), size.z()));
-//                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
-//                osgBox->setColor(color);
-
-//                osg::Geode* geode = new osg::Geode;
-//                geode->addDrawable(osgBox);
-
-//                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
-//                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
-//                shapeTF->addChild(geode);
-//                _bodyNodeGroupMap[node]->addChild(shapeTF);
-                break;
-            }*/
+            case dynamics::Shape::BOX:
+            case dynamics::Shape::ELLIPSOID:
             case dynamics::Shape::CYLINDER: {
-                std::cerr << "Cylinder" << std::endl;
-                dynamics::CylinderShape* shape = (dynamics::CylinderShape*)node->getVisualizationShape(i);
-                osg::ShapeDrawable* osgShape =
-                        new osg::ShapeDrawable(new osg::Cylinder(osgGolems::eigToOsgVec(shape->getOffset()), (float)shape->getRadius(), (float)shape->getHeight()));
-                osg::Vec4 color(osgGolems::eigToOsgVec(shape->getColor()), 1.0);
-                osgShape->setColor(color);
-
-                osg::Geode* geode = new osg::Geode;
-                geode->addDrawable(osgShape);
-
-                osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
-                shapeTF->setMatrix(osgGolems::eigToOsgMatrix(shape->getLocalTransform()));
-                shapeTF->addChild(geode);
-                _bodyNodeGroupMap[node]->addChild(shapeTF);
+                _bodyNodeGroupMap.at(node)->addChild(convertShapeToOsgNode(node->getVisualizationShape(i)));
                 break;
             }
             case dynamics::Shape::MESH: {
-                std::cerr << "Mesh" << std::endl;
-                dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(i);
-                const aiScene* aiscene = meshShape->getMesh();
-                aiNode* ainode = NULL;
-                if(aiscene) {
-                    try {
-                        ainode = aiscene->mRootNode;
-                    } catch(std::exception const& e) {
-                        std::cout << "Exception: " << e.what() << std::endl;
-                    }
-                    if(ainode) {
-                        _bodyNodeGroupMap[node]->addChild(osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode));
-                    } else {
-                        std::cerr << "Error: aiNode no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
-                        exit(1);
-                    }
-                } else {
-                    std::cerr << "Error: aiScene no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;
-                    exit(1);
-                }
+                _bodyNodeGroupMap.at(node)->addChild(convertMeshToOsgNode(node->getVisualizationShape(i)));
+                 break;
             }
         }
     }
@@ -281,21 +189,23 @@ void SkeletonNode::_addShapesFromBodyNode(dynamics::BodyNode* node)
 osg::Matrix SkeletonNode::_getBodyNodeMatrix(dynamics::BodyNode* bodyNode)
 {
     osg::Matrix m;
-    m.makeTranslate(osgGolems::eigToOsgVec(bodyNode->getLocalCOM()));
+    m.makeTranslate(osgGolems::eigToOsgVec3(bodyNode->getParentJoint()->getTransformFromChildBodyNode().translation()));
     return m;
 }
 
 osg::MatrixTransform* SkeletonNode::_makeJointNode(dynamics::Joint* joint)
 {
     // Create osg::MatrixTransform, set it using the Joint's TF from its parent BodyNode
-    _jointMatrixMap[joint] = new osg::MatrixTransform;
-    _jointMatrixMap[joint]->setMatrix(osgGolems::eigToOsgMatrix(joint->getTransformFromParentBodyNode()));
-
+    _jointMatrixMap.insert(std::make_pair(joint, new osg::MatrixTransform));
+    _jointMatrixMap.at(joint)->setMatrix(osgGolems::eigToOsgMatrix(joint->getTransformFromParentBodyNode()));
+    osg::Geode* geode = new osg::Geode;
+    geode->addDrawable(new osgGolems::Axes);
+    _jointMatrixMap.at(joint)->addChild(geode);
     // Add Joint osg::MatrixTransform to class array, and set data variance to dynamics
-    _joints.push_back(_jointMatrixMap[joint]);
+    _joints.push_back(_jointMatrixMap.at(joint));
 
     // Return the osg::MatrixTransform version of the Joint
-    return _jointMatrixMap[joint];
+    return _jointMatrixMap.at(joint);
 }
 
 

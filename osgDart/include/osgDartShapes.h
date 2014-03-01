@@ -2,8 +2,8 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Shailesh Lohia <shailesh.lohia@gatech.edu>
- * Date: Jan 2014
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
@@ -42,90 +42,46 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file osgDartShapes.h
+ * \brief Library for converting DART shapes and meshes to osg nodes.
+ */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef OSGDART_SHAPES_H
+#define OSGDART_SHAPES_H
 
-#include <QMainWindow>
-#include <ViewerWidget.h>
-#include <tree_view.h>
-#include "DartNode.h"
+// DART includes
+#include <dart/dynamics/Shape.h>
 
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
+// OpenSceneGraph includes
+#include <osg/Node>
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+using namespace dart;
 
-public:
-    MainWindow();
-    void Toolbar();
-    ViewerWidget* viewWidget;
-    TreeView* treeviewer;
-    QDockWidget *tree;
-    osgDart::DartNode* dartNode;
+/**
+ * \namespace osgDart
+ * \brief Namespace containing all the classes and functionality relating to the
+ * intersection of DART and OpenSceneGraph.
+ */
+namespace osgDart {
 
-    osg::Matrixd frontView, sideView, topView;
+/**
+ * \brief Convert dart::dynamics::Shape to an osgNode if it's not a mesh.
+ * \param inputShape One of the dart::dynamics::Shape types
+ * \return osg::MatrixTransform as an osg::Node pointer
+ */
+osg::Node* convertShapeToOsgNode(dynamics::Shape* inputShape);
 
-private slots:
-    void load();
-    void quickLoad();
-    void saveScene();
-    void close();
-    void exit();
-    void front();
-    void top();
-    void side();
-    void startSimulation();
-    void stopSimulation();
-    void simulateSingleStep();
-    void renderDuringSimulation();
-    void white();
-    void gray();
-    void black();
-    void resetCamera();
-    void xga1024x768();
-    void vga640x480();
-    void hd1280x720();
-    void about();
+/**
+ * \brief Convert dart::dynamics::MeshShape to an osgNode.
+ * DART MeshShapes are stored as Assimp scenes and these get converted
+ * to an osg::Node*.
+ * \param inputMesh A dart::dynamics::MeshShape or dart::dynamics::Shape
+ * that is actually a MeshShape.
+ * \return osg::MatrixTransform as an osg::Node pointer
+ */
+osg::Node* convertMeshToOsgNode(dynamics::Shape* mesh);
 
-private:
-    void createActions();
-    void createMenus();
-    void createOsgWindow();
-    void createTreeView();
+} // end namespace osgDart
 
-    QMenu *fileMenu;
-    QMenu *viewMenu;
-    QMenu *simulationMenu;
-    QMenu *settingsMenu;
-    QMenu *renderMenu;
-    QMenu *helpMenu;
-    QMenu *backgroundMenu;
-    QActionGroup *colorGroup;
-    QAction *loadAct;
-    QAction *quickLoadAct;
-    QAction *saveSceneAct;
-    QAction *closeAct;
-    QAction *exitAct;
-    QAction *frontAct;
-    QAction *topAct;
-    QAction *sideAct;
-    QAction *startSimulationAct;
-    QAction *stopSimulationAct;
-    QAction *simulateSingleStepAct;
-    QAction *renderDuringSimulationAct;
-    QAction *whiteAct;
-    QAction *grayAct;
-    QAction *blackAct;
-    QAction *resetCameraAct;
-    QAction *xga1024x768Act;
-    QAction *vga640x480Act;
-    QAction *hd1280x720Act;
-    QAction *aboutAct;
-};
-
-#endif // MAINWINDOW_H
+#endif // OSGDART_SHAPES_H
