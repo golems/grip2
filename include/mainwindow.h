@@ -72,6 +72,7 @@ public:
     ~MainWindow();
     void Toolbar();
     ViewerWidget* viewWidget;
+
     Tree_View* treeviewer;
     Visualizer *visualizertab;
     Inspector  *inspectortab;

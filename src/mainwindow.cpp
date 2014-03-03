@@ -63,7 +63,6 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-
 ///including tab files
 #include "visualizer.h"
 #include "ui_visualizer.h"
@@ -425,17 +424,31 @@ void MainWindow::createTreeView()
 void MainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
+    setDockOptions(QMainWindow::VerticalTabs);
+
     QDockWidget *viztabwidget = new QDockWidget(this);
     Ui_Visualizer::setupUi(viztabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
+<<<<<<< HEAD
 
     QDockWidget *instabwidget = new QDockWidget(this);
     Ui_Inspector::setupUi(instabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
+=======
+    //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
-    tabifyDockWidget(instabwidget, viztabwidget);
+    QDockWidget *inspectabwidget = new QDockWidget(this);
+    Ui_Inspector::setupUi(inspectabwidget);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+    //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
+>>>>>>> origin/feature/tabs
+
+    tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
     viztabwidget->raise();
+    //viztabwidget->set
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
 }
