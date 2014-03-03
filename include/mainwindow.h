@@ -78,7 +78,7 @@ public:
     Visualizer *visualizertab;
     Inspector  *inspectortab;
     //QDockWidget *visualizertab;
-    osgDart::DartNode* worldNode;
+    simulation::World* mWorld;
 
     osg::Matrixd frontView, sideView, topView;
 

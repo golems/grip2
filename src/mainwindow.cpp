@@ -168,13 +168,12 @@ void MainWindow::quickLoad()
 
 void MainWindow::doLoad(string fileName)
 {
-    worldNode = new osgDart::DartNode();
+    osgDart::DartNode* worldNode = new osgDart::DartNode();
     int numRobots = worldNode->addWorld(fileName);
     viewWidget->addNodeToScene(worldNode);
-    worldNode->printInfo();
+    mWorld = worldNode->getWorld();
 
-    treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
-
+    treeviewer->populateTreeView(mWorld, numRobots);
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
 }
