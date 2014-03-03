@@ -83,7 +83,7 @@ typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMa
  * \class SkeletonNode SkeletonNode.h
  * \brief Class which inherits osg::Group
  */
-class SkeletonNode : public osg::Group
+class SkeletonNode : public osg::Switch
 {
 public:
 

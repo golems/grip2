@@ -76,6 +76,10 @@ using namespace dart;
  */
 namespace osgDart {
 
+/// Definition of type SkeletonNodeMap, which maps dart::dynamics::Skeleton* to SkeletonNode*
+typedef std::map<dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
+
+
 /**
  * \class DartNode DartNode.h
  * \brief Class that is a subclass of osg::Group, which is the main
@@ -83,7 +87,7 @@ namespace osgDart {
  * SkeletonNodes as parts of a simulation world. In essence, a DartNode is
  * the largest visualization object.
  */
-class DartNode : public osg::Group
+class DartNode : public osg::Switch
 {
 public:
 
@@ -195,7 +199,7 @@ public:
      * \param robotIndex Index of the robot about which to print info
      * \return void
      */
-    void printRobotInfo(size_t robotIndex);
+    void printInfo();
 
     /**
      * \brief Update the transforms of all the dart objects in the SkeletonNodes
@@ -203,6 +207,8 @@ public:
      * \return void
      */
     void update();
+
+    void hideRobot(int i);
     
 protected:
 
@@ -231,6 +237,8 @@ protected:
 
     /// Standard vector of pointers to SkeletonNode objects
     std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;
+
+    SkeletonNodeMap _skelNodeMap;
 
 };
 

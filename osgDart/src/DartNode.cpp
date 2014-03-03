@@ -158,9 +158,10 @@ size_t DartNode::addRobot(dynamics::Skeleton* robot)
     _world->addSkeleton(robot);
     _robots.push_back(robot);
 
-    osg::ref_ptr<osgDart::SkeletonNode> skel = new osgDart::SkeletonNode(robot);
-    _skeletonNodes.push_back(skel);
-    this->addChild(skel);
+    osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(robot);
+    _skeletonNodes.push_back(skelNode);
+    _skelNodeMap.insert(std::make_pair(robot, skelNode));
+    this->addChild(skelNode);
     std::cerr << "Added robot:\n\t" << robot->getName() << std::endl;
 
     return _robots.size()-1;
@@ -179,9 +180,18 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
     }
 }
 
-int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemoove)
+int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemove)
 {
+    if(_skelNodeMap.at(robotToRemove)) {
+        _skelNodeMap.erase(robotToRemove);
+    }
+}
 
+void DartNode::hideRobot(int i)
+{
+    if(i < _robots.size()) {
+        this->setValue(i, false);
+    }
 }
 
 simulation::World* DartNode::getWorld()
@@ -205,13 +215,14 @@ int DartNode::robotIndexIsValid(size_t robotIndex)
     }
 }
 
-void DartNode::printRobotInfo(size_t robotIndex)
+void DartNode::printInfo()
 {
-    std::cout << "Robot[" << robotIndex << "]: "
-              << "\n\tName: " << _robots[robotIndex]->getName()
-              << "\n\tBodyNodes: " << _robots[robotIndex]->getNumBodyNodes()
-              <<
-    std::endl;
+    std::cout << "DartNode Robots:";
+    for(int i=0; i<_robots.size(); ++i) {
+        std::cout << "\n    " << _robots[i]->getName()
+                  << ": " << _robots[i]->getNumBodyNodes() << " BodyNodes";
+    }
+    std::cout << std::endl;
 }
 
 size_t DartNode::addWorld(simulation::World* world)
@@ -226,9 +237,10 @@ size_t DartNode::addWorld(simulation::World* world)
     for(int i=0; i<world->getNumSkeletons(); ++i) {
         _robots.push_back(world->getSkeleton(i));
         DEBUG("    " << world->getSkeleton(i)->getName());
-        osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(world->getSkeleton(i));
-        _skeletonNodes.push_back(skel);
-        this->addChild(skel);
+        osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(world->getSkeleton(i));
+        _skeletonNodes.push_back(skelNode);
+        _skelNodeMap.insert(std::make_pair(world->getSkeleton(i), skelNode));
+        this->addChild(skelNode);
     }
 
     return _robots.size()-1;

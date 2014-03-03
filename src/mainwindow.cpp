@@ -338,7 +338,7 @@ void MainWindow::createOsgWindow()
     } else {
         std::cerr << "Didn't find a robot" << std::endl;
     }
-
+    dartNode->printInfo();
 }
 
 void MainWindow::createTreeView()
