@@ -65,7 +65,6 @@
 #include "inspector.h"
 #include "ui_inspector.h"
 #include <dart/utils/urdf/DartLoader.h>
->>>>>>> feature/osgviewerQt
 
 MainWindow::MainWindow()
 {

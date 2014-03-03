@@ -74,8 +74,7 @@ public:
     Inspector  *inspectortab;
     //QDockWidget *visualizertab;
     osgDart::DartNode* dartNode;
-    feature/osgviewerQt
-
+    
     osg::Matrixd frontView, sideView, topView;
 
 private slots:
