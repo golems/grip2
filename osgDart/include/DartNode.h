@@ -140,6 +140,8 @@ public:
      */
     int addWorldFromSdf(std::string sdfFile);
 
+    int addWorld(std::string file);
+
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
      * a robot urdf file.

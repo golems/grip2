@@ -60,7 +60,7 @@
 using namespace dart;
 using namespace osgDart;
 
-DartNode::DartNode() : _world(NULL)
+DartNode::DartNode() : _world(0)
 {
     this->setUpdateCallback(new DartNodeCallback);
 }
@@ -114,15 +114,28 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 }
 
 
-int DartNode::addWorldFromUrdf(std::string urdfFile)
+int DartNode::addWorld(std::string file)
 {
-    simulation::World* world = parseWorldUrdf(urdfFile);
+    // try urdf first
+    simulation::World* world = parseWorldUrdf(file);
     if(world) {
-        addWorld(world);
+        this->addWorld(world);
         return 1;
     } else {
-        std::cerr << "Not adding world" << std::endl;
-        return 0;
+        world = parseWorldSdf(file);
+        if(world) {
+            this->addWorld(world);
+            return 1;
+        } else {
+            dynamics::Skeleton* skel = parseRobotUrdf(file);
+            if(skel) {
+                this->addRobot(skel);
+                return 1;
+            } else {
+                std::cerr << "In addWorld: Not adding world" << std::endl;
+                return 0;
+            }
+        }
     }
 }
 
@@ -133,7 +146,7 @@ int DartNode::addWorldFromSdf(std::string sdfFile)
         addWorld(world);
         return 1;
     } else {
-        std::cerr << "Not adding world" << std::endl;
+        std::cerr << "In addWorldFromSdf: Not adding world" << std::endl;
         return 0;
     }
 }
@@ -245,3 +258,5 @@ size_t DartNode::addWorld(simulation::World* world)
 
     return _robots.size()-1;
 }
+
+

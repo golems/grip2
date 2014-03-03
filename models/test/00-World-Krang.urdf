@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<!-- @file Krang.urdf -->
+<!-- @author Vivek Trivedi -->
+<!-- @date Feb 14, 2014 -->
+<!-- @brief This file contains the .urdf definition for Krang. -->
+<!-- NOTE: The center of mass locations are taken from the MassTable by summing up the -->
+<!-- individual part values for the sections (which correspond to nodes here). -->
+<!-- TODO: Set the center of mass locations -->
+<!-- TODO: Set the correct masses. Note that the dae models have the brackets divided in two and -->
+<!-- connected to the middle motor for which we do not have measurements. -->
+<!-- NOTE: The bounding box values are taken by finding the min and max values of the dae files. -->
+
+<world name="schunk_with_desktop">
+<!-- Include the models by including either the complete urdf or referencing the file name -->
+<include filename="KrangBlocksHands_basewheel.urdf" model_name="Cart"/>
+
+<entity model="Cart" name="Krang">
+	<origin xyz="0.0 0.0 0.27" rpy="1.5708 0 -1.5708"/>
+</entity>
+</world>

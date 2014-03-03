@@ -6,12 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
-    <height>213</height>
+    <width>906</width>
+    <height>169</height>
    </rect>
-  </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
   </property>
   <property name="windowTitle">
    <string>Visualizer</string>
@@ -20,40 +17,14 @@
    <layout class="QHBoxLayout" name="horizontalLayout_8">
     <item>
      <widget class="QGroupBox" name="groupBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QGroupBox { 
-   border: 2px solid gray; 
-   border-radius: 3px; 
-}
-
-QGroupBox::title { 
-    background-color: transparent;
-    subcontrol-position: top left; /* position at the top left*/ 
-    padding-top: 5px;
-    padding-left: 5px;
- } </string>
-      </property>
       <property name="title">
        <string>Mesh Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="topMargin">
-        <number>27</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QCheckBox" name="checkBox">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show Collision Mesh</string>
            </property>
@@ -78,10 +49,6 @@ QGroupBox::title {
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QCheckBox" name="checkBox_2">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Render using Collision Mesh</string>
            </property>
@@ -133,40 +100,14 @@ QGroupBox::title {
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QGroupBox { 
-   border: 2px solid gray; 
-   border-radius: 3px; 
-}
-
-QGroupBox::title { 
-    background-color: transparent;
-    subcontrol-position: top left; /* position at the top left*/ 
-    padding-top: 5px;
-    padding-left: 5px;
- } </string>
-      </property>
       <property name="title">
        <string>Dynamics Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="topMargin">
-        <number>27</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QCheckBox" name="checkBox_3">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show Contact Forces</string>
            </property>
@@ -191,10 +132,6 @@ QGroupBox::title {
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QCheckBox" name="checkBox_4">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show Projected Center of Mass</string>
            </property>
@@ -219,10 +156,6 @@ QGroupBox::title {
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QCheckBox" name="checkBox_7">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show Actual Center of Mass</string>
            </property>
@@ -274,40 +207,14 @@ QGroupBox::title {
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_3">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QGroupBox { 
-   border: 2px solid gray; 
-   border-radius: 3px; 
-}
-
-QGroupBox::title { 
-    background-color: transparent;
-    subcontrol-position: top left; /* position at the top left*/ 
-    padding-top: 5px;
-    padding-left: 5px;
- } </string>
-      </property>
       <property name="title">
        <string>Frame Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="topMargin">
-        <number>27</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QCheckBox" name="checkBox_5">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show Joint Axes</string>
            </property>
@@ -332,10 +239,6 @@ QGroupBox::title {
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QCheckBox" name="checkBox_6">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
            <property name="text">
             <string>Show BodyNode Frames</string>
            </property>
