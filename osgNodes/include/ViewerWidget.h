@@ -78,7 +78,7 @@ public:
     /**
      * \brief Constructor for ViewerWidget class
      */
-    ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::SingleThreaded);
+    ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::AutomaticSelection);
 
     /**
      * \brief Add a osgQt::GraphicsWindowQt widget to the ViewerWidget
@@ -92,7 +92,10 @@ public:
 
     osg::Matrixd getViewMatrix();
     void setViewMatrix(uint i, osg::Matrixd m);
-
+    void setToFrontView();
+    void setToTopView();
+    void setToSideView();
+    void setCameraMatrix(osg::Matrix& newMatrix, uint viewNum=0);
     void addNodeToScene(osg::Node *node, uint viewNum=0);
 
     /**

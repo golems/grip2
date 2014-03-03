@@ -49,6 +49,8 @@
 #include <osg/Geometry>
 #include <osg/Geode>
 #include <osg/MatrixTransform>
+#include <osg/Material>
+#include <osg/PolygonMode>
 
 // Assimp includes
 #include <assimp/scene.h>
@@ -87,6 +89,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
                 (*na)[i].set(n.x, n.y, n.z);
             }
             if(ca) {
+                std::cerr << "has color" << std::endl;
                 const aiColor4D& c = mesh->mColors[0][i];
                 (*ca)[i].set(c.r, c.g, c.b, c.a);
             }
@@ -164,6 +167,11 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
                 geom->addPrimitiveSet( de[i].get());
             }
         }
+
+        // Create materials
+        osg::StateSet* ss = geom->getOrCreateStateSet();
+        const aiMaterial* aiMtl = aiScene->mMaterials[mesh->mMaterialIndex];
+        createMaterialData( ss, aiMtl );
     }
 
     aiMatrix4x4 m = aiNode->mTransformation;
@@ -173,7 +181,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     osg::ref_ptr<osg::MatrixTransform> mt;
     mt = new osg::MatrixTransform;
     mt->setMatrix( osg::Matrixf((float*)&m));
-//    std::cerr << "\tNumChildren: " << aiNode->mNumChildren << std::endl;
+
     for(uint n=0; n<aiNode->mNumChildren; ++n)
     {
         osg::Node* child = traverseAIScene(aiScene, aiNode->mChildren[n]);
@@ -183,4 +191,37 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     }
     mt->addChild(geode);
     return mt.release();
+}
+
+void osgAssimpSceneReader::createMaterialData(osg::StateSet* ss, const aiMaterial* aiMtl)
+{
+    aiColor4D c;
+    osg::Material* material = new osg::Material;
+    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_AMBIENT, &c)==AI_SUCCESS)
+        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_DIFFUSE, &c)==AI_SUCCESS)
+        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_SPECULAR, &c)==AI_SUCCESS)
+        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_EMISSIVE, &c)==AI_SUCCESS)
+        material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+
+    unsigned int maxValue = 1;
+    float shininess = 0.0f, strength = 1.0f;
+    if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS, &shininess, &maxValue)==AI_SUCCESS) {
+        maxValue = 1;
+        if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &maxValue)==AI_SUCCESS)
+            shininess *= strength;
+        material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+    }
+    else {
+        material->setShininess(osg::Material::FRONT_AND_BACK, 0.0f);
+        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4());
+    }
+    ss->setAttributeAndModes(material);
+
+    int wireframe = 0; maxValue = 1;
+    if(aiGetMaterialIntegerArray(aiMtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &maxValue)==AI_SUCCESS) {
+        ss->setAttributeAndModes( new osg::PolygonMode( osg::PolygonMode::FRONT_AND_BACK, wireframe ? osg::PolygonMode::LINE : osg::PolygonMode::FILL) );
+    }
 }

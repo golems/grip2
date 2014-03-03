@@ -43,47 +43,45 @@
  */
 
 /**
- * \file CameraManipulator.h
- * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
- * It sets up desired behavior for robot simulator.
+ * \file osgDartShapes.h
+ * \brief Library for converting DART shapes and meshes to osg nodes.
  */
 
-#ifndef CAMERA_MANIPULATOR_H
-#define CAMERA_MANIPULATOR_H
+#ifndef OSGDART_SHAPES_H
+#define OSGDART_SHAPES_H
+
+// DART includes
+#include <dart/dynamics/Shape.h>
 
 // OpenSceneGraph includes
-#include <osgGA/OrbitManipulator>
+#include <osg/Node>
+
+using namespace dart;
 
 /**
- * \class CameraManipulator CameraManipulator.h
- * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
- * It sets up desired behavior for robot simulator.
+ * \namespace osgDart
+ * \brief Namespace containing all the classes and functionality relating to the
+ * intersection of DART and OpenSceneGraph.
  */
-class CameraManipulator : public osgGA::OrbitManipulator
-{
-public:
+namespace osgDart {
 
-    /**
-     * \brief Constructor for CameraManipulator class
-     */
-    CameraManipulator();
+/**
+ * \brief Convert dart::dynamics::Shape to an osgNode if it's not a mesh.
+ * \param inputShape One of the dart::dynamics::Shape types
+ * \return osg::MatrixTransform as an osg::Node pointer
+ */
+osg::Node* convertShapeToOsgNode(dynamics::Shape* inputShape);
 
-    /**
-     * \brief Destructor for CameraManipulator class
-     */
-    ~CameraManipulator();
+/**
+ * \brief Convert dart::dynamics::MeshShape to an osgNode.
+ * DART MeshShapes are stored as Assimp scenes and these get converted
+ * to an osg::Node*.
+ * \param inputMesh A dart::dynamics::MeshShape or dart::dynamics::Shape
+ * that is actually a MeshShape.
+ * \return osg::MatrixTransform as an osg::Node pointer
+ */
+osg::Node* convertMeshToOsgNode(dynamics::Shape* mesh);
 
-    /**
-     * \brief Set the camera manipulator's center of rotation
-     * \param center osg::Vec3 specifying x,y,z coordinates of center of rotation
-     * \return void
-     */
-    void setCenter(osg::Vec3 center);
+} // end namespace osgDart
 
-protected:
-
-
-
-};
-
-#endif // CAMERA_MANIPULATOR_H
+#endif // OSGDART_SHAPES_H

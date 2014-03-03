@@ -51,6 +51,7 @@
 #include <tree_view.h>
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
+#include "DartNode.h"
 
 class QAction;
 class QActionGroup;
@@ -72,6 +73,8 @@ public:
     Visualizer *visualizertab;
     Inspector  *inspectortab;
     //QDockWidget *visualizertab;
+    osgDart::DartNode* dartNode;
+    feature/osgviewerQt
 
     osg::Matrixd frontView, sideView, topView;
 
@@ -89,6 +92,7 @@ private slots:
     void simulateSingleStep();
     void renderDuringSimulation();
     void white();
+    void gray();
     void black();
     void resetCamera();
     void xga1024x768();
@@ -124,6 +128,7 @@ private:
     QAction *simulateSingleStepAct;
     QAction *renderDuringSimulationAct;
     QAction *whiteAct;
+    QAction *grayAct;
     QAction *blackAct;
     QAction *resetCameraAct;
     QAction *xga1024x768Act;

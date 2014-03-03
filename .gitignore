@@ -11,3 +11,7 @@
 *.lai
 *.la
 *.a
+
+doc/html
+doc/latex
+build

@@ -64,12 +64,15 @@
 #include "ui_visualizer.h"
 #include "inspector.h"
 #include "ui_inspector.h"
+#include <dart/utils/urdf/DartLoader.h>
+>>>>>>> feature/osgviewerQt
 
 MainWindow::MainWindow()
 {
     createActions();
     createMenus();
     createOsgWindow();
+    gray();
     createTreeView();
     createTabs();
 
@@ -135,15 +138,15 @@ void MainWindow::close(){}
 void MainWindow::exit(){}
 void MainWindow::front()
 {
-    viewWidget->setViewMatrix(0, frontView);
+    viewWidget->setToFrontView();
 }
 void MainWindow::top()
 {
-    viewWidget->setViewMatrix(0, topView);
+    viewWidget->setToTopView();
 }
 void MainWindow::side()
 {
-    viewWidget->setViewMatrix(0, sideView);
+    viewWidget->setToSideView();
 }
 void MainWindow::startSimulation()
 {
@@ -158,6 +161,11 @@ void MainWindow::white()
 {
     viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
 }
+void MainWindow::gray()
+{
+    viewWidget->setBackgroundColor(osg::Vec4(.5, .5, .5, 1));
+}
+
 void MainWindow::black()
 {
     viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
@@ -241,6 +249,10 @@ void MainWindow::createActions()
     whiteAct = new QAction(tr("White"), this);
     connect(whiteAct, SIGNAL(triggered()), this, SLOT(white()));
 
+    //grayAct
+    grayAct = new QAction(tr("Gray"), this);
+    connect(grayAct, SIGNAL(triggered()), this, SLOT(gray()));
+
     //BlackAct
     blackAct = new QAction(tr("Black"), this);
     connect(blackAct, SIGNAL(triggered()), this, SLOT(black()));
@@ -299,6 +311,7 @@ void MainWindow::createMenus()
     //backgroundMenu
     backgroundMenu = settingsMenu->addMenu(tr("Background"));
     backgroundMenu->addAction(whiteAct);
+    backgroundMenu->addAction(grayAct);
     backgroundMenu->addAction(blackAct);
     //settings Menu contd...
     settingsMenu->addAction(resetCameraAct);
@@ -316,23 +329,34 @@ void MainWindow::createMenus()
 
 void MainWindow::createOsgWindow()
 {
+    std::cerr << "Adding viewer widget" << std::endl;
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
-    // Add grid
     viewWidget->addGrid(20, 20, 1);
-    // Add robot
-    osgDart::DartNode* dartNode = new osgDart::DartNode();
-//    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-    dartNode->addWorld("../../../otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
-    viewWidget->addNodeToScene(dartNode);
-    // Add view widget to app
     setCentralWidget(viewWidget);
-    frontView = viewWidget->getViewMatrix();
-    sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));
-    topView = frontView * osg::Matrixd(osg::Quat(-90*M_PI/180, osg::Vec3f(1, 0, 0)));
-//    viewWidget->getView(0)->getCamera()->setV
-//    osgViewer::View* cameraView = createView(1000, 150, 400, 400, osgDB::readNodeFile("../grip2/data/robot.osg"));
-//    viewWidget->addView(cameraView);
+
+    // Add robot
+    dartNode = new osgDart::DartNode();
+//    dartNode->addWorldFromUrdf("/home/pete/otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
+//    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum.world");
+    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
+//    dartNode->addWorldFromSdf("../../../otherRepos/gazebo_models/simple_arm/model.sdf");
+//    dartNode->addRobot("../models/test.urdf");
+    std::cerr << "loaded" << std::endl;
+    dynamics::Skeleton* robot;
+    if(robot = dartNode->getRobot()) {
+        std::cerr << "Robot: " << robot->getName() << std::endl;
+
+        std::vector<int> ind(1);
+        ind[0] = robot->getJoint("LSP")->getGenCoord(0)->getSkeletonIndex();
+        Eigen::VectorXd q(1);
+        q[0] = .3;
+        robot->setConfig(ind, q);
+        viewWidget->addNodeToScene(dartNode);
+    } else {
+        std::cerr << "Didn't find a robot" << std::endl;
+    }
+
 }
 
 void MainWindow::createTreeView()
