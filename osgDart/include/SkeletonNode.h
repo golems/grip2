@@ -158,15 +158,10 @@ protected:
      * \brief Update SkeletonNode recursively based on Skeleton transforms
      */
     void _updateRecursively(dynamics::BodyNode* bodyNode);
-    osg::Node* _convertShapeToOsgNode(dynamics::Shape* inputShape);
-    osg::Node* _convertMeshToOsgNode(dynamics::Shape* mesh);
 
     /**
      * \brief Get root body node
      */
-
-    void moveJoint();
-
     dynamics::BodyNode* getRootBodyNode();
 
 

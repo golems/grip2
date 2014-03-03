@@ -179,6 +179,11 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
     }
 }
 
+int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemoove)
+{
+
+}
+
 simulation::World* DartNode::getWorld()
 {
     if(_world) {

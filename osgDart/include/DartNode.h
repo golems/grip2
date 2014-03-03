@@ -104,6 +104,12 @@ public:
      */
     dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
 
+    /**
+     * \brief Create a dart::simulation::World pointer from a world sdf file
+     * using DART's Sdf parser.
+     * \param sdfFile The name of the world sdf file
+     * \return Pointer to the simulation::World object
+     */
     simulation::World* parseWorldSdf(std::string sdfFile);
 
     /**
@@ -122,6 +128,12 @@ public:
      */
     int addWorldFromUrdf(std::string urdfFile);
 
+    /**
+     * \brief Add a dart::simulation::World to the DartNode using the name of
+     * a world sdf file.
+     * \param sdfFile The name of the sdf file
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
     int addWorldFromSdf(std::string sdfFile);
 
     /**
@@ -156,6 +168,26 @@ public:
      */
     dynamics::Skeleton* getRobot(size_t robotIndex=0);
 
+    /**
+     * \brief Remove robot from DartNode by passing in the pointer to
+     * the dart::dynamics::Skeleton to be removed.
+     * \param robot Robot to remove from the DartNode
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int removeRobot(dart::dynamics::Skeleton* robotToRemoove);
+
+    /**
+     * \brief Remove robot from DartNode by passing in the index of the robot
+     * to be removed.
+     * \param robot Robot to remove from the DartNode
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int removeRobot(size_t robotIndex=0);
+
+    /**
+     * \brief Get a pointer to the World object in the DartNode.
+     * \return simulation::World pointer
+     */
     simulation::World* getWorld();
 
     /**
@@ -165,6 +197,11 @@ public:
      */
     void printRobotInfo(size_t robotIndex);
 
+    /**
+     * \brief Update the transforms of all the dart objects in the SkeletonNodes
+     * of the DartNode for the next culling and drawing events.
+     * \return void
+     */
     void update();
     
 protected:
@@ -188,8 +225,12 @@ protected:
 
     /// Standard vector of pointers to Skeletons
     simulation::World* _world;
+
+    /// Standard vector of pointers to dart::dynamics::Skeleton objects
     std::vector<dynamics::Skeleton*> _robots;
-    std::vector<SkeletonNode*> _skeletonNodes;
+
+    /// Standard vector of pointers to SkeletonNode objects
+    std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;
 
 };
 

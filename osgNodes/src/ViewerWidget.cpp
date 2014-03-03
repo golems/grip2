@@ -50,6 +50,7 @@
 #include "CameraCallback.h"
 #include "CameraManipulator.h"
 #include "Grid.h"
+#include <osg/ShapeDrawable>
 
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
@@ -62,6 +63,7 @@ void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
     setThreadingModel(threadingModel);
+//    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
     // Create scene data
 //    osg::Node* sceneData = getSceneData();
@@ -76,7 +78,7 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     setLayout(layout);
 
     connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
-    _timer.start(10);
+    _timer.start(1);
 }
 
 QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
@@ -136,6 +138,42 @@ void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
         this->getView(i)->getCameraManipulator()->setByMatrix(m);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
             dynamic_cast<osgGA::OrbitManipulator*>(this->getView(0)->getCameraManipulator());
+        c->setCenter(osg::Vec3f(0, 0, 0));
+    }
+}
+
+void ViewerWidget::setToTopView()
+{
+    osg::Matrixd m;
+    m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
+    m.setTrans(0, 0, 1);
+    this->setCameraMatrix(m);
+}
+
+void ViewerWidget::setToFrontView()
+{
+    osg::Matrixd m;
+    m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
+    m.postMultRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
+    m.setTrans(1, 0, 0);
+    this->setCameraMatrix(m);
+}
+
+void ViewerWidget::setToSideView()
+{
+    osg::Matrixd m;
+    m.makeRotate(M_PI, osg::Vec3(0, 0, 1));
+    m.postMultRotate(osg::Quat(-M_PI/2, osg::Vec3(1, 0, 0)));
+    m.setTrans(0, 1, 0);
+    this->setCameraMatrix(m);
+}
+
+void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
+{
+    if(viewNumIsValid(viewNum)) {
+        this->getCameraManipulator(viewNum)->setByMatrix(newMatrix);
+        osg::ref_ptr<osgGA::OrbitManipulator> c =
+            dynamic_cast<osgGA::OrbitManipulator*>(this->getCameraManipulator(viewNum));
         c->setCenter(osg::Vec3f(0, 0, 0));
     }
 }

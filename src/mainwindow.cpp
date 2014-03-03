@@ -120,15 +120,15 @@ void MainWindow::close(){}
 void MainWindow::exit(){}
 void MainWindow::front()
 {
-    viewWidget->setViewMatrix(0, frontView);
+    viewWidget->setToFrontView();
 }
 void MainWindow::top()
 {
-    viewWidget->setViewMatrix(0, topView);
+    viewWidget->setToTopView();
 }
 void MainWindow::side()
 {
-    viewWidget->setViewMatrix(0, sideView);
+    viewWidget->setToSideView();
 }
 void MainWindow::startSimulation()
 {
