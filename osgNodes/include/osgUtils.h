@@ -51,7 +51,11 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
 
-namespace osgUtils {
+/**
+ * \namespace osgGolems
+ * \brief Namespace to encompass the general OpenSceneGraph utilities
+ */
+namespace osgGolems {
 
 /**
  * \brief Creates a osgViewer::View pointer with the specified location
@@ -72,6 +76,7 @@ void addNodeToScene(osg::Group* scene);
 /**
  * \brief Convert Eigen::Isometry3d matrix to an osg::Matrix.
  * osg::Matrix is transposed.
+ * \param tf Eigen::Isometry3d to be converted. Passed in by reference
  * \return osg::Matrix
  */
 inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3d& tf)
@@ -86,6 +91,7 @@ inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3d& tf)
 /**
  * \brief Convert Eigen::Isometry3f matrix to an osg::Matrix.
  * osg::Matrix is transposed.
+ * \param tf Eigen::Isometry3f to be converted. Passed in by reference
  * \return osg::Matrix
  */
 inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3f& tf)
@@ -97,6 +103,11 @@ inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3f& tf)
     return output;
 }
 
+/**
+ * \brief Convert Eigen::Vector3d vector to an osg::Vec3d
+ * \param vec Eigen::Vector3d to be converted. Passed in by reference
+ * \return osg::Vec3d
+ */
 inline osg::Vec3d eigToOsgVec(const Eigen::Vector3d& vec)
 {
     osg::Vec3d output;

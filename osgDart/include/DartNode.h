@@ -44,8 +44,10 @@
 
 /**
  * \file DartNode.h
- * \brief Class that is a subclass of osg::Group, which is the main\n
- * object for DART visualization in OpenSceneGraph
+ * \brief Class that is a subclass of osg::Group, which is the main
+ * object for DART visualization in OpenSceneGraph. It can contain many
+ * SkeletonNodes as parts of a simulation world. In essence, a DartNode is
+ * the largest visualization object.
  */
 
 #ifndef DARTNODE_H
@@ -63,27 +65,67 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+#include "SkeletonNode.h"
+
 using namespace dart;
 
+/**
+ * \namespace osgDart
+ * \brief Namespace containing all the classes and functionality relating to the
+ * intersection of DART and OpenSceneGraph.
+ */
 namespace osgDart {
 
 /**
  * \class DartNode DartNode.h
  * \brief Class that is a subclass of osg::Group, which is the main
- * object for DART visualization in OpenSceneGraph
+ * object for DART visualization in OpenSceneGraph. It can contain many
+ * SkeletonNodes as parts of a simulation world. In essence, a DartNode is
+ * the largest visualization object.
  */
 class DartNode : public osg::Group
 {
 public:
+
+    //---------------------------------------------------------------
+    //                       PUBLIC FUNCTIONS
+    //---------------------------------------------------------------
 
     /**
      * \brief Constructor for DartNode
      */
     DartNode();
 
+    /**
+     * \brief Create a dart::dynamics::Skeleton pointer from a robot urdf file
+     * using DART's DartLoader.
+     * \param urdfFile The name of the urdf file
+     * \return Pointer to the dynamics::Skeleton object
+     */
     dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
+
+    /**
+     * \brief Create a dart::simulation::World pointer from a world urdf file
+     * using DART's DartLoader.
+     * \param urdfFile The name of the urdf file
+     * \return Pointer to the simulation::World object
+     */
     simulation::World* parseWorldUrdf(std::string urdfFile);
+
+    /**
+     * \brief Add a dart::simulation::World to the DartNode using the name of
+     * a world urdf file.
+     * \param urdfFile The name of the urdf file
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
     int addWorld(std::string urdfFile);
+
+    /**
+     * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
+     * a robot urdf file.
+     * \param urdfFile The name of the urdf file
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
     int addRobot(std::string urdfFile);
 
     /**
@@ -91,24 +133,60 @@ public:
      * \param robot New robot to add to the DartNode
      * \return Index (size_t) of the newly added robot
      */
-    size_t addRobot(dynamics::Skeleton& robot);
-    size_t addWorld(simulation::World& world);
+    size_t addRobot(dynamics::Skeleton* robot);
+
+    /**
+     * \brief Add a world to the DartNode. The world may consist
+     * of one or more objects or robots, all represented as Skeletons,
+     * each with a world transformation.
+     * \param world The dart::simulation::World object passed in by reference
+     * that contains one or more dart::dynamics::Skeleton objects.
+     * \return Index of the last object added
+     */
+    size_t addWorld(simulation::World *world);
 
     /**
      * \brief Get robot via index (size_t)
      * \param robotIndex Index of the robot you want
      * \return a dart::dynamics::Skeleton robot
      */
-    dynamics::Skeleton* getRobot(size_t robotIndex);
+    dynamics::Skeleton* getRobot(size_t robotIndex=0);
 
+    simulation::World* getWorld();
+
+    /**
+     * \brief Print out meta information of the robot
+     * \param robotIndex Index of the robot about which to print info
+     * \return void
+     */
     void printRobotInfo(size_t robotIndex);
+
+    void update();
     
 protected:
 
-    /// Standard vector of pointers to Skeletons
-    std::vector<dynamics::Skeleton*> _robots;
+    //---------------------------------------------------------------
+    //                       PROTECTED FUNCTIONS
+    //---------------------------------------------------------------
 
-    bool robotIndexIsValid(size_t robotIndex);
+    /**
+     * \brief Helper function to determine if the index the user passed in to
+     * specify a robot is valid.
+     * \param robotIndex The index of the desired robot
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int robotIndexIsValid(size_t robotIndex);
+
+
+    //---------------------------------------------------------------
+    //                       PROTECTED VARIABLES
+    //---------------------------------------------------------------
+
+    /// Standard vector of pointers to Skeletons
+    simulation::World* _world;
+    std::vector<dynamics::Skeleton*> _robots;
+    std::vector<SkeletonNode*> _skeletonNodes;
+
 };
 
 } // end namespace osgDart

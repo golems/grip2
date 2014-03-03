@@ -43,14 +43,16 @@
  */
 
 #include <QtGui>
-#include "mainwindow.h"
-#include "ViewerWidget.h"
 #include <iostream>
 #include <cstdio>
 #include <fstream>
-#include <osg/io_utils>
 
-//including the icons for the toolbar
+#include "mainwindow.h"
+
+///including the osg gl widget
+#include "ViewerWidget.h"
+
+///including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
 #include "icons/simulate.xpm"
@@ -61,15 +63,19 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-#include <QString>
-#include "Grid.h"
-#include "DartNode.h"
+///including tab files
 #include "visualizer.h"
 #include "ui_visualizer.h"
 #include "inspector.h"
 #include "ui_inspector.h"
 #include "tree_view.h"
 #include "ui_tree_view.h"
+
+///including the files for dart and osg
+#include "Grid.h"
+#include "DartNode.h"
+#include <osg/io_utils>
+#include <dart/utils/urdf/DartLoader.h>
 
 using namespace std;
 
@@ -84,7 +90,6 @@ MainWindow::MainWindow()
     setWindowTitle(tr("Grip2"));
     resize(860, 700);
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -386,10 +391,11 @@ void MainWindow::createMenus()
 
 void MainWindow::createOsgWindow()
 {
+    std::cerr << "Adding viewer widget" << std::endl;
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
-    // Add grid
     viewWidget->addGrid(20, 20, 1);
+
 
     setCentralWidget(viewWidget);
     frontView = viewWidget->getViewMatrix();
@@ -401,8 +407,6 @@ void MainWindow::createTreeView()
 {
     treeviewer = new Tree_View(this);
     this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
-    //treeviewer->addParent("test");
-    //treeviewer->addChild("child test", "test");
 }
 
 void MainWindow::createTabs()

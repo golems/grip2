@@ -42,6 +42,11 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef DEBUG_BUILD
+#define DEBUG(x) do { std::cerr << x; } while (0); std::cerr << std::endl;
+#else
+#define DEBUG(x)
+#endif
 
 #include "CameraManipulator.h"
 

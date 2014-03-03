@@ -58,7 +58,7 @@ void Tree_View::addChild(QString name, QString pname)
 
 void Tree_View::populateTreeView(osgDart::DartNode *world, int numRobots)
 {
-    for (int i = 0; i<= numRobots; i++)
+    for (int i = 0; i< numRobots; i++)
     {
         cout<<"In the tree view populate method "<<numRobots<<endl;
         dynamics::Skeleton* skel = world->getRobot(i);

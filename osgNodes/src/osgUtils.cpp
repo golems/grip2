@@ -53,7 +53,7 @@
 #include <osg/ShapeDrawable>
 #include "Axes.h"
 
-osgViewer::View* osgUtils::createView(int x, int y, int w, int h, osg::Node* scene)
+osgViewer::View* osgGolems::createView(int x, int y, int w, int h, osg::Node* scene)
 {
     osgViewer::View* view = new osgViewer::View;
     osgGA::OrbitManipulator* cameraManipulator = new osgGA::OrbitManipulator();
@@ -68,12 +68,12 @@ osgViewer::View* osgUtils::createView(int x, int y, int w, int h, osg::Node* sce
     return view;
 }
 
-void osgUtils::addNodeToScene(osg::Group* scene)
+void osgGolems::addNodeToScene(osg::Group* scene)
 {
-    scene->addChild(osgUtils::createNode());
+    scene->addChild(osgGolems::createNode());
 }
 
-osg::Node* osgUtils::createNode()
+osg::Node* osgGolems::createNode()
 {
     //                 --- tf1 --- geode --- cylinder
     // root --- rootTF |

@@ -67,16 +67,15 @@ class MainWindow : public QMainWindow , private Ui::Visualizer, private Ui::Insp
     Q_OBJECT
 
 public:
-    //MainWindow(QWidget *parent = 0);
     MainWindow();
     ~MainWindow();
     void Toolbar();
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
-    //QDockWidget *tree;
     Visualizer *visualizertab;
     Inspector  *inspectortab;
-    //QDockWidget *visualizertab;
+
+    osgDart::DartNode* dartNode;
 
     osg::Matrixd frontView, sideView, topView;
 
