@@ -63,6 +63,7 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
+
 ///including tab files
 #include "visualizer.h"
 #include "ui_visualizer.h"
@@ -84,6 +85,7 @@ MainWindow::MainWindow()
     createActions();
     createMenus();
     createOsgWindow();
+    gray();
     createTreeView();
     createTabs();
 
@@ -138,7 +140,7 @@ void MainWindow::load()
     QStringList fileNames; //stores the entire path of the file that it attempts to open
 
     QStringList filters; //setting file filters
-    filters << "Scene files (*.urdf *.sdf)"
+    filters << "Scene files (*.urdf *.sdf *.world)"
             << "Any files (*)";
 
     //initializing the File dialog box
@@ -172,10 +174,12 @@ void MainWindow::quickLoad()
 
 void MainWindow::doLoad(string fileName)
 {
-    osgDart::DartNode* dartNode = new osgDart::DartNode();
-    int numRobots = dartNode->addWorld(fileName);
-    viewWidget->addNodeToScene(dartNode);
-    treeviewer->populateTreeView(dartNode, numRobots);
+    worldNode = new osgDart::DartNode();
+    int numRobots = worldNode->addWorld(fileName);
+    viewWidget->addNodeToScene(worldNode);
+    worldNode->printInfo();
+
+    treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
@@ -206,17 +210,17 @@ void MainWindow::exit(){}
 
 void MainWindow::front()
 {
-    viewWidget->setViewMatrix(0, frontView);
+    viewWidget->setToFrontView();
 }
 
 void MainWindow::top()
 {
-    viewWidget->setViewMatrix(0, topView);
+    viewWidget->setToTopView();
 }
 
 void MainWindow::side()
 {
-    viewWidget->setViewMatrix(0, sideView);
+    viewWidget->setToSideView();
 }
 
 void MainWindow::startSimulation()
@@ -233,6 +237,11 @@ void MainWindow::white()
 {
     viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
 }
+void MainWindow::gray()
+{
+    viewWidget->setBackgroundColor(osg::Vec4(.5, .5, .5, 1));
+}
+
 void MainWindow::black()
 {
     viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
@@ -316,6 +325,10 @@ void MainWindow::createActions()
     whiteAct = new QAction(tr("White"), this);
     connect(whiteAct, SIGNAL(triggered()), this, SLOT(white()));
 
+    //grayAct
+    grayAct = new QAction(tr("Gray"), this);
+    connect(grayAct, SIGNAL(triggered()), this, SLOT(gray()));
+
     //BlackAct
     blackAct = new QAction(tr("Black"), this);
     connect(blackAct, SIGNAL(triggered()), this, SLOT(black()));
@@ -374,6 +387,7 @@ void MainWindow::createMenus()
     //backgroundMenu
     backgroundMenu = settingsMenu->addMenu(tr("Background"));
     backgroundMenu->addAction(whiteAct);
+    backgroundMenu->addAction(grayAct);
     backgroundMenu->addAction(blackAct);
     //settings Menu contd...
     settingsMenu->addAction(resetCameraAct);
@@ -395,7 +409,6 @@ void MainWindow::createOsgWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-
 
     setCentralWidget(viewWidget);
     frontView = viewWidget->getViewMatrix();

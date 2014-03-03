@@ -18,14 +18,6 @@ Tree_View::Tree_View(QWidget *parent) :
 {
     ui->setupUi(this);
     ui_treeWidget = ui->treeWidget;
-    /*
-    QTreeWidgetItem *itm = new QTreeWidgetItem(ui->treeWidget);
-    itm->setText(0, "test");
-    ui->treeWidget->addTopLevelItem(itm);
-    QTreeWidgetItem *childitm = new QTreeWidgetItem();
-    childitm->setText(0, "child test");
-    itm->addChild(childitm);
-    */
 }
 
 Tree_View::~Tree_View()
@@ -56,17 +48,21 @@ void Tree_View::addChild(QString name, QString pname)
     }
 }
 
-void Tree_View::populateTreeView(osgDart::DartNode *world, int numRobots)
+void Tree_View::populateTreeView(simulation::World *world, int numRobots)
 {
-    for (int i = 0; i< numRobots; i++)
+    for (int i = 0; i<numRobots; ++i)
     {
         cout<<"In the tree view populate method "<<numRobots<<endl;
-        dynamics::Skeleton* skel = world->getRobot(i);
-        addParent(QString::fromStdString(skel->getName()));
+        dynamics::Skeleton* skel = world->getSkeleton(i);
+        if(skel) {
+            addParent(QString::fromStdString(skel->getName()));
 
-        for (int j = 0; j<skel->getNumBodyNodes(); j++)
-        {
-            addChild(QString::fromStdString(skel->getBodyNode(j)->getName()), QString::fromStdString(skel->getName()));
+            for (int j = 0; j<skel->getNumBodyNodes(); j++)
+            {
+                addChild(QString::fromStdString(skel->getBodyNode(j)->getName()), QString::fromStdString(skel->getName()));
+            }
+        } else {
+            std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     }
 }

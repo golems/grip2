@@ -3,7 +3,9 @@
 
 #include <QDockWidget>
 #include "ui_tree_view.h"
-#include "../../osgDart/include/DartNode.h"
+#include <dart/simulation/World.h>
+
+using namespace dart;
 
 namespace Ui {
 class Tree_View;
@@ -15,7 +17,7 @@ class Tree_View : public QDockWidget
     
 public:
     explicit Tree_View(QWidget *parent = 0);
-    void populateTreeView(osgDart::DartNode* world, int numRobots);
+    void populateTreeView(simulation::World* world, int numRobots);
     ~Tree_View();
     
 private:

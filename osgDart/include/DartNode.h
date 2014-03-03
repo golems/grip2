@@ -54,7 +54,6 @@
 #define DARTNODE_H
 
 // DART includes
-#include <dart/utils/urdf/DartLoader.h>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/BodyNode.h>
@@ -65,6 +64,7 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+// osgDart includes
 #include "SkeletonNode.h"
 
 using namespace dart;
@@ -76,6 +76,10 @@ using namespace dart;
  */
 namespace osgDart {
 
+/// Definition of type SkeletonNodeMap, which maps dart::dynamics::Skeleton* to SkeletonNode*
+typedef std::map<dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
+
+
 /**
  * \class DartNode DartNode.h
  * \brief Class that is a subclass of osg::Group, which is the main
@@ -83,7 +87,7 @@ namespace osgDart {
  * SkeletonNodes as parts of a simulation world. In essence, a DartNode is
  * the largest visualization object.
  */
-class DartNode : public osg::Group
+class DartNode : public osg::Switch
 {
 public:
 
@@ -105,6 +109,14 @@ public:
     dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
 
     /**
+     * \brief Create a dart::simulation::World pointer from a world sdf file
+     * using DART's Sdf parser.
+     * \param sdfFile The name of the world sdf file
+     * \return Pointer to the simulation::World object
+     */
+    simulation::World* parseWorldSdf(std::string sdfFile);
+
+    /**
      * \brief Create a dart::simulation::World pointer from a world urdf file
      * using DART's DartLoader.
      * \param urdfFile The name of the urdf file
@@ -118,7 +130,17 @@ public:
      * \param urdfFile The name of the urdf file
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int addWorld(std::string urdfFile);
+    int addWorldFromUrdf(std::string urdfFile);
+
+    /**
+     * \brief Add a dart::simulation::World to the DartNode using the name of
+     * a world sdf file.
+     * \param sdfFile The name of the sdf file
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int addWorldFromSdf(std::string sdfFile);
+
+    int addWorld(std::string file);
 
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
@@ -152,6 +174,26 @@ public:
      */
     dynamics::Skeleton* getRobot(size_t robotIndex=0);
 
+    /**
+     * \brief Remove robot from DartNode by passing in the pointer to
+     * the dart::dynamics::Skeleton to be removed.
+     * \param robot Robot to remove from the DartNode
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int removeRobot(dart::dynamics::Skeleton* robotToRemoove);
+
+    /**
+     * \brief Remove robot from DartNode by passing in the index of the robot
+     * to be removed.
+     * \param robot Robot to remove from the DartNode
+     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     */
+    int removeRobot(size_t robotIndex=0);
+
+    /**
+     * \brief Get a pointer to the World object in the DartNode.
+     * \return simulation::World pointer
+     */
     simulation::World* getWorld();
 
     /**
@@ -159,9 +201,16 @@ public:
      * \param robotIndex Index of the robot about which to print info
      * \return void
      */
-    void printRobotInfo(size_t robotIndex);
+    void printInfo();
 
+    /**
+     * \brief Update the transforms of all the dart objects in the SkeletonNodes
+     * of the DartNode for the next culling and drawing events.
+     * \return void
+     */
     void update();
+
+    void hideRobot(int i);
     
 protected:
 
@@ -184,8 +233,14 @@ protected:
 
     /// Standard vector of pointers to Skeletons
     simulation::World* _world;
+
+    /// Standard vector of pointers to dart::dynamics::Skeleton objects
     std::vector<dynamics::Skeleton*> _robots;
-    std::vector<SkeletonNode*> _skeletonNodes;
+
+    /// Standard vector of pointers to SkeletonNode objects
+    std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;
+
+    SkeletonNodeMap _skelNodeMap;
 
 };
 

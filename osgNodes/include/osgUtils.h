@@ -50,6 +50,8 @@
 #include <osgGA/OrbitManipulator>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
+#include <iostream>
+#include <osg/io_utils>
 
 /**
  * \namespace osgGolems
@@ -100,6 +102,7 @@ inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3f& tf)
     for(ushort i=0; i<4; ++i)
         for(ushort j=0; j<4; ++j)
             output(i,j) = tf(j,i);
+
     return output;
 }
 
@@ -108,13 +111,29 @@ inline osg::Matrix eigToOsgMatrix(const Eigen::Isometry3f& tf)
  * \param vec Eigen::Vector3d to be converted. Passed in by reference
  * \return osg::Vec3d
  */
-inline osg::Vec3d eigToOsgVec(const Eigen::Vector3d& vec)
+inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
 {
-    osg::Vec3d output;
+    osg::Vec3 output;
     for(ushort i=0; i<3; ++i) {
         output[i] = vec[i];
     }
+    return output;
 }
+
+
+/**
+ * \brief Convert Eigen::Vector3d vector to an osg::Vec3d
+ * \param vec Eigen::Vector3d to be converted. Passed in by reference
+ * \return osg::Vec3d
+ */
+//inline osg::Vec3f eigToOsgVec3f(const Eigen::Vector3d& vec)
+//{
+//    osg::Vec3f output;
+//    for(ushort i=0; i<3; ++i) {
+//        output[i] = (float)vec[i];
+//    }
+//    return output;
+//}
 
 } // end of osgUtils namespace
 

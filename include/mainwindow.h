@@ -54,6 +54,7 @@
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
 #include "ui_tree_view.h"
+#include "DartNode.h"
 
 using namespace std;
 
@@ -74,9 +75,8 @@ public:
     Tree_View* treeviewer;
     Visualizer *visualizertab;
     Inspector  *inspectortab;
-
     osgDart::DartNode* dartNode;
-
+    osgDart::DartNode* worldNode;
     osg::Matrixd frontView, sideView, topView;
 
 private slots:
@@ -93,6 +93,7 @@ private slots:
     void simulateSingleStep();
     void renderDuringSimulation();
     void white();
+    void gray();
     void black();
     void resetCamera();
     void xga1024x768();
@@ -130,6 +131,7 @@ private:
     QAction *simulateSingleStepAct;
     QAction *renderDuringSimulationAct;
     QAction *whiteAct;
+    QAction *grayAct;
     QAction *blackAct;
     QAction *resetCameraAct;
     QAction *xga1024x768Act;
