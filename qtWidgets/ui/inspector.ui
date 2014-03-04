@@ -98,11 +98,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-<<<<<<< HEAD
           <widget class="QSlider" name="positionSlider_0">
-=======
-          <widget class="QSlider" name="horizontalSlider_9">
->>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -113,11 +109,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-<<<<<<< HEAD
           <widget class="QDoubleSpinBox" name="positionSpinBox_0">
-=======
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
->>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
