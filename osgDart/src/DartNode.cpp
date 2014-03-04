@@ -78,7 +78,7 @@ dynamics::Skeleton* DartNode::parseRobotUrdf(std::string urdfFile)
     utils::DartLoader loader;
     dynamics::Skeleton* robot = loader.parseSkeleton(urdfFile);
     if(!robot) {
-        std::cerr << "Error parsing robot urdf " << urdfFile << std::endl;
+        std::cerr << "[parseRobotUrdf] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed robot urdf " << urdfFile);
@@ -91,7 +91,7 @@ simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
     utils::SdfParser loader;
     simulation::World* world = loader.readSdfFile(sdfFile);
     if(!world) {
-        std::cerr << "Error parsing world sdf " << sdfFile << std::endl;
+        std::cerr << "[parseRobotSdf] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed world sdf " << sdfFile);
@@ -105,7 +105,7 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     utils::DartLoader loader;
     simulation::World* world = loader.parseWorld(urdfFile);
     if(!world) {
-        std::cerr << "Error parsing world urdf " << urdfFile << std::endl;
+        std::cerr << "[parseWorldUrdf] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed world urdf " << urdfFile);
@@ -122,17 +122,17 @@ int DartNode::addWorld(std::string file)
         this->addWorld(world);
         return 1;
     } else {
-        world = parseWorldSdf(file);
-        if(world) {
-            this->addWorld(world);
+        dynamics::Skeleton* skel = parseRobotUrdf(file);
+        if(skel) {
+            this->addRobot(skel);
             return 1;
         } else {
-            dynamics::Skeleton* skel = parseRobotUrdf(file);
-            if(skel) {
-                this->addRobot(skel);
+            world = parseWorldSdf(file);
+            if(world) {
+                this->addWorld(world);
                 return 1;
             } else {
-                std::cerr << "In addWorld: Not adding world" << std::endl;
+                std::cerr << "[addWorld] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
                 return 0;
             }
         }
@@ -146,7 +146,7 @@ int DartNode::addWorldFromSdf(std::string sdfFile)
         addWorld(world);
         return 1;
     } else {
-        std::cerr << "In addWorldFromSdf: Not adding world" << std::endl;
+        std::cerr << "[addWorldFromSdf] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return 0;
     }
 }

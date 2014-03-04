@@ -170,12 +170,16 @@ void MainWindow::doLoad(string fileName)
 {
     osgDart::DartNode* worldNode = new osgDart::DartNode();
     int numRobots = worldNode->addWorld(fileName);
-    viewWidget->addNodeToScene(worldNode);
-    mWorld = worldNode->getWorld();
+    if(worldNode->getWorld()) {
+        viewWidget->addNodeToScene(worldNode);
+        mWorld = worldNode->getWorld();
 
-    treeviewer->populateTreeView(mWorld, numRobots);
-    cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
-    saveText(fileName,".lastload");
+        treeviewer->populateTreeView(mWorld, numRobots);
+        cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
+        saveText(fileName,".lastload");
+    } else {
+        std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
+    }
 }
 
 int MainWindow::saveText(string scenepath, const char* llfile)
