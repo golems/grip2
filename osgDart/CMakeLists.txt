@@ -21,6 +21,7 @@ endif()
 
 # Include include directory
 include_directories(include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../osgNodes/include)
 
 
 #-----------------------------------------------

@@ -44,9 +44,12 @@
 
 #include <QtGui>
 #include "mainwindow.h"
-#include "tree_view.h"
 #include "ViewerWidget.h"
+#include <iostream>
+#include <cstdio>
+#include <fstream>
 #include <osg/io_utils>
+
 //including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
@@ -57,6 +60,7 @@
 #include "icons/frontView.xpm"
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
+
 #include <QString>
 #include "Grid.h"
 #include "DartNode.h"
@@ -64,7 +68,14 @@
 #include "ui_visualizer.h"
 #include "inspector.h"
 #include "ui_inspector.h"
+<<<<<<< HEAD
 #include <dart/utils/urdf/DartLoader.h>
+=======
+#include "tree_view.h"
+#include "ui_tree_view.h"
+
+using namespace std;
+>>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
 
 MainWindow::MainWindow()
 {
@@ -75,16 +86,8 @@ MainWindow::MainWindow()
     createTreeView();
     createTabs();
 
- /* test for tab display */
- //   QDockWidget *widget = new QDockWidget(this);
- //   Ui_Visualizer::setupUi(widget);
- //   this->addDockWidget(Qt::BottomDockWidgetArea, widget);
- //   widget->show();
-
-
     setWindowTitle(tr("Grip2"));
-    //setMinimumSize(860, 640);
-    resize(860, 640);
+    resize(860, 700);
 }
 
 
@@ -130,26 +133,105 @@ void MainWindow::Toolbar()
 }
 
 
-void MainWindow::load(){}
-void MainWindow::quickLoad(){}
+void MainWindow::load()
+{
+    QStringList fileNames; //stores the entire path of the file that it attempts to open
+
+    QStringList filters; //setting file filters
+    filters << "Scene files (*.urdf *.sdf *.world)"
+            << "Any files (*)";
+
+    //initializing the File dialog box
+    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+    //as per the documentation it may work correctly with gnome
+    //the method used below should work correctly on all desktops and is supposedly more powerful
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if (!fileNames.isEmpty())
+    {
+        cout<<"Attempting to open the following world file: "<<fileNames.front().toStdString() <<endl;
+        doLoad(fileNames.front().toStdString());
+    }
+}
+
+void MainWindow::quickLoad()
+{
+    QFile file(".lastload");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream in(&file);
+    QString line = in.readLine();
+    doLoad(line.toStdString());
+}
+
+void MainWindow::doLoad(string fileName)
+{
+    worldNode = new osgDart::DartNode();
+    int numRobots = worldNode->addWorld(fileName);
+    if(worldNode->getWorld()) {
+        viewWidget->addNodeToScene(worldNode);
+        mWorld = worldNode->getWorld();
+
+        treeviewer->populateTreeView(mWorld, numRobots);
+        cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
+        saveText(fileName,".lastload");
+    } else {
+        std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
+    }
+    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
+    worldNode->removeRobot(new dynamics::Skeleton);
+    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
+
+}
+
+int MainWindow::saveText(string scenepath, const char* llfile)
+{
+    try
+    {
+        QFile file(llfile);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return 0;
+        QTextStream out(&file);
+        out << QString::fromStdString(scenepath) << "\n";
+    }
+
+    catch (const std::exception& e)
+    {
+        cout <<  e.what() << endl;
+        return 0;
+    }
+    return 1;
+}
+
 void MainWindow::saveScene(){}
 void MainWindow::close(){}
 void MainWindow::exit(){}
+
 void MainWindow::front()
 {
     viewWidget->setToFrontView();
 }
+
 void MainWindow::top()
 {
     viewWidget->setToTopView();
 }
+
 void MainWindow::side()
 {
     viewWidget->setToSideView();
 }
+
 void MainWindow::startSimulation()
 {
 }
+
 void MainWindow::stopSimulation()
 {
 }
@@ -333,38 +415,14 @@ void MainWindow::createOsgWindow()
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
     setCentralWidget(viewWidget);
-
-    // Add robot
-    dartNode = new osgDart::DartNode();
-//    dartNode->addWorldFromUrdf("/home/pete/otherRepos/grip-samples/scenes/hubo_world_with_table4.urdf");
-//    dartNode->addWorldFromSdf("../../../otherRepos/dart/data/sdf/double_pendulum.world");
-    dartNode->addRobot("../models/drchubo_v2/robots/drchubo_v2.urdf");
-//    dartNode->addWorldFromSdf("../../../otherRepos/gazebo_models/simple_arm/model.sdf");
-//    dartNode->addRobot("../models/test.urdf");
-    std::cerr << "loaded" << std::endl;
-    dynamics::Skeleton* robot;
-    if(robot = dartNode->getRobot()) {
-        std::cerr << "Robot: " << robot->getName() << std::endl;
-
-        std::vector<int> ind(1);
-        ind[0] = robot->getJoint("LSP")->getGenCoord(0)->getSkeletonIndex();
-        Eigen::VectorXd q(1);
-        q[0] = .3;
-        robot->setConfig(ind, q);
-        viewWidget->addNodeToScene(dartNode);
-    } else {
-        std::cerr << "Didn't find a robot" << std::endl;
-    }
-
 }
 
 void MainWindow::createTreeView()
 {
-    tree = new QDockWidget(tr("Object Viewer"), this);
-    //tree->setFloating(true);
-    treeviewer = new TreeView(tree);
-    tree->setWidget(treeviewer->treeView);
-    addDockWidget(Qt::RightDockWidgetArea, tree);
+    treeviewer = new Tree_View(this);
+    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
+    //treeviewer->addParent("test");
+    //treeviewer->addChild("child test", "test");
 }
 
 void MainWindow::createTabs()
@@ -373,11 +431,9 @@ void MainWindow::createTabs()
     setDockOptions(QMainWindow::VerticalTabs);
 
     QDockWidget *viztabwidget = new QDockWidget(this);
-    //visualizer_ui.setupUi(widget);
     Ui_Visualizer::setupUi(viztabwidget);
-    //setMainWidget(widget);
-    //Ui_Visualizer::setupUi(this);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
+<<<<<<< HEAD
     //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
@@ -393,13 +449,17 @@ void MainWindow::createTabs()
 
     //connect(Ui_Inspector->positionSlider_0, SIGNAL(valueChanged(int)),Ui_Inspector->positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
     //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
+=======
+
+    QDockWidget *instabwidget = new QDockWidget(this);
+    Ui_Inspector::setupUi(instabwidget);
+    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
+>>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
 
     tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
     viztabwidget->raise();
     //viztabwidget->set
 
-
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
- 
 }

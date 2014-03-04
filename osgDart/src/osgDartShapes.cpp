@@ -82,7 +82,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
 
     switch (inputShape->getShapeType()) {
         case dynamics::Shape::BOX: {
-            DEBUG("Box");
+//            DEBUG("Box");
             dynamics::BoxShape* shape = (dynamics::BoxShape*)inputShape;
             osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getDim());
             osg::ShapeDrawable* osgShape =
@@ -95,7 +95,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
             break;
         }
         case dynamics::Shape::ELLIPSOID: {
-            DEBUG("Ellipsoid");
+//            DEBUG("Ellipsoid");
             dynamics::EllipsoidShape* shape = (dynamics::EllipsoidShape*)shape;
             osg::ShapeDrawable* osgBox =
                     new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), .3));
@@ -107,7 +107,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
             break;
         }
         case dynamics::Shape::CYLINDER: {
-            DEBUG("Cylinder");
+//            DEBUG("Cylinder");
             dynamics::CylinderShape* shape = (dynamics::CylinderShape*)inputShape;
             osg::ShapeDrawable* osgShape =
                     new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0,0,0), (float)shape->getRadius(), (float)shape->getHeight()));
@@ -133,7 +133,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
 
 osg::Node* osgDart::convertMeshToOsgNode(dynamics::Shape* mesh)
 {
-    DEBUG("Mesh");
+//    DEBUG("Mesh");
     dynamics::MeshShape* meshShape = (dynamics::MeshShape*)mesh;
     const aiScene* aiscene = meshShape->getMesh();
     aiNode* ainode = NULL;

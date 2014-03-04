@@ -119,7 +119,7 @@ osg::Camera* ViewerWidget::createCamera(int x, int y, int w, int h, const std::s
 
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
     camera->setGraphicsContext(new osgQt::GraphicsWindowQt(traits.get()));
-    camera->setClearColor(osg::Vec4(0.0, 0.0, 0.0, 1.0));
+    camera->setClearColor(osg::Vec4(0.0, 0.0, 0.0, 0.0));
     camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
     camera->setProjectionMatrixAsPerspective(
         30.0f, static_cast<double>(traits->width)/static_cast<double>(traits->height), 1.0f, 10000.0f);
@@ -137,7 +137,7 @@ void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
     if(viewNumIsValid(i)) {
         this->getView(i)->getCameraManipulator()->setByMatrix(m);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
-            dynamic_cast<osgGA::OrbitManipulator*>(this->getView(0)->getCameraManipulator());
+            dynamic_cast<osgGA::OrbitManipulator*>(this->getView(i)->getCameraManipulator());
         c->setCenter(osg::Vec3f(0, 0, 0));
     }
 }
@@ -148,6 +148,10 @@ void ViewerWidget::setToTopView()
     m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
     m.setTrans(0, 0, 1);
     this->setCameraMatrix(m);
+    // 0  1  0  0
+    //-1  0  0  0
+    // 0  0  1  0
+    // 0  0  1  1
 }
 
 void ViewerWidget::setToFrontView()
@@ -157,6 +161,10 @@ void ViewerWidget::setToFrontView()
     m.postMultRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
     m.setTrans(1, 0, 0);
     this->setCameraMatrix(m);
+    // 0  1  0  0
+    // 0  0  1  0
+    // 1  0  0  0
+    // 1  0  0  1
 }
 
 void ViewerWidget::setToSideView()
@@ -166,10 +174,15 @@ void ViewerWidget::setToSideView()
     m.postMultRotate(osg::Quat(-M_PI/2, osg::Vec3(1, 0, 0)));
     m.setTrans(0, 1, 0);
     this->setCameraMatrix(m);
+    //-1  0  0  0
+    // 0  0  1  0
+    // 0  1  0  0
+    // 0  1  0  1
 }
 
 void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
 {
+    std::cerr << "Camera Matrix: \n" << newMatrix << std::endl;
     if(viewNumIsValid(viewNum)) {
         this->getCameraManipulator(viewNum)->setByMatrix(newMatrix);
         osg::ref_ptr<osgGA::OrbitManipulator> c =

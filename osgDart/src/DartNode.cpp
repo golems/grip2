@@ -57,10 +57,13 @@
 #include "SkeletonNode.h"
 #include "DartNodeCallback.h"
 
+// Standard includes
+#include <stdexcept>
+
 using namespace dart;
 using namespace osgDart;
 
-DartNode::DartNode() : _world(NULL)
+DartNode::DartNode() : _world(0)
 {
     this->setUpdateCallback(new DartNodeCallback);
 }
@@ -78,7 +81,7 @@ dynamics::Skeleton* DartNode::parseRobotUrdf(std::string urdfFile)
     utils::DartLoader loader;
     dynamics::Skeleton* robot = loader.parseSkeleton(urdfFile);
     if(!robot) {
-        std::cerr << "Error parsing robot urdf " << urdfFile << std::endl;
+        std::cerr << "[parseRobotUrdf] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed robot urdf " << urdfFile);
@@ -91,7 +94,7 @@ simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
     utils::SdfParser loader;
     simulation::World* world = loader.readSdfFile(sdfFile);
     if(!world) {
-        std::cerr << "Error parsing world sdf " << sdfFile << std::endl;
+        std::cerr << "[parseRobotSdf] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed world sdf " << sdfFile);
@@ -105,7 +108,7 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     utils::DartLoader loader;
     simulation::World* world = loader.parseWorld(urdfFile);
     if(!world) {
-        std::cerr << "Error parsing world urdf " << urdfFile << std::endl;
+        std::cerr << "[parseWorldUrdf] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         DEBUG("Successfully parsed world urdf " << urdfFile);
@@ -114,38 +117,51 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 }
 
 
-int DartNode::addWorldFromUrdf(std::string urdfFile)
+size_t DartNode::addWorld(std::string file)
 {
-    simulation::World* world = parseWorldUrdf(urdfFile);
+    // try urdf first
+    simulation::World* world = parseWorldUrdf(file);
     if(world) {
-        addWorld(world);
-        return 1;
+        this->addWorld(world);
+        return _robots.size();
     } else {
-        std::cerr << "Not adding world" << std::endl;
-        return 0;
+        dynamics::Skeleton* skel = parseRobotUrdf(file);
+        if(skel) {
+            this->addRobot(skel);
+            return _robots.size();
+        } else {
+            world = parseWorldSdf(file);
+            if(world) {
+                this->addWorld(world);
+                return _robots.size();
+            } else {
+                std::cerr << "[addWorld] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
+                return _robots.size();
+            }
+        }
     }
 }
 
-int DartNode::addWorldFromSdf(std::string sdfFile)
+size_t DartNode::addWorldFromSdf(std::string sdfFile)
 {
     simulation::World* world = parseWorldSdf(sdfFile);
     if(world) {
         addWorld(world);
-        return 1;
+        return _robots.size();
     } else {
-        std::cerr << "Not adding world" << std::endl;
-        return 0;
+        std::cerr << "[addWorldFromSdf] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return _robots.size();
     }
 }
 
-int DartNode::addRobot(std::string urdfFile)
+size_t DartNode::addRobot(std::string urdfFile)
 {
     dynamics::Skeleton* robot = parseRobotUrdf(urdfFile);
     if(robot) {
         addRobot(robot);
-        return 1;
+        return _robots.size()-1;
     } else {
-        return 0;
+        return _robots.size()-1;
     }
 }
 
@@ -158,9 +174,10 @@ size_t DartNode::addRobot(dynamics::Skeleton* robot)
     _world->addSkeleton(robot);
     _robots.push_back(robot);
 
-    osg::ref_ptr<osgDart::SkeletonNode> skel = new osgDart::SkeletonNode(robot);
-    _skeletonNodes.push_back(skel);
-    this->addChild(skel);
+    osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(robot);
+    _skeletonNodes.push_back(skelNode);
+    _skelNodeMap.insert(std::make_pair(robot, skelNode));
+    this->addChild(skelNode);
     std::cerr << "Added robot:\n\t" << robot->getName() << std::endl;
 
     return _robots.size()-1;
@@ -179,9 +196,43 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
     }
 }
 
-int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemoove)
+int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemove)
 {
+    try {
+        this->removeChild(_skelNodeMap.at(robotToRemove));
+    } catch(const std::out_of_range& oor) {
+        std::cerr << "[removeRobot] Error: Out-of-range " << oor.what() << std::endl;
+        return 0;
+    }
 
+    if(_skelNodeMap.erase(robotToRemove)) {
+        return 1;
+    } else {
+        std::cerr << "[removeTried to remove a robot that doesn't exist" << std::endl;
+        return 0;
+    }
+}
+
+int DartNode::removeRobot(size_t robotIndex)
+{
+    if(robotIndexIsValid(robotIndex)) {
+        std::cerr << "Removing skeleton named: " << _robots.at(robotIndex)->getName() << std::endl;
+        if(removeRobot(_robots.at(robotIndex))) {
+            _robots.erase(_robots.begin() + robotIndex-1);
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+}
+
+void DartNode::hideRobot(int i)
+{
+    if(i < _robots.size()) {
+        this->setValue(i, false);
+    }
 }
 
 simulation::World* DartNode::getWorld()
@@ -205,13 +256,19 @@ int DartNode::robotIndexIsValid(size_t robotIndex)
     }
 }
 
-void DartNode::printRobotInfo(size_t robotIndex)
+void DartNode::printInfo()
 {
-    std::cout << "Robot[" << robotIndex << "]: "
-              << "\n\tName: " << _robots[robotIndex]->getName()
-              << "\n\tBodyNodes: " << _robots[robotIndex]->getNumBodyNodes()
-              <<
-    std::endl;
+    std::cout << "DartNode Robots:";
+    for(int i=0; i<_robots.size(); ++i) {
+        std::cout << "\n    " << _robots[i]->getName()
+                  << ": " << _robots[i]->getNumBodyNodes() << " BodyNodes";
+    }
+    std::cout << std::endl;
+}
+
+size_t DartNode::getNumSkeletons()
+{
+    return _robots.size();
 }
 
 size_t DartNode::addWorld(simulation::World* world)
@@ -226,10 +283,13 @@ size_t DartNode::addWorld(simulation::World* world)
     for(int i=0; i<world->getNumSkeletons(); ++i) {
         _robots.push_back(world->getSkeleton(i));
         DEBUG("    " << world->getSkeleton(i)->getName());
-        osgDart::SkeletonNode* skel = new osgDart::SkeletonNode(world->getSkeleton(i));
-        _skeletonNodes.push_back(skel);
-        this->addChild(skel);
+        osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(world->getSkeleton(i));
+        _skeletonNodes.push_back(skelNode);
+        _skelNodeMap.insert(std::make_pair(world->getSkeleton(i), skelNode));
+        this->addChild(skelNode);
     }
 
     return _robots.size()-1;
 }
+
+
