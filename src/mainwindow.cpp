@@ -68,14 +68,14 @@
 #include "ui_visualizer.h"
 #include "inspector.h"
 #include "ui_inspector.h"
-<<<<<<< HEAD
+
 #include <dart/utils/urdf/DartLoader.h>
-=======
+
 #include "tree_view.h"
 #include "ui_tree_view.h"
 
 using namespace std;
->>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
+
 
 MainWindow::MainWindow()
 {
@@ -433,7 +433,7 @@ void MainWindow::createTabs()
     QDockWidget *viztabwidget = new QDockWidget(this);
     Ui_Visualizer::setupUi(viztabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-<<<<<<< HEAD
+
     //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
@@ -449,12 +449,7 @@ void MainWindow::createTabs()
 
     //connect(Ui_Inspector->positionSlider_0, SIGNAL(valueChanged(int)),Ui_Inspector->positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
     //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
-=======
 
-    QDockWidget *instabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(instabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
->>>>>>> 04ca7703727882d4c6e74ef29ce69639ef024ba5
 
     tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
