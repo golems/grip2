@@ -168,7 +168,7 @@ void MainWindow::quickLoad()
 
 void MainWindow::doLoad(string fileName)
 {
-    osgDart::DartNode* worldNode = new osgDart::DartNode();
+    worldNode = new osgDart::DartNode();
     int numRobots = worldNode->addWorld(fileName);
     if(worldNode->getWorld()) {
         viewWidget->addNodeToScene(worldNode);
@@ -180,6 +180,10 @@ void MainWindow::doLoad(string fileName)
     } else {
         std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
     }
+    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
+    worldNode->removeRobot(new dynamics::Skeleton);
+    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
+
 }
 
 int MainWindow::saveText(string scenepath, const char* llfile)

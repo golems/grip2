@@ -57,6 +57,9 @@
 #include "SkeletonNode.h"
 #include "DartNodeCallback.h"
 
+// Standard includes
+#include <stdexcept>
+
 using namespace dart;
 using namespace osgDart;
 
@@ -114,51 +117,51 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 }
 
 
-int DartNode::addWorld(std::string file)
+size_t DartNode::addWorld(std::string file)
 {
     // try urdf first
     simulation::World* world = parseWorldUrdf(file);
     if(world) {
         this->addWorld(world);
-        return 1;
+        return _robots.size();
     } else {
         dynamics::Skeleton* skel = parseRobotUrdf(file);
         if(skel) {
             this->addRobot(skel);
-            return 1;
+            return _robots.size();
         } else {
             world = parseWorldSdf(file);
             if(world) {
                 this->addWorld(world);
-                return 1;
+                return _robots.size();
             } else {
                 std::cerr << "[addWorld] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
-                return 0;
+                return _robots.size();
             }
         }
     }
 }
 
-int DartNode::addWorldFromSdf(std::string sdfFile)
+size_t DartNode::addWorldFromSdf(std::string sdfFile)
 {
     simulation::World* world = parseWorldSdf(sdfFile);
     if(world) {
         addWorld(world);
-        return 1;
+        return _robots.size();
     } else {
         std::cerr << "[addWorldFromSdf] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
-        return 0;
+        return _robots.size();
     }
 }
 
-int DartNode::addRobot(std::string urdfFile)
+size_t DartNode::addRobot(std::string urdfFile)
 {
     dynamics::Skeleton* robot = parseRobotUrdf(urdfFile);
     if(robot) {
         addRobot(robot);
-        return 1;
+        return _robots.size()-1;
     } else {
-        return 0;
+        return _robots.size()-1;
     }
 }
 
@@ -195,8 +198,33 @@ dynamics::Skeleton* DartNode::getRobot(size_t robotIndex)
 
 int DartNode::removeRobot(dart::dynamics::Skeleton* robotToRemove)
 {
-    if(_skelNodeMap.at(robotToRemove)) {
-        _skelNodeMap.erase(robotToRemove);
+    try {
+        this->removeChild(_skelNodeMap.at(robotToRemove));
+    } catch(const std::out_of_range& oor) {
+        std::cerr << "[removeRobot] Error: Out-of-range " << oor.what() << std::endl;
+        return 0;
+    }
+
+    if(_skelNodeMap.erase(robotToRemove)) {
+        return 1;
+    } else {
+        std::cerr << "[removeTried to remove a robot that doesn't exist" << std::endl;
+        return 0;
+    }
+}
+
+int DartNode::removeRobot(size_t robotIndex)
+{
+    if(robotIndexIsValid(robotIndex)) {
+        std::cerr << "Removing skeleton named: " << _robots.at(robotIndex)->getName() << std::endl;
+        if(removeRobot(_robots.at(robotIndex))) {
+            _robots.erase(_robots.begin() + robotIndex-1);
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return 0;
     }
 }
 
@@ -236,6 +264,11 @@ void DartNode::printInfo()
                   << ": " << _robots[i]->getNumBodyNodes() << " BodyNodes";
     }
     std::cout << std::endl;
+}
+
+size_t DartNode::getNumSkeletons()
+{
+    return _robots.size();
 }
 
 size_t DartNode::addWorld(simulation::World* world)
