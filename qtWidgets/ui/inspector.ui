@@ -98,7 +98,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QSlider" name="horizontalSlider_9">
+          <widget class="QSlider" name="positionSlider_0">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -109,7 +109,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+          <widget class="QDoubleSpinBox" name="positionSpinBox_0">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
@@ -178,7 +178,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QSlider" name="horizontalSlider_4">
+          <widget class="QSlider" name="positionSlider_1">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -189,7 +189,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <widget class="QDoubleSpinBox" name="positionSpinBox_1">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
@@ -201,7 +201,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QSlider" name="horizontalSlider_5">
+          <widget class="QSlider" name="positionSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -212,7 +212,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+          <widget class="QDoubleSpinBox" name="positionSpinBox_2">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
@@ -224,7 +224,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QSlider" name="horizontalSlider_6">
+          <widget class="QSlider" name="positionSlider_3">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -235,7 +235,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+          <widget class="QDoubleSpinBox" name="positionSpinBox_3">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
@@ -304,7 +304,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QSlider" name="horizontalSlider">
+          <widget class="QSlider" name="orientationSlider_1">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -315,7 +315,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_1">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
 border-radius: 3px; </string>
@@ -327,7 +327,7 @@ border-radius: 3px; </string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QSlider" name="horizontalSlider_2">
+          <widget class="QSlider" name="orientationSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -338,7 +338,7 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_2">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
@@ -350,7 +350,7 @@ border-radius: 3px; </string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QSlider" name="horizontalSlider_3">
+          <widget class="QSlider" name="orientationSlider_3">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -361,7 +361,7 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_3">
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>

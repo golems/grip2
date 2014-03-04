@@ -386,6 +386,13 @@ void MainWindow::createTabs()
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
     //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
+    //Ui_Inspector->positionSlider_0->setRange(0,100);
+    //Ui_Inspector->positionSpinBox_0->setRange(0.0,100.0);
+
+    std::cout << "slider value: " << std::endl;
+
+    //connect(Ui_Inspector->positionSlider_0, SIGNAL(valueChanged(int)),Ui_Inspector->positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
+    //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
 
     tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
