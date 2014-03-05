@@ -71,17 +71,24 @@
 #include "tree_view.h"
 #include "ui_tree_view.h"
 
+#include <dart/dynamics/Shape.h>
+#include <dart/dynamics/BoxShape.h>
+#include <dart/dynamics/WeldJoint.h>
+
 using namespace std;
+
 
 MainWindow::MainWindow()
 {
+    gripShit = new GripSimulation;
+    simThread = new QThread;
+
     createActions();
     createMenus();
     createOsgWindow();
     gray();
     createTreeView();
     createTabs();
-
     setWindowTitle(tr("Grip2"));
     resize(860, 700);
 }
@@ -119,13 +126,19 @@ void MainWindow::Toolbar()
 
     connect(open, SIGNAL(triggered()), this, SLOT(load()));
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
-    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
-    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+//    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
+//    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
     connect(camera, SIGNAL(triggered()), this, SLOT(load()));
-    connect(film, SIGNAL(triggered()), this, SLOT(load()));
+    connect(film, SIGNAL(triggered()), this, SLOT(debugShit()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
+    connect(simulate, SIGNAL(triggered()), gripShit, SLOT(startSimulation()));
+//    connect(stop, SIGNAL(triggered()), gripShit, SLOT(stopSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    gripShit->moveToThread(simThread);
+    simThread->start();
+
 }
 
 
@@ -169,21 +182,48 @@ void MainWindow::quickLoad()
 void MainWindow::doLoad(string fileName)
 {
     worldNode = new osgDart::DartNode();
+    mWorld = new simulation::World;
+    mWorld->checkCollision(true);
+
+    // Add floor
+    dart::dynamics::Skeleton* ground = new dart::dynamics::Skeleton();
+    ground->setName("ground");
+
+    dart::dynamics::BodyNode* node = new dart::dynamics::BodyNode("ground");
+    node->setMass(1.0);
+
+    dart::dynamics::Shape* shape = new dart::dynamics::BoxShape(Eigen::Vector3d(10.0, 10.0, 0.0001));
+    shape->setColor(Eigen::Vector3d(0.5, 0.5, 1.0));
+    node->addCollisionShape(shape);
+
+    dart::dynamics::Joint* joint = new dart::dynamics::WeldJoint();
+    joint->setName("groundJoint");
+    joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
+    joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
+    node->setParentJoint(joint);
+
+    ground->addBodyNode(node);
+    ground->setMobile(false);
+    mWorld->addSkeleton(ground);
+    worldNode->addWorld(mWorld);
+
     int numRobots = worldNode->addWorld(fileName);
+    std::cerr << "numSkels: " << numRobots << std::endl;
+    for(int i=0; i<numRobots; ++i) {
+        std::cerr << "\n\t" << mWorld->getSkeleton(i)->getName();
+    }
     if(worldNode->getWorld()) {
         viewWidget->addNodeToScene(worldNode);
-        mWorld = worldNode->getWorld();
+//        mWorld = worldNode->getWorld();
+        mWorld->setTimeStep(0.001);
 
         treeviewer->populateTreeView(mWorld, numRobots);
         cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
         saveText(fileName,".lastload");
+        gripShit->setWorld(mWorld);
     } else {
         std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
     }
-    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
-    worldNode->removeRobot(new dynamics::Skeleton);
-    std::cerr << "# Skels: " << worldNode->getNumSkeletons() << std::endl;
-
 }
 
 int MainWindow::saveText(string scenepath, const char* llfile)
@@ -230,6 +270,13 @@ void MainWindow::startSimulation()
 
 void MainWindow::stopSimulation()
 {
+    std::cerr << "[MainWindow] Time: " << mWorld->getTime() << std::endl;
+    std::cerr << "Cube: " << mWorld->getSkeleton(0)->getJoint("LSR")->getLocalTransform().translation().transpose() << std::endl;
+}
+
+void MainWindow::debugShit()
+{
+    std::cerr << "TSY: " << mWorld->getSkeleton(0)->getBodyNode("Body_Torso")->getWorldTransform().translation().transpose() << std::endl;
 }
 
 void MainWindow::simulateSingleStep(){}

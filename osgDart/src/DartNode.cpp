@@ -277,6 +277,9 @@ size_t DartNode::addWorld(simulation::World* world)
         _world = world;
     } else {
         DEBUG("This DartNode already has a world object. Not going to create another one");
+        for(int i=0; i<world->getNumSkeletons(); ++i) {
+            _world->addSkeleton(world->getSkeleton(i));
+        }
     }
 
     DEBUG("Added world with the following " << world->getNumSkeletons() << " objects:");
