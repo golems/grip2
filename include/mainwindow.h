@@ -54,9 +54,10 @@
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
 #include "ui_tree_view.h"
+#include "DartNode.h"
+#include "GripSimulation.h"
 
 using namespace std;
-#include "DartNode.h"
 
 class QAction;
 class QActionGroup;
@@ -80,6 +81,8 @@ public:
     //QDockWidget *visualizertab;
     simulation::World* mWorld;
     osgDart::DartNode* worldNode;
+    GripSimulation* gripShit;
+    QThread* simThread;
 
     osg::Matrixd frontView, sideView, topView;
 
@@ -107,6 +110,7 @@ private slots:
 public slots: //Q_SLOTS:
     //void ChangePos0DoubleSpinBox(int);
     void ChangeJoint(int);
+    void debugShit();
 
 private:
     void createActions();
