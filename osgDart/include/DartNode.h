@@ -5,7 +5,7 @@
  * Author: Pete Vieira <pete.vieira@gatech.edu>
  * Date: Feb 2014
  *
- * Humanoid Robotics Lab      Georgia Institute of Technology
+ * Humanoid skeletonics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
  *
  *
@@ -98,15 +98,15 @@ public:
     /**
      * \brief Constructor for DartNode
      */
-    DartNode();
+    DartNode(bool debug=false);
 
     /**
-     * \brief Create a dart::dynamics::Skeleton pointer from a robot urdf file
+     * \brief Create a dart::dynamics::Skeleton pointer from a skeleton urdf file
      * using DART's DartLoader.
      * \param urdfFile The name of the urdf file
      * \return Pointer to the dynamics::Skeleton object
      */
-    dynamics::Skeleton* parseRobotUrdf(std::string urdfFile);
+    dynamics::Skeleton* parseSkeletonUrdf(std::string urdfFile);
 
     /**
      * \brief Create a dart::simulation::World pointer from a world sdf file
@@ -144,22 +144,22 @@ public:
 
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
-     * a robot urdf file.
+     * a skeleton urdf file.
      * \param urdfFile The name of the urdf file
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    size_t addRobot(std::string urdfFile);
+    size_t addSkeleton(std::string urdfFile);
 
     /**
-     * \brief Add a robot to the DartNode
-     * \param robot New robot to add to the DartNode
-     * \return Index (size_t) of the newly added robot
+     * \brief Add a skeleton to the DartNode
+     * \param skeleton New skeleton to add to the DartNode
+     * \return Index (size_t) of the newly added skeleton
      */
-    size_t addRobot(dynamics::Skeleton* robot);
+    size_t addSkeleton(dynamics::Skeleton* skeleton);
 
     /**
      * \brief Add a world to the DartNode. The world may consist
-     * of one or more objects or robots, all represented as Skeletons,
+     * of one or more objects or skeletons, all represented as Skeletons,
      * each with a world transformation.
      * \param world The dart::simulation::World object passed in by reference
      * that contains one or more dart::dynamics::Skeleton objects.
@@ -168,27 +168,27 @@ public:
     size_t addWorld(simulation::World *world);
 
     /**
-     * \brief Get robot via index (size_t)
-     * \param robotIndex Index of the robot you want
-     * \return a dart::dynamics::Skeleton robot
+     * \brief Get skeleton via index (size_t)
+     * \param skeletonIndex Index of the skeleton you want
+     * \return a dart::dynamics::Skeleton skeleton
      */
-    dynamics::Skeleton* getRobot(size_t robotIndex=0);
+    dynamics::Skeleton* getSkeleton(size_t skeletonIndex=0);
 
     /**
-     * \brief Remove robot from DartNode by passing in the pointer to
+     * \brief Remove skeleton from DartNode by passing in the pointer to
      * the dart::dynamics::Skeleton to be removed.
-     * \param robot Robot to remove from the DartNode
+     * \param skeleton skeleton to remove from the DartNode
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int removeRobot(dart::dynamics::Skeleton* robotToRemoove);
+    int removeSkeleton(dart::dynamics::Skeleton* skeletonToRemove);
 
     /**
-     * \brief Remove robot from DartNode by passing in the index of the robot
+     * \brief Remove skeleton from DartNode by passing in the index of the skeleton
      * to be removed.
-     * \param robot Robot to remove from the DartNode
+     * \param skeleton skeleton to remove from the DartNode
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int removeRobot(size_t robotIndex=0);
+    int removeSkeleton(size_t skeletonIndex=0);
 
     /**
      * \brief Get a pointer to the World object in the DartNode.
@@ -203,8 +203,8 @@ public:
     size_t getNumSkeletons();
 
     /**
-     * \brief Print out meta information of the robot
-     * \param robotIndex Index of the robot about which to print info
+     * \brief Print out meta information of the skeleton
+     * \param skeletonIndex Index of the skeleton about which to print info
      * \return void
      */
     void printInfo();
@@ -216,7 +216,7 @@ public:
      */
     void update();
 
-    void hideRobot(int i);
+    void hideSkeleton(int i);
     
 protected:
 
@@ -226,11 +226,11 @@ protected:
 
     /**
      * \brief Helper function to determine if the index the user passed in to
-     * specify a robot is valid.
-     * \param robotIndex The index of the desired robot
+     * specify a skeleton is valid.
+     * \param skeletonIndex The index of the desired skeleton
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int robotIndexIsValid(size_t robotIndex);
+    int skeletonIndexIsValid(size_t skeletonIndex);
 
 
     //---------------------------------------------------------------
@@ -241,12 +241,14 @@ protected:
     simulation::World* _world;
 
     /// Standard vector of pointers to dart::dynamics::Skeleton objects
-    std::vector<dynamics::Skeleton*> _robots;
+    std::vector<dynamics::Skeleton*> _skeletons;
 
     /// Standard vector of pointers to SkeletonNode objects
     std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;
 
     SkeletonNodeMap _skelNodeMap;
+
+    bool _debug;
 
 };
 

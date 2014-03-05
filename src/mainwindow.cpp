@@ -270,13 +270,12 @@ void MainWindow::startSimulation()
 
 void MainWindow::stopSimulation()
 {
-    std::cerr << "[MainWindow] Time: " << mWorld->getTime() << std::endl;
-    std::cerr << "Cube: " << mWorld->getSkeleton(0)->getJoint("LSR")->getLocalTransform().translation().transpose() << std::endl;
+
 }
 
 void MainWindow::debugShit()
 {
-    std::cerr << "TSY: " << mWorld->getSkeleton(0)->getBodyNode("Body_Torso")->getWorldTransform().translation().transpose() << std::endl;
+
 }
 
 void MainWindow::simulateSingleStep(){}

@@ -10,7 +10,7 @@ class GripSimulation : public QObject
 
 public:
 
-    GripSimulation();
+    GripSimulation(bool debug=false);
 
     ~GripSimulation();
 
@@ -23,6 +23,12 @@ public slots:
     virtual void doAfterSimulationTimeStep();
 
 protected:
-    simulation::World* mWorld;
-    bool mSimulating;
+    /// World object received from creator that we need to simulate
+    simulation::World* _world;
+
+    /// Bool for whether or not we are simulating
+    bool _simulating;
+
+    /// Bool for whether or not to print debug output to standard error
+    bool _debug;
 };

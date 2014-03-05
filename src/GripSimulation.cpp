@@ -7,7 +7,7 @@
 
 using namespace dart;
 
-GripSimulation::GripSimulation()
+GripSimulation::GripSimulation(bool debug) : _debug(debug)
 {
 
 }
@@ -20,34 +20,39 @@ GripSimulation::~GripSimulation()
 
 void GripSimulation::setWorld(simulation::World *world)
 {
-    mWorld = world;
-    std::cerr << "World: "
-              << "\n\tGravity: " << mWorld->getGravity().transpose()
-              << "\n\tTimestep: " << mWorld->getTimeStep()
-              << "\n\tTime: " << mWorld->getTime()
-              << std::endl;
+    _world = world;
+    if(_debug) {
+        std::cerr << "World: "
+                  << "\n\tGravity: " << _world->getGravity().transpose()
+                  << "\n\tTimestep: " << _world->getTimeStep()
+                  << "\n\tTime: " << _world->getTime()
+                  << std::endl;
+    }
 }
 
 void GripSimulation::startSimulation()
 {
-    std::cerr << "Simulating" << std::endl;
-    mSimulating = true;
-    size_t i = 0;
-    while(mSimulating) {
-//        std::cerr << "[Grip] Time: " << mWorld->getTime() << std::endl;
-        mWorld->step();
-//        if(mWorld->getSkeleton(0)->getJoint(0)->getLocalTransform().translation().z() <= 0) {
-//            mSimulating = false;
-//        }
-        ++i;
+    if(_debug) {
+        std::cerr << "Simulating" << std::endl;
     }
-    std::cerr << "Stopping Simulation at time: " << mWorld->getTime() << std::endl;
+
+    _simulating = true;
+
+    while(_simulating) {
+          _world->step();
+    }
+
+    if(_debug) {
+        std::cerr << "Stopping Simulation at time: " << _world->getTime() << std::endl;
+    }
 }
 
 void GripSimulation::stopSimulation()
 {
-    std::cerr << "Stoppin simulation" << std::endl;
-    mSimulating = false;
+    if(_debug) {
+        std::cerr << "Stoppin simulation" << std::endl;
+    }
+    _simulating = false;
 }
 
 void GripSimulation::doBeforeSimulationTimeStep()
