@@ -441,8 +441,9 @@ void MainWindow::createTabs()
     //inspectest.setupUi(inspectabwidget);
     inspec_ui.setupUi(inspectabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
-    //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
-    //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
+    /*
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
     inspec_ui.positionSlider_0->setRange(-180,180);
     inspec_ui.positionSlider_0->setValue(0);
     inspec_ui.positionSpinBox_0->setRange(-180,180);
@@ -475,7 +476,8 @@ void MainWindow::createTabs()
     inspec_ui.orientationSlider_2->setValue(0);
     inspec_ui.orientationSlider_3->setRange(-180,180);
     inspec_ui.orientationSlider_3->setValue(0);
-    // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
+    */
+    connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
    // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
     //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
 
@@ -486,6 +488,18 @@ void MainWindow::createTabs()
     //viztabwidget->set
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
+}
+
+void MainWindow::ChangeJoint(int slidervalue){
+    int joint_id = 10;
+    int joint_value = 0;
+    if (slidervalue == inspec_ui.positionSlider_0->value())
+        joint_value = inspec_ui.positionSlider_0->value();
+    else
+        joint_value = slidervalue;
+
+
+    std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
 
 /*

@@ -103,13 +103,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="positionSpinBox_0"/>
+          <widget class="QSpinBox" name="positionSpinBox_0">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -178,13 +191,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="positionSpinBox_1"/>
+          <widget class="QSpinBox" name="positionSpinBox_1">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -196,13 +222,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="positionSpinBox_2"/>
+          <widget class="QSpinBox" name="positionSpinBox_2">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -214,13 +253,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="positionSpinBox_3"/>
+          <widget class="QSpinBox" name="positionSpinBox_3">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -289,13 +341,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="orientationSpinBox_1"/>
+          <widget class="QSpinBox" name="orientationSpinBox_1">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -307,13 +372,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="orientationSpinBox_2"/>
+          <widget class="QSpinBox" name="orientationSpinBox_2">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -325,13 +403,26 @@ QGroupBox::title {
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="orientationSpinBox_3"/>
+          <widget class="QSpinBox" name="orientationSpinBox_3">
+           <property name="minimum">
+            <number>-180</number>
+           </property>
+           <property name="maximum">
+            <number>180</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
