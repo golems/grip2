@@ -75,8 +75,8 @@ public:
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
     //QDockWidget *tree;
-    Visualizer *visualizertab;
-    Inspector  *inspectortab;
+    //Visualizer *visualizertab;
+    //Inspector  *inspectortab;
     //QDockWidget *visualizertab;
     simulation::World* mWorld;
     osgDart::DartNode* worldNode;
@@ -104,6 +104,8 @@ private slots:
     void vga640x480();
     void hd1280x720();
     void about();
+//public slots: //Q_SLOTS:
+//    void ChangePos0DoubleSpinBox(int);
 
 private:
     void createActions();
@@ -113,6 +115,8 @@ private:
     void createTabs();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+    //void ChangePos0DoubleSpinBox(int sliderValue);
+    Ui::Inspector inspec_ui;
 
     QMenu *fileMenu;
     QMenu *viewMenu;

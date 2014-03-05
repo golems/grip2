@@ -109,12 +109,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="positionSpinBox_0">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="positionSpinBox_0"/>
          </item>
         </layout>
        </item>
@@ -189,12 +184,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="positionSpinBox_1">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="positionSpinBox_1"/>
          </item>
         </layout>
        </item>
@@ -212,12 +202,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="positionSpinBox_2">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="positionSpinBox_2"/>
          </item>
         </layout>
        </item>
@@ -235,12 +220,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="positionSpinBox_3">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="positionSpinBox_3"/>
          </item>
         </layout>
        </item>
@@ -315,12 +295,7 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orientationSpinBox_1">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="orientationSpinBox_1"/>
          </item>
         </layout>
        </item>
@@ -338,12 +313,7 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orientationSpinBox_2">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="orientationSpinBox_2"/>
          </item>
         </layout>
        </item>
@@ -361,12 +331,7 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orientationSpinBox_3">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="orientationSpinBox_3"/>
          </item>
         </layout>
        </item>
@@ -403,5 +368,118 @@ border-radius: 3px; </string>
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>positionSlider_0</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>positionSpinBox_0</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>positionSpinBox_1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>619</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>positionSpinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>467</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>613</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>positionSpinBox_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>489</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>orientationSpinBox_1</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>871</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>994</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>orientationSpinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>870</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>987</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>orientationSpinBox_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>872</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>984</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -399,7 +399,7 @@ void MainWindow::createMenus()
 
     //renderMenu
     renderMenu = menuBar()->addMenu(tr("&Render"));
-    renderMenu->addAction(xga1024x768Act);
+    //renderMenu->addAction(xga1024x768Act);
     renderMenu->addAction(vga640x480Act);
     renderMenu->addAction(hd1280x720Act);
 
@@ -433,21 +433,50 @@ void MainWindow::createTabs()
     QDockWidget *viztabwidget = new QDockWidget(this);
     Ui_Visualizer::setupUi(viztabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-
     //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
     QDockWidget *inspectabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(inspectabwidget);
+    //Inspector inspectest;
+    //inspectest.setupUi(inspectabwidget);
+    inspec_ui.setupUi(inspectabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
     //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
-    //Ui_Inspector->positionSlider_0->setRange(0,100);
-    //Ui_Inspector->positionSpinBox_0->setRange(0.0,100.0);
+    inspec_ui.positionSlider_0->setRange(-180,180);
+    inspec_ui.positionSlider_0->setValue(0);
+    inspec_ui.positionSpinBox_0->setRange(-180,180);
+    inspec_ui.positionSpinBox_0->setValue(0);
 
-    std::cout << "slider value: " << std::endl;
+    inspec_ui.positionSpinBox_1->setRange(-180,180);
+    inspec_ui.positionSpinBox_1->setValue(0);
+    inspec_ui.positionSpinBox_2->setRange(-180,180);
+    inspec_ui.positionSpinBox_2->setValue(0);
+    inspec_ui.positionSpinBox_3->setRange(-180,180);
+    inspec_ui.positionSpinBox_3->setValue(0);
 
-    //connect(Ui_Inspector->positionSlider_0, SIGNAL(valueChanged(int)),Ui_Inspector->positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
+    inspec_ui.orientationSpinBox_1->setRange(-180,180);
+    inspec_ui.orientationSpinBox_1->setValue(0);
+    inspec_ui.orientationSpinBox_2->setRange(-180,180);
+    inspec_ui.orientationSpinBox_2->setValue(0);
+    inspec_ui.orientationSpinBox_3->setRange(-180,180);
+    inspec_ui.orientationSpinBox_3->setValue(0);
+
+    inspec_ui.positionSlider_1->setRange(-180,180);
+    inspec_ui.positionSlider_1->setValue(0);
+    inspec_ui.positionSlider_2->setRange(-180,180);
+    inspec_ui.positionSlider_2->setValue(0);
+    inspec_ui.positionSlider_3->setRange(-180,180);
+    inspec_ui.positionSlider_3->setValue(0);
+
+    inspec_ui.orientationSlider_1->setRange(-180,180);
+    inspec_ui.orientationSlider_1->setValue(0);
+    inspec_ui.orientationSlider_2->setRange(-180,180);
+    inspec_ui.orientationSlider_2->setValue(0);
+    inspec_ui.orientationSlider_3->setRange(-180,180);
+    inspec_ui.orientationSlider_3->setValue(0);
+    // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
+   // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
     //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
 
 
@@ -458,3 +487,14 @@ void MainWindow::createTabs()
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
 }
+
+/*
+void MainWindow::ChangePos0DoubleSpinBox(int sliderValue){
+    inspec_ui.positionSpinBox_0->setValue((double)sliderValue);
+    std::cout << "slider value: " << sliderValue << std::endl;
+}
+*/
+
+//void MainWindow::ChangePos0Slider(double spinBoxValue){
+//    positionSlider_0->setValue((int)spinBoxValue);
+//}
