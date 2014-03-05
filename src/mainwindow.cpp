@@ -431,12 +431,14 @@ void MainWindow::createTabs()
     setDockOptions(QMainWindow::VerticalTabs);
 
     QDockWidget *viztabwidget = new QDockWidget(this);
+
     Ui_Visualizer::setupUi(viztabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
     //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
 
     QDockWidget *inspectabwidget = new QDockWidget(this);
+    //QWidget *inspectabwidget = new QWidget(this);
     //Inspector inspectest;
     //inspectest.setupUi(inspectabwidget);
     inspec_ui.setupUi(inspectabwidget);

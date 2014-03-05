@@ -104,8 +104,9 @@ private slots:
     void vga640x480();
     void hd1280x720();
     void about();
-//public slots: //Q_SLOTS:
-//    void ChangePos0DoubleSpinBox(int);
+public slots: //Q_SLOTS:
+    //void ChangePos0DoubleSpinBox(int);
+    void ChangeJoint(int);
 
 private:
     void createActions();
