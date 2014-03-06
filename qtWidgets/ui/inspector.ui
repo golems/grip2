@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1132</width>
-    <height>248</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,7 +98,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QSlider" name="positionSlider_0">
+          <widget class="DoubleSlider" name="positionSlider_0">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
@@ -109,20 +109,19 @@ QGroupBox::title {
            <property name="maximum">
             <number>180</number>
            </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="positionSpinBox_0">
-           <property name="minimum">
-            <number>-180</number>
-           </property>
-           <property name="maximum">
-            <number>180</number>
-           </property>
-          </widget>
+          <widget class="QSpinBox" name="spinBox"/>
          </item>
         </layout>
        </item>
@@ -138,6 +137,16 @@ QGroupBox::title {
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="DoubleSlider" name="horizontalSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
        </item>
       </layout>
      </widget>
@@ -458,24 +467,19 @@ QGroupBox::title {
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleSlider</class>
+   <extends>QSlider</extends>
+   <header>doubleslider.h</header>
+   <slots>
+    <signal>dsvalueChanged(double)</signal>
+    <slot>setValueAndEmit(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>positionSlider_0</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>positionSpinBox_0</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>139</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>231</x>
-     <y>130</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>positionSlider_1</sender>
    <signal>valueChanged(int)</signal>
@@ -483,12 +487,12 @@ QGroupBox::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>482</x>
-     <y>82</y>
+     <x>585</x>
+     <y>88</y>
     </hint>
     <hint type="destinationlabel">
-     <x>619</x>
-     <y>86</y>
+     <x>651</x>
+     <y>90</y>
     </hint>
    </hints>
   </connection>
@@ -499,11 +503,11 @@ QGroupBox::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>467</x>
-     <y>109</y>
+     <x>585</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
-     <x>673</x>
+     <x>651</x>
      <y>125</y>
     </hint>
    </hints>
@@ -515,12 +519,12 @@ QGroupBox::title {
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>489</x>
-     <y>144</y>
+     <x>585</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>622</x>
-     <y>152</y>
+     <x>651</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -569,6 +573,54 @@ QGroupBox::title {
     <hint type="destinationlabel">
      <x>984</x>
      <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_0</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>positionSlider_0</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>doubleSpinBox</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>
