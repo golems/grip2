@@ -472,6 +472,7 @@ QGroupBox::title {
    <slots>
     <signal>dsvalueChanged(double)</signal>
     <slot>setValueAndEmit(int)</slot>
+    <slot>getValueAndEmit(double)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -586,6 +587,22 @@ QGroupBox::title {
     <hint type="destinationlabel">
      <x>240</x>
      <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSpinBox_0</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>positionSlider_0</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>

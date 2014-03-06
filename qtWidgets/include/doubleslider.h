@@ -17,6 +17,7 @@ private:
 public slots:
          void setdsValue(double valueindouble);
          void setValueAndEmit(int slidervalue);
+         void getValueAndEmit(double spinboxvalue);
 
 signals:
          void dsvalueChanged(double newdsvalue);

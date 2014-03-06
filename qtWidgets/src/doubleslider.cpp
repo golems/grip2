@@ -7,7 +7,7 @@
 DoubleSlider::DoubleSlider (QWidget *parent)
   : QSlider(parent)
 {
-    //this->setRange(-1800,1800);
+    //this->setRange(-1800,1800); //I cannot override settings here. It seems settings from the designer have priorities.
     dsvalue = 0.0;
     connect (this, SIGNAL(valueChanged(int)), this, SLOT(setValueAndEmit(int)));
 
@@ -16,11 +16,8 @@ DoubleSlider::DoubleSlider (QWidget *parent)
 double DoubleSlider::changeTOdouble(int intvalue)
 {
     double temp = (double)intvalue;
-    //std::cout << "integer: " << intvalue << " double conversion: " << temp;
     double doublevalue = temp/10.0;
-    //std::cout << " doublevalue: " << doublevalue << std::endl;
 
-    //emit dsvalueChanged(doublevalue);
     return doublevalue;
 }
 
@@ -56,6 +53,16 @@ void DoubleSlider::setValueAndEmit(int slidervalue)
          }
      //std::cout << slidervalue << " " << temp << " " << dsvalue << std::endl;
      emit dsvalueChanged(dsvalue);
+}
+
+void DoubleSlider::getValueAndEmit(double spinboxvalue)
+{
+     double temp = changeTOinteger(spinboxvalue);
+     if (temp != value()) {
+         setValue(temp);
+         }
+     //std::cout << slidervalue << " " << temp << " " << dsvalue << std::endl;
+     emit valueChanged(temp);
 }
 
 /*

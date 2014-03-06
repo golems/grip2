@@ -492,39 +492,12 @@ void MainWindow::createTabs()
     /*
     inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
-    inspec_ui.positionSlider_0->setRange(-180,180);
-    inspec_ui.positionSlider_0->setValue(0);
-    inspec_ui.positionSpinBox_0->setRange(-180,180);
-    inspec_ui.positionSpinBox_0->setValue(0);
-
-    inspec_ui.positionSpinBox_1->setRange(-180,180);
-    inspec_ui.positionSpinBox_1->setValue(0);
-    inspec_ui.positionSpinBox_2->setRange(-180,180);
-    inspec_ui.positionSpinBox_2->setValue(0);
-    inspec_ui.positionSpinBox_3->setRange(-180,180);
-    inspec_ui.positionSpinBox_3->setValue(0);
-
-    inspec_ui.orientationSpinBox_1->setRange(-180,180);
-    inspec_ui.orientationSpinBox_1->setValue(0);
-    inspec_ui.orientationSpinBox_2->setRange(-180,180);
-    inspec_ui.orientationSpinBox_2->setValue(0);
-    inspec_ui.orientationSpinBox_3->setRange(-180,180);
-    inspec_ui.orientationSpinBox_3->setValue(0);
-
-    inspec_ui.positionSlider_1->setRange(-180,180);
-    inspec_ui.positionSlider_1->setValue(0);
-    inspec_ui.positionSlider_2->setRange(-180,180);
-    inspec_ui.positionSlider_2->setValue(0);
-    inspec_ui.positionSlider_3->setRange(-180,180);
-    inspec_ui.positionSlider_3->setValue(0);
-
-    inspec_ui.orientationSlider_1->setRange(-180,180);
-    inspec_ui.orientationSlider_1->setValue(0);
-    inspec_ui.orientationSlider_2->setRange(-180,180);
-    inspec_ui.orientationSlider_2->setValue(0);
-    inspec_ui.orientationSlider_3->setRange(-180,180);
-    inspec_ui.orientationSlider_3->setValue(0);
     */
+    //inspec_ui.positionSlider_0->setRange(-380,360); //I can override settings here but not in the custom widget side..
+    //inspec_ui.positionSlider_0->setValue(0);
+    //inspec_ui.positionSpinBox_0->setRange(-180,180);
+    //inspec_ui.positionSpinBox_0->setValue(0);
+
     connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
    // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
     //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
