@@ -1,12 +1,13 @@
 #include <QtGui>
 #include <cmath>
+#include <iostream>
 
 #include "doubleslider.h"
 
 DoubleSlider::DoubleSlider (QWidget *parent)
   : QSlider(parent)
 {
-    setRange(-1800,1800);
+    //this->setRange(-1800,1800);
     dsvalue = 0.0;
     connect (this, SIGNAL(valueChanged(int)), this, SLOT(setValueAndEmit(int)));
 
@@ -15,14 +16,17 @@ DoubleSlider::DoubleSlider (QWidget *parent)
 double DoubleSlider::changeTOdouble(int intvalue)
 {
     double temp = (double)intvalue;
-    double doublevalue = temp/100.0;
+    //std::cout << "integer: " << intvalue << " double conversion: " << temp;
+    double doublevalue = temp/10.0;
+    //std::cout << " doublevalue: " << doublevalue << std::endl;
+
     //emit dsvalueChanged(doublevalue);
     return doublevalue;
 }
 
 int DoubleSlider::changeTOinteger(double doublevalue)
 {
-    double temp = doublevalue*100.0;
+    double temp = doublevalue*10.0;
     int integervalue = ceil(temp);
     return integervalue;
 }
@@ -37,7 +41,7 @@ void DoubleSlider::setdsValue(double valueindouble)
 double DoubleSlider::getdsvalue()
 {
     double temp = (double)value();
-    temp = temp/100.0;
+    temp = temp/10.0;
     if (temp != dsvalue) {
         dsvalue = temp;
         }
@@ -50,6 +54,7 @@ void DoubleSlider::setValueAndEmit(int slidervalue)
      if (temp != dsvalue) {
          dsvalue = temp;
          }
+     //std::cout << slidervalue << " " << temp << " " << dsvalue << std::endl;
      emit dsvalueChanged(dsvalue);
 }
 

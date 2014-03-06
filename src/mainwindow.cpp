@@ -540,16 +540,16 @@ void MainWindow::createTabs()
 
 void MainWindow::ChangeJoint(int slidervalue){
     int joint_id = 10;
-    int joint_value = 0;
-    if (slidervalue == inspec_ui.positionSlider_0->value())
-        joint_value = inspec_ui.positionSlider_0->value();
-    else
-        joint_value = slidervalue;
+    double joint_value = 0.0;
+    //if (inspec_ui.positionSlider_0 == inspec_ui.positionSlider_0->getdsvalue())
+    //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
+    //else
+    joint_value = inspec_ui.positionSlider_0->getdsvalue();
 
     std::vector<int> indx;
     indx.push_back(mWorld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
     Eigen::VectorXd q(1);
-    q[0] = double(joint_value*(3.14)/180);
+    q[0] = double(joint_value*(3.14)/180.0);
     mWorld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
 
 
