@@ -80,7 +80,7 @@ using namespace std;
 
 MainWindow::MainWindow()
 {
-    gripShit = new GripSimulation;
+    gripShit = new GripSimulation(true);
     simThread = new QThread;
 
     createActions();
@@ -134,8 +134,8 @@ void MainWindow::Toolbar()
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
     connect(simulate, SIGNAL(triggered()), gripShit, SLOT(startSimulation()));
-//    connect(stop, SIGNAL(triggered()), gripShit, SLOT(stopSimulation()));
-    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    connect(stop, SIGNAL(triggered()), gripShit, SLOT(stopSimulation()));
+//    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
     gripShit->moveToThread(simThread);
     simThread->start();
 
@@ -181,7 +181,7 @@ void MainWindow::quickLoad()
 
 void MainWindow::doLoad(string fileName)
 {
-    worldNode = new osgDart::DartNode();
+    worldNode = new osgDart::DartNode(true);
     mWorld = new simulation::World;
     mWorld->checkCollision(true);
 

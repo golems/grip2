@@ -21,6 +21,7 @@ public slots:
     virtual void stopSimulation();
     virtual void doBeforeSimulationTimeStep();
     virtual void doAfterSimulationTimeStep();
+    void simulateTimeStep();
 
 protected:
     /// World object received from creator that we need to simulate
@@ -31,4 +32,6 @@ protected:
 
     /// Bool for whether or not to print debug output to standard error
     bool _debug;
+
+
 };
