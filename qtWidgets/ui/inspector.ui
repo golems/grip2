@@ -503,8 +503,8 @@ QGroupBox::title {
      <y>109</y>
     </hint>
     <hint type="destinationlabel">
-     <x>613</x>
-     <y>114</y>
+     <x>673</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>

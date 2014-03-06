@@ -10,7 +10,7 @@ class HexSpinBox : public QSpinBox
 
 public:
           HexSpinBox(QWidget *parent = 0);
-          HexSpinBox(QDockWidget *parent = 0);
+         // HexSpinBox(QDockWidget *parent = 0);
 
 protected:
           QValidator::State validate(QString &text, int &pos) const;

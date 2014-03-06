@@ -8,7 +8,7 @@ HexSpinBox::HexSpinBox (QWidget *parent)
     setRange(0,255);
     validator  = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,8}"),this);
 }
-
+/*
 HexSpinBox::HexSpinBox (QDockWidget *parent)
   : QSpinBox(parent)
 {
@@ -16,7 +16,7 @@ HexSpinBox::HexSpinBox (QDockWidget *parent)
     validator  = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,8}"),this);
 }
 
-
+*/
 QValidator::State HexSpinBox::validate (QString &text, int &pos) const
 {
     return validator->validate(text, pos);

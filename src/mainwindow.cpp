@@ -546,8 +546,14 @@ void MainWindow::ChangeJoint(int slidervalue){
     else
         joint_value = slidervalue;
 
+    std::vector<int> indx;
+    indx.push_back(mWorld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
+    Eigen::VectorXd q(1);
+    q[0] = double(joint_value*(3.14)/180);
+    mWorld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
 
-    std::cout << "change joint invoked: "<< joint_value << std::endl;
+
+    //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
 
 /*
