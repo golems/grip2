@@ -54,9 +54,10 @@
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
 #include "ui_tree_view.h"
+#include "DartNode.h"
+#include "GripSimulation.h"
 
 using namespace std;
-#include "DartNode.h"
 
 class QAction;
 class QActionGroup;
@@ -75,11 +76,13 @@ public:
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
     //QDockWidget *tree;
-    Visualizer *visualizertab;
-    Inspector  *inspectortab;
+    //Visualizer *visualizertab;
+    //Inspector  *inspectortab;
     //QDockWidget *visualizertab;
     simulation::World* mWorld;
     osgDart::DartNode* worldNode;
+    GripSimulation* gripShit;
+    QThread* simThread;
 
     osg::Matrixd frontView, sideView, topView;
 
@@ -104,6 +107,10 @@ private slots:
     void vga640x480();
     void hd1280x720();
     void about();
+public slots: //Q_SLOTS:
+    //void ChangePos0DoubleSpinBox(int);
+    void ChangeJoint(int);
+    void debugShit();
 
 private:
     void createActions();
@@ -113,6 +120,8 @@ private:
     void createTabs();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+    //void ChangePos0DoubleSpinBox(int sliderValue);
+    Ui::Inspector inspec_ui;
 
     QMenu *fileMenu;
     QMenu *viewMenu;
