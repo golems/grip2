@@ -60,9 +60,6 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-
-using namespace std;
-
 MainWindow::MainWindow()
 {
     createActions();
@@ -106,10 +103,14 @@ void MainWindow::Toolbar()
     connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
     connect(camera, SIGNAL(triggered()), this, SLOT(load()));
-    connect(film, SIGNAL(triggered()), this, SLOT(load()));
+    connect(film, SIGNAL(triggered()), this, SLOT(debugShit()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
+    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+
 }
 
 
@@ -149,11 +150,6 @@ void MainWindow::quickLoad()
     QString line = in.readLine();
     doLoad(line.toStdString());
 }
-
-
-void MainWindow::saveScene(){}
-void MainWindow::close(){}
-void MainWindow::exit(){}
 
 void MainWindow::about(){}
 
@@ -295,7 +291,7 @@ void MainWindow::createMenus()
 
     //renderMenu
     renderMenu = menuBar()->addMenu(tr("&Render"));
-    renderMenu->addAction(xga1024x768Act);
+    //renderMenu->addAction(xga1024x768Act);
     renderMenu->addAction(vga640x480Act);
     renderMenu->addAction(hd1280x720Act);
 
@@ -303,3 +299,7 @@ void MainWindow::createMenus()
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
 }
+
+void MainWindow::saveScene(){}
+void MainWindow::close(){}
+void MainWindow::exit(){}

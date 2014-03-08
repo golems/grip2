@@ -138,9 +138,9 @@ public:
      * \param sdfFile The name of the sdf file
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int addWorldFromSdf(std::string sdfFile);
+    size_t addWorldFromSdf(std::string sdfFile);
 
-    int addWorld(std::string file);
+    size_t addWorld(std::string file);
 
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
@@ -148,7 +148,7 @@ public:
      * \param urdfFile The name of the urdf file
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int addRobot(std::string urdfFile);
+    size_t addRobot(std::string urdfFile);
 
     /**
      * \brief Add a robot to the DartNode
@@ -195,6 +195,12 @@ public:
      * \return simulation::World pointer
      */
     simulation::World* getWorld();
+
+    /**
+     * \brief Get number of skeletons in the DartNode
+     * \return size_t Number of skeletons in the DartNode
+     */
+    size_t getNumSkeletons();
 
     /**
      * \brief Print out meta information of the robot

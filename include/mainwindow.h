@@ -50,6 +50,7 @@
 #include <iostream>
 #include <cstdio>
 
+
 using namespace std;
 
 class QAction;
@@ -87,6 +88,7 @@ private slots:
     virtual void vga640x480() = 0;
     virtual void hd1280x720() = 0;
     void about();
+
 
 private:
     void createActions();

@@ -44,7 +44,7 @@ class Tree_View : public QDockWidget
     Q_OBJECT
     
 public:
-    explicit Tree_View(QWidget *parent = 0, TreeViewReturn* active_item);
+    explicit Tree_View(QWidget *parent = 0, TreeViewReturn* active_item = NULL);
     void populateTreeView(simulation::World* world, int numRobots);
     ~Tree_View();
 

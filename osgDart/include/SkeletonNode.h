@@ -74,7 +74,7 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type JointMatrixMap, which maps dart::dynamics::Joint* to osg::MatrixTransform*
-typedef std::map<dynamics::Joint*, osg::ref_ptr<osg::MatrixTransform> > JointMatrixMap;
+typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> > BodyNodeMatrixMap;
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
 typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
@@ -112,18 +112,10 @@ protected:
     void _createSkeletonFromRootBodyNode(dynamics::BodyNode* rootBodyNode);
 
     /**
-     * \brief Place the root of the Skeleton in the world using the passed in BodyNode's
-     * world transform
-     * \param rootBodyNode The dart::dynamics::BodyNode root to place in the world
-     * \return osg::MatrixTransform* This is returned in order to add children nodes to it.
-     */
-    osg::MatrixTransform* _placeRootOfSkeletonInWorld(dynamics::BodyNode* rootBodyNode);
-
-    /**
      * \brief Pass in osg::MatrixTransform corresponding to parent Joint and its BodyNode
      * and it will recursively add osg::MatrixTransforms and Geode for all the children
      */
-    void _addSkeletonObjectsRecursivley(osg::MatrixTransform* jointTF, dynamics::BodyNode* bodyNode);
+    void _addSkeletonObjectsRecursivley(dynamics::BodyNode *bodyNode);
 
     /**
      * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
@@ -136,23 +128,6 @@ protected:
     osg::Group* _makeBodyNodeGroup(dynamics::BodyNode* node);
 
     void _addShapesFromBodyNode(dynamics::BodyNode* node);
-
-    /**
-     * \brief Create osg::MatrixTransform* from a dart::dynamics::Joint passed in by reference.
-     * The transform corresponds to the transform from its parent BodyNode to itself.
-     * \param joint dart::dynamics::Joint for which to create an osg::MatrixTransform*
-     * \return osg::MatrixTransform pointer corresponding to the dart::dynamics::Joint passed in
-     */
-    osg::MatrixTransform* _makeJointNode(dynamics::Joint* joint);
-
-    /**
-     * \brief Get the local center of mass of the BodyNode relative to its parent joint,
-     * used to place the BodyNode relative to its parent joint in the visualization.
-     * The BodyNode is passed in by reference.
-     * \param node The dynamics::BodyNode of which to get the local center of mass
-     * \return osg::Matrix defining the local center of mass of the BodyNode relative to its parent joint
-     */
-    osg::Matrix _getBodyNodeMatrix(dynamics::BodyNode* node);
 
     /**
      * \brief Update SkeletonNode recursively based on Skeleton transforms
@@ -176,7 +151,7 @@ protected:
     std::vector<osg::ref_ptr<osg::MatrixTransform> > _joints;
 
     /// Map from dart::dynamics::Joint* to osg::MatrixTransform*
-    JointMatrixMap _jointMatrixMap;
+    BodyNodeMatrixMap _bodyNodeMatrixMap;
 
     /// Map from dart::dynamics::BodyNode* to osg::Group*
     BodyNodeGroupMap _bodyNodeGroupMap;
