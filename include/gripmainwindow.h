@@ -41,89 +41,71 @@
  *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *   POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef GRIPMAINWINDOW_H
+#define GRIPMAINWINDOW_H
 
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QMainWindow>
 #include <iostream>
 #include <cstdio>
 
+///including the base class
+#include "mainwindow.h"
+
+#include <ViewerWidget.h>
+#include <tree_view.h>
+#include "ui_visualizer.h"
+#include "ui_inspector.h"
+#include "ui_tree_view.h"
+
+#include "DartNode.h"
+
+
 using namespace std;
 
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
-
-class MainWindow : public QMainWindow
+class GripMainWindow : public MainWindow, private Ui::Visualizer, private Ui::Inspector
 {
-    Q_OBJECT
-
 public:
-    MainWindow();
-    ~MainWindow();
-    void Toolbar();
+    GripMainWindow();
+    ~GripMainWindow();
+
+    ViewerWidget* viewWidget;
+    Tree_View* treeviewer;
+    Visualizer *visualizertab;
+    Inspector  *inspectortab;
+
+    /// TreeViewReturn class is defined in tree_view.h
+    /// It contains two members: void* object and DataType dataType
+    /// void* object can store a dart Skeleton object or BodyNode object
+    /// DataType is an enumaration defined in tree_view.h which can take
+    /// the values Return_Type_Robot and Return_Type_Node
+    TreeViewReturn* activeItem;
+
+    osgDart::DartNode* worldNode;
+    osg::Matrixd frontView, sideView, topView;
 
 private slots:
-    void load();
-    void quickLoad();
-    void saveScene();
-    void close();
-    void exit();
-    virtual void front() = 0;
-    virtual void top() = 0;
-    virtual void side() = 0;
-    virtual void startSimulation() = 0;
-    virtual void stopSimulation() = 0;
-    virtual void simulateSingleStep() = 0;
-    virtual void renderDuringSimulation() = 0;
-    virtual void white() = 0;
-    virtual void gray() = 0;
-    virtual void black() = 0;
-    virtual void resetCamera() = 0;
-    virtual void xga1024x768() = 0;
-    virtual void vga640x480() = 0;
-    virtual void hd1280x720() = 0;
-    void about();
+    void front();
+    void top();
+    void side();
+    void startSimulation();
+    void stopSimulation();
+    void simulateSingleStep();
+    void renderDuringSimulation();
+    void white();
+    void gray();
+    void black();
+    void resetCamera();
+    void xga1024x768();
+    void vga640x480();
+    void hd1280x720();
 
 private:
-    void createActions();
-    void createMenus();
-    virtual void createRenderingWindow() = 0;
-    virtual void createTreeView() = 0;
-    virtual void createTabs() = 0;
-    virtual void doLoad(string fileName) = 0;
-
-    QMenu *fileMenu;
-    QMenu *viewMenu;
-    QMenu *simulationMenu;
-    QMenu *settingsMenu;
-    QMenu *renderMenu;
-    QMenu *helpMenu;
-    QMenu *backgroundMenu;
-    QActionGroup *colorGroup;
-    QAction *loadAct;
-    QAction *quickLoadAct;
-    QAction *saveSceneAct;
-    QAction *closeAct;
-    QAction *exitAct;
-    QAction *frontAct;
-    QAction *topAct;
-    QAction *sideAct;
-    QAction *startSimulationAct;
-    QAction *stopSimulationAct;
-    QAction *simulateSingleStepAct;
-    QAction *renderDuringSimulationAct;
-    QAction *whiteAct;
-    QAction *grayAct;
-    QAction *blackAct;
-    QAction *resetCameraAct;
-    QAction *xga1024x768Act;
-    QAction *vga640x480Act;
-    QAction *hd1280x720Act;
-    QAction *aboutAct;
+    void createRenderingWindow();
+    void createTreeView();
+    void createTabs();
+    void doLoad(string fileName);
+    int saveText(string scenepath, const char* llfile);
 };
 
-#endif // MAINWINDOW_H
+
+#endif // GRIPMAINWINDOW_H

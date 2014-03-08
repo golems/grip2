@@ -49,9 +49,6 @@
 
 #include "mainwindow.h"
 
-///including the osg gl widget
-#include "ViewerWidget.h"
-
 ///including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
@@ -63,19 +60,6 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-///including tab files
-#include "visualizer.h"
-#include "ui_visualizer.h"
-#include "inspector.h"
-#include "ui_inspector.h"
-#include "tree_view.h"
-#include "ui_tree_view.h"
-
-///including the files for dart and osg
-#include "Grid.h"
-#include "DartNode.h"
-#include <osg/io_utils>
-#include <dart/utils/urdf/DartLoader.h>
 
 using namespace std;
 
@@ -83,12 +67,7 @@ MainWindow::MainWindow()
 {
     createActions();
     createMenus();
-    createOsgWindow();
-    gray();
-    createTreeView();
-    createTabs();
-
-    setWindowTitle(tr("Grip2"));
+    setWindowTitle(tr("Grip"));
     resize(860, 700);
 }
 
@@ -171,88 +150,11 @@ void MainWindow::quickLoad()
     doLoad(line.toStdString());
 }
 
-void MainWindow::doLoad(string fileName)
-{
-    worldNode = new osgDart::DartNode();
-    int numRobots = worldNode->addWorld(fileName);
-    viewWidget->addNodeToScene(worldNode);
-    worldNode->printInfo();
-
-    treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
-
-    cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
-    saveText(fileName,".lastload");
-}
-
-int MainWindow::saveText(string scenepath, const char* llfile)
-{
-    try
-    {
-        QFile file(llfile);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-            return 0;
-        QTextStream out(&file);
-        out << QString::fromStdString(scenepath) << "\n";
-    }
-
-    catch (const std::exception& e)
-    {
-        cout <<  e.what() << endl;
-        return 0;
-    }
-    return 1;
-}
 
 void MainWindow::saveScene(){}
 void MainWindow::close(){}
 void MainWindow::exit(){}
 
-void MainWindow::front()
-{
-    viewWidget->setToFrontView();
-}
-
-void MainWindow::top()
-{
-    viewWidget->setToTopView();
-}
-
-void MainWindow::side()
-{
-    viewWidget->setToSideView();
-}
-
-void MainWindow::startSimulation()
-{
-}
-
-void MainWindow::stopSimulation()
-{
-}
-
-void MainWindow::simulateSingleStep(){}
-void MainWindow::renderDuringSimulation(){}
-void MainWindow::white()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
-}
-void MainWindow::gray()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(.5, .5, .5, 1));
-}
-
-void MainWindow::black()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
-}
-void MainWindow::resetCamera()
-{
-    viewWidget->setCameraToHomePosition();
-}
-
-void MainWindow::xga1024x768(){}
-void MainWindow::vga640x480(){}
-void MainWindow::hd1280x720(){}
 void MainWindow::about(){}
 
 void MainWindow::createActions()
@@ -400,55 +302,4 @@ void MainWindow::createMenus()
     //helpMenu
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
-}
-
-void MainWindow::createOsgWindow()
-{
-    std::cerr << "Adding viewer widget" << std::endl;
-    viewWidget = new ViewerWidget();
-    viewWidget->setGeometry(100, 100, 800, 600);
-    viewWidget->addGrid(20, 20, 1);
-
-    setCentralWidget(viewWidget);
-    frontView = viewWidget->getViewMatrix();
-    sideView =  frontView * osg::Matrixd(osg::Quat(90*M_PI/180, osg::Vec3f(0, 0, 1)));
-    topView = frontView * osg::Matrixd(osg::Quat(-90*M_PI/180, osg::Vec3f(1, 0, 0)));
-}
-
-void MainWindow::createTreeView()
-{
-    treeviewer = new Tree_View(this);
-    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
-}
-
-void MainWindow::createTabs()
-{
-    setDockOptions(QMainWindow::AnimatedDocks);
-    setDockOptions(QMainWindow::VerticalTabs);
-
-    QDockWidget *viztabwidget = new QDockWidget(this);
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-<<<<<<< HEAD
-
-    QDockWidget *instabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(instabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
-=======
-    //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
-    //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
-
-    QDockWidget *inspectabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(inspectabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
-    //inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
-    //inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
->>>>>>> origin/feature/tabs
-
-    tabifyDockWidget(inspectabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
-    //viztabwidget->set
-
-    // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
 }

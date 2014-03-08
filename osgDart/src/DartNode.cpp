@@ -120,17 +120,17 @@ int DartNode::addWorld(std::string file)
     simulation::World* world = parseWorldUrdf(file);
     if(world) {
         this->addWorld(world);
-        return 1;
+        return _robots.size();
     } else {
         world = parseWorldSdf(file);
         if(world) {
             this->addWorld(world);
-            return 1;
+            return _robots.size();
         } else {
             dynamics::Skeleton* skel = parseRobotUrdf(file);
             if(skel) {
                 this->addRobot(skel);
-                return 1;
+                return _robots.size();
             } else {
                 std::cerr << "In addWorld: Not adding world" << std::endl;
                 return 0;
