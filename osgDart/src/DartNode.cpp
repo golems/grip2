@@ -50,6 +50,7 @@
 #include "DartNode.h"
 #include "SkeletonNode.h"
 #include "DartNodeCallback.h"
+#include "osgUtils.h"
 
 // Standard includes
 #include <stdexcept>

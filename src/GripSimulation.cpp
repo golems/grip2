@@ -5,8 +5,7 @@
 #include <dart/dynamics/Joint.h>
 #include <iostream>
 #include <iomanip>
-#include <chrono>
-#include <ctime>
+#include "gripTime.h"
 
 using namespace dart;
 
@@ -53,13 +52,20 @@ void GripSimulation::startSimulation()
 void GripSimulation::simulateTimeStep()
 {
     if(_simulating) {
-        std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
+        // Run each tabs doBeforeSimulationTimeStep function
+        // for each tab
+        //     tabs->doBeforeSimulationTimeStep
+        // end
+
+        // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
 
-        std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
-        std::cerr << time_span.count() << std::endl;
+        // Run each tabs doBeforeSimulationTimeStep function
+        // for each tab
+        //     tabs->doAfterSimulationTimeStep
+        // end
+
     }
     QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
 

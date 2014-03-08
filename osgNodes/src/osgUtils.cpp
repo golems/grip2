@@ -52,6 +52,7 @@
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include "Axes.h"
+#include <osg/PolygonMode>
 
 osgViewer::View* osgGolems::createView(int x, int y, int w, int h, osg::Node* scene)
 {
@@ -118,3 +119,5 @@ osg::Node* osgGolems::createNode()
 
     return rootTF;
 }
+
+

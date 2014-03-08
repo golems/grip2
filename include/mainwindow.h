@@ -108,6 +108,8 @@ private slots:
     void hd1280x720();
     void about();
     void debugShit();
+//    void doBeforeSimulationTimeStep();
+//    void doAfterSimulationTimeStep();
 
 private:
     void createActions();

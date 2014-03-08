@@ -16,6 +16,10 @@ public:
 
     void setWorld(simulation::World* world);
 
+//signals:
+//    void signalDoBeforeSimulationTimeStep();
+//    void signalDoAfterSimulationTimeStep();
+
 public slots:
     virtual void startSimulation();
     virtual void stopSimulation();
@@ -32,6 +36,7 @@ protected:
 
     /// Bool for whether or not to print debug output to standard error
     bool _debug;
+
 
 
 };
