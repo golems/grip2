@@ -49,7 +49,13 @@
 #include <QMainWindow>
 #include <iostream>
 #include <cstdio>
-
+#include <ViewerWidget.h>
+#include <tree_view.h>
+#include "ui_visualizer.h"
+#include "ui_inspector.h"
+#include "ui_tree_view.h"
+#include "DartNode.h"
+#include "GripSimulation.h"
 
 using namespace std;
 
@@ -58,14 +64,27 @@ class QActionGroup;
 class QLabel;
 class QMenu;
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow , private Ui::Visualizer, private Ui::Inspector
 {
     Q_OBJECT
 
 public:
+    //MainWindow(QWidget *parent = 0);
     MainWindow();
     ~MainWindow();
     void Toolbar();
+    ViewerWidget* viewWidget;
+    Tree_View* treeviewer;
+    //QDockWidget *tree;
+    //Visualizer *visualizertab;
+    //Inspector  *inspectortab;
+    //QDockWidget *visualizertab;
+    simulation::World* mWorld;
+    osgDart::DartNode* worldNode;
+    GripSimulation* gripShit;
+    QThread* simThread;
+
+    osg::Matrixd frontView, sideView, topView;
 
 private slots:
     void load();
@@ -73,30 +92,36 @@ private slots:
     void saveScene();
     void close();
     void exit();
-    virtual void front() = 0;
-    virtual void top() = 0;
-    virtual void side() = 0;
-    virtual void startSimulation() = 0;
-    virtual void stopSimulation() = 0;
-    virtual void simulateSingleStep() = 0;
-    virtual void renderDuringSimulation() = 0;
-    virtual void white() = 0;
-    virtual void gray() = 0;
-    virtual void black() = 0;
-    virtual void resetCamera() = 0;
-    virtual void xga1024x768() = 0;
-    virtual void vga640x480() = 0;
-    virtual void hd1280x720() = 0;
+    void front();
+    void top();
+    void side();
+    void startSimulation();
+    void stopSimulation();
+    void simulateSingleStep();
+    void renderDuringSimulation();
+    void white();
+    void gray();
+    void black();
+    void resetCamera();
+    void xga1024x768();
+    void vga640x480();
+    void hd1280x720();
     void about();
-
+public slots: //Q_SLOTS:
+    //void ChangePos0DoubleSpinBox(int);
+    void ChangeJoint(int);
+    void debugShit();
 
 private:
     void createActions();
     void createMenus();
-    virtual void createRenderingWindow() = 0;
-    virtual void createTreeView() = 0;
-    virtual void createTabs() = 0;
-    virtual void doLoad(string fileName) = 0;
+    void createOsgWindow();
+    void createTreeView();
+    void createTabs();
+    void doLoad(string fileName);
+    int saveText(string scenepath, const char* llfile);
+    //void ChangePos0DoubleSpinBox(int sliderValue);
+    Ui::Inspector inspec_ui;
 
     QMenu *fileMenu;
     QMenu *viewMenu;

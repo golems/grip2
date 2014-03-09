@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1132</width>
-    <height>244</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,10 +98,22 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QSlider" name="horizontalSlider_9">
+          <widget class="DoubleSlider" name="positionSlider_0">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -109,10 +121,12 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="positionSpinBox_0">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -178,10 +192,16 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QSlider" name="horizontalSlider_4">
+          <widget class="DoubleSlider" name="positionSlider_1">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -189,10 +209,12 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="positionSpinBox_1">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -201,10 +223,16 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QSlider" name="horizontalSlider_5">
+          <widget class="DoubleSlider" name="positionSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -212,10 +240,12 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="positionSpinBox_2">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -224,10 +254,16 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QSlider" name="horizontalSlider_6">
+          <widget class="DoubleSlider" name="positionSlider_3">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -235,10 +271,12 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="positionSpinBox_3">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -304,10 +342,16 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QSlider" name="horizontalSlider">
+          <widget class="DoubleSlider" name="orientationSlider_1">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -315,10 +359,12 @@ QGroupBox::title {
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_1">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -327,10 +373,16 @@ border-radius: 3px; </string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QSlider" name="horizontalSlider_2">
+          <widget class="DoubleSlider" name="orientationSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -338,10 +390,12 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_2">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -350,10 +404,16 @@ border-radius: 3px; </string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QSlider" name="horizontalSlider_3">
+          <widget class="DoubleSlider" name="orientationSlider_3">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -361,10 +421,12 @@ border-radius: 3px; </string>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <widget class="QDoubleSpinBox" name="orientationSpinBox_3">
+           <property name="minimum">
+            <double>-180.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>180.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -402,6 +464,243 @@ border-radius: 3px; </string>
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleSlider</class>
+   <extends>QSlider</extends>
+   <header>doubleslider.h</header>
+   <slots>
+    <signal>dsvalueChanged(double)</signal>
+    <slot>setValueAndEmit(int)</slot>
+    <slot>getValueAndEmit(double)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>positionSlider_0</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>positionSpinBox_0</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>240</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSpinBox_0</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>positionSlider_0</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_1</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>positionSpinBox_1</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>545</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>67</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_2</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>positionSpinBox_2</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSlider_3</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>positionSpinBox_3</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>588</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_1</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>orientationSpinBox_1</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>896</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>976</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_2</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>orientationSpinBox_2</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>890</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>974</x>
+     <y>117</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSlider_3</sender>
+   <signal>dsvalueChanged(double)</signal>
+   <receiver>orientationSpinBox_3</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>935</x>
+     <y>152</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>972</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSpinBox_3</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>positionSlider_3</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>152</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>523</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSpinBox_2</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>positionSlider_2</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>593</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>575</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>positionSpinBox_1</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>positionSlider_1</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>575</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSpinBox_1</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>orientationSlider_1</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>973</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>943</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSpinBox_2</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>orientationSlider_2</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>961</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>942</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orientationSpinBox_3</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>orientationSlider_3</receiver>
+   <slot>getValueAndEmit(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>962</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>945</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
