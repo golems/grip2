@@ -124,10 +124,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
     }
 
     // Add wireframe mode to the geode
-    std::cerr << "setting wireframe mode" << std::endl;
     osgGolems::addWireFrameMode(geode);
-    std::cerr << "Turning on wireframe" << std::endl;
-    osgGolems::setWireFrameOn(geode);
 
     // Add shape to a Geode, add it to a MatrixTransform whose matrix is set to
     // the local TF of the shape and add the MatrixTransform to the node as a child
@@ -151,10 +148,7 @@ osg::Node* osgDart::convertMeshToOsgNode(dynamics::Shape* mesh)
         }
         if(ainode) {
             osg::Node* node = osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode);
-            std::cerr << "setting wireframe mode" << std::endl;
             osgGolems::addWireFrameMode(node);
-            std::cerr << "Turning on wireframe" << std::endl;
-            osgGolems::setWireFrameOn(node);
             return node;
         } else {
             std::cerr << "Error: aiNode no good. Exiting at line " << __LINE__ << " of file " << __FILE__ << std::endl;

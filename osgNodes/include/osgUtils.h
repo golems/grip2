@@ -129,7 +129,7 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
 inline void addWireFrameMode(osg::Node* node)
 {
     if(!node) {
-        std::cerr << "Invalid node" << std::endl;
+        std::cerr << "Invalid node. Line " << __LINE__ << " of " << __FILE__ << std::endl;
         return;
     }
 
@@ -138,7 +138,6 @@ inline void addWireFrameMode(osg::Node* node)
     polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
 
     if(!polyModeObj) {
-        std::cerr << "no plyModeOb. Line " << __LINE__ << " of " << __FILE__ << std::endl;
         polyModeObj = new osg::PolygonMode;
         node->getOrCreateStateSet()->setAttribute(polyModeObj);
     }
@@ -159,7 +158,6 @@ inline void setWireFrameOn(osg::Node* node)
     polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
 
     if(!polyModeObj) {
-        std::cerr << "no plyModeObj. Line " << __LINE__ << " of " << __FILE__ << std::endl;
         polyModeObj = new osg::PolygonMode;
         node->getStateSet()->setAttribute(polyModeObj);
     }

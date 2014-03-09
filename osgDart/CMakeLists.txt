@@ -12,7 +12,7 @@ endif()
 
 # Find DART
 if(DART_NOT_FOUND)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/share/dart")
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/share/dart")
     find_package(DART REQUIRED)
     include_directories(${DART_INCLUDE_DIRS})
     link_directories(${DART_LIBRARY_DIRS})

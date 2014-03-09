@@ -10,6 +10,12 @@
     <height>430</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="minimumSize">
    <size>
     <width>250</width>
@@ -18,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>1000</width>
+    <width>250</width>
     <height>1000</height>
    </size>
   </property>
@@ -30,6 +36,19 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignRight">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="toolTip">
+       <string extracomment="click on this to see joint names instead of body node names"/>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string>Joint Names</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QTreeWidget" name="treeWidget">
       <property name="sizePolicy">

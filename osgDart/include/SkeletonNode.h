@@ -51,7 +51,7 @@
 #define SKELETONNODE_H
 
 // Grip includes
-#include "Axes.h"
+#include "../../osgNodes/include/Axes.h"
 
 // Dart includes
 #include <dart/dynamics/Skeleton.h>

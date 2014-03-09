@@ -143,7 +143,6 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(dynamics::BodyNode* node)
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap.insert(std::make_pair(node, new osg::Group));
 
-    std::cerr << "Creating shape for " << node->getName() << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addShapesFromBodyNode(node);
 

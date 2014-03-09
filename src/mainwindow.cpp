@@ -43,14 +43,13 @@
  */
 
 #include <QtGui>
-#include "mainwindow.h"
-#include "ViewerWidget.h"
 #include <iostream>
 #include <cstdio>
 #include <fstream>
-#include <osg/io_utils>
 
-//including the icons for the toolbar
+#include "mainwindow.h"
+
+///including the icons for the toolbar
 #include "icons/open.xpm"
 #include "icons/redo.xpm"
 #include "icons/simulate.xpm"
@@ -61,38 +60,13 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-#include <QString>
-#include "Grid.h"
-#include "DartNode.h"
-#include "visualizer.h"
-#include "ui_visualizer.h"
-#include "inspector.h"
-#include "ui_inspector.h"
-#include "tree_view.h"
-#include "ui_tree_view.h"
-
-#include <dart/dynamics/Shape.h>
-#include <dart/dynamics/BoxShape.h>
-#include <dart/dynamics/WeldJoint.h>
-
-using namespace std;
-
-
 MainWindow::MainWindow()
 {
-    gripShit = new GripSimulation(true);
-    simThread = new QThread;
-
     createActions();
     createMenus();
-    createOsgWindow();
-    gray();
-    createTreeView();
-    createTabs();
-    setWindowTitle(tr("Grip2"));
+    setWindowTitle(tr("Grip"));
     resize(860, 700);
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -126,18 +100,16 @@ void MainWindow::Toolbar()
 
     connect(open, SIGNAL(triggered()), this, SLOT(load()));
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
-//    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
-//    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
     connect(camera, SIGNAL(triggered()), this, SLOT(load()));
-    connect(film, SIGNAL(triggered()), this, SLOT(debugShit()));
+//    connect(film, SIGNAL(triggered()), this, SLOT(film()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
-    connect(simulate, SIGNAL(triggered()), gripShit, SLOT(startSimulation()));
-    connect(stop, SIGNAL(triggered()), gripShit, SLOT(stopSimulation()));
-//    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-    gripShit->moveToThread(simThread);
-    simThread->start();
+    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
+    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
 
 }
 
@@ -179,128 +151,6 @@ void MainWindow::quickLoad()
     doLoad(line.toStdString());
 }
 
-void MainWindow::doLoad(string fileName)
-{
-    worldNode = new osgDart::DartNode(true);
-    mWorld = new simulation::World;
-    mWorld->checkCollision(true);
-
-    // Add floor
-    dart::dynamics::Skeleton* ground = new dart::dynamics::Skeleton();
-    ground->setName("ground");
-
-    dart::dynamics::BodyNode* node = new dart::dynamics::BodyNode("ground");
-    node->setMass(1.0);
-
-    dart::dynamics::Shape* shape = new dart::dynamics::BoxShape(Eigen::Vector3d(10.0, 10.0, 0.0001));
-    shape->setColor(Eigen::Vector3d(0.5, 0.5, 1.0));
-    node->addCollisionShape(shape);
-
-    dart::dynamics::Joint* joint = new dart::dynamics::WeldJoint();
-    joint->setName("groundJoint");
-    joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-    joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-    node->setParentJoint(joint);
-
-    ground->addBodyNode(node);
-    ground->setMobile(false);
-    mWorld->addSkeleton(ground);
-    worldNode->addWorld(mWorld);
-
-    int numRobots = worldNode->addWorld(fileName);
-    std::cerr << "numSkels: " << numRobots << std::endl;
-    for(int i=0; i<numRobots; ++i) {
-        std::cerr << "\n\t" << mWorld->getSkeleton(i)->getName();
-    }
-    if(worldNode->getWorld()) {
-        viewWidget->addNodeToScene(worldNode);
-//        mWorld = worldNode->getWorld();
-        mWorld->setTimeStep(0.001);
-
-        treeviewer->populateTreeView(mWorld, numRobots);
-        cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
-        saveText(fileName,".lastload");
-        gripShit->setWorld(mWorld);
-    } else {
-        std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
-    }
-}
-
-int MainWindow::saveText(string scenepath, const char* llfile)
-{
-    try
-    {
-        QFile file(llfile);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-            return 0;
-        QTextStream out(&file);
-        out << QString::fromStdString(scenepath) << "\n";
-    }
-
-    catch (const std::exception& e)
-    {
-        cout <<  e.what() << endl;
-        return 0;
-    }
-    return 1;
-}
-
-void MainWindow::saveScene(){}
-void MainWindow::close(){}
-void MainWindow::exit(){}
-
-void MainWindow::front()
-{
-    viewWidget->setToFrontView();
-}
-
-void MainWindow::top()
-{
-    viewWidget->setToTopView();
-}
-
-void MainWindow::side()
-{
-    viewWidget->setToSideView();
-}
-
-void MainWindow::startSimulation()
-{
-}
-
-void MainWindow::stopSimulation()
-{
-
-}
-
-void MainWindow::debugShit()
-{
-
-}
-
-void MainWindow::simulateSingleStep(){}
-void MainWindow::renderDuringSimulation(){}
-void MainWindow::white()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(1, 1, 1, 1));
-}
-void MainWindow::gray()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(.5, .5, .5, 1));
-}
-
-void MainWindow::black()
-{
-    viewWidget->setBackgroundColor(osg::Vec4(0, 0, 0, 1));
-}
-void MainWindow::resetCamera()
-{
-    viewWidget->setCameraToHomePosition();
-}
-
-void MainWindow::xga1024x768(){}
-void MainWindow::vga640x480(){}
-void MainWindow::hd1280x720(){}
 void MainWindow::about(){}
 
 void MainWindow::createActions()
@@ -441,7 +291,7 @@ void MainWindow::createMenus()
 
     //renderMenu
     renderMenu = menuBar()->addMenu(tr("&Render"));
-    renderMenu->addAction(xga1024x768Act);
+    //renderMenu->addAction(xga1024x768Act);
     renderMenu->addAction(vga640x480Act);
     renderMenu->addAction(hd1280x720Act);
 
@@ -450,37 +300,6 @@ void MainWindow::createMenus()
     helpMenu->addAction(aboutAct);
 }
 
-void MainWindow::createOsgWindow()
-{
-    std::cerr << "Adding viewer widget" << std::endl;
-    viewWidget = new ViewerWidget();
-    viewWidget->setGeometry(100, 100, 800, 600);
-    viewWidget->addGrid(20, 20, 1);
-    setCentralWidget(viewWidget);
-}
-
-void MainWindow::createTreeView()
-{
-    treeviewer = new Tree_View(this);
-    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
-    //treeviewer->addParent("test");
-    //treeviewer->addChild("child test", "test");
-}
-
-void MainWindow::createTabs()
-{
-    setDockOptions(QMainWindow::AnimatedDocks);
-    QDockWidget *viztabwidget = new QDockWidget(this);
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-
-    QDockWidget *instabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(instabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, instabwidget);
-
-    tabifyDockWidget(instabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
-
-    // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
-}
+void MainWindow::saveScene(){}
+void MainWindow::close(){}
+void MainWindow::exit(){}
