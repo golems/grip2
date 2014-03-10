@@ -50,7 +50,6 @@
 #include <iostream>
 #include <cstdio>
 
-
 using namespace std;
 
 class QAction;
@@ -67,7 +66,7 @@ public:
     ~MainWindow();
     void Toolbar();
 
-private slots:
+protected slots:
     void load();
     void quickLoad();
     void saveScene();
@@ -126,6 +125,7 @@ private:
     QAction *vga640x480Act;
     QAction *hd1280x720Act;
     QAction *aboutAct;
+
 };
 
 #endif // MAINWINDOW_H

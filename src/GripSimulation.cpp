@@ -17,17 +17,22 @@
 
 using namespace dart;
 
-GripSimulation::GripSimulation(MainWindow *gripWindow, bool debug) :
-    _world(NULL), _debug(debug), _thread(new QThread), _gripWindow(gripWindow)
+GripSimulation::GripSimulation(bool debug) :
+    _world(NULL),
+    _debug(debug),
+//    _thread(new QThread),
+//    _gripWindow(gripWindow),
+    _simulating(false),
+    _simulateOneFrame(false)
 {
-    this->moveToThread(_thread);
-    _thread->start();
+//    this->moveToThread(_thread);
+//    _thread->start();
 }
 
 
 GripSimulation::~GripSimulation()
 {
-
+//    _thread->deleteLater();
 }
 
 void GripSimulation::setWorld(simulation::World *world)
@@ -69,25 +74,34 @@ void GripSimulation::simulateTimeStep()
         // end
 
         // Simulate timestep by stepping the world dynamics forward one step
-        std::cerr << "World: "
-                  << "\n\tSkeletons: " << _world->getNumSkeletons()
-                  << "\n\tTime: " << _world->getTime()
-                  << "\n\tStep: " << _world->getTimeStep()
-                  << std::endl;
+//        std::cerr << "World: "
+//                  << "\n\tSkeletons: " << _world->getNumSkeletons()
+//                  << "\n\tTime: " << _world->getTime()
+//                  << "\n\tStep: " << _world->getTimeStep()
+//                  << std::endl;
+        double t1 = grip::getTime();
         _world->step();
-
+        std::cerr << grip::getTime() - t1 << std::endl;
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
         //     tabs->doAfterSimulationTimeStep
         // end
 
+        if(_simulateOneFrame) {
+            return;
+        }
     }
     QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
 
 }
 
-
+void GripSimulation::simulateSingleTimeStep()
+{
+    _simulateOneFrame = true;
+    emit simulateTimeStep();
+    _simulateOneFrame = false;
+}
 
 void GripSimulation::stopSimulation()
 {

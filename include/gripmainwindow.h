@@ -86,11 +86,12 @@ public:
     dart::simulation::World* world;
 
     GripSimulation* simulation;
+    QThread* simulationThread;
 
 //signals:
-    void startSim();
-    void stopSim();
-    void simulateSingle();
+//    void startSim();
+//    void stopSim();
+//    void simulateSingle();
 
     dart::dynamics::Skeleton* createGround();
 

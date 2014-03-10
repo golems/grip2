@@ -107,10 +107,6 @@ void MainWindow::Toolbar()
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
-    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
-    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-
 }
 
 

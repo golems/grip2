@@ -26,11 +26,14 @@
 
 
 GripMainWindow::GripMainWindow() :
-    MainWindow(), worldNode(new osgDart::DartNode()), simulation(new GripSimulation(this))
+    MainWindow(), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true)), simulationThread(new QThread)
 {
     createRenderingWindow();
     createTreeView();
     createTabs();
+
+    simulation->moveToThread(simulationThread);
+    simulationThread->start();
 }
 
 GripMainWindow::~GripMainWindow()
@@ -40,7 +43,6 @@ GripMainWindow::~GripMainWindow()
 void GripMainWindow::doLoad(string fileName)
 {
     world = new dart::simulation::World();
-    world->checkCollision(true);
     world->addSkeleton(createGround());
     world->setTimeStep(0.001);
 
@@ -182,6 +184,7 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
     joint->setName("groundJoint");
     joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
     joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
+    Eigen::Isometry3d m = Eigen::Isometry3d::Identity();
     node->setParentJoint(joint);
 
     ground->addBodyNode(node);

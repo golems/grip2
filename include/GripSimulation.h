@@ -1,4 +1,7 @@
 
+#ifndef GRIP_SIMULATION_H
+#define GRIP_SIMULATION_H
+
 #include <dart/simulation/World.h>
 #include <QObject>
 #include "mainwindow.h"
@@ -11,7 +14,7 @@ class GripSimulation : public QObject
 
 public:
 
-    GripSimulation(MainWindow* gripWindow, bool debug=false);
+    GripSimulation(bool debug);
 
     ~GripSimulation();
 
@@ -25,6 +28,7 @@ public slots:
     virtual void startSimulation();
     virtual void stopSimulation();
     virtual void simulateTimeStep();
+    virtual void simulateSingleTimeStep();
 
 protected:
     /// World object received from creator that we need to simulate
@@ -33,13 +37,17 @@ protected:
     /// Bool for whether or not we are simulating
     bool _simulating;
 
+    bool _simulateOneFrame;
+
     /// Bool for whether or not to print debug output to standard error
     bool _debug;
 
-    QThread* _thread;
+//    QThread* _thread;
 
-    MainWindow* _gripWindow;
+//    MainWindow* _gripWindow;
 
 
 
 };
+
+#endif // GRIP_SIMULATION_H
