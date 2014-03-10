@@ -1,17 +1,27 @@
 
 
+// Local includes
 #include "GripSimulation.h"
+#include "gripTime.h"
+
+// DART includes
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
+
+// Standard C++ includes
 #include <iostream>
 #include <iomanip>
-#include "gripTime.h"
+
+// QT includes
+#include <QThread>
 
 using namespace dart;
 
-GripSimulation::GripSimulation(bool debug) : _world(NULL), _debug(debug)
+GripSimulation::GripSimulation(MainWindow *gripWindow, bool debug) :
+    _world(NULL), _debug(debug), _thread(new QThread), _gripWindow(gripWindow)
 {
-
+    this->moveToThread(_thread);
+    _thread->start();
 }
 
 
@@ -59,7 +69,13 @@ void GripSimulation::simulateTimeStep()
         // end
 
         // Simulate timestep by stepping the world dynamics forward one step
+        std::cerr << "World: "
+                  << "\n\tSkeletons: " << _world->getNumSkeletons()
+                  << "\n\tTime: " << _world->getTime()
+                  << "\n\tStep: " << _world->getTimeStep()
+                  << std::endl;
         _world->step();
+
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
@@ -79,14 +95,4 @@ void GripSimulation::stopSimulation()
         std::cerr << "Stoppin simulation" << std::endl;
     }
     _simulating = false;
-}
-
-void GripSimulation::doBeforeSimulationTimeStep()
-{
-
-}
-
-void GripSimulation::doAfterSimulationTimeStep()
-{
-
 }
