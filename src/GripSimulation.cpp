@@ -67,9 +67,7 @@ void GripSimulation::startSimulation()
     _simulating = true;
 
     if(_world) {
-        if(_world->getTime() == 0) {
-            _simulationStartTime = grip::getTime();
-        }
+        _simulationStartTime = grip::getTime();
         _prevTime = grip::getTime();
 
         simulateTimeStep();
@@ -105,8 +103,15 @@ void GripSimulation::simulateTimeStep()
 
         double curTime = grip::getTime();
         double timeStepDuration = curTime - _prevTime;
-//        simulationTime = ;
+        _simulationDuration = _simulationDuration + (curTime - _simulationStartTime);
         _simTimeRelToRealTime = timeStepDuration / _world->getTimeStep();
+        _prevTime = curTime;
+
+        std::cerr << "Sim | Real | Rel: "
+                  << _world->getTime() << " | "
+                  << _simulationDuration << " | "
+                  << _simTimeRelToRealTime
+                  << std::endl;
 
         if(_simulateOneFrame) {
             return;
