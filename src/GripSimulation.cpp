@@ -37,8 +37,10 @@ GripSimulation::~GripSimulation()
 
 void GripSimulation::setWorld(simulation::World *world)
 {
+    // Assign world object and add initial state to the timeline
     _world = world;
-    _world->checkCollision(false);
+    addWorldToTimeline(*_world);
+
     if(_debug) {
         std::cerr << "World: "
                   << "\n\tGravity: " << _world->getGravity().transpose()
@@ -46,6 +48,14 @@ void GripSimulation::setWorld(simulation::World *world)
                   << "\n\tTime: " << _world->getTime()
                   << std::endl;
     }
+}
+
+void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)
+{
+    timeslice slice;
+    slice.time = worldToAdd.getTime();
+    slice.state = worldToAdd.getState();
+    _timeline.push_back(slice);
 }
 
 void GripSimulation::startSimulation()
@@ -57,9 +67,16 @@ void GripSimulation::startSimulation()
     _simulating = true;
 
     if(_world) {
+        if(_world->getTime() == 0) {
+            _simulationStartTime = grip::getTime();
+        }
+        _prevTime = grip::getTime();
+
         simulateTimeStep();
     } else {
-        std::cerr << "Not simulating because there's no world yet" << std::endl;
+        std::cerr << "Not simulating because there's no world yet. From line "
+                  << __LINE__ << " of " << __FILE__
+                  << std::endl;
     }
 
 }
@@ -77,6 +94,7 @@ void GripSimulation::simulateTimeStep()
 
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
+        addWorldToTimeline(*_world);
 
         std::cerr << grip::getTime() - t1 << std::endl;
 
@@ -84,6 +102,11 @@ void GripSimulation::simulateTimeStep()
         // for each tab
         //     tabs->doAfterSimulationTimeStep
         // end
+
+        double curTime = grip::getTime();
+        double timeStepDuration = curTime - _prevTime;
+//        simulationTime = ;
+        _simTimeRelToRealTime = timeStepDuration / _world->getTimeStep();
 
         if(_simulateOneFrame) {
             return;

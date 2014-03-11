@@ -112,7 +112,7 @@ void GripMainWindow::hd1280x720(){}
 void GripMainWindow::startSimulation()
 {
     if(world) {
-        emit simulation->startSimulation();
+        simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
         this->getToolBar()->actions().at(4)->setVisible(true);
         this->getToolBar()->actions().at(3)->setVisible(false);
@@ -124,7 +124,7 @@ void GripMainWindow::startSimulation()
 
 void GripMainWindow::stopSimulation()
 {
-    emit simulation->stopSimulation();
+    simulation->stopSimulation();
     // FIXME: Maybe use qsignalmapping or std::map for this
     this->getToolBar()->actions().at(4)->setVisible(false);
     this->getToolBar()->actions().at(3)->setVisible(true);
@@ -132,7 +132,7 @@ void GripMainWindow::stopSimulation()
 
 void GripMainWindow::simulateSingleStep()
 {
-    emit simulation->simulateSingleTimeStep();
+    simulation->simulateSingleTimeStep();
 }
 
 void GripMainWindow::renderDuringSimulation(){}
