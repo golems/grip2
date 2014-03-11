@@ -47,6 +47,7 @@ public:
     explicit Tree_View(QWidget *parent = 0, TreeViewReturn* active_item = NULL);
     void populateTreeView(simulation::World* world, int numRobots);
     ~Tree_View();
+    TreeViewReturn* getActiveItem();
 
 private slots:
     void nameChange_BodyNode_Joint(int checkBoxState);

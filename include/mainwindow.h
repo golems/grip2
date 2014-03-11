@@ -75,6 +75,7 @@ public:
     void Toolbar();
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
+    TreeViewReturn* activeItem;
     //QDockWidget *tree;
     //Visualizer *visualizertab;
     //Inspector  *inspectortab;

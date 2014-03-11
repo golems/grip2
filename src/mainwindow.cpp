@@ -520,7 +520,7 @@ void MainWindow::ChangeJoint(int slidervalue){
     //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
     //else
     joint_value = inspec_ui.positionSlider_0->getdsvalue();
-
+    std::cout << treeviewer->getActiveItem() << std::endl;
     std::vector<int> indx;
     indx.push_back(mWorld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
     Eigen::VectorXd q(1);
