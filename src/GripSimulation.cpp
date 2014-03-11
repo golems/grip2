@@ -21,7 +21,6 @@ GripSimulation::GripSimulation(bool debug) :
     _world(NULL),
     _debug(debug),
     _thread(new QThread),
-//    _gripWindow(gripWindow),
     _simulating(false),
     _simulateOneFrame(false)
 {
@@ -76,12 +75,8 @@ void GripSimulation::simulateTimeStep()
 
         double t1 = grip::getTime();
 
-        mMutex.lock();
-
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
-
-        mMutex.unlock();
 
         std::cerr << grip::getTime() - t1 << std::endl;
 
@@ -92,9 +87,15 @@ void GripSimulation::simulateTimeStep()
 
         if(_simulateOneFrame) {
             return;
+        } else {
+            // Call this method again using invokeMethod to give the EventLoop
+            // time to check for other signals
+            QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
         }
+    } else { // Get out of this function so we don't call ourselves again
+        return;
     }
-    QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
+
 
 }
 

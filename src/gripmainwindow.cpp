@@ -31,9 +31,6 @@ GripMainWindow::GripMainWindow() :
     createRenderingWindow();
     createTreeView();
     createTabs();
-
-//    simulation->moveToThread(simulationThread);
-//    simulationThread->start();
 }
 
 GripMainWindow::~GripMainWindow()

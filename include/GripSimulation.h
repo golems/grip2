@@ -21,6 +21,8 @@ public:
 
     void setWorld(simulation::World* world);
 
+//signals:
+
 
 public slots:
     virtual void startSimulation();
@@ -41,10 +43,6 @@ protected:
     bool _debug;
     QMutex mMutex;
     QThread* _thread;
-
-//    MainWindow* _gripWindow;
-
-
 
 };
 
