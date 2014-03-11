@@ -26,14 +26,18 @@
 
 
 GripMainWindow::GripMainWindow() :
-    MainWindow(), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true)), simulationThread(new QThread)
+    MainWindow()
 {
+    world = new dart::simulation::World;
+    worldNode = new osgDart::DartNode(true);
+    simulation = new GripSimulation(true);
+//    simulationThread = new QThread;
     createRenderingWindow();
     createTreeView();
     createTabs();
 
-    simulation->moveToThread(simulationThread);
-    simulationThread->start();
+//    simulation->moveToThread(simulationThread);
+//    simulationThread->start();
 }
 
 GripMainWindow::~GripMainWindow()
@@ -42,7 +46,17 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(string fileName)
 {
-    world = new dart::simulation::World();
+
+    std::cerr << "Removing worldNode children" << std::endl;
+    worldNode->removeAllSkeletons();
+
+    if(world) {
+        std::cerr << "Removing world skeletons" << std::endl;
+        for(int i=0; i<world->getNumSkeletons(); ++i) {
+            world->removeSkeleton(world->getSkeleton(i));
+        }
+    }
+
     world->addSkeleton(createGround());
     world->setTimeStep(0.001);
 
@@ -110,7 +124,10 @@ void GripMainWindow::stopSimulation()
     emit simulation->stopSimulation();
 }
 
-void GripMainWindow::simulateSingleStep(){}
+void GripMainWindow::simulateSingleStep()
+{
+    emit simulation->simulateSingleTimeStep();
+}
 
 void GripMainWindow::renderDuringSimulation(){}
 

@@ -5,6 +5,7 @@
 #include <dart/simulation/World.h>
 #include <QObject>
 #include "mainwindow.h"
+#include <QMutex>
 
 using namespace dart;
 
@@ -20,9 +21,6 @@ public:
 
     void setWorld(simulation::World* world);
 
-//signals:
-//    void signalDoBeforeSimulationTimeStep();
-//    void signalDoAfterSimulationTimeStep();
 
 public slots:
     virtual void startSimulation();
@@ -41,8 +39,8 @@ protected:
 
     /// Bool for whether or not to print debug output to standard error
     bool _debug;
-
-//    QThread* _thread;
+    QMutex mMutex;
+    QThread* _thread;
 
 //    MainWindow* _gripWindow;
 

@@ -86,7 +86,7 @@ public:
     dart::simulation::World* world;
 
     GripSimulation* simulation;
-    QThread* simulationThread;
+//    QThread* simulationThread;
 
 //signals:
 //    void startSim();

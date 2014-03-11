@@ -20,19 +20,20 @@ using namespace dart;
 GripSimulation::GripSimulation(bool debug) :
     _world(NULL),
     _debug(debug),
-//    _thread(new QThread),
+    _thread(new QThread),
 //    _gripWindow(gripWindow),
     _simulating(false),
     _simulateOneFrame(false)
 {
-//    this->moveToThread(_thread);
-//    _thread->start();
+    this->moveToThread(_thread);
+    _thread->start();
 }
 
 
 GripSimulation::~GripSimulation()
 {
-//    _thread->deleteLater();
+    _thread->quit();
+    _thread->wait();
 }
 
 void GripSimulation::setWorld(simulation::World *world)
@@ -73,14 +74,15 @@ void GripSimulation::simulateTimeStep()
         //     tabs->doBeforeSimulationTimeStep
         // end
 
-        // Simulate timestep by stepping the world dynamics forward one step
-//        std::cerr << "World: "
-//                  << "\n\tSkeletons: " << _world->getNumSkeletons()
-//                  << "\n\tTime: " << _world->getTime()
-//                  << "\n\tStep: " << _world->getTimeStep()
-//                  << std::endl;
         double t1 = grip::getTime();
+
+        mMutex.lock();
+
+        // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
+
+        mMutex.unlock();
+
         std::cerr << grip::getTime() - t1 << std::endl;
 
         // Run each tabs doBeforeSimulationTimeStep function
@@ -98,8 +100,15 @@ void GripSimulation::simulateTimeStep()
 
 void GripSimulation::simulateSingleTimeStep()
 {
+    _simulating = true;
     _simulateOneFrame = true;
-    emit simulateTimeStep();
+
+    if(_debug) {
+        std::cerr << "Simulating a single timestep" << std::endl;
+        emit this->simulateTimeStep();
+    }
+
+    _simulating = false;
     _simulateOneFrame = false;
 }
 
