@@ -84,12 +84,13 @@ void MainWindow::Toolbar()
     QPixmap topViewIcon((const char**) topView_xpm);
     QPixmap rightSideViewIcon((const char**) rightSideView_xpm);
 
-    QToolBar *toolbar = addToolBar("main toolbar");
+    toolbar = addToolBar("main toolbar");
     QAction *open = toolbar->addAction(QIcon(openIcon), "Open Scene (Ctrl + O)");
     QAction *redo = toolbar->addAction(QIcon(redoIcon), "Load last viewed scene (Ctrl + Shift + Q)");
     toolbar->addSeparator();
     QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
     QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
+    toolbar->actions().at(4)->setVisible(false);
     toolbar->addSeparator();
     QAction *camera = toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
     QAction *film = toolbar->addAction(QIcon(filmIcon), "Export film sequence");
@@ -109,6 +110,10 @@ void MainWindow::Toolbar()
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
 }
 
+QToolBar* MainWindow::getToolBar()
+{
+    return toolbar;
+}
 
 void MainWindow::load()
 {

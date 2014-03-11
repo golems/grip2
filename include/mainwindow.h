@@ -66,6 +66,9 @@ public:
     ~MainWindow();
     void Toolbar();
 
+protected:
+    QToolBar* getToolBar();
+
 protected slots:
     void load();
     void quickLoad();
@@ -104,6 +107,8 @@ private:
     QMenu *renderMenu;
     QMenu *helpMenu;
     QMenu *backgroundMenu;
+
+    QToolBar* toolbar;
     QActionGroup *colorGroup;
     QAction *loadAct;
     QAction *quickLoadAct;
