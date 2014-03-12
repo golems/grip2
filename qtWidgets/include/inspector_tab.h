@@ -10,7 +10,7 @@
 class Inspector_Tab : public QDockWidget {
     Q_OBJECT
 public:
-    Inspector_Tab(QWidget *parent, simulation::World *simWorld, Tree_View *treeViewer);
+    Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer);
     ~Inspector_Tab();
 private slots:
     void ChangePos0DoubleSpinBox(int sliderValue);
@@ -18,7 +18,7 @@ private slots:
     void ChangeJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
 private:
     Ui::Inspector_Tab *inspector_ui;
-    simulation::World *world;
+    simulation::World *simworld;
     Tree_View *treeview;
     QSlider *positionSlider_0;
     QDoubleSpinBox *positionSpinBox_0;

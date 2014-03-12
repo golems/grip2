@@ -85,6 +85,7 @@ using namespace std;
 
 MainWindow::MainWindow()
 {
+ /*
     gripShit = new GripSimulation;
     simThread = new QThread;
     mWorld = new simulation::World;
@@ -97,6 +98,7 @@ MainWindow::MainWindow()
     createTabs();
     setWindowTitle(tr("Grip2"));
     resize(860, 700);
+*/
 }
 
 

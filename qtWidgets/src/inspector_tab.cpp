@@ -7,7 +7,7 @@
 
 
 
-Inspector_Tab::Inspector_Tab(QWidget *parent, simulation::World *simWorld, Tree_View *treeViewer)
+Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
  : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab)
 {
  //   QDockWidget *widget = new QDockWidget(this);
@@ -30,48 +30,50 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, simulation::World *simWorld, Tree_
     inspector_ui->positionSlider_0->setValue(0);
     inspector_ui->positionSpinBox_0->setRange(-180.0,180.0);
     inspector_ui->positionSpinBox_0->setValue(0.0);
-
+/*
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
     std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
-    world = simWorld;
-    std::cout << "test world in inspector constructor: " << world << std::endl;
+    simworld = simWorld;
+    std::cout << "test world in inspector constructor: " << simworld << std::endl;
     std::cout << "Inspector constructor" << std::endl;
     treeview = treeViewer;
 
     std::cout << "test treeview in inspector constructor: " << treeview << std::endl;
+*/
 }
 
 void Inspector_Tab::ChangePos0DoubleSpinBox(int sliderValue){
-    positionSpinBox_0->setValue((double)sliderValue);
-    std::cout << "slider value: " << sliderValue << std::endl;
+ //   positionSpinBox_0->setValue((double)sliderValue);
+ //   std::cout << "slider value: " << sliderValue << std::endl;
 }
 
 void Inspector_Tab::ChangePos0Slider(double spinBoxValue){
-    positionSlider_0->setValue((int)spinBoxValue);
+ //   positionSlider_0->setValue((int)spinBoxValue);
 }
 
 void Inspector_Tab::ChangeJoint(int sliderValue){
-    int joint_id = 10;
-    double joint_Value = 0.0;
+ //   int joint_id = 10;
+ //   double joint_Value = 0.0;
     //if (inspec_ui.positionSlider_0 == inspec_ui.positionSlider_0->getdsvalue())
     //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
     //else
-
+    /*
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
     std::cout << joint_Value << std::endl;
     std::cout << treeview->getActiveItem() << std::endl;
 
     std::cout << "test changejoint" << std::endl;
+
     std::vector<int> indx;
-    std::cout << world << std::endl;
-    indx.push_back(world->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
+    std::cout << simworld << std::endl;
+    indx.push_back(simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
 
 
     Eigen::VectorXd q(1);
     q[0] = double(joint_Value*(3.14)/180.0);
-    world->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+    simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
 
-
+    */
     //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
 
