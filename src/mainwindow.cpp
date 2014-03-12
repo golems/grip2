@@ -91,7 +91,7 @@ void MainWindow::Toolbar()
     toolbar->addSeparator();
     QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
     QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
-    toolbar->actions().at(4)->setVisible(false);
+    stop->setVisible(false);
     toolbar->addSeparator();
     QAction *camera = toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
     QAction *film = toolbar->addAction(QIcon(filmIcon), "Export film sequence");

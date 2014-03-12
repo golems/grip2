@@ -27,7 +27,7 @@
 
 
 GripMainWindow::GripMainWindow() :
-    MainWindow()
+    MainWindow(), world(NULL), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true))
 {
     pluginList = new QList<QObject*>;
     world = new dart::simulation::World;
@@ -54,6 +54,8 @@ void GripMainWindow::doLoad(string fileName)
         for(int i=0; i<world->getNumSkeletons(); ++i) {
             world->removeSkeleton(world->getSkeleton(i));
         }
+    } else {
+        world = new dart::simulation::World;
     }
 
     world->addSkeleton(createGround());
@@ -115,21 +117,28 @@ void GripMainWindow::hd1280x720(){}
 
 void GripMainWindow::startSimulation()
 {
-    emit simulation->startSimulation();
-    this->getToolBar()->actions().at(4)->setVisible(true);
-    this->getToolBar()->actions().at(3)->setVisible(false);
+    if(world) {
+        simulation->startSimulation();
+        // FIXME: Maybe use qsignalmapping or std::map for this
+        this->getToolBar()->actions().at(4)->setVisible(true);
+        this->getToolBar()->actions().at(3)->setVisible(false);
+    } else {
+        std::cerr << "Not simulating because there's no world yet" << std::endl;
+    }
+
 }
 
 void GripMainWindow::stopSimulation()
 {
-    emit simulation->stopSimulation();
+    simulation->stopSimulation();
+    // FIXME: Maybe use qsignalmapping or std::map for this
     this->getToolBar()->actions().at(4)->setVisible(false);
     this->getToolBar()->actions().at(3)->setVisible(true);
 }
 
 void GripMainWindow::simulateSingleStep()
 {
-    emit simulation->simulateSingleTimeStep();
+    simulation->simulateSingleTimeStep();
 }
 
 void GripMainWindow::renderDuringSimulation(){}

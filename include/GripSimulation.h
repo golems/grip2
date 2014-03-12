@@ -4,10 +4,13 @@
 
 #include <dart/simulation/World.h>
 #include <QObject>
-#include "mainwindow.h"
-#include <QMutex>
 
-using namespace dart;
+class timeslice
+{
+public:
+    double time;
+    Eigen::VectorXd state;
+};
 
 class GripSimulation : public QObject
 {
@@ -19,8 +22,7 @@ public:
 
     ~GripSimulation();
 
-    void setWorld(simulation::World* world);
-
+    void setWorld(dart::simulation::World* world);
 
 public slots:
     virtual void startSimulation();
@@ -29,8 +31,10 @@ public slots:
     virtual void simulateSingleTimeStep();
 
 protected:
+    void addWorldToTimeline(const dart::simulation::World& worldToAdd);
+
     /// World object received from creator that we need to simulate
-    simulation::World* _world;
+    dart::simulation::World* _world;
 
     /// Bool for whether or not we are simulating
     bool _simulating;
@@ -39,12 +43,18 @@ protected:
 
     /// Bool for whether or not to print debug output to standard error
     bool _debug;
-    QMutex mMutex;
+
+    /// Local thread to move object into
     QThread* _thread;
 
-//    MainWindow* _gripWindow;
+    /// Vector to hold timeslice objects for the slider and playback
+    std::vector<timeslice> _timeline;
 
-
+    double _simulationDuration;  ///< Simulation time in realtime
+    double _simulationStartTime; ///< Initial system clock time when simulation started
+    double _simTimeRelToRealTimeInstantaneous; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
+    double _simTimeRelToRealTimeOverall; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
+    double _prevTime; ///< Real time on the last time step
 
 };
 

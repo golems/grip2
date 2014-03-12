@@ -21,7 +21,6 @@ GripSimulation::GripSimulation(bool debug) :
     _world(NULL),
     _debug(debug),
     _thread(new QThread),
-//    _gripWindow(gripWindow),
     _simulating(false),
     _simulateOneFrame(false)
 {
@@ -38,8 +37,10 @@ GripSimulation::~GripSimulation()
 
 void GripSimulation::setWorld(simulation::World *world)
 {
+    // Assign world object and add initial state to the timeline
     _world = world;
-    _world->checkCollision(false);
+    addWorldToTimeline(*_world);
+
     if(_debug) {
         std::cerr << "World: "
                   << "\n\tGravity: " << _world->getGravity().transpose()
@@ -47,6 +48,14 @@ void GripSimulation::setWorld(simulation::World *world)
                   << "\n\tTime: " << _world->getTime()
                   << std::endl;
     }
+}
+
+void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)
+{
+    timeslice slice;
+    slice.time = worldToAdd.getTime();
+    slice.state = worldToAdd.getState();
+    _timeline.push_back(slice);
 }
 
 void GripSimulation::startSimulation()
@@ -58,9 +67,14 @@ void GripSimulation::startSimulation()
     _simulating = true;
 
     if(_world) {
+        _simulationStartTime = grip::getTime();
+        _prevTime = grip::getTime();
+
         simulateTimeStep();
     } else {
-        std::cerr << "Not simulating because there's no world yet" << std::endl;
+        std::cerr << "Not simulating because there's no world yet. From line "
+                  << __LINE__ << " of " << __FILE__
+                  << std::endl;
     }
 
 }
@@ -74,27 +88,40 @@ void GripSimulation::simulateTimeStep()
         //     tabs->doBeforeSimulationTimeStep
         // end
 
-        double t1 = grip::getTime();
-
-        mMutex.lock();
-
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
-
-        mMutex.unlock();
-
-        std::cerr << grip::getTime() - t1 << std::endl;
+//        addWorldToTimeline(*_world);
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
         //     tabs->doAfterSimulationTimeStep
         // end
 
+        double curTime = grip::getTime();
+        double timeStepDuration = curTime - _prevTime;
+        _simulationDuration = _simulationDuration + timeStepDuration;
+        _simTimeRelToRealTimeInstantaneous = _world->getTimeStep() / timeStepDuration;
+        _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
+        _prevTime = curTime;
+
+        std::cerr << "Sim | Real | RelInst | RelOverall: "
+                  << _world->getTime() << " | "
+                  << _simulationDuration << " | "
+                  << _simTimeRelToRealTimeInstantaneous << " | "
+                  << _simTimeRelToRealTimeOverall
+                  << std::endl;
+
         if(_simulateOneFrame) {
             return;
+        } else {
+            // Call this method again using invokeMethod to give the EventLoop
+            // time to check for other signals
+            QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
         }
+    } else { // Get out of this function so we don't call ourselves again
+        return;
     }
-    QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
+
 
 }
 
