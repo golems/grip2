@@ -162,6 +162,13 @@ void Tree_View::populateTreeView(simulation::World *world, int numRobots)
     }
 }
 
+void Tree_View::clear()
+{
+    while(ui_treeWidget->topLevelItemCount()) {
+        delete ui_treeWidget->takeTopLevelItem(0);
+    }
+}
+
 void Tree_View::name_Joint(QTreeWidgetItem* node)
 {
     TreeViewReturn* val = node->data(0, Qt::UserRole).value<TreeViewReturn*>();
