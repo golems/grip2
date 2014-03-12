@@ -26,11 +26,17 @@
 
 
 GripMainWindow::GripMainWindow() :
-    MainWindow(), world(NULL), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true))
+    MainWindow(),
+    world(NULL),
+    worldNode(new osgDart::DartNode(true)),
+    simulation(new GripSimulation(this, true)),
+    _simulating(false)
 {
     createRenderingWindow();
     createTreeView();
     createTabs();
+
+    connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 }
 
 GripMainWindow::~GripMainWindow()
@@ -39,18 +45,17 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(string fileName)
 {
-
-    std::cerr << "Removing worldNode children" << std::endl;
-    worldNode->removeAllSkeletons();
+    if(_simulating) {
+        if(!stopSimulationWithDialog()) {
+            std::cerr << "Not loading a new world" << std::endl;
+            return;
+        }
+    }
 
     if(world) {
-        std::cerr << "Removing world skeletons" << std::endl;
-        for(int i=0; i<world->getNumSkeletons(); ++i) {
-            world->removeSkeleton(world->getSkeleton(i));
-        }
-    } else {
-        world = new dart::simulation::World;
+        this->deleteWorld();
     }
+    world = new dart::simulation::World;
 
     world->addSkeleton(createGround());
     world->setTimeStep(0.001);
@@ -67,6 +72,60 @@ void GripMainWindow::doLoad(string fileName)
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+}
+
+bool GripMainWindow::stopSimulationWithDialog()
+{
+    // Ask user if they really want to end the simulation and load a new world
+    QMessageBox msgBox;
+    msgBox.setText(tr("Ending simulation and opening new world"));
+    msgBox.setInformativeText("Are you sure?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int resp = msgBox.exec();
+
+    switch(resp) {
+        case QMessageBox::Cancel: {
+            return false;
+        }
+        case QMessageBox::Ok:
+        default: {
+            break;
+        }
+    }
+
+    // Stop simulation
+    simulation->stopSimulation();
+
+    // Wait for simulation to stop by letting the event loop process
+    // events until the "simulationStopped" slot is called which set the
+    // _simulating flag to false.
+    while(_simulating) {
+        QCoreApplication::processEvents();
+    }
+
+    // Swap the start and stop buttons
+    this->swapStartStopButtons();
+
+    return true;
+}
+
+void GripMainWindow::deleteWorld()
+{
+    if(world) {
+        worldNode->removeAllSkeletons();
+        delete world;
+        world = 0;
+        treeviewer->clear();
+        delete simulation;
+        simulation = new GripSimulation(this, true);
+    }
+}
+
+void GripMainWindow::simulationStopped()
+{
+    std::cerr << "Got simulationStopped signal" << std::endl;
+    _simulating = false;
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -112,10 +171,10 @@ void GripMainWindow::hd1280x720(){}
 void GripMainWindow::startSimulation()
 {
     if(world) {
+        _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
-        this->getToolBar()->actions().at(4)->setVisible(true);
-        this->getToolBar()->actions().at(3)->setVisible(false);
+        swapStartStopButtons();
     } else {
         std::cerr << "Not simulating because there's no world yet" << std::endl;
     }
@@ -125,9 +184,20 @@ void GripMainWindow::startSimulation()
 void GripMainWindow::stopSimulation()
 {
     simulation->stopSimulation();
+    _simulating = false;
     // FIXME: Maybe use qsignalmapping or std::map for this
-    this->getToolBar()->actions().at(4)->setVisible(false);
-    this->getToolBar()->actions().at(3)->setVisible(true);
+    swapStartStopButtons();
+}
+
+void GripMainWindow::swapStartStopButtons()
+{
+    if(this->getToolBar()->actions().at(3)->isVisible()) {
+        this->getToolBar()->actions().at(3)->setVisible(false);
+        this->getToolBar()->actions().at(4)->setVisible(true);
+    } else {
+        this->getToolBar()->actions().at(3)->setVisible(true);
+        this->getToolBar()->actions().at(4)->setVisible(false);
+    }
 }
 
 void GripMainWindow::simulateSingleStep()

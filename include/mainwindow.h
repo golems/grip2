@@ -90,7 +90,7 @@ protected slots:
     virtual void vga640x480() = 0;
     virtual void hd1280x720() = 0;
     void about();
-
+    virtual void simulationStopped() = 0;
 
 private:
     void createActions();

@@ -14,16 +14,21 @@
 
 // QT includes
 #include <QThread>
+#include "mainwindow.h"
 
 using namespace dart;
 
-GripSimulation::GripSimulation(bool debug) :
+GripSimulation::GripSimulation(MainWindow* parent, bool debug) :
+    QObject(),
     _world(NULL),
     _debug(debug),
     _thread(new QThread),
     _simulating(false),
     _simulateOneFrame(false)
 {
+    connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
+    connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
+    connect(this, SIGNAL(simulationStoppedd()), parent, SLOT(simulationStopped()));
     this->moveToThread(_thread);
     _thread->start();
 }
@@ -31,8 +36,7 @@ GripSimulation::GripSimulation(bool debug) :
 
 GripSimulation::~GripSimulation()
 {
-    _thread->quit();
-    _thread->wait();
+    _thread->deleteLater();
 }
 
 void GripSimulation::setWorld(simulation::World *world)
@@ -52,10 +56,10 @@ void GripSimulation::setWorld(simulation::World *world)
 
 void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)
 {
-    timeslice slice;
-    slice.time = worldToAdd.getTime();
-    slice.state = worldToAdd.getState();
-    _timeline.push_back(slice);
+    GripTimeslice timeslice;
+    timeslice.time = worldToAdd.getTime();
+    timeslice.state = worldToAdd.getState();
+    _timeline.push_back(timeslice);
 }
 
 void GripSimulation::startSimulation()
@@ -78,7 +82,6 @@ void GripSimulation::startSimulation()
     }
 
 }
-
 void GripSimulation::simulateTimeStep()
 {
     if(_simulating) {
@@ -90,7 +93,7 @@ void GripSimulation::simulateTimeStep()
 
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
-//        addWorldToTimeline(*_world);
+        addWorldToTimeline(*_world);
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
@@ -104,12 +107,12 @@ void GripSimulation::simulateTimeStep()
         _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
         _prevTime = curTime;
 
-        std::cerr << "Sim | Real | RelInst | RelOverall: "
-                  << _world->getTime() << " | "
-                  << _simulationDuration << " | "
-                  << _simTimeRelToRealTimeInstantaneous << " | "
-                  << _simTimeRelToRealTimeOverall
-                  << std::endl;
+//        std::cerr << "Sim | Real | RelInst | RelOverall: "
+//                  << _world->getTime() << " | "
+//                  << _simulationDuration << " | "
+//                  << _simTimeRelToRealTimeInstantaneous << " | "
+//                  << _simTimeRelToRealTimeOverall
+//                  << std::endl;
 
         if(_simulateOneFrame) {
             return;
@@ -119,6 +122,10 @@ void GripSimulation::simulateTimeStep()
             QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
         }
     } else { // Get out of this function so we don't call ourselves again
+        if(_debug) {
+            std::cerr << "Emitting stop signal and exiting simulation loop" << std::endl;
+        }
+        emit simulationStoppedd();
         return;
     }
 

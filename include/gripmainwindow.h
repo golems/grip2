@@ -104,13 +104,18 @@ private slots:
     void xga1024x768();
     void vga640x480();
     void hd1280x720();
+    void simulationStopped();
 
 private:
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
+    void deleteWorld();
+    bool stopSimulationWithDialog();
+    void swapStartStopButtons();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+    bool _simulating;
 };
 
 

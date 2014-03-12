@@ -237,11 +237,13 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
 
 void DartNode::removeAllSkeletons()
 {
-    for(int i=0; i<_skeletons.size(); ++i) {
-        this->removeSkeleton(i);
+    if(this->getNumChildren()) {
+        this->removeChildren(0, this->getNumChildren());
+        _skeletons.clear();
+        _skeletonNodes.clear();
+        _skelNodeMap.clear();
+        _world = 0;
     }
-    _skeletons.clear();
-    std::cerr << "Vector size: " << _skeletons.size() << std::endl;
 }
 
 void DartNode::hideSkeleton(int i)
