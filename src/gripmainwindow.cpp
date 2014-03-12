@@ -6,6 +6,7 @@
 #include "ViewerWidget.h"
 
 ///including tab files
+#include "GripTab.h"
 #include "visualizer.h"
 #include "ui_visualizer.h"
 #include "inspector.h"
@@ -28,16 +29,14 @@
 GripMainWindow::GripMainWindow() :
     MainWindow()
 {
+    pluginList = new QList<QObject*>;
     world = new dart::simulation::World;
     worldNode = new osgDart::DartNode(true);
     simulation = new GripSimulation(true);
-//    simulationThread = new QThread;
     createRenderingWindow();
     createTreeView();
     createTabs();
-
-//    simulation->moveToThread(simulationThread);
-//    simulationThread->start();
+    loadPlugins();
 }
 
 GripMainWindow::~GripMainWindow()
@@ -170,16 +169,62 @@ void GripMainWindow::createTreeView()
     this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
+void GripMainWindow::loadPlugins()
+{
+    QObject* plugin;
+    QDir pluginsDir = QDir(qApp->applicationDirPath());
+
+#if defined(Q_OS_WIN)
+    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+        pluginsDir.cdUp();
+#elif defined(Q_OS_MAC)
+    if (pluginsDir.dirName() == "MacOS") {
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+    }
+#endif
+    pluginsDir.cdUp();
+    pluginsDir.cd("plugin");
+
+    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+        std::cout<<"Attempting to load plugin: "<<fileName.toStdString()<<std::endl;
+        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+        plugin = loader.instance();
+        if (plugin) {
+            std::cout<<"Plugin loaded "<<(plugin->objectName()).toStdString()<<std::endl;
+            pluginList->append(plugin);
+            GripTab* gt = qobject_cast<GripTab*>(plugin);
+            if(gt)
+            {
+                gt->LoadActiveNode(activeItem);
+
+                QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
+                if(pluginWidget == NULL)
+                    std::cout<<"is NULL"<<std::endl;
+                else
+                    this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+
+                tabifyDockWidget(viztabwidget, pluginWidget);
+            }
+        }
+        else {
+            std::cout<<"Plugin could not be loaded"<<std::endl;
+            std::cout<<"Error: "<<(loader.errorString()).toStdString()<<std::endl;
+        }
+    }
+}
+
 void GripMainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
     setDockOptions(QMainWindow::VerticalTabs);
 
-    QDockWidget *viztabwidget = new QDockWidget(this);
+    viztabwidget = new QDockWidget(this);
     Ui_Visualizer::setupUi(viztabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
 
-    QDockWidget *inspectabwidget = new QDockWidget(this);
+    inspectabwidget = new QDockWidget(this);
     Ui_Inspector::setupUi(inspectabwidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
 

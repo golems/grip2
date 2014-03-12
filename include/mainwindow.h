@@ -65,6 +65,7 @@ public:
     MainWindow();
     ~MainWindow();
     void Toolbar();
+    void loadPlugins();
 
 protected:
     QToolBar* getToolBar();

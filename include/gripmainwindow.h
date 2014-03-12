@@ -47,12 +47,14 @@
 
 #include <iostream>
 #include <cstdio>
+#include <QList>
 
 ///including the base class
 #include "mainwindow.h"
 
 #include <ViewerWidget.h>
 #include <tree_view.h>
+#include <TreeViewReturn.h>
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
 #include "ui_tree_view.h"
@@ -70,9 +72,10 @@ public:
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
-    Tree_View* treeviewer;
-    Visualizer* visualizertab;
-    Inspector* inspectortab;
+
+    /// static tabs in the Grip interface
+    QDockWidget* viztabwidget;
+    QDockWidget* inspectabwidget;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -86,12 +89,6 @@ public:
     dart::simulation::World* world;
 
     GripSimulation* simulation;
-//    QThread* simulationThread;
-
-//signals:
-//    void startSim();
-//    void stopSim();
-//    void simulateSingle();
 
     dart::dynamics::Skeleton* createGround();
 
@@ -112,12 +109,19 @@ private slots:
     void hd1280x720();
 
 private:
+    /** Private Members */
+    QList<QObject*>* pluginList;
+
+    /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
+    Tree_View* treeviewer;
+
+    /** Private Methods */
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+    void loadPlugins();
 };
-
 
 #endif // GRIPMAINWINDOW_H
