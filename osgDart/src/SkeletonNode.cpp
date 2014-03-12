@@ -42,12 +42,6 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef DEBUG_BUILD
-#define DEBUG(x) do { std::cerr << x; } while (0); std::cerr << std::endl;
-#else
-#define DEBUG(x)
-#endif
-
 // Local includes
 #include "SkeletonNode.h"
 #include "osgUtils.h"
@@ -65,15 +59,22 @@
 // OpenSceneGraph includes
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/StateSet>
 
 using namespace dart;
 using namespace osgDart;
 
-SkeletonNode::SkeletonNode(dynamics::Skeleton* robot, float axisLength) :
+SkeletonNode::SkeletonNode(dynamics::Skeleton* skeleton, float axisLength, bool debug) :
     _axisLength(axisLength),
-    _rootBodyNode(NULL)
+    _rootBodyNode(NULL),
+    _debug(debug)
 {
-    _createSkeletonFromRootBodyNode(robot->getRootBodyNode());
+    _createSkeletonFromRootBodyNode(skeleton->getRootBodyNode());
+}
+
+SkeletonNode::~SkeletonNode()
+{
+
 }
 
 void SkeletonNode::update()

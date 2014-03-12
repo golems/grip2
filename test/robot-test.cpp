@@ -136,7 +136,7 @@ int testDartNode()
     dynamics::Skeleton* robot = getRobot();
 
     osgDart::DartNode* dartNode = new osgDart::DartNode();
-    dartNode->addRobot(robot);
+    dartNode->addSkeleton(robot);
 
     std::cerr << "Pre State\n" << robot->getConfig().transpose() << std::endl;
     std::cerr << "Pre TF\n" << robot->getJoint("LHP")->getTransformFromParentBodyNode().matrix() << std::endl;

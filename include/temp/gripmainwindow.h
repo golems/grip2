@@ -58,7 +58,7 @@
 #include "ui_tree_view.h"
 
 #include "DartNode.h"
-
+#include "GripSimulation.h"
 
 using namespace std;
 
@@ -68,10 +68,11 @@ public:
     GripMainWindow();
     ~GripMainWindow();
 
+    /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
-    Visualizer *visualizertab;
-    Inspector  *inspectortab;
+    Visualizer* visualizertab;
+    Inspector* inspectortab;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -80,8 +81,13 @@ public:
     /// the values Return_Type_Robot and Return_Type_Node
     TreeViewReturn* activeItem;
 
+    /// Main OpenSceneGraph node for the main view of the composite viewer
     osgDart::DartNode* worldNode;
-    osg::Matrixd frontView, sideView, topView;
+    dart::simulation::World* world;
+
+    GripSimulation* simulation;
+
+    dart::dynamics::Skeleton* createGround();
 
 private slots:
     void front();

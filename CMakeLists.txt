@@ -5,7 +5,7 @@ project(grip2)
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Debug")
-set(BUILD_FLAGS "-std=c++0x -Wreturn-type -Wno-enum-compare -Wall")
+set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -73,7 +73,7 @@ set(project_libs qtWidgets osgNodes osgDart)
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/mainwindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
 add_library(mainwindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainwindow ${project_libs})
+target_link_libraries(mainwindow ${project_libs} ${DART_LIBRARIES})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainwindow)
@@ -83,7 +83,7 @@ set(project_libs ${project_libs} mainwindow)
 #                BUILD GRIP
 #-----------------------------------------------
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
-target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 
 #-----------------------------------------------
@@ -100,7 +100,7 @@ foreach(utest_src_file ${unit_tests_source})
     get_filename_component(test_base ${utest_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}")
     add_executable(${test_base} ${utest_src_file})
-    target_link_libraries(${test_base} ${project_libs} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
+    target_link_libraries(${test_base} ${project_libs} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
     add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
     add_dependencies(check ${test_base})

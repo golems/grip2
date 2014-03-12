@@ -52,6 +52,8 @@
 #include <eigen3/Eigen/Geometry>
 #include <iostream>
 #include <osg/io_utils>
+#include <osg/StateSet>
+#include <osg/PolygonMode>
 
 /**
  * \namespace osgGolems
@@ -120,7 +122,72 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
     return output;
 }
 
+//inline void addWireFrameMode(osg::Node* node);
+//inline void setWireFrameOn(osg::Node* node);
+//inline void setWireFrameOff(osg::Node* node);
 
+inline void addWireFrameMode(osg::Node* node)
+{
+    if(!node) {
+        std::cerr << "Invalid node. Line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return;
+    }
+
+    osg::PolygonMode* polyModeObj;
+
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+
+    if(!polyModeObj) {
+        polyModeObj = new osg::PolygonMode;
+        node->getOrCreateStateSet()->setAttribute(polyModeObj);
+    }
+}
+
+inline void setWireFrameOn(osg::Node* node)
+{
+    if(!node) {
+        std::cerr << "Invalid node. Line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return;
+    }
+
+    if(!node->getStateSet()) {
+        addWireFrameMode(node);
+    }
+
+    osg::PolygonMode* polyModeObj;
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+
+    if(!polyModeObj) {
+        polyModeObj = new osg::PolygonMode;
+        node->getStateSet()->setAttribute(polyModeObj);
+    }
+
+    polyModeObj->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+}
+
+inline void setWireFrameOff(osg::Node* node)
+{
+    if(!node) {
+        std::cerr << "Invalid node. Line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return;
+    }
+
+    if(!node->getStateSet()) {
+        std::cerr << "No StateSet. Line " << __LINE__ << " of " << __FILE__ << std::endl;
+        return;
+    }
+
+    osg::PolygonMode* polyModeObj;
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+
+    if(!polyModeObj) {
+        polyModeObj = new osg::PolygonMode;
+        node->getStateSet()->setAttribute(polyModeObj);
+    }
+
+    polyModeObj->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+
+}
 /**
  * \brief Convert Eigen::Vector3d vector to an osg::Vec3d
  * \param vec Eigen::Vector3d to be converted. Passed in by reference
@@ -135,6 +202,6 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
 //    return output;
 //}
 
-} // end of osgUtils namespace
+} // end of osgGolems namespace
 
 #endif // OSG_UTILS_H

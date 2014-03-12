@@ -116,12 +116,13 @@ void MainWindow::Toolbar()
     QPixmap topViewIcon((const char**) topView_xpm);
     QPixmap rightSideViewIcon((const char**) rightSideView_xpm);
 
-    QToolBar *toolbar = addToolBar("main toolbar");
+    toolbar = addToolBar("main toolbar");
     QAction *open = toolbar->addAction(QIcon(openIcon), "Open Scene (Ctrl + O)");
     QAction *redo = toolbar->addAction(QIcon(redoIcon), "Load last viewed scene (Ctrl + Shift + Q)");
     toolbar->addSeparator();
     QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
     QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
+    stop->setVisible(false);
     toolbar->addSeparator();
     QAction *camera = toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
     QAction *film = toolbar->addAction(QIcon(filmIcon), "Export film sequence");
@@ -135,10 +136,11 @@ void MainWindow::Toolbar()
 //    connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
 //    connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
     connect(camera, SIGNAL(triggered()), this, SLOT(load()));
-    connect(film, SIGNAL(triggered()), this, SLOT(debugShit()));
+//    connect(film, SIGNAL(triggered()), this, SLOT(film()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
+
     connect(simulate, SIGNAL(triggered()), gripShit, SLOT(startSimulation()));
 //    connect(stop, SIGNAL(triggered()), gripShit, SLOT(stopSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
@@ -147,6 +149,10 @@ void MainWindow::Toolbar()
 
 }
 
+QToolBar* MainWindow::getToolBar()
+{
+    return toolbar;
+}
 
 void MainWindow::load()
 {

@@ -91,7 +91,10 @@ public:
 
     osg::Matrixd frontView, sideView, topView;
 
-private slots:
+protected:
+    QToolBar* getToolBar();
+
+protected slots:
     void load();
     void quickLoad();
     void saveScene();
@@ -135,6 +138,8 @@ private:
     QMenu *renderMenu;
     QMenu *helpMenu;
     QMenu *backgroundMenu;
+
+    QToolBar* toolbar;
     QActionGroup *colorGroup;
     QAction *loadAct;
     QAction *quickLoadAct;
@@ -156,6 +161,7 @@ private:
     QAction *vga640x480Act;
     QAction *hd1280x720Act;
     QAction *aboutAct;
+
 };
 
 #endif // MAINWINDOW_H
