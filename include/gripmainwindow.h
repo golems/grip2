@@ -110,6 +110,12 @@ private slots:
 
 private:
     /** Private Members */
+    /// Any plugin that is loaded successfully into the Grip will get stored in this QList
+    /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
+    /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
+    /// you first need to perform a qobject_cast. An example for the same is
+    /// GripTab* gt = qobject_cast<GripTab*>(plugin);
+    /// Once a pointer of type GripTab is created you can then call the function directly.
     QList<QObject*>* pluginList;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
@@ -121,6 +127,9 @@ private:
     void createTabs();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+
+    /// This function reads a folder by the name of 'plugin' in source directory
+    /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
     void loadPlugins();
 };
 
