@@ -30,7 +30,6 @@ GripMainWindow::GripMainWindow() :
 {
     createRenderingWindow();
     createTreeView();
-    //world = new dart::simulation::World;
     createTabs();
 }
 
@@ -178,6 +177,7 @@ void GripMainWindow::createTabs()
     setDockOptions(QMainWindow::AnimatedDocks);
     setDockOptions(QMainWindow::VerticalTabs);
 
+
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(this);
 
@@ -188,25 +188,23 @@ void GripMainWindow::createTabs()
     inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
     */
 
+    //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
+
     tabifyDockWidget(inspectortab, visualizationtab);
     visualizationtab->show();
     visualizationtab->raise();
+    std::cout << "test test" <<std::endl;
+    //QDockWidget *viztabwidget = new QDockWidget(this);
+    //Ui_Visualizer::setupUi(viztabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
 
-    // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
+    //QDockWidget *inspectabwidget = new QDockWidget(this);
+    //Ui_Inspector::setupUi(inspectabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
 
-    /*
-    QDockWidget *viztabwidget = new QDockWidget(this);
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-
-    QDockWidget *inspectabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(inspectabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
-
-    tabifyDockWidget(inspectabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
-    */
+    //tabifyDockWidget(inspectabwidget, viztabwidget);
+    //viztabwidget->show();
+    //viztabwidget->raise();
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()
