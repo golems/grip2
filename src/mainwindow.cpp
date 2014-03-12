@@ -66,10 +66,10 @@
 #include <QString>
 #include "Grid.h"
 #include "DartNode.h"
-#include "visualizer.h"
-#include "ui_visualizer.h"
-#include "inspector.h"
-#include "ui_inspector.h"
+#include "visualization_tab.h"
+#include "ui_visualization_tab.h"
+#include "inspector_tab.h"
+#include "ui_inspector_tab.h"
 
 #include <dart/utils/urdf/DartLoader.h>
 
@@ -87,6 +87,7 @@ MainWindow::MainWindow()
 {
     gripShit = new GripSimulation;
     simThread = new QThread;
+    mWorld = new simulation::World;
 
     createActions();
     createMenus();
@@ -187,7 +188,7 @@ void MainWindow::quickLoad()
 void MainWindow::doLoad(string fileName)
 {
     worldNode = new osgDart::DartNode();
-    mWorld = new simulation::World;
+    //mWorld = new simulation::World; --> moved to constructor!! or we could move mWorld initialization to tabcreation
     mWorld->checkCollision(true);
 
     // Add floor
@@ -229,6 +230,7 @@ void MainWindow::doLoad(string fileName)
     } else {
         std::cerr << "[doLoad] Error loading file. Fix it or try a different one." << std::endl;
     }
+    std::cout << "test mWorld in doload: " << mWorld << std::endl;
 }
 
 int MainWindow::saveText(string scenepath, const char* llfile)
@@ -478,48 +480,35 @@ void MainWindow::createTabs()
     setDockOptions(QMainWindow::AnimatedDocks);
     setDockOptions(QMainWindow::VerticalTabs);
 
-    QDockWidget *viztabwidget = new QDockWidget(this);
+    inspectortab = new Inspector_Tab(this, mWorld,treeviewer);
+    visualizationtab = new Visualization_Tab(this);
 
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-    //viztabwidget->setFeatures(QDockWidget::DockWidgetMovable);
-    //viztabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
-
-    QDockWidget *inspectabwidget = new QDockWidget(this);
-    //QWidget *inspectabwidget = new QWidget(this);
-    //Inspector inspectest;
-    //inspectest.setupUi(inspectabwidget);
-    inspec_ui.setupUi(inspectabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
     /*
     inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
     inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
     */
-    //inspec_ui.positionSlider_0->setRange(-380,360); //I can override settings here but not in the custom widget side..
-    //inspec_ui.positionSlider_0->setValue(0);
-    //inspec_ui.positionSpinBox_0->setRange(-180,180);
-    //inspec_ui.positionSpinBox_0->setValue(0);
 
-    connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
-   // connect(inspec_ui.positionSlider_0, SIGNAL(valueChanged(int)),inspec_ui.positionSpinBox_0, SLOT(ChangePos0DoubleSpinBox(int)));
-    //connect(Ui_Inspector->positionSpinBox_0, SIGNAL(vlaueChanged(double)), Ui_Inspector->positionSlider_0, SLOT(ChangePos0Slider(double)));
+    //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
 
-
-    tabifyDockWidget(inspectabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
-    //viztabwidget->set
+    tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+    std::cout << "test test" <<std::endl;
 
     // Qt::RightDockWidgetArea,  Qt::LeftDockWidgetArea,  Qt::TopDockWidgetArea,  Qt::BottomDockWidgetArea,  Qt::AllDockWidgetArea
 }
 
+/*
 void MainWindow::ChangeJoint(int slidervalue){
     int joint_id = 10;
     double joint_value = 0.0;
     //if (inspec_ui.positionSlider_0 == inspec_ui.positionSlider_0->getdsvalue())
     //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
     //else
-    joint_value = inspec_ui.positionSlider_0->getdsvalue();
+
+    //joint_value = inspec_ui.positionSlider_0->getdsvalue();
     std::cout << treeviewer->getActiveItem() << std::endl;
     std::vector<int> indx;
     indx.push_back(mWorld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
@@ -530,7 +519,7 @@ void MainWindow::ChangeJoint(int slidervalue){
 
     //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
-
+*/
 /*
 void MainWindow::ChangePos0DoubleSpinBox(int sliderValue){
     inspec_ui.positionSpinBox_0->setValue((double)sliderValue);

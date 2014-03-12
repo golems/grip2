@@ -51,8 +51,10 @@
 #include <cstdio>
 #include <ViewerWidget.h>
 #include <tree_view.h>
-#include "ui_visualizer.h"
-#include "ui_inspector.h"
+#include <inspector_tab.h>
+#include <visualization_tab.h>
+#include "ui_visualization_tab.h"
+#include "ui_inspector_tab.h"
 #include "ui_tree_view.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
@@ -64,7 +66,7 @@ class QActionGroup;
 class QLabel;
 class QMenu;
 
-class MainWindow : public QMainWindow , private Ui::Visualizer, private Ui::Inspector
+class MainWindow : public QMainWindow //, private Ui::Visualizer, private Ui::Inspector
 {
     Q_OBJECT
 
@@ -76,6 +78,8 @@ public:
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
     TreeViewReturn* activeItem;
+    Inspector_Tab* inspectortab;
+    Visualization_Tab* visualizationtab;
     //QDockWidget *tree;
     //Visualizer *visualizertab;
     //Inspector  *inspectortab;
@@ -110,7 +114,7 @@ private slots:
     void about();
 public slots: //Q_SLOTS:
     //void ChangePos0DoubleSpinBox(int);
-    void ChangeJoint(int);
+    //void ChangeJoint(int);
     void debugShit();
 
 private:
@@ -122,7 +126,7 @@ private:
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
     //void ChangePos0DoubleSpinBox(int sliderValue);
-    Ui::Inspector inspec_ui;
+    //Ui::Inspector inspec_ui;
 
     QMenu *fileMenu;
     QMenu *viewMenu;
