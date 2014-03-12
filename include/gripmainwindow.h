@@ -53,8 +53,10 @@
 
 #include <ViewerWidget.h>
 #include <tree_view.h>
-#include "ui_visualizer.h"
-#include "ui_inspector.h"
+#include <inspector_tab.h>
+#include <visualization_tab.h>
+#include "ui_visualization_tab.h"
+#include "ui_inspector_tab.h"
 #include "ui_tree_view.h"
 
 #include "DartNode.h"
@@ -62,7 +64,7 @@
 
 using namespace std;
 
-class GripMainWindow : public MainWindow, private Ui::Visualizer, private Ui::Inspector
+class GripMainWindow : public MainWindow
 {
 public:
     GripMainWindow();
@@ -71,8 +73,8 @@ public:
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
     Tree_View* treeviewer;
-    Visualizer* visualizertab;
-    Inspector* inspectortab;
+    Inspector_Tab* inspectortab;
+    Visualization_Tab* visualizationtab;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType

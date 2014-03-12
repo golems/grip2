@@ -6,10 +6,10 @@
 #include "ViewerWidget.h"
 
 ///including tab files
-#include "visualizer.h"
-#include "ui_visualizer.h"
-#include "inspector.h"
-#include "ui_inspector.h"
+#include "visualization_tab.h"
+#include "ui_visualization_tab.h"
+#include "inspector_tab.h"
+#include "ui_inspector_tab.h"
 #include "tree_view.h"
 #include "ui_tree_view.h"
 
@@ -248,17 +248,34 @@ void GripMainWindow::createTabs()
     setDockOptions(QMainWindow::AnimatedDocks);
     setDockOptions(QMainWindow::VerticalTabs);
 
-    QDockWidget *viztabwidget = new QDockWidget(this);
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
 
-    QDockWidget *inspectabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(inspectabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+    inspectortab = new Inspector_Tab(this, world,treeviewer);
+    visualizationtab = new Visualization_Tab(this);
 
-    tabifyDockWidget(inspectabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    /*
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
+    */
+
+    //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
+
+    tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+    std::cout << "test test" <<std::endl;
+    //QDockWidget *viztabwidget = new QDockWidget(this);
+    //Ui_Visualizer::setupUi(viztabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
+
+    //QDockWidget *inspectabwidget = new QDockWidget(this);
+    //Ui_Inspector::setupUi(inspectabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+
+    //tabifyDockWidget(inspectabwidget, viztabwidget);
+    //viztabwidget->show();
+    //viztabwidget->raise();
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()

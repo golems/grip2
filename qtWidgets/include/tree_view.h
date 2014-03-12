@@ -48,6 +48,7 @@ public:
     void populateTreeView(simulation::World* world, int numRobots);
     void clear();
     ~Tree_View();
+    TreeViewReturn* getActiveItem();
 
 private slots:
     void nameChange_BodyNode_Joint(int checkBoxState);

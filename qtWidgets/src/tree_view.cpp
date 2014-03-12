@@ -50,6 +50,11 @@ void Tree_View::treeView_itemSelected(QTreeWidgetItem * item, int column)
     activeItem = val;
 }
 
+TreeViewReturn* Tree_View::getActiveItem()
+{
+ return activeItem;
+}
+
 QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
 {
     QTreeWidgetItem *itm = new QTreeWidgetItem(ui_treeWidget);

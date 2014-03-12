@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Visualizer</class>
- <widget class="QDockWidget" name="Visualizer">
+ <class>Visualization_Tab</class>
+ <widget class="QDockWidget" name="Visualization_Tab">
   <property name="geometry">
    <rect>
     <x>0</x>
