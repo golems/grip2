@@ -27,7 +27,8 @@
 
 GripMainWindow::GripMainWindow() :
     MainWindow(),
-    world(NULL),
+    world(new dart::simulation::World),
+//    world(NULL),
     worldNode(new osgDart::DartNode(true)),
     simulation(new GripSimulation(this, true)),
     _simulating(false)
@@ -55,7 +56,7 @@ void GripMainWindow::doLoad(string fileName)
     if(world) {
         this->deleteWorld();
     }
-    world = new dart::simulation::World;
+//    world = new dart::simulation::World;
 
     world->addSkeleton(createGround());
     world->setTimeStep(0.001);
@@ -115,8 +116,7 @@ void GripMainWindow::deleteWorld()
 {
     if(world) {
         worldNode->removeAllSkeletons();
-        delete world;
-        world = 0;
+        world->setTime(0);
         treeviewer->clear();
         delete simulation;
         simulation = new GripSimulation(this, true);
