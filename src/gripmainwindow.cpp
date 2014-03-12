@@ -78,7 +78,8 @@ bool GripMainWindow::stopSimulationWithDialog()
 {
     // Ask user if they really want to end the simulation and load a new world
     QMessageBox msgBox;
-    msgBox.setText(tr("Ending simulation and opening new world"));
+    msgBox.setWindowTitle(tr("Stop Simulation and Open Scene?"));
+    msgBox.setText(tr("Ending simulation and opening new scene!"));
     msgBox.setInformativeText("Are you sure?");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Ok);
