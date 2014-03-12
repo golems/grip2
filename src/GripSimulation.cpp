@@ -88,13 +88,9 @@ void GripSimulation::simulateTimeStep()
         //     tabs->doBeforeSimulationTimeStep
         // end
 
-        double t1 = grip::getTime();
-
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
-        addWorldToTimeline(*_world);
-
-        std::cerr << grip::getTime() - t1 << std::endl;
+//        addWorldToTimeline(*_world);
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
@@ -103,14 +99,16 @@ void GripSimulation::simulateTimeStep()
 
         double curTime = grip::getTime();
         double timeStepDuration = curTime - _prevTime;
-        _simulationDuration = _simulationDuration + (curTime - _simulationStartTime);
-        _simTimeRelToRealTime = timeStepDuration / _world->getTimeStep();
+        _simulationDuration = _simulationDuration + timeStepDuration;
+        _simTimeRelToRealTimeInstantaneous = _world->getTimeStep() / timeStepDuration;
+        _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
         _prevTime = curTime;
 
-        std::cerr << "Sim | Real | Rel: "
+        std::cerr << "Sim | Real | RelInst | RelOverall: "
                   << _world->getTime() << " | "
                   << _simulationDuration << " | "
-                  << _simTimeRelToRealTime
+                  << _simTimeRelToRealTimeInstantaneous << " | "
+                  << _simTimeRelToRealTimeOverall
                   << std::endl;
 
         if(_simulateOneFrame) {

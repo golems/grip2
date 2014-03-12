@@ -52,7 +52,8 @@ protected:
 
     double _simulationDuration;  ///< Simulation time in realtime
     double _simulationStartTime; ///< Initial system clock time when simulation started
-    double _simTimeRelToRealTime; /// Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
+    double _simTimeRelToRealTimeInstantaneous; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
+    double _simTimeRelToRealTimeOverall; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
     double _prevTime; ///< Real time on the last time step
 
 };
