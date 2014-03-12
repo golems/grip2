@@ -137,7 +137,7 @@ void MainWindow::load()
 
     if (!fileNames.isEmpty())
     {
-        cout<<"Attempting to open the following world file: "<<fileNames.front().toStdString() <<endl;
+        std::cerr<<"Attempting to open the following world file: "<<fileNames.front().toStdString() <<std::endl;
         doLoad(fileNames.front().toStdString());
     }
 }

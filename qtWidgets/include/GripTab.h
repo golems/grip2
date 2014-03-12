@@ -2,6 +2,7 @@
 #define GRIPTAB_H
 
 #include "TreeViewReturn.h"
+#include "../../osgNodes/include/ViewerWidget.h"
 #include <QDockWidget>
 #include <QtPlugin>
 
@@ -9,8 +10,10 @@ class GripTab : public QDockWidget
 {
 public:
     TreeViewReturn* activeNode;
+    ViewerWidget* viewWidget;
+
     /// Load active node object from MainWindow
-    virtual void LoadActiveNode(TreeViewReturn* ret) = 0;
+    virtual void LoadActiveNode(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
 
     /// Fire in relation to dynamic simulation Suitable for controllers
     virtual void GRIPEventSimulationBeforeTimestep() = 0;

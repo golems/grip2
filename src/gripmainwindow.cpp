@@ -206,7 +206,7 @@ void GripMainWindow::loadPlugins()
             GripTab* gt = qobject_cast<GripTab*>(plugin);
             if(gt)
             {
-                gt->LoadActiveNode(activeItem);
+                gt->LoadActiveNode(activeItem, viewWidget);
 
                 QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
                 if(pluginWidget == NULL)
