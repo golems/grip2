@@ -235,15 +235,15 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
     }
 }
 
-void DartNode::removeAllSkeletons()
+void DartNode::clear()
 {
     if(this->getNumChildren()) {
         this->removeChildren(0, this->getNumChildren());
         _skeletons.clear();
         _skeletonNodes.clear();
         _skelNodeMap.clear();
-        _world = 0;
     }
+    assert(this->getNumChildren() == 0);
 }
 
 void DartNode::hideSkeleton(int i)

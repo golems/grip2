@@ -27,9 +27,9 @@
 
 GripMainWindow::GripMainWindow() :
     MainWindow(),
-    world(NULL),
+    world(new dart::simulation::World()),
     worldNode(new osgDart::DartNode(true)),
-    simulation(new GripSimulation(this, true)),
+    simulation(new GripSimulation(world, this, true)),
     _simulating(false)
 {
     createRenderingWindow();
@@ -53,9 +53,9 @@ void GripMainWindow::doLoad(string fileName)
     }
 
     if(world) {
-        this->deleteWorld();
+        std::cerr << "Deleting world" << std::endl;
+        this->resetEverything();
     }
-    world = new dart::simulation::World;
 
     world->addSkeleton(createGround());
     world->setTimeStep(0.001);
@@ -65,8 +65,6 @@ void GripMainWindow::doLoad(string fileName)
 
     viewWidget->addNodeToScene(worldNode);
     worldNode->printInfo();
-
-    simulation->setWorld(world);
 
     treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
 
@@ -111,16 +109,18 @@ bool GripMainWindow::stopSimulationWithDialog()
     return true;
 }
 
-void GripMainWindow::deleteWorld()
+void GripMainWindow::resetEverything()
 {
     if(world) {
-        worldNode->removeAllSkeletons();
-        delete world;
-        world = 0;
+        worldNode->clear();
+        while(world->getNumSkeletons()) {
+            world->removeSkeleton(world->getSkeleton(0));
+        }
+        world->setTime(0);
         treeviewer->clear();
-        delete simulation;
-        simulation = new GripSimulation(this, true);
+        simulation->reset();
     }
+    std::cerr << "world state: \n" << world->getState().transpose() << std::endl;
 }
 
 void GripMainWindow::simulationStopped()

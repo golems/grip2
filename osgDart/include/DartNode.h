@@ -190,7 +190,7 @@ public:
      */
     int removeSkeleton(size_t skeletonIndex=0);
 
-    void removeAllSkeletons();
+    void clear();
 
     /**
      * \brief Get a pointer to the World object in the DartNode.

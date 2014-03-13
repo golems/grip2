@@ -18,9 +18,9 @@
 
 using namespace dart;
 
-GripSimulation::GripSimulation(MainWindow* parent, bool debug) :
+GripSimulation::GripSimulation(simulation::World* world, MainWindow* parent, bool debug) :
     QObject(),
-    _world(NULL),
+    _world(world),
     _debug(debug),
     _thread(new QThread),
     _simulating(false),
@@ -52,6 +52,16 @@ void GripSimulation::setWorld(simulation::World *world)
                   << "\n\tTime: " << _world->getTime()
                   << std::endl;
     }
+}
+
+void GripSimulation::reset()
+{
+    _timeline.clear();
+    _simulationDuration = 0;
+    _simulationStartTime = 0;
+    _simTimeRelToRealTimeInstantaneous = 0;
+    _simTimeRelToRealTimeOverall = 0;
+    _prevTime = 0;
 }
 
 void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)

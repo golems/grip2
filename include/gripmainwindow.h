@@ -112,7 +112,7 @@ private:
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
-    void deleteWorld();
+    void resetEverything();
     bool stopSimulationWithDialog();
     void swapStartStopButtons();
     void doLoad(string fileName);

@@ -36,7 +36,7 @@ public:
      * \param parent Pointer to the parent widget. Default is 0
      * \param debug Flag for whether or not to output debug statements
      */
-    GripSimulation(MainWindow* parent=0, bool debug=false);
+    GripSimulation(dart::simulation::World* world, MainWindow *parent=0, bool debug=false);
 
     /**
      * \brief Destroys the GripSimulation object
@@ -49,6 +49,12 @@ public:
      * \return void
      */
     void setWorld(dart::simulation::World* world);
+
+    /**
+     * \brief Reset the GripSimulation object
+     * \return void
+     */
+    void reset();
 
 signals:
     /**
