@@ -48,6 +48,7 @@ void Tree_View::treeView_itemSelected(QTreeWidgetItem * item, int column)
 {
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
     activeItem = val;
+    emit itemSelected(activeItem);
 }
 
 TreeViewReturn* Tree_View::getActiveItem()
@@ -218,3 +219,8 @@ void Tree_View::nameChange_BodyNode_Joint(int checkBoxState)
         }
     }
 }
+
+//void Tree_View::itemSelected(TreeViewReturn* active_item)
+//{
+//
+//}

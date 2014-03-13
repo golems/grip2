@@ -4,7 +4,9 @@
 #include <tree_view.h>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
-
+//#include <typeinfo>
+#include <QDebug>
+#include <QString>
 
 
 Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
@@ -32,13 +34,15 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->positionSpinBox_0->setValue(0.0);
 
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
-    std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
+    //std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
     simworld = simWorld;
-    std::cout << "test world in inspector constructor: " << simworld << std::endl;
-    std::cout << "Inspector constructor" << std::endl;
+    //std::cout << "test world in inspector constructor: " << simworld << std::endl;
+    //std::cout << "Inspector constructor" << std::endl;
     treeview = treeViewer;
 
-    std::cout << "test treeview in inspector constructor: " << treeview << std::endl;
+    connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(ReceiveSeletedItem(TreeViewReturn*)));
+    //std::cout << "connected" << std::endl;
+    //std::cout << "test treeview in inspector constructor: " << treeview << std::endl;
 
 }
 
@@ -61,14 +65,45 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
     std::cout << joint_Value << std::endl;
     std::cout << treeview->getActiveItem() << std::endl;
+    if (treeview->getActiveItem()->dType == 0) //if Robot, active_item->object = *skel
+     {
+         dart::dynamics::Skeleton* item_selected;
+         item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
 
-    std::cout << "test changejoint" << std::endl;
+         std::cerr << "Skeleton" << std::endl;
+         qDebug() << QString::fromStdString(item_selected->getName()) ;
+     }
+    else if (treeview->getActiveItem()->dType == 1) //if Node, active_item->object = *node
+     {
+         dart::dynamics::BodyNode* item_selected;
+         item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+         std::cerr << "BodyNode" << std::endl;
+         qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
+     }
+    else
+     std::cerr << "Not identified object passed to ChangeJoint" << std::endl;
+
+    //std::cout << "test changejoint" << std::endl;
 
     std::vector<int> indx;
-    std::cout << simworld << std::endl;
+    // std::cout << simworld << std::endl;
     if(simworld) {
         std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
-        indx.push_back(simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
+        if (treeview->getActiveItem()->dType == 0)
+         indx.push_back( simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex() );
+        else if (treeview->getActiveItem()->dType == 1)
+        {
+         std::cerr << "node selected" << std::endl;
+         dart::dynamics::BodyNode* item_selected;
+         item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+
+         indx.push_back( simworld->getSkeleton(1)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
+
+        // QString::fromStdString(item_selected->getParentJoint()->getName())
+        }
+        else
+         std::cerr << "Err" << std::endl;
+
         Eigen::VectorXd q(1);
         q[0] = double(joint_Value*(3.14)/180.0);
         simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
@@ -82,4 +117,31 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
 Inspector_Tab::~Inspector_Tab()
 {
+}
+
+void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
+{
+ std::cerr << "Item seleted received" << std::endl;
+ std::cerr << "Data type " << active_item->dType << std::endl;
+ if (active_item->dType == 0) //if Robot, active_item->object = *skel
+ {
+     dart::dynamics::Skeleton* item_selected;
+     item_selected = (dart::dynamics::Skeleton*)active_item->object;
+
+     std::cerr << "Skeleton" << std::endl;
+     qDebug() << QString::fromStdString(item_selected->getName()) ;
+ }
+ else if (active_item->dType == 1) //if Node, active_item->object = *node
+ {
+     dart::dynamics::BodyNode* item_selected;
+     item_selected = (dart::dynamics::BodyNode*)active_item->object;
+     std::cerr << "BodyNode" << std::endl;
+     qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
+ }
+ else
+ {
+     std::cerr << "Not identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
+
+ }
+
 }

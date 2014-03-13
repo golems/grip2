@@ -50,6 +50,9 @@ public:
     ~Tree_View();
     TreeViewReturn* getActiveItem();
 
+signals:
+    void itemSelected(TreeViewReturn* active_item);
+
 private slots:
     void nameChange_BodyNode_Joint(int checkBoxState);
     void treeView_itemSelected(QTreeWidgetItem * item, int column);
