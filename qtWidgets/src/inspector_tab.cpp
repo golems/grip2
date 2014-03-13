@@ -56,28 +56,23 @@ void Inspector_Tab::ChangePos0Slider(double spinBoxValue){
 }
 
 void Inspector_Tab::ChangeJoint(int sliderValue){
-    int joint_id = 10;
+
     double joint_Value = 0.0;
-    //if (inspec_ui.positionSlider_0 == inspec_ui.positionSlider_0->getdsvalue())
-    //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
-    //else
 
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
-    std::cout << joint_Value << std::endl;
-    std::cout << treeview->getActiveItem() << std::endl;
+
     if (treeview->getActiveItem()->dType == 0) //if Robot, active_item->object = *skel
      {
          dart::dynamics::Skeleton* item_selected;
          item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
-
-         std::cerr << "Skeleton" << std::endl;
+         std::cerr << "Skeleton Selected" << std::endl;
          qDebug() << QString::fromStdString(item_selected->getName()) ;
      }
     else if (treeview->getActiveItem()->dType == 1) //if Node, active_item->object = *node
      {
          dart::dynamics::BodyNode* item_selected;
          item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
-         std::cerr << "BodyNode" << std::endl;
+         std::cerr << "BodyNode Selected" << std::endl;
          qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
      }
     else
@@ -85,32 +80,35 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
     //std::cout << "test changejoint" << std::endl;
 
-    std::vector<int> indx;
-    // std::cout << simworld << std::endl;
+
     if(simworld) {
         std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
-        if (treeview->getActiveItem()->dType == 0)
-         indx.push_back( simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex() );
-        else if (treeview->getActiveItem()->dType == 1)
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+         //indx.push_back( simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex() );
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
         {
          std::cerr << "node selected" << std::endl;
          dart::dynamics::BodyNode* item_selected;
          item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
 
+         std::vector<int> indx;
          indx.push_back( simworld->getSkeleton(1)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
 
+
+         Eigen::VectorXd q(1);
+         q[0] = double(joint_Value*(3.14)/180.0);
+         simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
         // QString::fromStdString(item_selected->getParentJoint()->getName())
         }
         else
          std::cerr << "Err" << std::endl;
 
-        Eigen::VectorXd q(1);
-        q[0] = double(joint_Value*(3.14)/180.0);
-        simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
     } else {
         std::cerr << "No world on line " << __LINE__ << " of " << __FILE__ << std::endl;
     }
-
 
     //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }

@@ -99,7 +99,8 @@ void GripSimulation::simulateTimeStep()
         _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
         _prevTime = curTime;
 
-//        std::cerr << "Sim | Real | RelInst | RelOverall: "
+
+//        std::cerr << "Sim2 | Real | RelInst | RelOverall: "
 //                  << _world->getTime() << " | "
 //                  << _simulationDuration << " | "
 //                  << _simTimeRelToRealTimeInstantaneous << " | "
