@@ -30,7 +30,7 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->positionSlider_0->setValue(0);
 //    inspector_ui->positionSpinBox_0->setRange(-180.0,180.0);
 //    inspector_ui->positionSpinBox_0->setValue(0.0);
-/*
+
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
     std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
     simworld = simWorld;
@@ -39,7 +39,7 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     treeview = treeViewer;
 
     std::cout << "test treeview in inspector constructor: " << treeview << std::endl;
-*/
+
 }
 
 void Inspector_Tab::ChangePos0DoubleSpinBox(int sliderValue){
@@ -52,12 +52,12 @@ void Inspector_Tab::ChangePos0Slider(double spinBoxValue){
 }
 
 void Inspector_Tab::ChangeJoint(int sliderValue){
- //   int joint_id = 10;
- //   double joint_Value = 0.0;
+    int joint_id = 10;
+    double joint_Value = 0.0;
     //if (inspec_ui.positionSlider_0 == inspec_ui.positionSlider_0->getdsvalue())
     //    joint_value = inspec_ui.positionSlider_0->getdsvalue();
     //else
-    /*
+
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
     std::cout << joint_Value << std::endl;
     std::cout << treeview->getActiveItem() << std::endl;
@@ -66,14 +66,17 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
     std::vector<int> indx;
     std::cout << simworld << std::endl;
-    indx.push_back(simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
+    if(simworld) {
+        std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+        indx.push_back(simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex());
+        Eigen::VectorXd q(1);
+        q[0] = double(joint_Value*(3.14)/180.0);
+        simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+    } else {
+        std::cerr << "No world on line " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
 
 
-    Eigen::VectorXd q(1);
-    q[0] = double(joint_Value*(3.14)/180.0);
-    simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
-
-    */
     //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
 

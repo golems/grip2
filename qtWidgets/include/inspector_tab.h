@@ -18,8 +18,8 @@ private slots:
     void ChangeJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
 private:
     Ui::Inspector_Tab *inspector_ui;
-    //simulation::World *simworld;
-    //Tree_View *treeview;
+    simulation::World *simworld;
+    Tree_View *treeview;
     QSlider *positionSlider_0;
     QDoubleSpinBox *positionSpinBox_0;
 };
