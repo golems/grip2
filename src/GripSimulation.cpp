@@ -28,7 +28,7 @@ GripSimulation::GripSimulation(simulation::World* world, MainWindow* parent, boo
 {
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
     connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
-    connect(this, SIGNAL(simulationStoppedd()), parent, SLOT(simulationStopped()));
+    connect(this, SIGNAL(simulationStoppedSignal()), parent, SLOT(simulationStoppedSignal()));
     this->moveToThread(_thread);
     _thread->start();
 }
@@ -37,21 +37,6 @@ GripSimulation::GripSimulation(simulation::World* world, MainWindow* parent, boo
 GripSimulation::~GripSimulation()
 {
     _thread->deleteLater();
-}
-
-void GripSimulation::setWorld(simulation::World *world)
-{
-    // Assign world object and add initial state to the timeline
-    _world = world;
-    addWorldToTimeline(*_world);
-
-    if(_debug) {
-        std::cerr << "World: "
-                  << "\n\tGravity: " << _world->getGravity().transpose()
-                  << "\n\tTimestep: " << _world->getTimeStep()
-                  << "\n\tTime: " << _world->getTime()
-                  << std::endl;
-    }
 }
 
 void GripSimulation::reset()
@@ -135,7 +120,7 @@ void GripSimulation::simulateTimeStep()
         if(_debug) {
             std::cerr << "Emitting stop signal and exiting simulation loop" << std::endl;
         }
-        emit simulationStoppedd();
+        emit simulationStoppedSignal();
         return;
     }
 
@@ -149,7 +134,7 @@ void GripSimulation::simulateSingleTimeStep()
 
     if(_debug) {
         std::cerr << "Simulating a single timestep" << std::endl;
-        emit this->simulateTimeStep();
+        this->simulateTimeStep();
     }
 
     _simulating = false;

@@ -63,7 +63,7 @@ signals:
      * parent deletes it.
      * \return void
      */
-    void simulationStoppedd();
+    void simulationStoppedSignal();
 
 public slots:
     /**
