@@ -57,16 +57,17 @@ void GripMainWindow::doLoad(string fileName)
         this->resetEverything();
     }
 
-    world->addSkeleton(createGround());
     world->setTimeStep(0.001);
 
+    world->addSkeleton(createGround());
     worldNode->addWorld(world);
-    int numRobots = worldNode->addWorld(fileName);
+    worldNode->addWorld(fileName);
 
     viewWidget->addNodeToScene(worldNode);
+
     worldNode->printInfo();
 
-    treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
+    treeviewer->populateTreeView(world);
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");

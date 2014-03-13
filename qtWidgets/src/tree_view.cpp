@@ -108,6 +108,11 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     QIcon icon;
 
     // Prismatic Joint: 1 DOF
+    if(node == node) {
+        std::cerr << "No problem: Node: " << node->getName() << ". ParentJoint: " << node->getParentJoint()->getName() << std::endl;
+    } else {
+        std::cerr << "What the heck!" << std::endl;
+    }
     if(dart::dynamics::PrismaticJoint* joint = dynamic_cast<dart::dynamics::PrismaticJoint*>(node->getParentJoint()))
         icon = QIcon(prismIcon);
 
@@ -147,10 +152,10 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     return prev;
 }
 
-void Tree_View::populateTreeView(simulation::World *world, int numRobots)
+void Tree_View::populateTreeView(simulation::World *world)
 {
     QPixmap robotIcon((const char**) robot_xpm);
-    for (int i = 0; i<numRobots; ++i)
+    for (int i = 0; i<world->getNumSkeletons(); ++i)
     {
         dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {

@@ -14,11 +14,8 @@
 
 // QT includes
 #include <QThread>
-#include "mainwindow.h"
 
-using namespace dart;
-
-GripSimulation::GripSimulation(simulation::World* world, MainWindow* parent, bool debug) :
+GripSimulation::GripSimulation(dart::simulation::World* world, MainWindow* parent, bool debug) :
     QObject(),
     _world(world),
     _debug(debug),
@@ -28,7 +25,7 @@ GripSimulation::GripSimulation(simulation::World* world, MainWindow* parent, boo
 {
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
     connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
-    connect(this, SIGNAL(simulationStoppedSignal()), parent, SLOT(simulationStoppedSignal()));
+    connect(this, SIGNAL(simulationStoppedSignal()), parent, SLOT(simulationStopped()));
     this->moveToThread(_thread);
     _thread->start();
 }

@@ -77,7 +77,7 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type SkeletonNodeMap, which maps dart::dynamics::Skeleton* to SkeletonNode*
-typedef std::map<dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
+typedef std::map<const dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
 
 
 /**
@@ -155,7 +155,7 @@ public:
      * \param skeleton New skeleton to add to the DartNode
      * \return Index (size_t) of the newly added skeleton
      */
-    size_t addSkeleton(dynamics::Skeleton* skeleton);
+    size_t addSkeleton(dart::dynamics::Skeleton &skeleton);
 
     /**
      * \brief Add a world to the DartNode. The world may consist
@@ -165,7 +165,7 @@ public:
      * that contains one or more dart::dynamics::Skeleton objects.
      * \return Index of the last object added
      */
-    size_t addWorld(simulation::World *world);
+    size_t addWorld(dart::simulation::World* world);
 
     /**
      * \brief Get skeleton via index (size_t)
@@ -180,7 +180,7 @@ public:
      * \param skeleton skeleton to remove from the DartNode
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int removeSkeleton(dart::dynamics::Skeleton* skeletonToRemove);
+    int removeSkeleton(const dart::dynamics::Skeleton* skeletonToRemove);
 
     /**
      * \brief Remove skeleton from DartNode by passing in the index of the skeleton

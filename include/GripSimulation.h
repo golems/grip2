@@ -2,8 +2,13 @@
 #ifndef GRIP_SIMULATION_H
 #define GRIP_SIMULATION_H
 
+// DART includes
 #include <dart/simulation/World.h>
+
+// Qt includes
 #include <QObject>
+
+// Local includes
 #include "mainwindow.h"
 
 /**
@@ -27,6 +32,7 @@ public:
  */
 class GripSimulation : public QObject
 {
+    /// Macro to create meta-object code for the signals and slots
     Q_OBJECT
 
 public:
