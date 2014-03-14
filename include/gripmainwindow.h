@@ -54,9 +54,12 @@
 
 #include <ViewerWidget.h>
 #include <tree_view.h>
-#include <TreeViewReturn.h>
-#include "ui_visualizer.h"
-#include "ui_inspector.h"
+
+#include <inspector_tab.h>
+#include <visualization_tab.h>
+#include "ui_visualization_tab.h"
+#include "ui_inspector_tab.h"
+
 #include "ui_tree_view.h"
 #include "GripTab.h"
 
@@ -65,7 +68,7 @@
 
 using namespace std;
 
-class GripMainWindow : public MainWindow, private Ui::Visualizer, private Ui::Inspector
+class GripMainWindow : public MainWindow
 {
 public:
     GripMainWindow();
@@ -74,9 +77,8 @@ public:
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
 
-    /// static tabs in the Grip interface
-    QDockWidget* viztabwidget;
-    QDockWidget* inspectabwidget;
+    Inspector_Tab* inspectortab;
+    Visualization_Tab* visualizationtab;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -93,6 +95,9 @@ public:
 
     dart::dynamics::Skeleton* createGround();
 
+protected slots:
+    void setSimulationRelativeTime(double time);
+
 private slots:
     void front();
     void top();
@@ -108,6 +113,7 @@ private slots:
     void xga1024x768();
     void vga640x480();
     void hd1280x720();
+    void simulationStopped();
 
 private:
     /** Private Members */
@@ -126,8 +132,13 @@ private:
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
+    void clear();
+    bool stopSimulationWithDialog();
+    void swapStartStopButtons();
     void doLoad(string fileName);
     int saveText(string scenepath, const char* llfile);
+
+    bool _simulating;
 
     /// This function reads a folder by the name of 'plugin' in source directory
     /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)

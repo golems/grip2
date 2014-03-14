@@ -82,8 +82,8 @@ set(project_libs ${project_libs} mainwindow)
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
-add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
-target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+add_executable(Grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
+target_link_libraries(Grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 
 #-----------------------------------------------

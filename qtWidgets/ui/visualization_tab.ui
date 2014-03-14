@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Inspector</class>
- <widget class="QDockWidget" name="Inspector">
+ <class>Visualization_Tab</class>
+ <widget class="QDockWidget" name="Visualization_Tab">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1132</width>
-    <height>244</height>
+    <width>1131</width>
+    <height>213</height>
    </rect>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
-   <string>Inspector</string>
+   <string>Visualizer</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QHBoxLayout" name="horizontalLayout_10">
+   <layout class="QHBoxLayout" name="horizontalLayout_8">
     <item>
-     <widget class="QGroupBox" name="groupBox_5">
+     <widget class="QGroupBox" name="groupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
         <horstretch>1</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
       </property>
       <property name="styleSheet">
        <string notr="true">QGroupBox { 
@@ -43,78 +40,206 @@ QGroupBox::title {
  } </string>
       </property>
       <property name="title">
-       <string>Position</string>
+       <string>Mesh Options</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <property name="topMargin">
         <number>27</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QCheckBox" name="checkBox">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
            <property name="text">
-            <string>Parent</string>
+            <string>Show Collision Mesh</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-           <property name="text">
-            <string>Item</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_2">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9">
-         <item>
-          <widget class="QSlider" name="horizontalSlider_9">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
+          <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
+           <property name="text">
+            <string>Render using Collision Mesh</string>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>28</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_9">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>8</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox { 
+   border: 2px solid gray; 
+   border-radius: 3px; 
+}
+
+QGroupBox::title { 
+    background-color: transparent;
+    subcontrol-position: top left; /* position at the top left*/ 
+    padding-top: 5px;
+    padding-left: 5px;
+ } </string>
+      </property>
+      <property name="title">
+       <string>Dynamics Options</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="topMargin">
+        <number>27</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="checkBox_3">
            <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
+            <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="text">
+            <string>Show Contact Forces</string>
+           </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="checkBox_4">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
+           <property name="text">
+            <string>Show Projected Center of Mass</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QCheckBox" name="checkBox_7">
+           <property name="styleSheet">
+            <string notr="true">border: 0px solid gray; 
+     border-radius: 3px; </string>
+           </property>
+           <property name="text">
+            <string>Show Actual Center of Mass</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -126,7 +251,7 @@ QGroupBox::title {
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>21</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -135,139 +260,13 @@ QGroupBox::title {
      </widget>
     </item>
     <item>
-     <spacer name="horizontalSpacer">
+     <spacer name="horizontalSpacer_10">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>79</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QGroupBox { 
-   border: 2px solid gray; 
-   border-radius: 3px; 
-}
-
-QGroupBox::title { 
-    background-color: transparent;
-    subcontrol-position: top left; /* position at the top left*/ 
-    padding-top: 5px;
-    padding-left: 5px;
- } </string>
-      </property>
-      <property name="title">
-       <string>Position</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="topMargin">
-        <number>27</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QSlider" name="horizontalSlider_4">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QSlider" name="horizontalSlider_5">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QSlider" name="horizontalSlider_6">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>21</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>80</width>
+        <width>8</width>
         <height>20</height>
        </size>
       </property>
@@ -295,90 +294,77 @@ QGroupBox::title {
  } </string>
       </property>
       <property name="title">
-       <string>Orientation</string>
+       <string>Frame Options</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="topMargin">
         <number>27</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QSlider" name="horizontalSlider">
+          <widget class="QCheckBox" name="checkBox_5">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+           <property name="text">
+            <string>Show Joint Axes</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-border-radius: 3px; </string>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <widget class="QSlider" name="horizontalSlider_2">
+          <widget class="QCheckBox" name="checkBox_6">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
      border-radius: 3px; </string>
            </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+           <property name="text">
+            <string>Show BodyNode Frames</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QSlider" name="horizontalSlider_3">
-           <property name="styleSheet">
-            <string notr="true">border: 0px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid gray; 
-     border-radius: 3px; </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
+        <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>14</height>
+           <height>27</height>
           </size>
          </property>
         </spacer>
@@ -387,13 +373,13 @@ border-radius: 3px; </string>
      </widget>
     </item>
     <item>
-     <spacer name="horizontalSpacer_4">
+     <spacer name="horizontalSpacer_11">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
-        <width>79</width>
+        <width>8</width>
         <height>20</height>
        </size>
       </property>

@@ -48,6 +48,12 @@ void Tree_View::treeView_itemSelected(QTreeWidgetItem * item, int column)
 {
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
     activeItem = val;
+    emit itemSelected(activeItem);
+}
+
+TreeViewReturn* Tree_View::getActiveItem()
+{
+ return activeItem;
 }
 
 QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
@@ -142,10 +148,10 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     return prev;
 }
 
-void Tree_View::populateTreeView(simulation::World *world, int numRobots)
+void Tree_View::populateTreeView(simulation::World *world)
 {
     QPixmap robotIcon((const char**) robot_xpm);
-    for (int i = 0; i<numRobots; ++i)
+    for (int i = 0; i<world->getNumSkeletons(); ++i)
     {
         dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {
@@ -154,6 +160,13 @@ void Tree_View::populateTreeView(simulation::World *world, int numRobots)
         } else {
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
+    }
+}
+
+void Tree_View::clear()
+{
+    while(ui_treeWidget->topLevelItemCount()) {
+        delete ui_treeWidget->takeTopLevelItem(0);
     }
 }
 
@@ -201,3 +214,8 @@ void Tree_View::nameChange_BodyNode_Joint(int checkBoxState)
         }
     }
 }
+
+//void Tree_View::itemSelected(TreeViewReturn* active_item)
+//{
+//
+//}

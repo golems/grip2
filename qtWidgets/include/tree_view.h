@@ -19,8 +19,13 @@ class Tree_View : public QDockWidget
     
 public:
     explicit Tree_View(QWidget *parent = 0, TreeViewReturn* active_item = NULL);
-    void populateTreeView(simulation::World* world, int numRobots);
+    void populateTreeView(simulation::World* world);
+    void clear();
     ~Tree_View();
+    TreeViewReturn* getActiveItem();
+
+signals:
+    void itemSelected(TreeViewReturn* active_item);
 
 private slots:
     void nameChange_BodyNode_Joint(int checkBoxState);

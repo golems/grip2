@@ -129,7 +129,7 @@ size_t DartNode::addWorld(std::string file)
     } else {
         dynamics::Skeleton* skel = parseSkeletonUrdf(file);
         if(skel) {
-            this->addSkeleton(skel);
+            this->addSkeleton(*skel);
             return _skeletons.size();
         } else {
             world = parseWorldSdf(file);
@@ -160,14 +160,14 @@ size_t DartNode::addSkeleton(std::string urdfFile)
 {
     dynamics::Skeleton* skeleton = parseSkeletonUrdf(urdfFile);
     if(skeleton) {
-        addSkeleton(skeleton);
+        addSkeleton(*skeleton);
         return _skeletons.size()-1;
     } else {
         return _skeletons.size()-1;
     }
 }
 
-size_t DartNode::addSkeleton(dynamics::Skeleton* skeleton)
+size_t DartNode::addSkeleton(dynamics::Skeleton& skeleton)
 {
     if(!_world) {
         if(_debug) {
@@ -175,15 +175,15 @@ size_t DartNode::addSkeleton(dynamics::Skeleton* skeleton)
         }
         _world = new simulation::World();
     }
-    _world->addSkeleton(skeleton);
-    _skeletons.push_back(skeleton);
+    _world->addSkeleton(&skeleton);
+    _skeletons.push_back(&skeleton);
 
     osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(skeleton, _debug);
     _skeletonNodes.push_back(skelNode);
-    _skelNodeMap.insert(std::make_pair(skeleton, skelNode));
+    _skelNodeMap.insert(std::make_pair(&skeleton, skelNode));
     this->addChild(skelNode);
     if(_debug) {
-        std::cerr << "Added robot:\n\t" << skeleton->getName() << std::endl;
+        std::cerr << "Added robot:\n\t" << skeleton.getName() << std::endl;
     }
 
     return _skeletons.size()-1;
@@ -202,7 +202,7 @@ dynamics::Skeleton* DartNode::getSkeleton(size_t skeletonIndex)
     }
 }
 
-int DartNode::removeSkeleton(dart::dynamics::Skeleton* skeletonToRemove)
+int DartNode::removeSkeleton(const dynamics::Skeleton* skeletonToRemove)
 {
     try {
         this->removeChild(_skelNodeMap.at(skeletonToRemove));
@@ -235,13 +235,15 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
     }
 }
 
-void DartNode::removeAllSkeletons()
+void DartNode::clear()
 {
-    for(int i=0; i<_skeletons.size(); ++i) {
-        this->removeSkeleton(i);
+    if(this->getNumChildren()) {
+        this->removeChildren(0, this->getNumChildren());
+        _skeletons.clear();
+        _skeletonNodes.clear();
+        _skelNodeMap.clear();
     }
-    _skeletons.clear();
-    std::cerr << "Vector size: " << _skeletons.size() << std::endl;
+    assert(this->getNumChildren() == 0);
 }
 
 void DartNode::hideSkeleton(int i)
@@ -310,7 +312,7 @@ size_t DartNode::addWorld(simulation::World* world)
         if(_debug) {
             std::cerr << "    " << world->getSkeleton(i)->getName() << std::endl;
         }
-        osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(world->getSkeleton(i), _debug);
+        osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*world->getSkeleton(i), _debug);
         _skeletonNodes.push_back(skelNode);
         _skelNodeMap.insert(std::make_pair(world->getSkeleton(i), skelNode));
         this->addChild(skelNode);

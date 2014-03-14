@@ -2,17 +2,17 @@
 
 #include <QtGui>
 
-///including the osg gl widget
+/// including the osg gl widget
 #include "ViewerWidget.h"
 
-///including tab files
-#include "GripTab.h"
-#include "visualizer.h"
-#include "ui_visualizer.h"
-#include "inspector.h"
-#include "ui_inspector.h"
+/// including tab files
+#include "visualization_tab.h"
+#include "ui_visualization_tab.h"
+#include "inspector_tab.h"
+#include "ui_inspector_tab.h"
 #include "tree_view.h"
 #include "ui_tree_view.h"
+#include "doubleslider.h"
 
 ///including the files for dart and osg
 #include "Grid.h"
@@ -27,17 +27,20 @@
 
 
 GripMainWindow::GripMainWindow() :
-    MainWindow(), world(NULL), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true))
+    MainWindow(),
+    world(new dart::simulation::World()),
+    worldNode(new osgDart::DartNode(true)),
+    simulation(new GripSimulation(world, this, true)),
+    _simulating(false)
 {
-    pluginList = new QList<GripTab*>;
-    world = new dart::simulation::World;
-    worldNode = new osgDart::DartNode(true);
-    simulation = new GripSimulation(true);
     createRenderingWindow();
     createTreeView();
     createTabs();
     loadPlugins();
+
+    connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 }
+
 
 GripMainWindow::~GripMainWindow()
 {
@@ -45,34 +48,96 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(string fileName)
 {
-
-    std::cerr << "Removing worldNode children" << std::endl;
-    worldNode->removeAllSkeletons();
-
-    if(world) {
-        std::cerr << "Removing world skeletons" << std::endl;
-        for(int i=0; i<world->getNumSkeletons(); ++i) {
-            world->removeSkeleton(world->getSkeleton(i));
+    if(_simulating) {
+        if(!stopSimulationWithDialog()) {
+            std::cerr << "Not loading a new world" << std::endl;
+            return;
         }
-    } else {
-        world = new dart::simulation::World;
     }
 
-    world->addSkeleton(createGround());
+    if(world) {
+        std::cerr << "Deleting world" << std::endl;
+        this->clear();
+    }
+
     world->setTimeStep(0.001);
 
+    world->addSkeleton(createGround());
     worldNode->addWorld(world);
-    int numRobots = worldNode->addWorld(fileName);
+    worldNode->addWorld(fileName);
 
     viewWidget->addNodeToScene(worldNode);
+
     worldNode->printInfo();
 
-    simulation->setWorld(world);
-
-    treeviewer->populateTreeView(worldNode->getWorld(), numRobots);
+    treeviewer->populateTreeView(world);
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+}
+
+bool GripMainWindow::stopSimulationWithDialog()
+{
+    // Ask user if they really want to end the simulation and load a new world
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Stop Simulation and Open Scene?"));
+    msgBox.setText(tr("Ending simulation and opening new scene!"));
+    msgBox.setInformativeText("Are you sure?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int resp = msgBox.exec();
+
+    switch(resp) {
+        case QMessageBox::Cancel: {
+            return false;
+        }
+        case QMessageBox::Ok:
+        default: {
+            break;
+        }
+    }
+
+    // Stop simulation
+    simulation->stopSimulation();
+
+    // Wait for simulation to stop by letting the event loop process
+    // events until the "simulationStopped" slot is called which set the
+    // _simulating flag to false.
+    while(_simulating) {
+        QCoreApplication::processEvents();
+    }
+
+    // Swap the start and stop buttons
+    this->swapStartStopButtons();
+
+    return true;
+}
+
+void GripMainWindow::clear()
+{
+    if(world) {
+        worldNode->clear();
+        while(world->getNumSkeletons()) {
+            world->removeSkeleton(world->getSkeleton(0));
+        }
+        world->setTime(0);
+        treeviewer->clear();
+        simulation->reset();
+    }
+    std::cerr << "world state: \n" << world->getState().transpose() << std::endl;
+}
+
+void GripMainWindow::simulationStopped()
+{
+    std::cerr << "Got simulationStopped signal" << std::endl;
+    _simulating = false;
+}
+
+void GripMainWindow::setSimulationRelativeTime(double time)
+{
+    //FIXME Attach to the time info widgets
+    // use input parameter time for the relative time box
+    // use world->getTime() for the simulation time box
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -118,10 +183,10 @@ void GripMainWindow::hd1280x720(){}
 void GripMainWindow::startSimulation()
 {
     if(world) {
+        _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
-        this->getToolBar()->actions().at(4)->setVisible(true);
-        this->getToolBar()->actions().at(3)->setVisible(false);
+        swapStartStopButtons();
     } else {
         std::cerr << "Not simulating because there's no world yet" << std::endl;
     }
@@ -131,9 +196,20 @@ void GripMainWindow::startSimulation()
 void GripMainWindow::stopSimulation()
 {
     simulation->stopSimulation();
+    _simulating = false;
     // FIXME: Maybe use qsignalmapping or std::map for this
-    this->getToolBar()->actions().at(4)->setVisible(false);
-    this->getToolBar()->actions().at(3)->setVisible(true);
+    swapStartStopButtons();
+}
+
+void GripMainWindow::swapStartStopButtons()
+{
+    if(this->getToolBar()->actions().at(3)->isVisible()) {
+        this->getToolBar()->actions().at(3)->setVisible(false);
+        this->getToolBar()->actions().at(4)->setVisible(true);
+    } else {
+        this->getToolBar()->actions().at(3)->setVisible(true);
+        this->getToolBar()->actions().at(4)->setVisible(false);
+    }
 }
 
 void GripMainWindow::simulateSingleStep()
@@ -169,7 +245,7 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-    setCentralWidget(viewWidget);
+    this->setCentralWidget(viewWidget);
 }
 
 void GripMainWindow::createTreeView()
@@ -214,7 +290,7 @@ void GripMainWindow::loadPlugins()
                 else
                     this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
 
-                tabifyDockWidget(viztabwidget, pluginWidget);
+                tabifyDockWidget(visualizationtab, pluginWidget);
             }
         }
         else {
@@ -227,20 +303,45 @@ void GripMainWindow::loadPlugins()
 void GripMainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
-    setDockOptions(QMainWindow::VerticalTabs);
+    setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
-    viztabwidget = new QDockWidget(this);
-    Ui_Visualizer::setupUi(viztabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
 
-    inspectabwidget = new QDockWidget(this);
-    Ui_Inspector::setupUi(inspectabwidget);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+    inspectortab = new Inspector_Tab(this, world,treeviewer);
+    visualizationtab = new Visualization_Tab(this);
 
-    tabifyDockWidget(inspectabwidget, viztabwidget);
-    viztabwidget->show();
-    viztabwidget->raise();
+    QWidget* emptyTitle1 = new QWidget();
+    QWidget* emptyTitle2 = new QWidget();
+    visualizationtab->setTitleBarWidget(emptyTitle1);
+    inspectortab->setTitleBarWidget(emptyTitle2);
+    //delete emptyTitle1;
+    //delete emptyTitle2;
 
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    /*
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
+    inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
+    */
+
+    //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
+
+    tabifyDockWidget(inspectortab, visualizationtab);
+
+    visualizationtab->show();
+    visualizationtab->raise();
+    std::cout << "test test" <<std::endl;
+
+    //QDockWidget *viztabwidget = new QDockWidget(this);
+    //Ui_Visualizer::setupUi(viztabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
+
+    //QDockWidget *inspectabwidget = new QDockWidget(this);
+    //Ui_Inspector::setupUi(inspectabwidget);
+    //this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
+
+    //tabifyDockWidget(inspectabwidget, viztabwidget);
+    //viztabwidget->show();
+    //viztabwidget->raise();
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()

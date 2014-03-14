@@ -74,10 +74,10 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type JointMatrixMap, which maps dart::dynamics::Joint* to osg::MatrixTransform*
-typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> > BodyNodeMatrixMap;
+typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> > BodyNodeMatrixMap;
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
-typedef std::map<dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
+typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
 
 /**
  * \class SkeletonNode SkeletonNode.h
@@ -97,7 +97,7 @@ public:
      * \param axisLength Length of the joint axes (meters)
      * \param debug Debug flag for printing debug statements to standard error
      */
-    SkeletonNode(dynamics::Skeleton* skeleton, float axisLength=0.2, bool debug=false);
+    SkeletonNode(const dynamics::Skeleton& skeleton, float axisLength=0.2, bool debug=false);
 
     /**
      * \brief Destructor for SkeletonNode
@@ -123,7 +123,7 @@ protected:
      * \param rootBodyNode The root of the skeleton
      * \return void
      */
-    void _createSkeletonFromRootBodyNode(dynamics::BodyNode* rootBodyNode);
+    void _createSkeleton();
 
     /**
      * \brief Recursively build osg skeleton starting with a BodyNode and recursively creating its
@@ -134,7 +134,7 @@ protected:
      * and it will recursively add osg::MatrixTransforms and Geode for all the children
      * \param bodyNode The BodyNode to add to the osg skeleton along with its children
      */
-    void _addSkeletonObjectsRecursivley(dynamics::BodyNode* bodyNode);
+    void _addSkeletonObjectsRecursivley(const dynamics::BodyNode& bodyNode);
 
     /**
      * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
@@ -144,14 +144,14 @@ protected:
      * \param node dart::dynamics::BodyNode of which to make an osg::Group*
      * \return osg::Group* The osg::Group* corresponding the dart::dynamics::BodyNode
      */
-    osg::Group* _makeBodyNodeGroup(dynamics::BodyNode* node);
+    osg::Group* _makeBodyNodeGroup(const dynamics::BodyNode &node);
 
     /**
      * \brief Convert BodyNode shapes to osg shapes
      * \param node BodyNode to get shapes from
      * \return void
      */
-    void _addShapesFromBodyNode(dynamics::BodyNode* node);
+    void _addShapesFromBodyNode(const dynamics::BodyNode& node);
 
     /**
      * \brief Update SkeletonNode recursively based on Skeleton transforms. This traverses through each
@@ -160,13 +160,13 @@ protected:
      * \param bodyNode BodyNode used to update the osg::MatrixTransform and its children
      * \return void
      */
-    void _updateRecursively(dynamics::BodyNode* bodyNode);
+    void _updateRecursively(const dynamics::BodyNode& bodyNode);
 
     /**
      * \brief Get root body node
      * \return dynamics::BodyNode pointer to the root body node
      */
-    dynamics::BodyNode* getRootBodyNode();
+    const dynamics::BodyNode& getRootBodyNode();
 
 
     //---------------------------------------------------------------
@@ -174,7 +174,7 @@ protected:
     //---------------------------------------------------------------
 
     /// Root BodyNode
-    dynamics::BodyNode* _rootBodyNode;
+    const dynamics::BodyNode& _rootBodyNode;
 
     /// Array of osg::Group pointers for the dart::dynamics::BodyNode visualization objects
     std::vector<osg::ref_ptr<osg::Group> > _bodyNodes;
