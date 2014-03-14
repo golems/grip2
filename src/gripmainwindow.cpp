@@ -254,10 +254,11 @@ void GripMainWindow::createTreeView()
 
 void GripMainWindow::createTabs()
 {
-    setDockOptions(QMainWindow::AnimatedDocks);
+    //setDockOptions(QMainWindow::AnimatedDocks);
     //setDockOptions(QMainWindow::VerticalTabs);
     //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
     setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+    //setDockOptions(QMainWindow::AllowNestedDocks);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(this);
@@ -271,12 +272,14 @@ void GripMainWindow::createTabs()
 //    delete emptyTitle1;
 //    delete emptyTitle2;
 
-//    inspectortab->setFeatures(QDockWidget::DockWidgetMovable);
-//    inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
-//    inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
-//    visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
-//    visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
-//    visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
+    //inspectortab->setFeatures(QDockWidget::DockWidgetMovable);
+    //inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
+    //inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
+    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
+    //visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
+    //visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
+    //visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
+    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);//                  setFeatures(QDockWidget::DockWidgetClosable);
 
     this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
@@ -284,6 +287,8 @@ void GripMainWindow::createTabs()
     tabifyDockWidget(inspectortab, visualizationtab);
     visualizationtab->show();
     visualizationtab->raise();
+    //visualizationtab->setFloating(false);
+    //inspectortab->setFloating(false);
 
     //QDockWidget *viztabwidget = new QDockWidget(this);
     //Ui_Visualizer::setupUi(viztabwidget);
