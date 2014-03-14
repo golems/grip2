@@ -303,33 +303,35 @@ void GripMainWindow::loadPlugins()
 void GripMainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
-    setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
-
+    //setDockOptions(QMainWindow::VerticalTabs);
+    //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
+    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(this);
 
-    QWidget* emptyTitle1 = new QWidget();
-    QWidget* emptyTitle2 = new QWidget();
-    visualizationtab->setTitleBarWidget(emptyTitle1);
-    inspectortab->setTitleBarWidget(emptyTitle2);
-    //delete emptyTitle1;
-    //delete emptyTitle2;
+//    QDockWidget* emptyTitle1 = new QDockWidget();
+//    QDockWidget* emptyTitle2 = new QDockWidget();
+//    visualizationtab->setTitleBarWidget(emptyTitle1);
+//    inspectortab->setTitleBarWidget(emptyTitle2);
+//    QDockWidget* emptyTitle1 = new QDockWidget();
+//    QDockWidget* emptyTitle2 = new QDockWidget();
+//    delete emptyTitle1;
+//    delete emptyTitle2;
+
+//    inspectortab->setFeatures(QDockWidget::DockWidgetMovable);
+//    inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
+//    inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
+//    visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
+//    visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
+//    visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
 
     this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    /*
-    inspectabwidget->setFeatures(QDockWidget::DockWidgetMovable);
-    inspectabwidget->setFeatures(QDockWidget::DockWidgetFloatable);
-    */
-
-    //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
 
     tabifyDockWidget(inspectortab, visualizationtab);
-
     visualizationtab->show();
     visualizationtab->raise();
-    std::cout << "test test" <<std::endl;
 
     //QDockWidget *viztabwidget = new QDockWidget(this);
     //Ui_Visualizer::setupUi(viztabwidget);
