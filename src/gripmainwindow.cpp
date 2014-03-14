@@ -36,6 +36,7 @@ GripMainWindow::GripMainWindow() :
     createRenderingWindow();
     createTreeView();
     createTabs();
+    this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 }
@@ -53,7 +54,7 @@ void GripMainWindow::doLoad(string fileName)
         }
     }
 
-    if(world) {
+    if(world->getTime() || world->getNumSkeletons()) {
         std::cerr << "Deleting world" << std::endl;
         this->clear();
     }
@@ -136,6 +137,15 @@ void GripMainWindow::setSimulationRelativeTime(double time)
     //FIXME Attach to the time info widgets
     // use input parameter time for the relative time box
     // use world->getTime() for the simulation time box
+}
+
+void GripMainWindow::slotAddTimesliceToTimeline(const GripTimeslice& timeslice)
+{
+    std::cerr << "Timeline: " << timeline.size() << std::endl;
+    timeline.push_back(timeslice);
+    ostringstream msg;
+    msg << "New timeslice. Size = " << timeline.size();
+    this->setMessageSlot(tr(msg.str().c_str()));
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -255,8 +265,6 @@ void GripMainWindow::createTreeView()
 void GripMainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
-    //setDockOptions(QMainWindow::VerticalTabs);
-    //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
     setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
