@@ -91,6 +91,9 @@ public:
 
     dart::dynamics::Skeleton* createGround();
 
+protected slots:
+    void setSimulationRelativeTime(double time);
+
 private slots:
     void front();
     void top();
@@ -112,7 +115,7 @@ private:
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
-    void resetEverything();
+    void clear();
     bool stopSimulationWithDialog();
     void swapStartStopButtons();
     void doLoad(string fileName);

@@ -23,9 +23,15 @@ GripSimulation::GripSimulation(dart::simulation::World* world, MainWindow* paren
     _simulating(false),
     _simulateOneFrame(false)
 {
+    // Signals and slots for the worker object and thread
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
     connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
+
+    // Signal and slot for informing the parent that the simulation loop in stopped
     connect(this, SIGNAL(simulationStoppedSignal()), parent, SLOT(simulationStopped()));
+
+    // Signal and slot for sending the simulation time relative to real time (instantaneous) to the parent
+    connect(this, SIGNAL(relTimeChanged(double)), parent, SLOT(setSimulationRelativeTime(double)));
     this->moveToThread(_thread);
     _thread->start();
 }
@@ -39,10 +45,10 @@ GripSimulation::~GripSimulation()
 void GripSimulation::reset()
 {
     _timeline.clear();
-    _simulationDuration = 0;
+//    _simulationDuration = 0;
     _simulationStartTime = 0;
     _simTimeRelToRealTimeInstantaneous = 0;
-    _simTimeRelToRealTimeOverall = 0;
+//    _simTimeRelToRealTimeOverall = 0;
     _prevTime = 0;
 }
 
@@ -94,11 +100,11 @@ void GripSimulation::simulateTimeStep()
 
         double curTime = grip::getTime();
         double timeStepDuration = curTime - _prevTime;
-        _simulationDuration = _simulationDuration + timeStepDuration;
+//        _simulationDuration = _simulationDuration + timeStepDuration;
         _simTimeRelToRealTimeInstantaneous = _world->getTimeStep() / timeStepDuration;
-        _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
+//        _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
         _prevTime = curTime;
-
+        emit relTimeChanged(_simTimeRelToRealTimeInstantaneous);
 
 //        std::cerr << "Sim2 | Real | RelInst | RelOverall: "
 //                  << _world->getTime() << " | "

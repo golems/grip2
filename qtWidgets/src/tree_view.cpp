@@ -109,11 +109,6 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     QIcon icon;
 
     // Prismatic Joint: 1 DOF
-    if(node == node) {
-        std::cerr << "No problem: Node: " << node->getName() << ". ParentJoint: " << node->getParentJoint()->getName() << std::endl;
-    } else {
-        std::cerr << "What the heck!" << std::endl;
-    }
     if(dart::dynamics::PrismaticJoint* joint = dynamic_cast<dart::dynamics::PrismaticJoint*>(node->getParentJoint()))
         icon = QIcon(prismIcon);
 

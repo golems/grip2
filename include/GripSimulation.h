@@ -8,7 +8,7 @@
 // Qt includes
 #include <QObject>
 
-// Local includes
+//// Local includes
 #include "mainwindow.h"
 
 /**
@@ -71,6 +71,12 @@ signals:
      */
     void simulationStoppedSignal();
 
+    /**
+     * \brief Signal to pass the time value of the simulation real time
+     * \param
+     */
+    void relTimeChanged(double simTimeRelToRealTimeInstantaneous);
+
 public slots:
     /**
      * \brief Slot that checks if there's a world object. If so, initialize time variables
@@ -116,10 +122,10 @@ protected:
     /// Vector to hold timeslice objects for the slider and playback
     std::vector<GripTimeslice> _timeline;
 
-    double _simulationDuration;  ///< Simulation time in realtime
+//    double _simulationDuration;  ///< Simulation time in realtime
     double _simulationStartTime; ///< Initial system clock time when simulation started
     double _simTimeRelToRealTimeInstantaneous; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
-    double _simTimeRelToRealTimeOverall; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
+//    double _simTimeRelToRealTimeOverall; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
     double _prevTime; ///< Real time on the last time step
 
     bool _simulating; /// Bool for whether or not we are simulating

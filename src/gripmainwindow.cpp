@@ -12,6 +12,7 @@
 #include "ui_inspector_tab.h"
 #include "tree_view.h"
 #include "ui_tree_view.h"
+#include "doubleslider.h"
 
 ///including the files for dart and osg
 #include "Grid.h"
@@ -54,7 +55,7 @@ void GripMainWindow::doLoad(string fileName)
 
     if(world) {
         std::cerr << "Deleting world" << std::endl;
-        this->resetEverything();
+        this->clear();
     }
 
     world->setTimeStep(0.001);
@@ -110,7 +111,7 @@ bool GripMainWindow::stopSimulationWithDialog()
     return true;
 }
 
-void GripMainWindow::resetEverything()
+void GripMainWindow::clear()
 {
     if(world) {
         worldNode->clear();
@@ -128,6 +129,13 @@ void GripMainWindow::simulationStopped()
 {
     std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
+}
+
+void GripMainWindow::setSimulationRelativeTime(double time)
+{
+    //FIXME Attach to the time info widgets
+    // use input parameter time for the relative time box
+    // use world->getTime() for the simulation time box
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -235,7 +243,7 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-    setCentralWidget(viewWidget);
+    this->setCentralWidget(viewWidget);
 }
 
 void GripMainWindow::createTreeView()
@@ -247,8 +255,7 @@ void GripMainWindow::createTreeView()
 void GripMainWindow::createTabs()
 {
     setDockOptions(QMainWindow::AnimatedDocks);
-    setDockOptions(QMainWindow::VerticalTabs);
-
+    setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(this);
@@ -263,6 +270,7 @@ void GripMainWindow::createTabs()
     //connect(inspectortab->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
 
     tabifyDockWidget(inspectortab, visualizationtab);
+
     visualizationtab->show();
     visualizationtab->raise();
     std::cout << "test test" <<std::endl;

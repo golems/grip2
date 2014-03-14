@@ -771,6 +771,7 @@
         <origin rpy="0 0 0" xyz="-0.0020 -0.0105 -0.0420" />
         <parent link="Body_LF31" />
         <child link="Body_LF32" />
+		<axis xyz="0 -1 0" />
         <limit effort="10.0" lower="-1.5" upper=".1" velocity="2.0" />
     </joint>
     <link name="Body_LF33">
