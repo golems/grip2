@@ -6,15 +6,43 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
-    <height>213</height>
+    <width>1033</width>
+    <height>183</height>
    </rect>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget { 
+   font: 0.5pt &quot;Ubuntu&quot;;
+   color:rgb(255, 255, 255);
+}
+QDockWidget::title {
+     text-align: left;
+     subcontrol-position: top left;
+     position: absolute;
+     top: 0px; left: 0px; bottom: 0px;
+ }
+QDockWidget::close-button, QDockWidget::float-button {
+    icon-size: 14px; /* maximum icon size */
+ }
+QDockWidget::close-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 5px; bottom: 0px;
+     width: 14px;
+ }
+
+QDockWidget::float-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 20px; bottom: 0px;
+     width: 14px;
+ }</string>
+  </property>
   <property name="windowTitle">
-   <string>Visualizer</string>
+   <string>Visualization Tab</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -117,19 +145,6 @@ QGroupBox::title {
        </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer_9">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>8</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
@@ -260,19 +275,6 @@ QGroupBox::title {
      </widget>
     </item>
     <item>
-     <spacer name="horizontalSpacer_10">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>8</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
      <widget class="QGroupBox" name="groupBox_3">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -371,19 +373,6 @@ QGroupBox::title {
        </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer_11">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>8</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>
