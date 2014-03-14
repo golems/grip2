@@ -22,10 +22,10 @@ public:
      */
     TreeViewReturn(){}
 
-    ///used to store the Skeleton object or the BodyNode object
+    /// used to store the Skeleton object or the BodyNode object
     void* object;
 
-    ///used to differentiate between the skeleton object and BodyNode object
+    /// used to differentiate between the skeleton object and BodyNode object
     DataType dType;
 };
 Q_DECLARE_METATYPE(TreeViewReturn*);

@@ -29,7 +29,7 @@
 GripMainWindow::GripMainWindow() :
     MainWindow(), world(NULL), worldNode(new osgDart::DartNode(true)), simulation(new GripSimulation(true))
 {
-    pluginList = new QList<QObject*>;
+    pluginList = new QList<GripTab*>;
     world = new dart::simulation::World;
     worldNode = new osgDart::DartNode(true);
     simulation = new GripSimulation(true);
@@ -202,11 +202,11 @@ void GripMainWindow::loadPlugins()
         plugin = loader.instance();
         if (plugin) {
             std::cout<<"Plugin loaded "<<(plugin->objectName()).toStdString()<<std::endl;
-            pluginList->append(plugin);
             GripTab* gt = qobject_cast<GripTab*>(plugin);
+            pluginList->append(gt);
             if(gt)
             {
-                gt->LoadActiveNode(activeItem, viewWidget);
+                gt->Load(activeItem, viewWidget);
 
                 QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
                 if(pluginWidget == NULL)
@@ -240,6 +240,7 @@ void GripMainWindow::createTabs()
     tabifyDockWidget(inspectabwidget, viztabwidget);
     viztabwidget->show();
     viztabwidget->raise();
+
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()

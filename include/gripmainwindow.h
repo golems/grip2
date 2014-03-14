@@ -58,6 +58,7 @@
 #include "ui_visualizer.h"
 #include "ui_inspector.h"
 #include "ui_tree_view.h"
+#include "GripTab.h"
 
 #include "DartNode.h"
 #include "GripSimulation.h"
@@ -116,7 +117,7 @@ private:
     /// you first need to perform a qobject_cast. An example for the same is
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
-    QList<QObject*>* pluginList;
+    QList<GripTab*>* pluginList;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
     Tree_View* treeviewer;
