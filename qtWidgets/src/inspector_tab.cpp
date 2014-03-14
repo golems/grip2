@@ -76,8 +76,9 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
          qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
      }
     else
+    {
      std::cerr << "Not identified object passed to ChangeJoint" << std::endl;
-
+    }
     //std::cout << "test changejoint" << std::endl;
 
 
