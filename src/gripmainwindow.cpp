@@ -257,8 +257,16 @@ void GripMainWindow::createTabs()
     setDockOptions(QMainWindow::AnimatedDocks);
     setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
+
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(this);
+
+    QWidget* emptyTitle1 = new QWidget();
+    QWidget* emptyTitle2 = new QWidget();
+    visualizationtab->setTitleBarWidget(emptyTitle1);
+    inspectortab->setTitleBarWidget(emptyTitle2);
+    //delete emptyTitle1;
+    //delete emptyTitle2;
 
     this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
@@ -274,6 +282,7 @@ void GripMainWindow::createTabs()
     visualizationtab->show();
     visualizationtab->raise();
     std::cout << "test test" <<std::endl;
+
     //QDockWidget *viztabwidget = new QDockWidget(this);
     //Ui_Visualizer::setupUi(viztabwidget);
     //this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
