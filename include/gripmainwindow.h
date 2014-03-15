@@ -98,8 +98,10 @@ public:
 
     dart::dynamics::Skeleton* createGround();
 
-//protected slots:
-public slots:
+    /// Vector to hold timeslice objects for the slider and playback
+    std::vector<GripTimeslice> timeline;
+
+protected slots:
     void setSimulationRelativeTime(double time);
 
 private slots:
@@ -118,10 +120,7 @@ private slots:
     void vga640x480();
     void hd1280x720();
     void simulationStopped();
-
-signals:
-    void sim_time_changed(double time);
-    void testemit(double time);
+    void slotAddTimesliceToTimeline(const GripTimeslice& timeslice);
 
 private:
     void createRenderingWindow();

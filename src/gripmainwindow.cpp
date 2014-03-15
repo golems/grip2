@@ -44,6 +44,7 @@ GripMainWindow::GripMainWindow() :
     //createSliders();
     createTimeDisplays();
     createTabs();
+    this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 }
@@ -61,7 +62,7 @@ void GripMainWindow::doLoad(string fileName)
         }
     }
 
-    if(world) {
+    if(world->getTime() || world->getNumSkeletons()) {
         std::cerr << "Deleting world" << std::endl;
         this->clear();
     }
@@ -148,6 +149,15 @@ void GripMainWindow::setSimulationRelativeTime(double time)
     //qDebug() << time;
     //emit sim_time_changed(world->getTime());
     simulation_time_display->Update_Time(world->getTime(),time);
+}
+
+void GripMainWindow::slotAddTimesliceToTimeline(const GripTimeslice& timeslice)
+{
+    std::cerr << "Timeline: " << timeline.size() << std::endl;
+    timeline.push_back(timeslice);
+    ostringstream msg;
+    msg << "New timeslice. Size = " << timeline.size();
+    this->setMessageSlot(tr(msg.str().c_str()));
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -341,18 +351,10 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
     return ground;
 }
 
-void GripMainWindow::createPlaybackSliders()
-{
-//    playback_slider = new Playback_Slider(this);
-//    this->addDockWidget(Qt::BottomDockWidgetArea, playback_slider);
-}
 
 void GripMainWindow::createTimeDisplays()
 {
     simulation_time_display = new Time_Display(this);
     this->addDockWidget(Qt::RightDockWidgetArea, simulation_time_display);
-
-    //simulation_time_display->show();
-//    connect(this,SIGNAL(),..,SLOT())
 
 }

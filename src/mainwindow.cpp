@@ -115,6 +115,11 @@ QToolBar* MainWindow::getToolBar()
     return toolbar;
 }
 
+void MainWindow::setMessageSlot(QString msg)
+{
+    this->statusBar()->showMessage(msg);
+}
+
 void MainWindow::load()
 {
     QStringList fileNames; //stores the entire path of the file that it attempts to open
