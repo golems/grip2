@@ -8,10 +8,16 @@
 ///including tab files
 #include "visualization_tab.h"
 #include "ui_visualization_tab.h"
+
 #include "inspector_tab.h"
 #include "ui_inspector_tab.h"
+
 #include "tree_view.h"
 #include "ui_tree_view.h"
+
+#include "time_display.h"
+#include "ui_time_display.h"
+
 #include "doubleslider.h"
 
 ///including the files for dart and osg
@@ -35,6 +41,8 @@ GripMainWindow::GripMainWindow() :
 {
     createRenderingWindow();
     createTreeView();
+    //createSliders();
+    createTimeDisplays();
     createTabs();
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
@@ -136,6 +144,10 @@ void GripMainWindow::setSimulationRelativeTime(double time)
     //FIXME Attach to the time info widgets
     // use input parameter time for the relative time box
     // use world->getTime() for the simulation time box
+    // emit GripMainWindow::testemit(time);
+    //qDebug() << time;
+    //emit sim_time_changed(world->getTime());
+    simulation_time_display->Update_Time(world->getTime(),time);
 }
 
 int GripMainWindow::saveText(string scenepath, const char* llfile)
@@ -276,6 +288,7 @@ void GripMainWindow::createTabs()
     //inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
     //inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
     inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
+
     //visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
     //visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
     //visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
@@ -326,4 +339,20 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
     ground->addBodyNode(node);
     ground->setMobile(false);
     return ground;
+}
+
+void GripMainWindow::createPlaybackSliders()
+{
+//    playback_slider = new Playback_Slider(this);
+//    this->addDockWidget(Qt::BottomDockWidgetArea, playback_slider);
+}
+
+void GripMainWindow::createTimeDisplays()
+{
+    simulation_time_display = new Time_Display(this);
+    this->addDockWidget(Qt::RightDockWidgetArea, simulation_time_display);
+
+    //simulation_time_display->show();
+//    connect(this,SIGNAL(),..,SLOT())
+
 }

@@ -55,17 +55,23 @@
 #include <tree_view.h>
 #include <inspector_tab.h>
 #include <visualization_tab.h>
+#include <time_display.h>
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 #include "ui_tree_view.h"
+#include "ui_time_display.h"
 
 #include "DartNode.h"
 #include "GripSimulation.h"
+//#include <QObject>
+//#include <QtGui>
 
 using namespace std;
 
 class GripMainWindow : public MainWindow
 {
+    //Q_OBJECT
+
 public:
     GripMainWindow();
     ~GripMainWindow();
@@ -75,6 +81,7 @@ public:
     Tree_View* treeviewer;
     Inspector_Tab* inspectortab;
     Visualization_Tab* visualizationtab;
+    Time_Display* simulation_time_display;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -91,7 +98,8 @@ public:
 
     dart::dynamics::Skeleton* createGround();
 
-protected slots:
+//protected slots:
+public slots:
     void setSimulationRelativeTime(double time);
 
 private slots:
@@ -111,10 +119,16 @@ private slots:
     void hd1280x720();
     void simulationStopped();
 
+signals:
+    void sim_time_changed(double time);
+    void testemit(double time);
+
 private:
     void createRenderingWindow();
     void createTreeView();
     void createTabs();
+    void createPlaybackSliders();
+    void createTimeDisplays();
     void clear();
     bool stopSimulationWithDialog();
     void swapStartStopButtons();
