@@ -86,7 +86,7 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
 
     if(simworld) {
-        std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
 
         if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
         {
@@ -103,7 +103,7 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
 
          Eigen::VectorXd q(1);
-         q[0] = double(joint_Value*(3.14)/180.0);
+         q[0] = double(joint_Value*(M_PI)/180.0);
          simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
         // QString::fromStdString(item_selected->getParentJoint()->getName())
         }
