@@ -13,10 +13,15 @@ public:
     Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer);
     ~Inspector_Tab();
 private slots:
-    void ChangePos0DoubleSpinBox(int sliderValue);
-    void ChangePos0Slider(double spinBoxValue);
     void ChangeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
     void ReceiveSeletedItem(TreeViewReturn* active_item);
+    void ChangeXPosition(int sliderValue);
+    void ChangeYPosition(int sliderValue);
+    void ChangeZPosition(int sliderValue);
+    void ChangeROrientation(int sliderValue);
+    void ChangePOrientation(int sliderValue);
+    void ChangeYOrientation(int sliderValue);
+
 
 private:
     Ui::Inspector_Tab *inspector_ui;

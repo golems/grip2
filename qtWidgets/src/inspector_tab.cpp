@@ -5,6 +5,7 @@
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/WeldJoint.h>
+#include <dart/dynamics/FreeJoint.h>
 //#include <typeinfo>
 #include <QDebug>
 #include <QString>
@@ -38,6 +39,14 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->positionSpinBox_0->setDecimals(1);
 //    std::cerr << "slider min vlaue :" << inspector_ui->positionSlider_0->getMinValue() << std::endl;
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeSelectedJoint(int)));
+    connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(ChangeXPosition(int)));
+    connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(ChangeYPosition(int)));
+    connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(ChangeZPosition(int)));
+    connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(ChangeROrientation(int)));
+    connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(ChangePOrientation(int)));
+    connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(ChangeYOrientation(int)));
+   // connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(ChangeYPosition(int)));
+   // connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(ChangeZPosition(int)));
     //std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
     simworld = simWorld;
     //std::cout << "test world in inspector constructor: " << simworld << std::endl;
@@ -50,22 +59,415 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 
 }
 
-void Inspector_Tab::ChangePos0DoubleSpinBox(int sliderValue){
- //   positionSpinBox_0->setValue((double)sliderValue);
- //   std::cout << "slider value: " << sliderValue << std::endl;
+
+
+void Inspector_Tab::ChangeXPosition(int sliderValue){
+    double joint_Value = 0.0;
+
+    //int num_gen_coordinate;
+
+    joint_Value = inspector_ui->positionSlider_1->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+             //qDebug() << QString::fromStdString(item_selected->getName()) ;
+             //std::cerr << "ChangeXPosition: Seleted item is " << item_selected->getName() << std::endl;
+             //std::cerr << "ChangeXPosition: Skeleton id: " << treeview->getActiveItem()->skeletonID << std::endl;
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeXPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+             //std::cerr << "ChangeJoint: node selected step2" << std::endl;
+             //std::cerr << item_selected->getName() << std::endl;
+             //std::cerr << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+             //std::cerr << simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getGenCoord(0) << std::endl;
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+                 //std::cerr << "Free joint" << std::endl;
+
+                 //num_gen_coordinate = item_selected->getParentJoint()->getNumGenCoords();
+                 //std::cerr << "num_gen_coordiate: " << num_gen_coordinate << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(3)->getSkeletonIndex()); // X direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeXPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeXPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
 }
 
-void Inspector_Tab::ChangePos0Slider(double spinBoxValue){
- //   positionSlider_0->setValue((int)spinBoxValue);
+void Inspector_Tab::ChangeYPosition(int sliderValue){
+    double joint_Value = 0.0;
+
+    joint_Value = inspector_ui->positionSlider_2->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeYPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(4)->getSkeletonIndex()); // Y direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeYPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeYPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
+}
+
+void Inspector_Tab::ChangeZPosition(int sliderValue){
+    double joint_Value = 0.0;
+
+    //int num_gen_coordinate;
+
+    joint_Value = inspector_ui->positionSlider_3->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeZPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(5)->getSkeletonIndex()); // X direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeZPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeZPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
+}
+
+void Inspector_Tab::ChangeROrientation(int sliderValue){
+    double joint_Value = 0.0;
+
+    //int num_gen_coordinate;
+
+    joint_Value = inspector_ui->orientationSlider_1->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+             //qDebug() << QString::fromStdString(item_selected->getName()) ;
+             //std::cerr << "ChangeXPosition: Seleted item is " << item_selected->getName() << std::endl;
+             //std::cerr << "ChangeXPosition: Skeleton id: " << treeview->getActiveItem()->skeletonID << std::endl;
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeXPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+             //std::cerr << "ChangeJoint: node selected step2" << std::endl;
+             //std::cerr << item_selected->getName() << std::endl;
+             //std::cerr << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+             //std::cerr << simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getGenCoord(0) << std::endl;
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+                 //std::cerr << "Free joint" << std::endl;
+
+                 //num_gen_coordinate = item_selected->getParentJoint()->getNumGenCoords();
+                 //std::cerr << "num_gen_coordiate: " << num_gen_coordinate << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(0)->getSkeletonIndex()); // X direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeXPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeXPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
+}
+
+void Inspector_Tab::ChangePOrientation(int sliderValue){
+    double joint_Value = 0.0;
+
+    //int num_gen_coordinate;
+
+    joint_Value = inspector_ui->orientationSlider_2->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+             //qDebug() << QString::fromStdString(item_selected->getName()) ;
+             //std::cerr << "ChangeXPosition: Seleted item is " << item_selected->getName() << std::endl;
+             //std::cerr << "ChangeXPosition: Skeleton id: " << treeview->getActiveItem()->skeletonID << std::endl;
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeXPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+             //std::cerr << "ChangeJoint: node selected step2" << std::endl;
+             //std::cerr << item_selected->getName() << std::endl;
+             //std::cerr << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+             //std::cerr << simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getGenCoord(0) << std::endl;
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+                 //std::cerr << "Free joint" << std::endl;
+
+                 //num_gen_coordinate = item_selected->getParentJoint()->getNumGenCoords();
+                 //std::cerr << "num_gen_coordiate: " << num_gen_coordinate << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(1)->getSkeletonIndex()); // X direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeXPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeXPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
+}
+
+
+void Inspector_Tab::ChangeYOrientation(int sliderValue){
+    double joint_Value = 0.0;
+
+    //int num_gen_coordinate;
+
+    joint_Value = inspector_ui->orientationSlider_3->getdsvalue();
+    //std::cerr << "ChangeXPositionCalled" << std::endl;
+
+    if(simworld)
+    { /// if world is defined
+        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+
+        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        {
+             dart::dynamics::Skeleton* item_selected;
+             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
+             //qDebug() << QString::fromStdString(item_selected->getName()) ;
+             //std::cerr << "ChangeXPosition: Seleted item is " << item_selected->getName() << std::endl;
+             //std::cerr << "ChangeXPosition: Skeleton id: " << treeview->getActiveItem()->skeletonID << std::endl;
+        }
+        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        {
+             //std::cerr << "ChangeXPosition: node selected step1" << std::endl;
+             dart::dynamics::BodyNode* item_selected;
+             item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+             //std::cerr << "ChangeJoint: node selected step2" << std::endl;
+             //std::cerr << item_selected->getName() << std::endl;
+             //std::cerr << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+             //std::cerr << simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getGenCoord(0) << std::endl;
+
+             /// check if the joint is a free joint (6DoF)
+             if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
+             {
+                 //std::cerr << "Free joint" << std::endl;
+
+                 //num_gen_coordinate = item_selected->getParentJoint()->getNumGenCoords();
+                 //std::cerr << "num_gen_coordiate: " << num_gen_coordinate << "skeleton index: " << item_selected->getSkeletonIndex() << std::endl;
+
+                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// if the node is the root
+                 {
+                     std::vector<int> indx;
+                     indx.push_back( item_selected->getParentJoint()->getGenCoord(2)->getSkeletonIndex()); // X direction
+                     Eigen::VectorXd q(1);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     q[0] = double(joint_Value*(M_PI)/180.0);
+                     //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                     // QString::fromStdString(item_selected->getParentJoint()->getName())
+                     //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
+
+            }
+            else
+            {
+                 std::cerr << "Selected joint is not a free joint";
+            }
+        }
+        else
+        {
+            std::cerr << "ChangeXPosition: Err" << std::endl;
+        }
+
+    }
+    else
+    {
+        std::cerr << "ChangeXPosition: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+    }
 }
 
 void Inspector_Tab::ChangeSelectedJoint(int sliderValue){
 
     double joint_Value = 0.0;
-
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
 
     if(simworld) {
+
         //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
 
         if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
@@ -94,7 +496,7 @@ void Inspector_Tab::ChangeSelectedJoint(int sliderValue){
                  std::vector<int> indx;
                  indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                  Eigen::VectorXd q(1);
-                 std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
+                 //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
                  q[0] = double(joint_Value*(M_PI)/180.0);
                  //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
                  simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
@@ -187,7 +589,7 @@ void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
  }
  else
  {
-     std::cerr << "ReceiveSelectedItem: No identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
+    std::cerr << "ReceiveSelectedItem: No identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
     inspector_ui->parent_selected_display->setText(QString("%1").arg("Not identified"));
     inspector_ui->item_selected_display->setText(QString("%1").arg("Not identified"));
 
