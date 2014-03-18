@@ -33,11 +33,11 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->positionSlider_0->setValue(0);
 //    inspector_ui->positionSpinBox_0->setRange(-180.0,180.0);
 //    inspector_ui->positionSpinBox_0->setValue(0.0);
-    inspector_ui->positionSlider_0->setMinMaxDecimalValue(-20.0,10.0,1);
-    inspector_ui->positionSpinBox_0->setRange(-20.0,10.0);
-    inspector_ui->positionSpinBox_0->setDecimals(1);
-    std::cerr << "slider min vlaue :" << inspector_ui->positionSlider_0->getMinValue() << std::endl;
-    connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
+//    inspector_ui->positionSlider_0->setMinMaxDecimalValue(-20.0,10.0,1);
+//    inspector_ui->positionSpinBox_0->setRange(-20.0,10.0);
+//    inspector_ui->positionSpinBox_0->setDecimals(1);
+//    std::cerr << "slider min vlaue :" << inspector_ui->positionSlider_0->getMinValue() << std::endl;
+    connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeSelectedJoint(int)));
     //std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
     simworld = simWorld;
     //std::cout << "test world in inspector constructor: " << simworld << std::endl;
@@ -59,7 +59,7 @@ void Inspector_Tab::ChangePos0Slider(double spinBoxValue){
  //   positionSlider_0->setValue((int)spinBoxValue);
 }
 
-void Inspector_Tab::ChangeJoint(int sliderValue){
+void Inspector_Tab::ChangeSelectedJoint(int sliderValue){
 
     double joint_Value = 0.0;
 
@@ -89,12 +89,18 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
          }
          else
          {
+                 if (item_selected->getSkeletonIndex() !=0) /// if the node is not the root
+                 {
                  std::vector<int> indx;
                  indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                  Eigen::VectorXd q(1);
+                 std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
                  q[0] = double(joint_Value*(M_PI)/180.0);
+                 //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
                  simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
                  // QString::fromStdString(item_selected->getParentJoint()->getName())
+                 //item_selected->getParentJoint()->getGenCoord(0)->q_max
+                 }
          }
         }
         else
@@ -131,17 +137,53 @@ void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
      item_selected = (dart::dynamics::BodyNode*)active_item->object;
      //std::cerr << "ReceiveSelectedItem: BodyNode is selected" << std::endl;
      //qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
-    if (item_selected->getSkeletonIndex() !=0)
+    if (item_selected->getSkeletonIndex() !=0) //if the selected node's index is not zero
     {
         inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getParentBodyNode()->getName()) );
         inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+        if (dart::dynamics::WeldJoint* joint = dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
+        {
+            std::cerr << "Weldjoint is selected" << std::endl;
+        }
+        else
+        {
+            ///joint max,min and decimal point setting
+            inspector_ui->positionSlider_0->setMinMaxDecimalValue((item_selected->getParentJoint()->getGenCoord(0)->get_qMin())*180.0/M_PI,(item_selected->getParentJoint()->getGenCoord(0)->get_qMax())*180.0/M_PI,1);
+            inspector_ui->positionSlider_0->setValue((item_selected->getParentJoint()->getGenCoord(0)->get_q())*180.0/M_PI);
+            inspector_ui->positionSpinBox_0->setRange((item_selected->getParentJoint()->getGenCoord(0)->get_qMin())*180.0/M_PI,(item_selected->getParentJoint()->getGenCoord(0)->get_qMax())*180.0/M_PI);
+            inspector_ui->positionSpinBox_0->setDecimals(1);
+            inspector_ui->positionSpinBox_0->setValue((item_selected->getParentJoint()->getGenCoord(0)->get_q())*180.0/M_PI);
+        }
     }
-    else
+    else // node index is zero, i.e. does not have a parent node
     {
         inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getName()) );
         inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+
+        /// if the root node is fixed
+        if (dart::dynamics::WeldJoint* joint = dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
+        {
+            std::cerr << "Weldjoint is selected" << std::endl;
+        }
+        else // if the root node is not fixed
+        {
+            std::cerr << "Root link/joint: free!!" << std::endl;
+            ///joint max,min and decimal point setting
+            //double link0_max = simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getSkeletonIndex())->getGenCoord(0)->get_qMax();
+            //double link0_min = simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getSkeletonIndex())->getGenCoord(0)->get_qMin();
+            //std::cerr << "link0 min: " << link0_min << " link0_max: " << link0_max << std::endl;
+            //inspector_ui->positionSlider_0->setMinMaxDecimalValue(link0_min*180.0/M_PI,link0_max*180.0/M_PI,1);
+            //inspector_ui->positionSlider_0->setValue(0);
+            //inspector_ui->positionSpinBox_0->setRange(link0_min*180.0/M_PI,link0_max*180.0/M_PI);
+            //inspector_ui->positionSpinBox_0->setDecimals(1);
+            //inspector_ui->positionSpinBox_0->setValue(0.0);
+        }
     }
     //std::cerr <<"skeleton index : " << item_selected->get << std::endl;
+
+
+
+
  }
  else
  {

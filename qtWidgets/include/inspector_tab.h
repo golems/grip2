@@ -15,7 +15,7 @@ public:
 private slots:
     void ChangePos0DoubleSpinBox(int sliderValue);
     void ChangePos0Slider(double spinBoxValue);
-    void ChangeJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
+    void ChangeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
     void ReceiveSeletedItem(TreeViewReturn* active_item);
 
 private:
