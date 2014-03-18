@@ -46,6 +46,7 @@
 #include "SkeletonNode.h"
 #include "osgUtils.h"
 #include "osgDartShapes.h"
+#include "DartVisual.h"
 
 // DART includes
 #include <dart/dynamics/BodyNode.h>
@@ -143,9 +144,13 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addShapesFromBodyNode(node);
+    osgDart::DartVisuals* viz = new osgDart::DartVisuals;
+//    viz->getJointAxisTF()->setMatrix(osgGolems::eigToOsgMatrix(node.getParentJoint();
+    _bodyNodeGroupMap.at(&node)->addChild(viz);
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
     _bodyNodes.push_back(_bodyNodeGroupMap.at(&node));
+
 
     // Return the osg::Group version of the BodyNode
     return _bodyNodeGroupMap.at(&node);

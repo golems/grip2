@@ -22,6 +22,7 @@
 
 ///including the files for dart and osg
 #include "Grid.h"
+#include "Line.h"
 #include "DartNode.h"
 #include <osg/io_utils>
 #include <dart/dynamics/Shape.h>
@@ -41,7 +42,7 @@ GripMainWindow::GripMainWindow() :
 {
     createRenderingWindow();
     createTreeView();
-    //createSliders();
+//    createSliders();
     createTimeDisplays();
     createTabs();
     this->setStatusBar(this->statusBar());
@@ -258,6 +259,7 @@ void GripMainWindow::resetCamera()
 {
     viewWidget->setCameraToHomePosition();
 }
+#include "DartVisual.h"
 
 void GripMainWindow::createRenderingWindow()
 {
@@ -266,6 +268,19 @@ void GripMainWindow::createRenderingWindow()
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
     this->setCentralWidget(viewWidget);
+//    osg::MatrixTransform* tf = new osg::MatrixTransform;
+//    osg::Matrix m;
+////    m.makeTranslate(0, 0, .5);
+//    m.setRotate(osg::Quat(-M_PI/4, osg::Vec3(0, 1, 0)));
+//    std::cerr << "M \n" << m << std::endl;
+//    tf->setMatrix(m);
+//    osg::Geode* g = new osg::Geode;
+//    osgGolems::Line* l = new osgGolems::Line(osgGolems::LINE_WITH_ARROWS);
+//    l->setColor(osg::Vec4f(1, 0, 1, 1));
+//    g->addDrawable(l);
+//    tf->addChild(g);
+//    tf->addChild(new osgDart::DartVisuals);
+//    viewWidget->addNodeToScene(tf);
 }
 
 void GripMainWindow::createTreeView()

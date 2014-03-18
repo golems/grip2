@@ -1,4 +1,5 @@
 #include "visualization_tab.h"
+#include <iostream>
 
 Visualization_Tab::Visualization_Tab(QWidget *parent)
  : QDockWidget(parent), visualizer_ui(new Ui::Visualization_Tab)
@@ -13,5 +14,9 @@ Visualization_Tab::Visualization_Tab(QWidget *parent)
 }
 
 Visualization_Tab::~Visualization_Tab()
+{
+}
+
+void Visualization_Tab::slotShowHideJointAxes()
 {
 }

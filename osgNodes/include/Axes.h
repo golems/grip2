@@ -72,14 +72,15 @@ public:
      * \brief Constructor for Axes.
      * \param scale Scale factor for length of axes
      */
-    inline Axes(float scale = 0.1, bool addPlanes=false)
+    inline Axes(float scale = 0.1)
     {
-        _verts = new osg::Vec3Array;
+        _verts = new osg::Vec3Array(4);
         _colors = new osg::Vec4Array;
-        _verts->resize(5);
-        
-        _setElements(addPlanes);
-        setScale(scale);
+        _lineWidth = new osg::LineWidth;
+
+        this->_createAxes();
+        this->setScale(scale);
+        this->setLineWidth(1.0f);
     }
     
     /**
@@ -89,60 +90,59 @@ public:
      */
     inline void setScale(float newScale)
     {
-        (*_verts)[0] = osg::Vec3(0,0,0);
-        (*_verts)[1] = osg::Vec3(newScale,0,0);
-        (*_verts)[2] = osg::Vec3(0,newScale,0);
-        (*_verts)[3] = osg::Vec3(0,0,newScale);
-        (*_verts)[4] = osg::Vec3(newScale,newScale,0);
+        (*_verts)[0].set(0,0,0);        // origin
+        (*_verts)[1].set(newScale,0,0); // x-axis endpoint
+        (*_verts)[2].set(0,newScale,0); // y-axis endpoint
+        (*_verts)[3].set(0,0,newScale); // z-axis endpoint
         
-        setVertexArray(_verts);
+        // Move vertices to VertexBuffer
+        this->setVertexArray(_verts);
+    }
+
+    inline void setColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis)
+    {
+        (*_colors)[0] = xAxis;
+        (*_colors)[1] = yAxis;
+        (*_colors)[2] = zAxis;
+        this->setColorArray(_colors);
+    }
+
+    inline void setLineWidth(float newLineWidth)
+    {
+        _lineWidth->setWidth(newLineWidth);
+        this->getOrCreateStateSet()->setAttribute(_lineWidth);
     }
     
     
 protected:
     
     /**
-     * \brief Define the axes elements
+     * \brief Define the axes elements indices. These indices correspond to
+     * the vertices in the _verts array.
      * \return void
      */
-    inline void _setElements(bool addPlanes)
+    inline void _createAxes()
     {
         osg::DrawElementsUShort* x_elem =
                 new osg::DrawElementsUShort(osg::PrimitiveSet::LINES, 0);
         x_elem->push_back(0); x_elem->push_back(1);
-        addPrimitiveSet(x_elem);
+        this->addPrimitiveSet(x_elem);
         _colors->push_back(osg::Vec4(1.0f,0.0f,0.0f,1.0f));
         
         osg::DrawElementsUShort* y_elem =
                 new osg::DrawElementsUShort(osg::PrimitiveSet::LINES, 0);
         y_elem->push_back(0); y_elem->push_back(2);
-        addPrimitiveSet(y_elem);
+        this->addPrimitiveSet(y_elem);
         _colors->push_back(osg::Vec4(0.0f,1.0f,0.0f,1.0f));
         
         osg::DrawElementsUShort* z_elem =
                 new osg::DrawElementsUShort(osg::PrimitiveSet::LINES, 0);
         z_elem->push_back(0); z_elem->push_back(3);
-        addPrimitiveSet(z_elem);
+        this->addPrimitiveSet(z_elem);
         _colors->push_back(osg::Vec4(0.0f,0.0f,1.0f,1.0f));
-
-        if(addPlanes) {
-            osg::DrawElementsUShort* plane_top =
-                    new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
-            plane_top->push_back(0); plane_top->push_back(1);
-            plane_top->push_back(4); plane_top->push_back(2);
-            addPrimitiveSet(plane_top);
-            _colors->push_back(osg::Vec4(0.6f,0.6f,1.0f,0.5));
-
-            osg::DrawElementsUShort* plane_bottom =
-                    new osg::DrawElementsUShort(osg::PrimitiveSet::QUADS, 0);
-            plane_bottom->push_back(0); plane_bottom->push_back(2);
-            plane_bottom->push_back(4); plane_bottom->push_back(1);
-            addPrimitiveSet(plane_bottom);
-            _colors->push_back(osg::Vec4(1.0f,1.0f,0.6f,0.5f));
-        }
         
-        setColorArray(_colors);
-        setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+        this->setColorArray(_colors);
+        this->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
     }
     
     /// Array of vertices defining the endpoints of the axes
@@ -150,6 +150,8 @@ protected:
 
     /// Array of colors defining the color the axes
     osg::Vec4Array* _colors;
+
+    osg::LineWidth* _lineWidth;
     
 };
 
