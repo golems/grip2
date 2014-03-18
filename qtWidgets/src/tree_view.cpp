@@ -56,7 +56,7 @@ TreeViewReturn* Tree_View::getActiveItem()
  return activeItem;
 }
 
-QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
+QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon, int skeleton_id)
 {
     QTreeWidgetItem *itm = new QTreeWidgetItem(ui_treeWidget);
     itm->setText(0, QString::fromStdString(skel->getName()));
@@ -65,6 +65,7 @@ QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
     TreeViewReturn* ret = new TreeViewReturn();
     ret->object = skel;
     ret->dType = Return_Type_Robot;
+    ret->skeletonID = skeleton_id;
 
     QVariant var;
     var.setValue(ret);
@@ -74,7 +75,7 @@ QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
     return itm;
 }
 
-QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon)
+QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon, int skeleton_id)
 {
     if(parent != NULL)
     {
@@ -85,6 +86,7 @@ QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetIt
         TreeViewReturn* ret = new TreeViewReturn();
         ret->object = node;
         ret->dType = Return_Type_Node;
+        ret->skeletonID = skeleton_id;
 
         QVariant var;
         var.setValue(ret);
@@ -99,7 +101,7 @@ QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetIt
     }
 }
 
-QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem* prev, QTreeWidgetItem* parent, bool chain)
+QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem* prev, QTreeWidgetItem* parent, bool chain, int skeleton_id)
 {
     QPixmap fixedIcon((const char**) fixed_xpm);
     QPixmap freeIcon((const char**) free_xpm);
@@ -132,18 +134,18 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     if (node->getNumChildBodyNodes() == 1)
     {
         if (node->getChildBodyNode(0)->getNumChildBodyNodes() == 1 && !chain)
-            prev = new_parent = addChildItem(node, parent, QIcon(icon));
+            prev = new_parent = addChildItem(node, parent, QIcon(icon), skeleton_id);
         else
         {
-            prev = addChildItem(node, parent, QIcon(icon));
+            prev = addChildItem(node, parent, QIcon(icon), skeleton_id);
         }
-        buildTree(node->getChildBodyNode(0), prev, new_parent, true);
+        buildTree(node->getChildBodyNode(0), prev, new_parent, true, skeleton_id);
     }
     else
     {
-        prev = new_parent = addChildItem(node, parent, QIcon(icon));
+        prev = new_parent = addChildItem(node, parent, QIcon(icon), skeleton_id);
         for (int i=0; i<node->getNumChildBodyNodes(); i++)
-            prev = buildTree(node->getChildBodyNode(i), prev, new_parent, false);
+            prev = buildTree(node->getChildBodyNode(i), prev, new_parent, false, skeleton_id);
     }
     return prev;
 }
@@ -155,8 +157,8 @@ void Tree_View::populateTreeView(simulation::World *world)
     {
         dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {
-            QTreeWidgetItem* parent = addParent(skel,  QIcon(robotIcon));
-            buildTree(skel->getRootBodyNode(), parent, parent, false);
+            QTreeWidgetItem* parent = addParent(skel,  QIcon(robotIcon), i);
+            buildTree(skel->getRootBodyNode(), parent, parent, false,i);
         } else {
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }

@@ -36,6 +36,9 @@ public:
 
     ///used to differentiate between the skeleton object and BodyNode object
     DataType dType;
+
+    ///used to identify skeleton id number
+    int skeletonID;
 };
 Q_DECLARE_METATYPE(TreeViewReturn*);
 
@@ -63,9 +66,9 @@ private:
     QCheckBox *ui_checkBox;
     TreeViewReturn* activeItem;
 
-    QTreeWidgetItem* addParent(dynamics::Skeleton *skel, QIcon icon);
-    QTreeWidgetItem* addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon);
-    QTreeWidgetItem* buildTree(dynamics::BodyNode* node, QTreeWidgetItem *prev, QTreeWidgetItem *parent, bool chain);
+    QTreeWidgetItem* addParent(dynamics::Skeleton *skel, QIcon icon, int skeleton_id);
+    QTreeWidgetItem* addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon, int skeleton_id);
+    QTreeWidgetItem* buildTree(dynamics::BodyNode* node, QTreeWidgetItem *prev, QTreeWidgetItem *parent, bool chain, int skeleton_id);
     void name_Joint(QTreeWidgetItem* node);
     void name_BodyNode(QTreeWidgetItem* node);
 };

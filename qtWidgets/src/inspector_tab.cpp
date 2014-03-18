@@ -4,6 +4,7 @@
 #include <tree_view.h>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
+#include <dart/dynamics/WeldJoint.h>
 //#include <typeinfo>
 #include <QDebug>
 #include <QString>
@@ -64,57 +65,45 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
     joint_Value = inspector_ui->positionSlider_0->getdsvalue();
 
-    if (treeview->getActiveItem()->dType == 0) //if Robot, active_item->object = *skel
-     {
-         dart::dynamics::Skeleton* item_selected;
-         item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
-         std::cerr << "Skeleton Selected" << std::endl;
-         qDebug() << QString::fromStdString(item_selected->getName()) ;
-     }
-    else if (treeview->getActiveItem()->dType == 1) //if Node, active_item->object = *node
-     {
-         dart::dynamics::BodyNode* item_selected;
-         item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
-         std::cerr << "BodyNode Selected" << std::endl;
-         qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
-     }
-    else
-    {
-     std::cerr << "Not identified object passed to ChangeJoint" << std::endl;
-    }
-    //std::cout << "test changejoint" << std::endl;
-
-
     if(simworld) {
         //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
 
         if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
         {
-         //indx.push_back( simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex() );
+         dart::dynamics::Skeleton* item_selected;
+         item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+         //std::cerr << "ChangeJoint: Skeleton is Selected" << std::endl;
+         //qDebug() << QString::fromStdString(item_selected->getName()) ;
+         //std::cerr << "ChangeJoint: Seleted item is " << item_selected->getName() << std::endl;
+         //std::cerr << "ChangeJoint: Skeleton id: " << treeview->getActiveItem()->skeletonID << std::endl;
         }
         else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
         {
-         std::cerr << "node selected" << std::endl;
+         //std::cerr << "ChangeJoint: node selected" << std::endl;
          dart::dynamics::BodyNode* item_selected;
          item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
 
-         std::vector<int> indx;
-         indx.push_back( simworld->getSkeleton(1)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
-
-
-         Eigen::VectorXd q(1);
-         q[0] = double(joint_Value*(M_PI)/180.0);
-         simworld->getSkeleton(1)->setConfig(indx, q); //getSkeleton(i) - choose ith object
-        // QString::fromStdString(item_selected->getParentJoint()->getName())
+         if (dart::dynamics::WeldJoint* joint = dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
+         {
+                 std::cerr << "Weldjoint is selected" << std::endl;
+         }
+         else
+         {
+                 std::vector<int> indx;
+                 indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
+                 Eigen::VectorXd q(1);
+                 q[0] = double(joint_Value*(M_PI)/180.0);
+                 simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                 // QString::fromStdString(item_selected->getParentJoint()->getName())
+         }
         }
         else
-         std::cerr << "Err" << std::endl;
+         std::cerr << "ChangeJoint: Err" << std::endl;
 
     } else {
-        std::cerr << "No world on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "ChangeJoint: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
     }
 
-    //std::cout << "change joint invoked: "<< joint_value << std::endl;
 }
 
 Inspector_Tab::~Inspector_Tab()
@@ -123,27 +112,45 @@ Inspector_Tab::~Inspector_Tab()
 
 void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
 {
- std::cerr << "Item seleted received" << std::endl;
- std::cerr << "Data type " << active_item->dType << std::endl;
+ //std::cerr << "ReceiveSelectedItem: Item seleted received" << std::endl;
+ //std::cerr << "ReceiveSelectedItem: Data type " << active_item->dType << std::endl;
+
  if (active_item->dType == 0) //if Robot, active_item->object = *skel
  {
      dart::dynamics::Skeleton* item_selected;
      item_selected = (dart::dynamics::Skeleton*)active_item->object;
 
-     std::cerr << "Skeleton" << std::endl;
-     qDebug() << QString::fromStdString(item_selected->getName()) ;
+     std::cerr << "ReceiveSelectedItem: Skeleton is seleted" << std::endl;
+     //qDebug() << QString::fromStdString(item_selected->getName()) ;
+    inspector_ui->parent_selected_display->setText(QString::fromStdString(item_selected->getName()));
+    inspector_ui->item_selected_display->setText(QString::fromStdString(item_selected->getName()));
  }
  else if (active_item->dType == 1) //if Node, active_item->object = *node
  {
      dart::dynamics::BodyNode* item_selected;
      item_selected = (dart::dynamics::BodyNode*)active_item->object;
-     std::cerr << "BodyNode" << std::endl;
-     qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
+     //std::cerr << "ReceiveSelectedItem: BodyNode is selected" << std::endl;
+     //qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
+    if (item_selected->getSkeletonIndex() !=0)
+    {
+        inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getParentBodyNode()->getName()) );
+        inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+    }
+    else
+    {
+        inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+        inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+    }
+    //std::cerr <<"skeleton index : " << item_selected->get << std::endl;
  }
  else
  {
-     std::cerr << "Not identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
+     std::cerr << "ReceiveSelectedItem: No identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
+    inspector_ui->parent_selected_display->setText(QString("%1").arg("Not identified"));
+    inspector_ui->item_selected_display->setText(QString("%1").arg("Not identified"));
 
  }
+
+
 
 }
