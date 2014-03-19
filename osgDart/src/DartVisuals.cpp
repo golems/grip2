@@ -42,7 +42,7 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DartVisual.h"
+#include "DartVisuals.h"
 
 using namespace osgDart;
 
@@ -50,17 +50,28 @@ DartVisuals::DartVisuals()
 {
     _cullFace = new osg::CullFace(osg::CullFace::BACK);
     _lineWidth = new osg::LineWidth(3.0);
+}
 
+DartVisuals::~DartVisuals()
+{
+
+}
+
+void DartVisuals::addJointAxis()
+{
     _jointAxisTF = new osg::MatrixTransform;
     _jointAxisTF->addChild(_makeJointAxis());
     this->addChild(_jointAxisTF);
+}
 
+void DartVisuals::addBodyNodesAxes()
+{
     _bodyNodeAxesTF = new osg::MatrixTransform;
     _bodyNodeAxesTF->addChild(_makeBodyNodeAxes());
     this->addChild(_bodyNodeAxesTF);
 }
 
-DartVisuals::~DartVisuals()
+void DartVisuals::addCenterOfMass()
 {
 
 }
@@ -75,9 +86,9 @@ osg::MatrixTransform* DartVisuals::getBodyNodeAxesTF()
     return _bodyNodeAxesTF;
 }
 
-void DartVisuals::setJointAxisColor(const osg::Vec3& color)
+void DartVisuals::setJointAxisColor(const osg::Vec4& color)
 {
-
+    _jointAxis->setColor(color);
 }
 
 void DartVisuals::setBodyNodeAxesColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis)
@@ -95,7 +106,7 @@ void DartVisuals::setLineWidth(float lineWidth)
 
 osg::Geode* DartVisuals::_makeJointAxis()
 {
-    _jointAxis = new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW, .2);
+    _jointAxis = new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW, .1);
     osg::Geode* geode = new osg::Geode;
     geode->addDrawable(_jointAxis);
     _setGeodeModes(geode);
@@ -104,7 +115,7 @@ osg::Geode* DartVisuals::_makeJointAxis()
 
 osg::Geode* DartVisuals::_makeBodyNodeAxes()
 {
-    _bodyNodeAxes = new osgGolems::Axes();
+    _bodyNodeAxes = new osgGolems::Axes(.1);
     osg::Geode* geode = new osg::Geode;
     geode->addDrawable(_bodyNodeAxes);
     _setGeodeModes(geode);
@@ -118,7 +129,7 @@ void DartVisuals::_setGeodeModes(osg::Geode* geode)
     // Set line width of axis and axes
     geode->getOrCreateStateSet()->setAttributeAndModes(_lineWidth);
     // Set culling mode
-    geode->getOrCreateStateSet()->setAttributeAndModes(_cullFace, osg::StateAttribute::ON);
+//    geode->getOrCreateStateSet()->setAttributeAndModes(_cullFace, osg::StateAttribute::ON);
     // Turn on proper blending of transparent and opaque nodes
     geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 }

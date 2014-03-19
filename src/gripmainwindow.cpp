@@ -259,7 +259,6 @@ void GripMainWindow::resetCamera()
 {
     viewWidget->setCameraToHomePosition();
 }
-#include "DartVisual.h"
 
 void GripMainWindow::createRenderingWindow()
 {

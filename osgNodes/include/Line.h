@@ -111,8 +111,8 @@ public:
         (*_verts)[0].set(0,0,0);
         (*_verts)[1].set(length,0,0);
 
-        float arrowWidth = 0.01 * _lineWidth->getWidth();
-        float arrowLength = 0.03 * _lineWidth->getWidth();
+        float arrowWidth = 0.003 * _lineWidth->getWidth();
+        float arrowLength = 0.015 * _lineWidth->getWidth();
 
         switch(_lineType) {
             case LINE_ENDING_WITH_ARROW: {

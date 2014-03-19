@@ -58,9 +58,13 @@ public:
     DartVisuals();
     ~DartVisuals();
 
+    void addJointAxis();
+    void addBodyNodesAxes();
+    void addCenterOfMass();
+
     osg::MatrixTransform* getJointAxisTF();
     osg::MatrixTransform* getBodyNodeAxesTF();
-    void setJointAxisColor(const osg::Vec3& color);
+    void setJointAxisColor(const osg::Vec4 &color);
     void setBodyNodeAxesColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis);
 
     void setLineWidth(float lineWidth);
@@ -87,9 +91,14 @@ protected:
 #endif // DARTVISUAL_H
 
 
+/// Joint level
 // Joint axes
 // BodyNode frames
 // Center of mass
 // Projected center of mass
-// Contact forces
 // Collision mesh
+
+/// Skeleton level
+// Center of mass
+// Project center of mass
+// Contact forces

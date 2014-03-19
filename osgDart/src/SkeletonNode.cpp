@@ -46,7 +46,7 @@
 #include "SkeletonNode.h"
 #include "osgUtils.h"
 #include "osgDartShapes.h"
-#include "DartVisual.h"
+#include "DartVisuals.h"
 
 // DART includes
 #include <dart/dynamics/BodyNode.h>
@@ -56,6 +56,7 @@
 #include <dart/dynamics/EllipsoidShape.h>
 #include <dart/dynamics/CylinderShape.h>
 #include <dart/dynamics/MeshShape.h>
+#include <dart/dynamics/RevoluteJoint.h>
 
 // OpenSceneGraph includes
 #include <osg/Shape>
@@ -87,6 +88,7 @@ void SkeletonNode::update()
     for(int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
         _updateRecursively(*_rootBodyNode.getChildBodyNode(i));
     }
+
 }
 
 const dynamics::BodyNode& SkeletonNode::getRootBodyNode()
@@ -133,7 +135,6 @@ void SkeletonNode::_updateRecursively(const dynamics::BodyNode& bodyNode)
         for(size_t i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
             _updateRecursively(*bodyNode.getChildBodyNode(i));
         }
-
     }
 }
 
@@ -141,12 +142,30 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap.insert(std::make_pair(&node, new osg::Group));
+    osgDart::DartVisuals* visuals = new osgDart::DartVisuals;
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addShapesFromBodyNode(node);
-    osgDart::DartVisuals* viz = new osgDart::DartVisuals;
-//    viz->getJointAxisTF()->setMatrix(osgGolems::eigToOsgMatrix(node.getParentJoint();
-    _bodyNodeGroupMap.at(&node)->addChild(viz);
+
+    visuals->addBodyNodesAxes();
+
+    if(node.getParentBodyNode() && node.getParentJoint()) {
+        if(node.getParentJoint()->getJointType() == dynamics::Joint::REVOLUTE) {
+            dynamics::RevoluteJoint* parentJoint = dynamic_cast<dynamics::RevoluteJoint*>(node.getParentJoint());
+
+            Eigen::Quaterniond axisQuat;
+            axisQuat.setFromTwoVectors(Eigen::Vector3d(1,0,0), parentJoint->getAxis());
+            Eigen::Isometry3d axisTF = Eigen::Isometry3d(axisQuat);
+
+            visuals->addJointAxis();
+            visuals->getJointAxisTF()->setMatrix(osgGolems::eigToOsgMatrix(axisTF));
+            visuals->setJointAxisColor(osg::Vec4(1,0,1,1));
+        }
+    }
+
+    _bodyNodeGroupMap.at(&node)->addChild(visuals);
+
+    _bodyNodeVisualsMap.insert(std::make_pair(&node, visuals));
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
     _bodyNodes.push_back(_bodyNodeGroupMap.at(&node));
