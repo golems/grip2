@@ -259,7 +259,7 @@ void DartNode::clear()
 
 void DartNode::hideSkeleton(int i)
 {
-    if(i < _skeletons.size()) {
+    if(skeletonIndexIsValid(i)) {
         this->setValue(i, false);
     }
 }

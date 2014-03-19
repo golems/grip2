@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>309</width>
+    <width>140</width>
     <height>70</height>
    </rect>
   </property>
@@ -44,34 +44,21 @@ QDockWidget::float-button {
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QLabel" name="label">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
+     <widget class="QLineEdit" name="time_edit_sim">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation time&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
-      <property name="text">
-       <string>Simulation Time</string>
+      <property name="frame">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="time_edit_sim"/>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Sim/Real</string>
+     <widget class="QLineEdit" name="time_edit_rel">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation time relative to real time (ie. 0.5 is two times slower than real time. 2.0 is twice as fast as real time)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="time_edit_rel"/>
     </item>
    </layout>
   </widget>

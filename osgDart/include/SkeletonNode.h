@@ -52,6 +52,7 @@
 
 // Grip includes
 #include "../../osgNodes/include/Axes.h"
+#include "DartVisuals.h"
 
 // Dart includes
 #include <dart/dynamics/Skeleton.h>
@@ -78,6 +79,9 @@ typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> >
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
 typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
+
+/// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
+typedef std::map<const dynamics::BodyNode*, osgDart::DartVisuals*> BodyNodeVisualsMap;
 
 /**
  * \class SkeletonNode SkeletonNode.h
@@ -184,6 +188,8 @@ protected:
 
     /// Map from dart::dynamics::BodyNode* to osg::Group*
     BodyNodeGroupMap _bodyNodeGroupMap;
+
+    BodyNodeVisualsMap _bodyNodeVisualsMap;
 
     /// Length of joint axes visualization
     float _axisLength;
