@@ -42,8 +42,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DARTVISUAL_H
-#define DARTVISUAL_H
+#ifndef BODYNODE_VISUALS_H
+#define BODYNODE_VISUALS_H
 
 #include <osg/MatrixTransform>
 #include <osg/CullFace>
@@ -52,11 +52,11 @@
 
 namespace osgDart {
 
-class DartVisuals : public osg::MatrixTransform
+class BodyNodeVisuals : public osg::MatrixTransform
 {
 public:
-    DartVisuals();
-    ~DartVisuals();
+    BodyNodeVisuals();
+    ~BodyNodeVisuals();
 
     void addJointAxis();
     void addBodyNodesAxes();
@@ -88,7 +88,7 @@ protected:
 
 }
 
-#endif // DARTVISUAL_H
+#endif // BODYNODE_VISUALS_H
 
 
 /// Joint level

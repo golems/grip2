@@ -46,7 +46,6 @@
 #include "SkeletonNode.h"
 #include "osgUtils.h"
 #include "osgDartShapes.h"
-#include "DartVisuals.h"
 
 // DART includes
 #include <dart/dynamics/BodyNode.h>
@@ -66,12 +65,12 @@
 using namespace dart;
 using namespace osgDart;
 
-SkeletonNode::SkeletonNode(const dynamics::Skeleton &skeleton, float axisLength, bool debug) :
-    _axisLength(axisLength),
+SkeletonNode::SkeletonNode(const dynamics::Skeleton &skeleton, bool debug) :
     _rootBodyNode(*skeleton.getRootBodyNode()),
-    _debug(debug)
+    _debug(debug),
+    _skeletonVisuals(new osgDart::SkeletonVisuals)
 {
-    std::cerr << "Debug: " << _debug << std::endl;
+    this->setName(_rootBodyNode.getSkeleton()->getName());
     _createSkeleton();
 }
 
@@ -90,6 +89,18 @@ void SkeletonNode::update()
         _updateRecursively(*_rootBodyNode.getChildBodyNode(i));
     }
 
+    _updateSkeletonVisuals();
+}
+
+void SkeletonNode::_updateSkeletonVisuals()
+{
+    osg::Matrix comTF;
+    comTF.makeTranslate(osgGolems::eigToOsgVec3(_rootBodyNode.getSkeleton()->getWorldCOM()));
+    if(_skeletonVisuals->getCenterOfMassTF()) {
+        _skeletonVisuals->getCenterOfMassTF()->setMatrix(comTF);
+    }
+    comTF(3,2) = 0.0;
+    _skeletonVisuals->getProjectedCenterOfMassTF()->setMatrix(comTF);
 }
 
 const dynamics::BodyNode& SkeletonNode::getRootBodyNode()
@@ -108,6 +119,17 @@ void SkeletonNode::_createSkeleton()
     _bodyNodeMatrixMap.insert(std::make_pair(&_rootBodyNode, root));
     _addSkeletonObjectsRecursivley(_rootBodyNode);
 
+    _addSkeletonVisuals();
+}
+
+void SkeletonNode::_addSkeletonVisuals()
+{
+    if(_rootBodyNode.getSkeleton()->getNumBodyNodes() > 1) {
+        _skeletonVisuals->addCenterOfMass();
+    }
+    _skeletonVisuals->addProjectedCenterOfMass();
+    _updateSkeletonVisuals();
+    this->addChild(_skeletonVisuals);
 }
 
 void SkeletonNode::_addSkeletonObjectsRecursivley(const dynamics::BodyNode& bodyNode)
@@ -142,11 +164,12 @@ void SkeletonNode::_updateRecursively(const dynamics::BodyNode& bodyNode)
 void SkeletonNode::setJointAxesVisible(bool isVisible)
 {
     if(_debug) {
-        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ") << "Joint Axes" << std::endl;
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ")
+                  << "Joint Axes for " << this->getName() << std::endl;
     }
-    for(int i=0; i<_visuals.size(); ++i) {
-        if(_visuals.at(i)->getJointAxisTF()) {
-            _visuals.at(i)->getJointAxisTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+    for(size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
+        if(_bodyNodeVisuals.at(i)->getJointAxisTF()) {
+            _bodyNodeVisuals.at(i)->getJointAxisTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
         }
     }
 }
@@ -154,20 +177,46 @@ void SkeletonNode::setJointAxesVisible(bool isVisible)
 void SkeletonNode::setBodyNodeAxesVisible(bool isVisible)
 {
     if(_debug) {
-        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ") << "BodyNode Axes" << std::endl;
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ")
+                  << "BodyNode Axes for " << this->getName() << std::endl;
     }
-    for(int i=0; i<_visuals.size(); ++i) {
-        if(_visuals.at(i)->getBodyNodeAxesTF()) {
-            _visuals.at(i)->getBodyNodeAxesTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+    for(size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
+        if(_bodyNodeVisuals.at(i)->getBodyNodeAxesTF()) {
+            _bodyNodeVisuals.at(i)->getBodyNodeAxesTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
         }
     }
 }
+
+void SkeletonNode::setSkeletonCoMVisible(bool isVisible)
+{
+    if(_debug) {
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ")
+                  << "CoM for " << this->getName() << std::endl;
+    }
+
+    if(_skeletonVisuals->getCenterOfMassTF()) {
+        _skeletonVisuals->getCenterOfMassTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+    }
+}
+
+void SkeletonNode::setSkeletonCoMProjectedVisible(bool isVisible)
+{
+    if(_debug) {
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ")
+                  << "Projected CoM for " << this->getName() << std::endl;
+    }
+
+    if(_skeletonVisuals->getProjectedCenterOfMassTF()) {
+        _skeletonVisuals->getProjectedCenterOfMassTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+    }
+}
+
 
 osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap.insert(std::make_pair(&node, new osg::Group));
-    osgDart::DartVisuals* visuals = new osgDart::DartVisuals;
+    osgDart::BodyNodeVisuals* visuals = new osgDart::BodyNodeVisuals;
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addShapesFromBodyNode(node);
@@ -193,7 +242,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
     _bodyNodeGroupMap.at(&node)->addChild(visuals);
 
     _bodyNodeVisualsMap.insert(std::make_pair(&node, visuals));
-    _visuals.push_back(visuals);
+    _bodyNodeVisuals.push_back(visuals);
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
     _bodyNodes.push_back(_bodyNodeGroupMap.at(&node));

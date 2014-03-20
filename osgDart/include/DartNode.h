@@ -220,6 +220,8 @@ public:
 
     void setJointAxesVisible(bool isVisible=false);
     void setBodyNodeAxesVisible(bool isVisible=false);
+    void setSkeletonCoMVisible(bool isVisible=false);
+    void setSkeletonCoMProjectedVisible(bool isVisible=false);
 
     void hideSkeleton(int i);
     

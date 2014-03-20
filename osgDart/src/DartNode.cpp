@@ -87,6 +87,20 @@ void DartNode::setBodyNodeAxesVisible(bool isVisible)
     }
 }
 
+void DartNode::setSkeletonCoMVisible(bool isVisible)
+{
+    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+        _skeletonNodes[i]->setSkeletonCoMVisible(isVisible);
+    }
+}
+
+void DartNode::setSkeletonCoMProjectedVisible(bool isVisible)
+{
+    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+        _skeletonNodes[i]->setSkeletonCoMProjectedVisible(isVisible);
+    }
+}
+
 dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
 {
     // Load robot model from urdf and check if valid

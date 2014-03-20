@@ -52,11 +52,7 @@
 
 // OpenSceneGraph includes
 #include <osg/Geode>
-#include <osg/PositionAttitudeTransform>
-#include <osgViewer/Viewer>
 #include <osg/LineWidth>
-#include <osg/Matrix>
-#include <osg/MatrixTransform>
 
 namespace osgGolems {
 
