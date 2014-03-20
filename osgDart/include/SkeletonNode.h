@@ -115,6 +115,9 @@ public:
      */
     void update();
 
+    void setJointAxesVisible(bool isVisible=false);
+    void setBodyNodeAxesVisible(bool isVisible=false);
+
 protected:
 
     //---------------------------------------------------------------
@@ -182,6 +185,8 @@ protected:
 
     /// Array of osg::Group pointers for the dart::dynamics::BodyNode visualization objects
     std::vector<osg::ref_ptr<osg::Group> > _bodyNodes;
+
+    std::vector<osg::ref_ptr<osgDart::DartVisuals> > _visuals;
 
     /// Map from dart::dynamics::Joint* to osg::MatrixTransform*
     BodyNodeMatrixMap _bodyNodeMatrixMap;

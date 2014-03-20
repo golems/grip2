@@ -48,6 +48,8 @@ GripMainWindow::GripMainWindow() :
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
+    connect(visualizationtab->visualizer_ui->checkBoxShowJointAxes, SIGNAL(toggled(bool)), this, SLOT(slotToggleJointAxesVisibility(bool)));
+    connect(visualizationtab->visualizer_ui->checkBoxShowBodyNodeFrames, SIGNAL(toggled(bool)), this, SLOT(slotToggleBodyNodeAxesVisibility(bool)));
 }
 
 GripMainWindow::~GripMainWindow()
@@ -82,6 +84,19 @@ void GripMainWindow::doLoad(string fileName)
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+}
+
+void GripMainWindow::slotToggleJointAxesVisibility(bool checked)
+{
+    if(true) {
+        std::cerr << "[Grip] Setting Joint visibility to " << (checked == false ? "False" : "True") << std::endl;
+    }
+    worldNode->setJointAxesVisible(checked);
+}
+
+void GripMainWindow::slotToggleBodyNodeAxesVisibility(bool checked)
+{
+    worldNode->setBodyNodeAxesVisible(checked);
 }
 
 bool GripMainWindow::stopSimulationWithDialog()

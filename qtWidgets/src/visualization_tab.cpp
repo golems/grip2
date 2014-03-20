@@ -16,7 +16,3 @@ Visualization_Tab::Visualization_Tab(QWidget *parent)
 Visualization_Tab::~Visualization_Tab()
 {
 }
-
-void Visualization_Tab::slotShowHideJointAxes()
-{
-}

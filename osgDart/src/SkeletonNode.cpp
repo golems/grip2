@@ -71,6 +71,7 @@ SkeletonNode::SkeletonNode(const dynamics::Skeleton &skeleton, float axisLength,
     _rootBodyNode(*skeleton.getRootBodyNode()),
     _debug(debug)
 {
+    std::cerr << "Debug: " << _debug << std::endl;
     _createSkeleton();
 }
 
@@ -138,6 +139,30 @@ void SkeletonNode::_updateRecursively(const dynamics::BodyNode& bodyNode)
     }
 }
 
+void SkeletonNode::setJointAxesVisible(bool isVisible)
+{
+    if(_debug) {
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ") << "Joint Axes" << std::endl;
+    }
+    for(int i=0; i<_visuals.size(); ++i) {
+        if(_visuals.at(i)->getJointAxisTF()) {
+            _visuals.at(i)->getJointAxisTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+        }
+    }
+}
+
+void SkeletonNode::setBodyNodeAxesVisible(bool isVisible)
+{
+    if(_debug) {
+        std::cerr << "[SkeletonNode] " << (isVisible ? "Showing " : "Hiding ") << "BodyNode Axes" << std::endl;
+    }
+    for(int i=0; i<_visuals.size(); ++i) {
+        if(_visuals.at(i)->getBodyNodeAxesTF()) {
+            _visuals.at(i)->getBodyNodeAxesTF()->setNodeMask(isVisible ? 0xffffffff : 0x0);
+        }
+    }
+}
+
 osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
@@ -148,6 +173,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
     _addShapesFromBodyNode(node);
 
     visuals->addBodyNodesAxes();
+    visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
     if(node.getParentBodyNode() && node.getParentJoint()) {
         if(node.getParentJoint()->getJointType() == dynamics::Joint::REVOLUTE) {
@@ -160,12 +186,14 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dynamics::BodyNode& node)
             visuals->addJointAxis();
             visuals->getJointAxisTF()->setMatrix(osgGolems::eigToOsgMatrix(axisTF));
             visuals->setJointAxisColor(osg::Vec4(1,0,1,1));
+            visuals->getJointAxisTF()->setNodeMask(0x0);
         }
     }
 
     _bodyNodeGroupMap.at(&node)->addChild(visuals);
 
     _bodyNodeVisualsMap.insert(std::make_pair(&node, visuals));
+    _visuals.push_back(visuals);
 
     // Add BodyNode osg::Group to class array, and set data variance to dynamic
     _bodyNodes.push_back(_bodyNodeGroupMap.at(&node));

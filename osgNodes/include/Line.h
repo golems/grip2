@@ -103,9 +103,9 @@ public:
     inline void setLength(float length)
     {
         // Arrow vertices layout
-        //               2 \
-        //        0------1---3
-        //               4 /
+        //   / 5      2 \
+        // 6---0------1---3
+        //   \ 7      4 /
 
         // Set line vertices
         (*_verts)[0].set(0,0,0);

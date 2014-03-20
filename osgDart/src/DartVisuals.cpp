@@ -43,10 +43,12 @@
  */
 
 #include "DartVisuals.h"
+#include <iostream>
 
 using namespace osgDart;
 
-DartVisuals::DartVisuals()
+DartVisuals::DartVisuals() :
+    _jointAxisTF(NULL), _jointAxis(NULL), _bodyNodeAxesTF(NULL), _bodyNodeAxes(NULL)
 {
     _cullFace = new osg::CullFace(osg::CullFace::BACK);
     _lineWidth = new osg::LineWidth(3.0);
@@ -78,12 +80,12 @@ void DartVisuals::addCenterOfMass()
 
 osg::MatrixTransform* DartVisuals::getJointAxisTF()
 {
-    return _jointAxisTF;
+        return _jointAxisTF;
 }
 
 osg::MatrixTransform* DartVisuals::getBodyNodeAxesTF()
 {
-    return _bodyNodeAxesTF;
+        return _bodyNodeAxesTF;
 }
 
 void DartVisuals::setJointAxisColor(const osg::Vec4& color)

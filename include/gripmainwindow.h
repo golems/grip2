@@ -103,6 +103,8 @@ public:
 
 protected slots:
     void setSimulationRelativeTime(double time);
+    void slotToggleJointAxesVisibility(bool checked);
+    void slotToggleBodyNodeAxesVisibility(bool checked);
 
 private slots:
     void front();

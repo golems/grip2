@@ -10,10 +10,6 @@ class Visualization_Tab : public QDockWidget {
 public:
     Visualization_Tab(QWidget *parent = 0);
     ~Visualization_Tab();
-
-public slots:
-    void slotShowHideJointAxes();
-private:
     Ui::Visualization_Tab *visualizer_ui;
 
 };

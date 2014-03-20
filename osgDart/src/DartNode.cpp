@@ -70,6 +70,23 @@ void DartNode::update()
     }
 }
 
+void DartNode::setJointAxesVisible(bool isVisible)
+{
+    if(_debug) {
+        std::cerr << "[DartNode] Setting Joint axis visibility for " << _skeletonNodes.size() << " skeletons to " << (isVisible == false ? "False" : "True") << std::endl;
+    }
+    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+        _skeletonNodes[i]->setJointAxesVisible(isVisible);
+    }
+}
+
+void DartNode::setBodyNodeAxesVisible(bool isVisible)
+{
+    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+        _skeletonNodes[i]->setBodyNodeAxesVisible(isVisible);
+    }
+}
+
 dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
 {
     // Load robot model from urdf and check if valid
