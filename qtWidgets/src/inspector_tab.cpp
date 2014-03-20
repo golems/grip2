@@ -43,7 +43,9 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     treeview = treeViewer;
 
     connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(ReceiveSeletedItem(TreeViewReturn*)));
-
+    inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
+    inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+    inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 }
 
 void Inspector_Tab::ChangeSliders(int sliderValue){
@@ -218,6 +220,9 @@ void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
      //qDebug() << QString::fromStdString(item_selected->getName()) ;
     inspector_ui->parent_selected_display->setText(QString::fromStdString(item_selected->getName()));
     inspector_ui->item_selected_display->setText(QString::fromStdString(item_selected->getName()));
+    inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
+    inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+    inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
  }
  else if (active_item->dType == 1) //if Node, active_item->object = *node
  {
@@ -241,7 +246,12 @@ void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
             inspector_ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
             inspector_ui->positionSpinBox_0->setDecimals(1);
             inspector_ui->positionSpinBox_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+            inspector_ui->Joint_Slider_GroupBox->setEnabled(true);
+            inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+            inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
         }
+
+
     }
     else // node index is zero, i.e. does not have a parent node
     {
@@ -256,6 +266,9 @@ void Inspector_Tab::ReceiveSeletedItem(TreeViewReturn* active_item)
         else // if the root node is not fixed
         {
             std::cerr << "Root link/joint: free!!" << std::endl;
+            inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
+            inspector_ui->Position_Slider_GroupBox->setEnabled(true);
+            inspector_ui->Orientation_Slider_GroupBox->setEnabled(true);
 
         }
     }
