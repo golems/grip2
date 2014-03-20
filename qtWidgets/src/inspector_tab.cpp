@@ -152,9 +152,6 @@ void Inspector_Tab::ChangeSliders(int sliderValue){
 
 void Inspector_Tab::ChangeSelectedJoint(int sliderValue){
 
-    double joint_Value = 0.0;
-    joint_Value = inspector_ui->positionSlider_0->getdsvalue();
-
     if(simworld) {
 
         //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
@@ -186,7 +183,7 @@ void Inspector_Tab::ChangeSelectedJoint(int sliderValue){
                  indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                  Eigen::VectorXd q(1);
                  //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
-                 q[0] = DEG2RAD(joint_Value);
+                 q[0] = DEG2RAD(inspector_ui->positionSlider_0->getdsvalue());
                  //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
                  simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
                  // QString::fromStdString(item_selected->getParentJoint()->getName())
