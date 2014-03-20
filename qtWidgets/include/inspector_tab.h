@@ -15,12 +15,7 @@ public:
 private slots:
     void ChangeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
     void ReceiveSeletedItem(TreeViewReturn* active_item);
-    void ChangeXPosition(int sliderValue);
-    void ChangeYPosition(int sliderValue);
-    void ChangeZPosition(int sliderValue);
-    void ChangeROrientation(int sliderValue);
-    void ChangePOrientation(int sliderValue);
-    void ChangeYOrientation(int sliderValue);
+    void ChangeSliders(int sliderValue);
 
 
 private:
