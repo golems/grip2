@@ -70,7 +70,7 @@ using namespace std;
 
 class GripMainWindow : public MainWindow
 {
-    //Q_OBJECT
+//    Q_OBJECT
 
 public:
     GripMainWindow();

@@ -13,6 +13,8 @@ class Inspector_Tab : public QDockWidget
 public:
     Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer);
     ~Inspector_Tab();
+    void initializeTab();
+
 private slots:
     void changeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
     void receiveSeletedItem(TreeViewReturn* active_item);

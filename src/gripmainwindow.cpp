@@ -83,6 +83,7 @@ void GripMainWindow::doLoad(string fileName)
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+    inspectortab->initializeTab();
 }
 
 bool GripMainWindow::stopSimulationWithDialog()

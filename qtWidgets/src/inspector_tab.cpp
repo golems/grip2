@@ -27,25 +27,55 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
  : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab), simworld(simWorld), treeview(treeViewer), selected_type_from_tree(0)
 {
     inspector_ui->setupUi(this);
+    int position_precision_decimal = 2;
+    int orientation_precision_decimal = 2;
+
     /// selected joint slider
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(changeSelectedJoint(int)));
 
     /// robot position and orientation sliders
     connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
-    inspector_ui->positionSlider_1->setMinMaxDecimalValue(-10.0,10.0,2);
+    inspector_ui->positionSlider_1->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_1->setValue(0);
+    inspector_ui->positionSpinBox_1->setRange(-10.0,10.0);
+    inspector_ui->positionSpinBox_1->setDecimals(position_precision_decimal);
+    inspector_ui->positionSpinBox_1->setSingleStep(pow(10,-position_precision_decimal));
+
 
     connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
-    inspector_ui->positionSlider_2->setMinMaxDecimalValue(-10.0,10.0,2);
+    inspector_ui->positionSlider_2->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_2->setValue(0);
+    inspector_ui->positionSpinBox_2->setRange(-10.0,10.0);
+    inspector_ui->positionSpinBox_2->setDecimals(position_precision_decimal);
+    inspector_ui->positionSpinBox_2->setSingleStep(pow(10,-position_precision_decimal));
 
     connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
-    inspector_ui->positionSlider_3->setMinMaxDecimalValue(-10.0,10.0,2);
+    inspector_ui->positionSlider_3->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_3->setValue(0);
+    inspector_ui->positionSpinBox_3->setRange(-10.0,10.0);
+    inspector_ui->positionSpinBox_3->setDecimals(position_precision_decimal);
+    inspector_ui->positionSpinBox_3->setSingleStep(pow(10,-position_precision_decimal));
 
     connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    inspector_ui->orientationSlider_1->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
+    inspector_ui->orientationSlider_1->setValue(0);
+//    inspector_ui->orientationSpinBox_1->setRange(-180.0,180.0);
+    inspector_ui->orientationSpinBox_1->setDecimals(orientation_precision_decimal);
+    inspector_ui->orientationSpinBox_1->setSingleStep(pow(10,-orientation_precision_decimal));
+
     connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    inspector_ui->orientationSlider_2->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
+    inspector_ui->orientationSlider_2->setValue(0);
+//    inspector_ui->orientationSpinBox_2->setRange(-180.0,180.0);
+    inspector_ui->orientationSpinBox_2->setDecimals(position_precision_decimal);
+    inspector_ui->orientationSpinBox_2->setSingleStep(pow(10,-orientation_precision_decimal));
+
     connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    inspector_ui->orientationSlider_3->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
+    inspector_ui->orientationSlider_3->setValue(0);
+//    inspector_ui->orientationSpinBox_3->setRange(-180.0,180.0);
+    inspector_ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
+    inspector_ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
 
     connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSeletedItem(TreeViewReturn*)));
     inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
@@ -60,7 +90,7 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
  */
 void Inspector_Tab::changePositionAndOrientation(int sliderValue){
 
-//    QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
+//  QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
     Eigen::Matrix<double, 6, 1> pose;
     pose << 0, 0, 0, 0, 0, 0;
 
@@ -86,12 +116,12 @@ void Inspector_Tab::changePositionAndOrientation(int sliderValue){
              {
                  if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
                  {
-                       pose(0) = inspector_ui->positionSlider_1->getdsvalue();
-                       pose(1) = inspector_ui->positionSlider_2->getdsvalue();
-                       pose(2) = inspector_ui->positionSlider_3->getdsvalue();
-                       pose(3) = DEG2RAD(inspector_ui->orientationSlider_1->getdsvalue());
-                       pose(4) = DEG2RAD(inspector_ui->orientationSlider_2->getdsvalue());
-                       pose(5) = DEG2RAD(inspector_ui->orientationSlider_3->getdsvalue());
+                       pose(0) = inspector_ui->positionSlider_1->getdsValue();
+                       pose(1) = inspector_ui->positionSlider_2->getdsValue();
+                       pose(2) = inspector_ui->positionSlider_3->getdsValue();
+                       pose(3) = DEG2RAD(inspector_ui->orientationSlider_1->getdsValue());
+                       pose(4) = DEG2RAD(inspector_ui->orientationSlider_2->getdsValue());
+                       pose(5) = DEG2RAD(inspector_ui->orientationSlider_3->getdsValue());
 
                        setRootTransform(simworld->getSkeleton(treeview->getActiveItem()->skeletonID), pose);
                  }
@@ -99,18 +129,18 @@ void Inspector_Tab::changePositionAndOrientation(int sliderValue){
             }
             else
             {
-                 std::cerr << "Selected joint is not a free joint";
+                 std::cerr << "Selected joint is not a free joint" << std::endl;
             }
         }
         else
         {
-            std::cerr << "changePositionAndOrientation: No return type identified" << std::endl;
+            std::cerr << "changePositionAndOrientation: No return type identified" << treeview->getActiveItem()->dType << std::endl;
         }
 
     }
     else
     {
-        std::cerr << "Change Position & Orientation: simworld is empty" << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "Change Position & Orientation: either simworld is empty" << __LINE__ << " of " << __FILE__ << std::endl;
     }
 }
 
@@ -148,7 +178,7 @@ void Inspector_Tab::changeSelectedJoint(int sliderValue){
                          std::vector<int> indx;
                          indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                          Eigen::VectorXd config(1);
-                         config[0] = DEG2RAD(inspector_ui->positionSlider_0->getdsvalue());
+                         config[0] = DEG2RAD(inspector_ui->positionSlider_0->getdsValue());
                          simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, config); //getSkeleton(i) - choose ith object
 
                      }
@@ -213,10 +243,13 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
             else
             {
                 ///joint max,min and decimal point setting
-                inspector_ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),1);
+                int joint_precision_decimal  = 2;
+                inspector_ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),
+                                                                      RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),joint_precision_decimal);
                 inspector_ui->positionSlider_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 inspector_ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
-                inspector_ui->positionSpinBox_0->setDecimals(2);
+                inspector_ui->positionSpinBox_0->setDecimals(joint_precision_decimal);
+                inspector_ui->positionSpinBox_0->setSingleStep(pow(10,-joint_precision_decimal));
                 inspector_ui->positionSpinBox_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 ///enable joint slider only
                 inspector_ui->Joint_Slider_GroupBox->setEnabled(true);
@@ -284,7 +317,31 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 
 }
 
+void Inspector_Tab::initializeTab()
+{
+    if (inspector_ui->positionSlider_0->getdsValue() != 0.0)
+        inspector_ui->positionSlider_0->setdsValue(0);
+    if (inspector_ui->positionSlider_1->getdsValue() != 0.0)
+        inspector_ui->positionSlider_1->setdsValue(0);
+    if (inspector_ui->positionSlider_2->getdsValue() != 0.0)
+        inspector_ui->positionSlider_2->setdsValue(0);
+    if (inspector_ui->positionSlider_3->getdsValue() != 0.0)
+        inspector_ui->positionSlider_3->setdsValue(0);
+    if (inspector_ui->orientationSlider_1->getdsValue() != 0.0)
+        inspector_ui->orientationSlider_1->setdsValue(0);
+    if (inspector_ui->orientationSlider_2->getdsValue() != 0.0)
+        inspector_ui->orientationSlider_2->setdsValue(0);
+    if (inspector_ui->orientationSlider_3->getdsValue() != 0.0)
+        inspector_ui->orientationSlider_3->setdsValue(0);
 
+
+    if (inspector_ui->Joint_Slider_GroupBox->isEnabled())
+        inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
+    if (inspector_ui->Position_Slider_GroupBox->isEnabled())
+        inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+    if (inspector_ui->Orientation_Slider_GroupBox->isEnabled());
+        inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
+}
 
 ///**
 // * @function getRootTransform

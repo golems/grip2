@@ -38,7 +38,7 @@ void DoubleSlider::setdsValue(double valueindouble)
      emit valueChanged(changeTOinteger(dsvalue));
 }
 
-double DoubleSlider::getdsvalue()
+double DoubleSlider::getdsValue()
 {
     double temp = (double)value();
     temp = temp/pow(10.0,(double)decimal_point);

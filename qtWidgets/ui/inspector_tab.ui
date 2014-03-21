@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>182</height>
+    <width>1051</width>
+    <height>239</height>
    </rect>
   </property>
   <property name="styleSheet">
@@ -71,7 +71,7 @@ QGroupBox::title {
  } </string>
       </property>
       <property name="title">
-       <string>Position</string>
+       <string>Joint</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="topMargin">
@@ -109,7 +109,7 @@ QGroupBox::title {
      border-radius: 3px; </string>
            </property>
            <property name="text">
-            <string>Item</string>
+            <string>Selected Joint</string>
            </property>
           </widget>
          </item>
@@ -125,6 +125,13 @@ QGroupBox::title {
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Joint Angle[deg]</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="DoubleSlider" name="positionSlider_0">
            <property name="styleSheet">
@@ -185,7 +192,7 @@ QGroupBox::title {
  } </string>
       </property>
       <property name="title">
-       <string>Position</string>
+       <string>Robot Position</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="topMargin">
@@ -193,6 +200,13 @@ QGroupBox::title {
        </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>X[m]</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="DoubleSlider" name="positionSlider_1">
            <property name="styleSheet">
@@ -225,6 +239,13 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Y[m]</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="DoubleSlider" name="positionSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
@@ -255,6 +276,13 @@ QGroupBox::title {
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Z[m]</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="DoubleSlider" name="positionSlider_3">
            <property name="styleSheet">
@@ -309,7 +337,7 @@ QGroupBox::title {
  } </string>
       </property>
       <property name="title">
-       <string>Orientation</string>
+       <string>Robot Orientation</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="topMargin">
@@ -317,6 +345,13 @@ QGroupBox::title {
        </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Roll [deg]</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="DoubleSlider" name="orientationSlider_1">
            <property name="styleSheet">
@@ -349,6 +384,13 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Pitch[deg]</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="DoubleSlider" name="orientationSlider_2">
            <property name="styleSheet">
             <string notr="true">border: 0px solid gray; 
@@ -379,6 +421,13 @@ QGroupBox::title {
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Yaw  [deg]</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="DoubleSlider" name="orientationSlider_3">
            <property name="styleSheet">

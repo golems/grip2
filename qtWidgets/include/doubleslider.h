@@ -10,7 +10,7 @@ public:
          DoubleSlider(QWidget *parent = 0);
          double changeTOdouble(int intvalue);
          int changeTOinteger(double doublevalue);
-         double getdsvalue(); //get doubleslider value
+         double getdsValue(); //get doubleslider value
          void setMinMaxDecimalValue(double minvalue, double maxvalue, int decimalvalue);
          double getMinValue();
          double getMaxValue();
