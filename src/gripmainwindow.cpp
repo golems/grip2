@@ -79,6 +79,7 @@ void GripMainWindow::doLoad(string fileName)
     worldNode->printInfo();
 
     treeviewer->populateTreeView(world);
+    visualizationtab->update();
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
@@ -297,7 +298,7 @@ void GripMainWindow::createTabs()
     //setDockOptions(QMainWindow::AllowNestedDocks);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
-    visualizationtab = new Visualization_Tab(this);
+    visualizationtab = new Visualization_Tab(worldNode, this);
 
 //    QDockWidget* emptyTitle1 = new QDockWidget();
 //    QDockWidget* emptyTitle2 = new QDockWidget();

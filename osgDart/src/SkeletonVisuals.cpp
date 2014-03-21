@@ -42,94 +42,66 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DartVisuals.h"
+#include "SkeletonVisuals.h"
+#include <iostream>
 
 using namespace osgDart;
 
-DartVisuals::DartVisuals()
+SkeletonVisuals::SkeletonVisuals() :
+    _centerOfMassTF(NULL), _centerOfMass(NULL), _projectedCenterOfMassTF(NULL), _projectedCenterOfMass(NULL)
 {
     _cullFace = new osg::CullFace(osg::CullFace::BACK);
-    _lineWidth = new osg::LineWidth(3.0);
 }
 
-DartVisuals::~DartVisuals()
+SkeletonVisuals::~SkeletonVisuals()
 {
 
 }
 
-void DartVisuals::addJointAxis()
+void SkeletonVisuals::addCenterOfMass()
 {
-    _jointAxisTF = new osg::MatrixTransform;
-    _jointAxisTF->addChild(_makeJointAxis());
-    this->addChild(_jointAxisTF);
+    _centerOfMassTF = new osg::MatrixTransform;
+    _centerOfMass = new osgGolems::Sphere(osg::Vec3(0,0,0), 0.03, osg::Vec4(1,1,.8,1));
+    this->_setGeodeModes(_centerOfMass);
+    _centerOfMassTF->addChild(_centerOfMass);
+    this->addChild(_centerOfMassTF);
 }
 
-void DartVisuals::addBodyNodesAxes()
+void SkeletonVisuals::addProjectedCenterOfMass()
 {
-    _bodyNodeAxesTF = new osg::MatrixTransform;
-    _bodyNodeAxesTF->addChild(_makeBodyNodeAxes());
-    this->addChild(_bodyNodeAxesTF);
+    _projectedCenterOfMassTF = new osg::MatrixTransform;
+    _projectedCenterOfMass = new osgGolems::Cylinder(osg::Vec3(0,0,0), 0.03, 0.001f, osg::Vec4(1,1,.8,1));
+    this->_setGeodeModes(_projectedCenterOfMass);
+    _projectedCenterOfMassTF->addChild(_projectedCenterOfMass);
+    this->addChild(_projectedCenterOfMassTF);
 }
 
-void DartVisuals::addCenterOfMass()
+osg::MatrixTransform* SkeletonVisuals::getCenterOfMassTF()
 {
-
+        return _centerOfMassTF;
 }
 
-osg::MatrixTransform* DartVisuals::getJointAxisTF()
+osg::MatrixTransform* SkeletonVisuals::getProjectedCenterOfMassTF()
 {
-    return _jointAxisTF;
+        return _projectedCenterOfMassTF;
 }
 
-osg::MatrixTransform* DartVisuals::getBodyNodeAxesTF()
+void SkeletonVisuals::setCenterOfMassColor(const osg::Vec4& newColor)
 {
-    return _bodyNodeAxesTF;
+    _centerOfMass->setColor(newColor);
 }
 
-void DartVisuals::setJointAxisColor(const osg::Vec4& color)
+void SkeletonVisuals::setProjectedCenterOfMassColor(const osg::Vec4& newColor)
 {
-    _jointAxis->setColor(color);
+    _projectedCenterOfMass->setColor(newColor);
 }
 
-void DartVisuals::setBodyNodeAxesColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis)
-{
-    _bodyNodeAxes->setColors(xAxis, yAxis, zAxis);
-}
-
-void DartVisuals::setLineWidth(float lineWidth)
-{
-    _lineWidth->setWidth(lineWidth);
-    for(int i=0; i<this->getNumChildren(); ++i) {
-        this->getChild(i)->getOrCreateStateSet()->setAttribute(_lineWidth);
-    }
-}
-
-osg::Geode* DartVisuals::_makeJointAxis()
-{
-    _jointAxis = new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW, .1);
-    osg::Geode* geode = new osg::Geode;
-    geode->addDrawable(_jointAxis);
-    _setGeodeModes(geode);
-    return geode;
-}
-
-osg::Geode* DartVisuals::_makeBodyNodeAxes()
-{
-    _bodyNodeAxes = new osgGolems::Axes(.1);
-    osg::Geode* geode = new osg::Geode;
-    geode->addDrawable(_bodyNodeAxes);
-    _setGeodeModes(geode);
-    return geode;
-}
-
-void DartVisuals::_setGeodeModes(osg::Geode* geode)
+void SkeletonVisuals::_setGeodeModes(osg::Geode* geode)
 {
     // Turn off lighting
     geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    // Set line width of axis and axes
-    geode->getOrCreateStateSet()->setAttributeAndModes(_lineWidth);
     // Set culling mode
-//    geode->getOrCreateStateSet()->setAttributeAndModes(_cullFace, osg::StateAttribute::ON);
+    geode->getOrCreateStateSet()->setAttributeAndModes(_cullFace, osg::StateAttribute::ON);
     // Turn on proper blending of transparent and opaque nodes
     geode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 }
