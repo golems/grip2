@@ -6,13 +6,22 @@
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/dynamics/FreeJoint.h>
+#include <dart/dynamics/RevoluteJoint.h>
+#include <dart/dynamics/PrismaticJoint.h>
 #include <QDebug>
 #include <QString>
 #include <QMetaMethod>
+//using namespace std;
+using namespace Eigen;
 
 //change units
-inline double DEG2RAD(double deg) { return (M_PI*deg/180.0); }
-inline double RAD2DEG(double rad) { return (180.0/M_PI*rad); }
+inline double DEG2RAD(double angle_deg)  { return (angle_deg * 0.01745329251994329577); } //{ return (M_PI*angle_deg/180.0); }
+inline double RAD2DEG(double angle_rad)	 { return (angle_rad * 57.2957795130823208768); } //{ return (180.0/M_PI*angle_rad); }
+
+/**
+ * @function Inspector_Tab()
+ * @brief constructor of the class Inspector_Tab: setup the ui widget and connect signals and slots
+ */
 
 Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
  : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab), simworld(simWorld), treeview(treeViewer), selected_type_from_tree(0)
@@ -45,85 +54,46 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 
 }
 
+/**
+ * @function changePositionAndOrientation
+ * @brief change position and orientation of the root node
+ */
 void Inspector_Tab::changePositionAndOrientation(int sliderValue){
 
-    QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
+//    QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
+    Eigen::Matrix<double, 6, 1> pose;
+    pose << 0, 0, 0, 0, 0, 0;
 
+    /// if world is defined
     if(simworld)
-    { /// if world is defined
-        //std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
+    {
         selected_type_from_tree = treeview->getActiveItem()->dType;
 
         if (selected_type_from_tree == Return_Type_Robot) //if robot, do nothing
         {
-             dart::dynamics::Skeleton* item_selected;
-             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             //dart::dynamics::Skeleton* item_selected;
+             //item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
              std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
 
         }
         else if (selected_type_from_tree == Return_Type_Node) //if bodynode, change configuration using slider
         {
-
              dart::dynamics::BodyNode* item_selected;
              item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
 
              /// check if the joint is a free joint (6DoF)
              if(dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
              {
-                 int joint_index = 0;
-                 std::vector<int> indx;
-                 Eigen::VectorXd q(1);
-
-                 if (sender() == inspector_ui->positionSlider_1)
-                 {
-                     joint_index = 3;
-                     q[0]  = inspector_ui->positionSlider_1->getdsvalue();
-
-                 }
-                 else if (sender() == inspector_ui->positionSlider_2)
-                 {
-                     joint_index = 4;
-                     q[0] = inspector_ui->positionSlider_2->getdsvalue();
-
-                 }
-                 else if (sender() == inspector_ui->positionSlider_3)
-                 {
-                     joint_index = 5;
-                     q[0] = inspector_ui->positionSlider_3->getdsvalue();
-
-                 }
-                 else if (sender() == inspector_ui->orientationSlider_1)
-                 {
-                     joint_index = 0;
-                     q[0] = DEG2RAD(inspector_ui->orientationSlider_1->getdsvalue());
-
-                 }
-                 else if (sender() == inspector_ui->orientationSlider_2)
-                 {
-                     joint_index = 1;
-                     q[0] = DEG2RAD(inspector_ui->orientationSlider_2->getdsvalue());
-
-                 }
-                 else if (sender() == inspector_ui->orientationSlider_3)
-                 {
-                     joint_index = 2;
-                     q[0] = DEG2RAD(inspector_ui->orientationSlider_3->getdsvalue());
-
-                 }
-
-                 else
-                 {
-                     std::cerr << "Error in slider joint index" << std::endl;
-                     return;
-                 }
-
-                 indx.push_back( item_selected->getParentJoint()->getGenCoord(joint_index)->getSkeletonIndex());
-
                  if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
                  {
+                       pose(0) = inspector_ui->positionSlider_1->getdsvalue();
+                       pose(1) = inspector_ui->positionSlider_2->getdsvalue();
+                       pose(2) = inspector_ui->positionSlider_3->getdsvalue();
+                       pose(3) = DEG2RAD(inspector_ui->orientationSlider_1->getdsvalue());
+                       pose(4) = DEG2RAD(inspector_ui->orientationSlider_2->getdsvalue());
+                       pose(5) = DEG2RAD(inspector_ui->orientationSlider_3->getdsvalue());
 
-                     simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
-
+                       setRootTransform(simworld->getSkeleton(treeview->getActiveItem()->skeletonID), pose);
                  }
 
             }
@@ -134,16 +104,20 @@ void Inspector_Tab::changePositionAndOrientation(int sliderValue){
         }
         else
         {
-            std::cerr << "ChangeXPosition: Err" << std::endl;
+            std::cerr << "changePositionAndOrientation: No return type identified" << std::endl;
         }
 
     }
     else
     {
-        std::cerr << "Change Position & Orientation: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "Change Position & Orientation: simworld is empty" << __LINE__ << " of " << __FILE__ << std::endl;
     }
 }
 
+/**
+ * @function changeSelectedJoint
+ * @brief move the selected joint(other than root joint) only
+ */
 
 void Inspector_Tab::changeSelectedJoint(int sliderValue){
 
@@ -153,19 +127,19 @@ void Inspector_Tab::changeSelectedJoint(int sliderValue){
 
         if (selected_type_from_tree == Return_Type_Robot) //if robot, do nothing
         {
-             dart::dynamics::Skeleton* item_selected;
-             item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             //dart::dynamics::Skeleton* item_selected;
+             //item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+             std::cerr << "Robot is selected" << std::endl;
 
         }
         else if (selected_type_from_tree == Return_Type_Node) //if bodynode, change configuration using slider
         {
-             //std::cerr << "ChangeJoint: node selected" << std::endl;
              dart::dynamics::BodyNode* item_selected;
              item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
 
-             if (dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
+             if (dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint())) //if the joint is fixed
              {
-                     std::cerr << "Weldjoint is selected" << std::endl;
+                     std::cerr << "A weldjoint is selected" << std::endl;
              }
              else
              {
@@ -173,28 +147,35 @@ void Inspector_Tab::changeSelectedJoint(int sliderValue){
                      {
                          std::vector<int> indx;
                          indx.push_back( simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
-                         Eigen::VectorXd q(1);
-                         //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
-                         q[0] = DEG2RAD(inspector_ui->positionSlider_0->getdsvalue());
-                         //std::cerr<< "Num of gen. coordinate in selected item : " << item_selected->getParentJoint()->getNumGenCoords() << std::endl;
-                         simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, q); //getSkeleton(i) - choose ith object
+                         Eigen::VectorXd config(1);
+                         config[0] = DEG2RAD(inspector_ui->positionSlider_0->getdsvalue());
+                         simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, config); //getSkeleton(i) - choose ith object
 
                      }
              }
         }
         else
-         std::cerr << "ChangeJoint: Err" << std::endl;
+         std::cerr << "changeSelectedJoint: No matched return type." << std::endl;
 
     } else {
-        std::cerr << "ChangeJoint: No world is loaded " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "changeSelectedJoint: simworld is empty." << __LINE__ << " of " << __FILE__ << std::endl;
     }
 
 }
+
+/**
+ * @function ~Inspector_Tab
+ * @brief deconstructor of the class Inspector_Tab
+ */
 
 Inspector_Tab::~Inspector_Tab()
 {
 }
 
+/**
+ * @function sreceiveSeletedItem
+ * @brief identify type of selected item from treeview and set the sliders properly
+ */
 void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 {
     selected_type_from_tree = active_item->dType;
@@ -204,7 +185,7 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
         dart::dynamics::Skeleton* item_selected;
         item_selected = (dart::dynamics::Skeleton*)active_item->object;
 
-        std::cerr << "ReceiveSelectedItem: Skeleton is seleted" << std::endl;
+        std::cerr << "ReceiveSelectedItem: Robot is seleted" << std::endl;
 
         inspector_ui->parent_selected_display->setText(QString::fromStdString(item_selected->getName()));
         inspector_ui->item_selected_display->setText(QString::fromStdString(item_selected->getName()));
@@ -216,32 +197,48 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
     {
         dart::dynamics::BodyNode* item_selected;
         item_selected = (dart::dynamics::BodyNode*)active_item->object;
-        //std::cerr << "ReceiveSelectedItem: BodyNode is selected" << std::endl;
-        //qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
 
-        if (item_selected->getSkeletonIndex() !=0) //double check, if the selected node's index is not zero
+        //std::cerr << "ReceiveSelectedItem: BodyNode is selected" << std::endl;
+
+        if (item_selected->getSkeletonIndex() != 0) //double check, if the selected node's index is not zero
         {
             inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getParentBodyNode()->getName()) );
             inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
+            ///if the joint is fixed, do nothing.
             if (dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
             {
-                std::cerr << "Weldjoint is selected" << std::endl;
+                std::cerr << "A weldjoint is selected" << std::endl;
             }
+            ///if the joint is movable(rovolute)
             else
             {
                 ///joint max,min and decimal point setting
                 inspector_ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),1);
                 inspector_ui->positionSlider_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 inspector_ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
-                inspector_ui->positionSpinBox_0->setDecimals(1);
+                inspector_ui->positionSpinBox_0->setDecimals(2);
                 inspector_ui->positionSpinBox_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+                ///enable joint slider only
                 inspector_ui->Joint_Slider_GroupBox->setEnabled(true);
+                inspector_ui->Position_Slider_GroupBox->setEnabled(true);
+                inspector_ui->Orientation_Slider_GroupBox->setEnabled(true);
+
+                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
+                pose = getPoseFromTransform(item_selected->getWorldTransform());
+                inspector_ui->positionSlider_1->setdsValue(pose(0));
+                inspector_ui->positionSlider_2->setdsValue(pose(1));
+                inspector_ui->positionSlider_3->setdsValue(pose(2));
+
+                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
+                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
+                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
                 inspector_ui->Position_Slider_GroupBox->setDisabled(true);
                 inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
+
             }
 
         }
-        else // node index is zero, i.e. does not have a parent node
+        else // node index is zero, i.e. it is the root node
         {
             inspector_ui->parent_selected_display->setText( QString::fromStdString(item_selected->getName()) );
             inspector_ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
@@ -249,24 +246,38 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
             /// if the root node is fixed
             if (dynamic_cast<dart::dynamics::WeldJoint*>(item_selected->getParentJoint()))
             {
-                std::cerr << "Weldjoint is selected" << std::endl;
+                std::cerr << "A weldjoint is selected" << std::endl;
             }
-            else // if the root node is not fixed
+            else if  (dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))// if the root node is not fixed
             {
-                std::cerr << "Root link/joint: free!!" << std::endl;
+                std::cerr << "Root node is free to move" << std::endl;
+                ///enable position and orientation sliders
                 inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
                 inspector_ui->Position_Slider_GroupBox->setEnabled(true);
                 inspector_ui->Orientation_Slider_GroupBox->setEnabled(true);
 
+                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
+                pose = getPoseFromTransform(item_selected->getWorldTransform());
+                inspector_ui->positionSlider_1->setdsValue(pose(0));
+                inspector_ui->positionSlider_2->setdsValue(pose(1));
+                inspector_ui->positionSlider_3->setdsValue(pose(2));
+
+                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
+                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
+                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
+
+            }
+            else
+            {
+                std::cerr << "The root joint is neither fixed nor free." << std::endl;
             }
         }
-        //std::cerr <<"skeleton index : " << item_selected->get << std::endl;
 
 
     }
     else
     {
-        std::cerr << "ReceiveSelectedItem: No identified object selected" << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "receiveSelectedItem: No identified return type" << __LINE__ << " of " << __FILE__ << std::endl;
         inspector_ui->parent_selected_display->setText(QString("%1").arg("Not identified"));
         inspector_ui->item_selected_display->setText(QString("%1").arg("Not identified"));
     }
@@ -299,46 +310,47 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 //    return pose;
 //}
 
-///**
-// * @function setRootTransform
-// * @brief Set q (SCREW) from pose <x,y,z,r,p,y>
-// */
-//void Inspector_Tab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose )
-//{
-//    dart::dynamics::Joint* joint = robot->getRootBodyNode()->getParentJoint();
+/**
+ * @function setRootTransform
+ * @brief Set q (SCREW) from pose <x,y,z,r,p,y>
+ */
+void Inspector_Tab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose )
+{
+    dart::dynamics::Joint* joint = robot->getRootBodyNode()->getParentJoint();
+    //dart::dynamics::Joint* joint = robot->getParentJoint();
+    if(dynamic_cast<dart::dynamics::FreeJoint*>(joint)) {
+        Matrix<double, 6, 1> q;
+        Eigen::Isometry3d transform = Eigen::Isometry3d::Identity();
+        transform.translation() = pose.head<3>();
+        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
+        q = dart::math::logMap(transform);
+        joint->set_q( q );
 
-//    if(dynamic_cast<dart::dynamics::FreeJoint*>(joint)) {
-//        Matrix<double, 6, 1> q;
-//        Eigen::Isometry3d transform = Eigen::Isometry3d::Identity();
-//        transform.translation() = pose.head<3>();
-//        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
-//        q = dart::math::logMap(transform);
-//        joint->set_q( q );
+    }
+    else {
+        Eigen::Isometry3d transform;
+        transform.makeAffine();
+        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
+        transform.translation() = pose.head<3>();
+        joint->setTransformFromParentBodyNode(transform);
+        std::cerr << "not a free joint??" << std::endl;
+    }
 
-//    }
-//    else {
-//        Eigen::Isometry3d transform;
-//        transform.makeAffine();
-//        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
-//        transform.translation() = pose.head<3>();
-//        joint->setTransformFromParentBodyNode(transform);
-//    }
+    for (int i = 0; i < robot->getNumBodyNodes(); ++i) {
+        robot->getBodyNode(i)->updateTransform();
+    }
+}
 
-//    for (int i = 0; i < robot->getNumBodyNodes(); ++i) {
-//        robot->getBodyNode(i)->updateTransform();
-//    }
-//}
-
-///**
-// * @function getPoseTransform
-// * @brief Get a vector <x,y,z,r,p,y> from Transform. NO SCREW
-// */
-//Eigen::Matrix<double, 6, 1> Inspector_Tab::getPoseFromTransform(const Eigen::Isometry3d& tf)
-//{
-//    Eigen::Matrix<double, 6, 1> pose;
-//    pose.head<3>() = tf.translation();
-//    pose.tail<3>() = dart::math::matrixToEulerXYZ(tf.linear());
-//    return pose;
-//}
+/**
+ * @function getPoseTransform
+ * @brief Get a vector <x,y,z,r,p,y> from Transform. NO SCREW
+ */
+Eigen::Matrix<double, 6, 1> Inspector_Tab::getPoseFromTransform(const Eigen::Isometry3d& tf)
+{
+    Eigen::Matrix<double, 6, 1> pose;
+    pose.head<3>() = tf.translation();
+    pose.tail<3>() = dart::math::matrixToEulerXYZ(tf.linear());
+    return pose;
+}
 
 

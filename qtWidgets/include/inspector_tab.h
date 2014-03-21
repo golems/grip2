@@ -7,7 +7,8 @@
 
 //class ..
 
-class Inspector_Tab : public QDockWidget {
+class Inspector_Tab : public QDockWidget
+{
     Q_OBJECT
 public:
     Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer);
@@ -22,12 +23,10 @@ private:
     Ui::Inspector_Tab *inspector_ui;
     simulation::World *simworld;
     Tree_View *treeview;
-//    QSlider *positionSlider_0;
-//    QDoubleSpinBox *positionSpinBox_0;
 
 //    Eigen::Matrix<double, 6, 1> getRootTransform(dart::dynamics::Skeleton* robot);
-//    void setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose);
-//    Eigen::Matrix<double, 6, 1> getPoseFromTransform(const Eigen::Isometry3d& tf);
+    void setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose);
+    Eigen::Matrix<double, 6, 1> getPoseFromTransform(const Eigen::Isometry3d& tf);
     int selected_type_from_tree;
 
 };
