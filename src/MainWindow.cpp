@@ -47,7 +47,7 @@
 #include <cstdio>
 #include <fstream>
 
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 ///including the icons for the toolbar
 #include "icons/open.xpm"

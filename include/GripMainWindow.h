@@ -45,42 +45,66 @@
 #define GRIPMAINWINDOW_H
 
 
+// C++ Standard includes
 #include <iostream>
 #include <cstdio>
 
-///including the base class
-#include "mainwindow.h"
+// Base class include
+#include "MainWindow.h"
 
-#include <ViewerWidget.h>
-#include <tree_view.h>
-#include <inspector_tab.h>
-#include <visualization_tab.h>
-#include <time_display.h>
+// Local includes
+#include "ViewerWidget.h"
+#include "tree_view.h"
+#include "inspector_tab.h"
+#include "visualization_tab.h"
+#include "time_display.h"
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 #include "ui_tree_view.h"
 #include "ui_time_display.h"
-
 #include "DartNode.h"
 #include "GripSimulation.h"
-//#include <QObject>
-//#include <QtGui>
 
 using namespace std;
 
+/**
+ * \class GripMainWindow GripMainWindow.h
+ * \brief Class that subclasses MainWindow in order to create the whole
+ * Grip interface.
+ */
 class GripMainWindow : public MainWindow
 {
-    //Q_OBJECT
 
 public:
+    /**
+     * \brief Constructs a GripMainWindow object
+     */
     GripMainWindow();
+
+    /**
+     * \brief Destructs a GripMainWindow object
+     */
     ~GripMainWindow();
+
+    /**
+     * \brief Convenience function for creating a ground skeleton
+     * \return Ground object
+     */
+    dart::dynamics::Skeleton* createGround();
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
+
+    /// Tree viewer for viewing the objects in the world
     Tree_View* treeviewer;
+
+    /// Tab for manually manipulating objects in the world
     Inspector_Tab* inspectortab;
+
+    /// Tab for changing visualization settings of the render window
     Visualization_Tab* visualizationtab;
+
+    /// Display for the simluation time and its time relative to real time
     Time_Display* simulation_time_display;
 
     /// TreeViewReturn class is defined in tree_view.h
@@ -92,47 +116,170 @@ public:
 
     /// Main OpenSceneGraph node for the main view of the composite viewer
     osgDart::DartNode* worldNode;
+
+    /// The world object that is being rendered and simulated
     dart::simulation::World* world;
 
+    /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
-
-    dart::dynamics::Skeleton* createGround();
 
     /// Vector to hold timeslice objects for the slider and playback
     std::vector<GripTimeslice> timeline;
 
 protected slots:
+    /**
+     * \brief Sets the time box for simulation time relative to real time
+     * \param time The simulation time relative to real time
+     * \return void
+     */
     void setSimulationRelativeTime(double time);
 
 private slots:
+    /**
+     * \brief Set the view to front view
+     * \return void
+     */
     void front();
+
+    /**
+     * \brief Set the view to top view
+     * \return void
+     */
     void top();
+
+    /**
+     * \brief Set the view to side view
+     * \return void
+     */
     void side();
+
+    /**
+     * \brief Starts the simulation
+     * \return void
+     */
     void startSimulation();
+
+    /**
+     * \brief Stops the simulation
+     * \return void
+     */
     void stopSimulation();
+
+    /**
+     * \brief Simulates a single time step of the simulation
+     * \return void
+     */
     void simulateSingleStep();
+
+    /**
+     * \brief Turns on rendering during simulation, which will simulation slower than if
+     * rendering is turned off.
+     */
     void renderDuringSimulation();
+
+    /**
+     * \brief Sets the background color of the window to white
+     * \return void
+     */
     void white();
+
+    /**
+     * \brief Sets the background color of the window to gray
+     * \return void
+     */
     void gray();
+
+    /**
+     * \brief Sets the background color of the window to black
+     * \return void
+     */
     void black();
+
     void resetCamera();
+
     void xga1024x768();
+
     void vga640x480();
+
     void hd1280x720();
+
+    /**
+     * \brief Notifies thread that simulation has stopped
+     * \return void
+     */
     void simulationStopped();
+
     void slotAddTimesliceToTimeline(const GripTimeslice& timeslice);
 
 private:
+    /**
+     * \brief Creates the rendering window
+     * \return void
+     */
     void createRenderingWindow();
+
+    /**
+     * \brief Creates the tree view
+     * \return void
+     */
     void createTreeView();
+
+    /**
+     * \brief Creates the default tabs
+     * \return void
+     */
     void createTabs();
+
+    /**
+     * \brief Creates the playback slider
+     * \return void
+     */
     void createPlaybackSliders();
+
+    /**
+     * \brief Creates the time display boxes
+     * \return void
+     */
     void createTimeDisplays();
+
+    /**
+     * \brief Clears the world, simulation and widgets
+     * \return void
+     */
     void clear();
+
+    /**
+     * \brief Pops up a dialog box for the user to confirm if he wants to stop the
+     * currently running simulation.
+     * \return bool Whether or not the user want to stop the simulation or not
+     */
     bool stopSimulationWithDialog();
+
+    /**
+     * \brief Swaps the start and stop buttons for covenience. It just shows and hides them.
+     * \return void
+     */
     void swapStartStopButtons();
+
+    /**
+     * \brief Load the scene and renders it. This function resets everything
+     * on each load.
+     * \param fileName Name of scene file to load
+     * \return void
+     */
     void doLoad(string fileName);
+
+
+    /**
+     * \brief Saves the loaded scene to file for quick load functionality
+     * \return void
+     */
     int saveText(string scenepath, const char* llfile);
+
+    /**
+     * \brief Bool for whether or not we are currently simulating
+     * \return bool
+     */
     bool _simulating;
 };
 

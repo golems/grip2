@@ -67,8 +67,6 @@
 // osgDart includes
 #include "SkeletonNode.h"
 
-using namespace dart;
-
 /**
  * \namespace osgDart
  * \brief Namespace containing all the classes and functionality relating to the
@@ -77,7 +75,7 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type SkeletonNodeMap, which maps dart::dynamics::Skeleton* to SkeletonNode*
-typedef std::map<const dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
+typedef std::map<const dart::dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
 
 
 /**
@@ -87,7 +85,7 @@ typedef std::map<const dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > Skeleto
  * SkeletonNodes as parts of a simulation world. In essence, a DartNode is
  * the largest visualization object.
  */
-class DartNode : public osg::Switch
+class DartNode : public osg::Group
 {
 public:
 
@@ -106,7 +104,7 @@ public:
      * \param urdfFile The name of the urdf file
      * \return Pointer to the dynamics::Skeleton object
      */
-    dynamics::Skeleton* parseSkeletonUrdf(std::string urdfFile);
+    dart::dynamics::Skeleton* parseSkeletonUrdf(std::string urdfFile);
 
     /**
      * \brief Create a dart::simulation::World pointer from a world sdf file
@@ -114,7 +112,7 @@ public:
      * \param sdfFile The name of the world sdf file
      * \return Pointer to the simulation::World object
      */
-    simulation::World* parseWorldSdf(std::string sdfFile);
+    dart::simulation::World* parseWorldSdf(std::string sdfFile);
 
     /**
      * \brief Create a dart::simulation::World pointer from a world urdf file
@@ -122,7 +120,7 @@ public:
      * \param urdfFile The name of the urdf file
      * \return Pointer to the simulation::World object
      */
-    simulation::World* parseWorldUrdf(std::string urdfFile);
+    dart::simulation::World* parseWorldUrdf(std::string urdfFile);
 
     /**
      * \brief Add a dart::simulation::World to the DartNode using the name of
@@ -172,7 +170,7 @@ public:
      * \param skeletonIndex Index of the skeleton you want
      * \return a dart::dynamics::Skeleton skeleton
      */
-    dynamics::Skeleton* getSkeleton(size_t skeletonIndex=0);
+    dart::dynamics::Skeleton* getSkeleton(size_t skeletonIndex=0);
 
     /**
      * \brief Remove skeleton from DartNode by passing in the pointer to
@@ -190,13 +188,18 @@ public:
      */
     int removeSkeleton(size_t skeletonIndex=0);
 
+    /**
+     * \brief Clear the DartNode. This is used for when you want to start from scratch but don't
+     * want to delete and create a new DartNode.
+     * \return void
+     */
     void clear();
 
     /**
      * \brief Get a pointer to the World object in the DartNode.
      * \return simulation::World pointer
      */
-    simulation::World* getWorld();
+    dart::simulation::World* getWorld();
 
     /**
      * \brief Get number of skeletons in the DartNode
@@ -212,19 +215,84 @@ public:
     void printInfo();
 
     /**
-     * \brief Update the transforms of all the dart objects in the SkeletonNodes
+     * \brief Updates the transforms of all the dart objects in the SkeletonNodes
      * of the DartNode for the next culling and drawing events.
      * \return void
      */
     void update();
 
-    void setJointAxesVisible(bool isVisible=false);
-    void setBodyNodeAxesVisible(bool isVisible=false);
-    void setSkeletonCoMVisible(bool isVisible=false);
-    void setSkeletonCoMProjectedVisible(bool isVisible=false);
+    /**
+     * \brief Sets the transparency value of the SkeletonNode corresponding to the
+     * dart::dynamics::Skeleton passed in
+     * \param skel Skeleton of which to change the transparency value of
+     * \param transparencyValue New transparency value for the skeleton
+     * \return void
+     */
+    void setSkeletonTransparency(const dart::dynamics::Skeleton& skel, float transparencyValue);
 
+    /**
+     * \brief Sets the transparency value of the osg::Group corresponding to the
+     * dart::dynamics::BodyNode passed in
+     * \param node BodyNode of which to change the transparency value of
+     * \param transparencyValue New transparency value for the BodyNode
+     * \return void
+     */
+    void setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue);
+
+    /**
+     * \brief Shows or hides the individual joint axes. This applies to skeletons with more than one
+     * link. A single line with an arrow is displayed representing the axis of rotation of the joint.
+     * This currently only applies to revolute joints.
+     * \param makeVisible Whether or not to visualize the joint axes
+     * \return void
+     */
+    void setJointAxesVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the individual link frames, represented by x,y,z axes using the color
+     * scheme red, green, blue, respectively. Currently this function doesn't account for different
+     * sized objects so axes may not be visible for larger objects.
+     * \param makeVisible Whether or not to visualize the link axes
+     * \return void
+     */
+    void setBodyNodeAxesVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the skeleton's center of mass, represented by a sphere.
+     * \param makeVisible Whether or not to visualize the skeleton's center of mass
+     * \return void
+     */
+    void setSkeletonCoMVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the skeleton's projected center of mass, represented by a circle on
+     * the ground.
+     * \param makeVisible Whether or not to visualize the skeleton's projected center of mass
+     * \return void
+     */
+    void setSkeletonCoMProjectedVisible(bool makeVisible=false);
+
+    /**
+     * \brief Render the skeleton using the collision mesh instead of the visual mesh
+     * \param enable Whether or not to enable the collision mesh
+     * \return void
+     */
+    void setSkeletonCollisionMeshOn(bool enable=true);
+
+    /**
+     * \brief Render the skeleton using wireframe instead of fill mode.
+     * \param enable Whether or not to enable the wireframe mode
+     * \return void
+     */
+    void setSkeletonWireFrameOn(bool enable=true);
+
+    /**
+     * \brief Hide a skeleton
+     * \param int skeleton index
+     * \return void
+     */
     void hideSkeleton(int i);
-    
+
 protected:
 
     //---------------------------------------------------------------
@@ -245,18 +313,19 @@ protected:
     //---------------------------------------------------------------
 
     /// Standard vector of pointers to Skeletons
-    simulation::World* _world;
+    dart::simulation::World* _world;
 
     /// Standard vector of pointers to dart::dynamics::Skeleton objects
-    std::vector<dynamics::Skeleton*> _skeletons;
+    std::vector<dart::dynamics::Skeleton*> _skeletons;
 
     /// Standard vector of pointers to SkeletonNode objects
     std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;
 
+    /// Map from dart::dynamics::Skeleton* to osg::SkeletonNode
     SkeletonNodeMap _skelNodeMap;
 
-    bool _debug;
-
+    /// Debug variable for whether or not to print debug output
+    const bool _debug;
 };
 
 } // end namespace osgDart

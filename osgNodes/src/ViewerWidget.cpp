@@ -42,20 +42,22 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+// Local includes
 #include "ViewerWidget.h"
-#include <osg/io_utils>
 #include "osgUtils.h"
 #include "Axes.h"
 #include "CameraCallback.h"
 #include "CameraManipulator.h"
 #include "Grid.h"
+
+// OpenSceneGraph includes
+#include <osg/io_utils>
 #include <osg/ShapeDrawable>
 
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
     osg::Geode* gridGeode = new osg::Geode();
-    Grid* grid = new Grid(width, depth, gridSize, osg::Vec4(1, 1, 1, 1));
+    osgGolems::Grid* grid = new osgGolems::Grid(width, depth, gridSize, osg::Vec4(1, 1, 1, 1));
     gridGeode->addDrawable(grid);
     addNodeToScene(gridGeode);
 }
@@ -91,7 +93,7 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     view->addEventHandler(new osgViewer::StatsHandler);
 
-    CameraManipulator* cameraManipulator = new CameraManipulator();
+    osgGolems::CameraManipulator* cameraManipulator = new osgGolems::CameraManipulator();
     view->setCameraManipulator(cameraManipulator);
 
     osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());

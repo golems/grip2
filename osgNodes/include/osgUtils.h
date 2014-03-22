@@ -42,18 +42,29 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file osgUtils.h
+ * \brief Utility functions for OpenSceneGraph
+ */
 
 #ifndef OSG_UTILS_H
 #define OSG_UTILS_H
 
+// OpenSceneGraph includes
 #include <osgViewer/View>
 #include <osgGA/OrbitManipulator>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Geometry>
-#include <iostream>
 #include <osg/io_utils>
 #include <osg/StateSet>
 #include <osg/PolygonMode>
+#include <osg/Material>
+#include <osg/BlendFunc>
+
+// Eigen includes
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+
+// C++ Standard Library includes
+#include <iostream>
 
 /**
  * \namespace osgGolems
@@ -122,10 +133,11 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
     return output;
 }
 
-//inline void addWireFrameMode(osg::Node* node);
-//inline void setWireFrameOn(osg::Node* node);
-//inline void setWireFrameOff(osg::Node* node);
-
+/**
+ * \brief Adds a wireframe mode to the node passed in
+ * \param node Node for which to add a wireframe mode
+ * \return void
+ */
 inline void addWireFrameMode(osg::Node* node)
 {
     if(!node) {
@@ -135,7 +147,8 @@ inline void addWireFrameMode(osg::Node* node)
 
     osg::PolygonMode* polyModeObj;
 
-    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getOrCreateStateSet()->
+                                                  getAttribute(osg::StateAttribute::POLYGONMODE));
 
     if(!polyModeObj) {
         polyModeObj = new osg::PolygonMode;
@@ -143,6 +156,12 @@ inline void addWireFrameMode(osg::Node* node)
     }
 }
 
+/**
+ * \brief Turns on wireframe mode for the passed in node
+ * If it doesn't have a wireframe mode, one is created.
+ * \param node Node for which to turn on wireframe mode
+ * \return void
+ */
 inline void setWireFrameOn(osg::Node* node)
 {
     if(!node) {
@@ -155,7 +174,8 @@ inline void setWireFrameOn(osg::Node* node)
     }
 
     osg::PolygonMode* polyModeObj;
-    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->
+                                                  getAttribute(osg::StateAttribute::POLYGONMODE));
 
     if(!polyModeObj) {
         polyModeObj = new osg::PolygonMode;
@@ -165,6 +185,12 @@ inline void setWireFrameOn(osg::Node* node)
     polyModeObj->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
 }
 
+/**
+ * \brief Turns off wireframe mode for the passed in node
+ * If it doesn't have a wireframe mode, one is created.
+ * \param node Node for which to turn off wireframe mode
+ * \return void
+ */
 inline void setWireFrameOff(osg::Node* node)
 {
     if(!node) {
@@ -173,12 +199,12 @@ inline void setWireFrameOff(osg::Node* node)
     }
 
     if(!node->getStateSet()) {
-        std::cerr << "No StateSet. Line " << __LINE__ << " of " << __FILE__ << std::endl;
-        return;
+        addWireFrameMode(node);
     }
 
     osg::PolygonMode* polyModeObj;
-    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->getAttribute(osg::StateAttribute::POLYGONMODE));
+    polyModeObj = dynamic_cast<osg::PolygonMode*>(node->getStateSet()->
+                                                  getAttribute(osg::StateAttribute::POLYGONMODE));
 
     if(!polyModeObj) {
         polyModeObj = new osg::PolygonMode;
@@ -186,21 +212,39 @@ inline void setWireFrameOff(osg::Node* node)
     }
 
     polyModeObj->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
-
 }
+
 /**
- * \brief Convert Eigen::Vector3d vector to an osg::Vec3d
- * \param vec Eigen::Vector3d to be converted. Passed in by reference
- * \return osg::Vec3d
+ * \brief Set the transparency value of a node
+ * Reference: OSG Cookbook p. 239
+ * \param node Node of which to change the transparency value
+ * \param transparencyValue New transparency value for the node (between 0 and 1)
+ * \return void
  */
-//inline osg::Vec3f eigToOsgVec3f(const Eigen::Vector3d& vec)
-//{
-//    osg::Vec3f output;
-//    for(ushort i=0; i<3; ++i) {
-//        output[i] = (float)vec[i];
-//    }
-//    return output;
-//}
+inline void setTransparency(osg::Node* node, float transparencyValue)
+{
+    if(!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL)) {
+        node->getOrCreateStateSet()->setAttribute(new osg::Material);
+        std::cerr << "Created new material" << std::endl;
+    }
+    if(!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::BLENDFUNC)) {
+        node->getOrCreateStateSet()->setAttributeAndModes(new osg::BlendFunc);
+        std::cerr << "Created new blendfunc" << std::endl;
+    }
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL);
+    osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
+    std::cerr << "Diffuse: " << diffuse << std::endl;
+    std::cerr << "Ambient: " << mat->getAmbient(osg::Material::FRONT_AND_BACK) << std::endl;
+    std::cerr << "Emissive:" << mat->getEmission(osg::Material::FRONT_AND_BACK) << std::endl;
+    std::cerr << "Specular:" << mat->getSpecular(osg::Material::FRONT_AND_BACK) << std::endl;
+
+    diffuse.set(diffuse.r(), diffuse.g(), diffuse.b(), transparencyValue);
+    mat->setDiffuse(osg::Material::FRONT_AND_BACK, diffuse);
+//    mat->setAlpha(osg::Material::FRONT_AND_BACK, transparencyValue);
+    node->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+}
 
 } // end of osgGolems namespace
 
