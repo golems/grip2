@@ -55,6 +55,12 @@
 #include <osgGA/OrbitManipulator>
 
 /**
+ * \namespace osgGolems
+ * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
+ */
+namespace osgGolems {
+
+/**
  * \class CameraManipulator CameraManipulator.h
  * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
  * It sets up desired behavior for robot simulator.
@@ -82,8 +88,8 @@ public:
 
 protected:
 
+}; // end class CameraManipulator
 
-
-};
+} // end namespace osgGolems
 
 #endif // CAMERA_MANIPULATOR_H

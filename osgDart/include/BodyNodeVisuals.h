@@ -42,63 +42,138 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file BodyNodeVisuals.h
+ * \brief Class that holds all the visualization nodes for a link,
+ * excluding the actual link.
+ */
+
 #ifndef BODYNODE_VISUALS_H
 #define BODYNODE_VISUALS_H
 
+// OpenSceneGraph includes
 #include <osg/MatrixTransform>
 #include <osg/CullFace>
+
+// Local includes
 #include "Axes.h"
 #include "Line.h"
 
+/**
+ * \namespace osgDart
+ * \brief Namespace containing all the classes and functionality relating to the
+ * intersection of DART and OpenSceneGraph.
+ */
 namespace osgDart {
 
+/**
+ * \brief Class that holds all the visualization nodes for a link,
+ * excluding the actual link.
+ */
 class BodyNodeVisuals : public osg::MatrixTransform
 {
 public:
+    /**
+     * \brief Constructs a BodyNodeVisuals object
+     */
     BodyNodeVisuals();
+
+    /**
+     * \brief Destructs a BodyNodeVisuals object
+     */
     ~BodyNodeVisuals();
 
+    /**
+     * \brief Adds a joint axis node to the class
+     * \return void
+     */
     void addJointAxis();
+
+    /**
+     * \brief Adds a link frame node to the class
+     * \return void
+     */
     void addBodyNodesAxes();
+
+    /**
+     * \brief Adds a center of mass sphere node to the class
+     * Not implemented yet
+     * \return void
+     */
     void addCenterOfMass();
 
+    /**
+     * \brief Gets the osg::MatrixTransform pointer that holds the joint axis node
+     * \return osg::MatrixTransform pointer
+     */
     osg::MatrixTransform* getJointAxisTF();
+
+    /**
+     * \brief Gets the osg::MatrixTransform pointer that holds the link frame node
+     * \return osg::MatrixTransform pointer
+     */
     osg::MatrixTransform* getBodyNodeAxesTF();
+
+    /**
+     * \brief Sets the color of the joint axis node
+     * \param color An osg::Vec4 reference specifying the color in rgba format in range (0,1)
+     * \return void
+     */
     void setJointAxisColor(const osg::Vec4 &color);
+
+    /**
+     * \brief Sets the color of the link frame node
+     * \param color An osg::Vec4 reference specifying the color in rgba format in range (0,1)
+     * \return void
+     */
     void setBodyNodeAxesColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis);
 
+    /**
+     * \brief Sets the line width of the joint axis and link frame axes. This is used only if
+     * the joint axis and link frame are not created using 3D objects
+     */
     void setLineWidth(float lineWidth);
 
 
 protected:
+    /**
+     * \brief Makes a joint axis arrow node
+     * \return osg::Geode pointer pointing to the newly created arrow node
+     */
     osg::Geode* _makeJointAxis();
+
+    /**
+     * \brief Make a link frame node with three axes
+     * \return osg::Geode pointer pointing to the newly created frame node
+     */
     osg::Geode* _makeBodyNodeAxes();
 
+    /**
+     * \brief Set the modes of the geode passed in
+     * \param geode The osg::Geode* of which to set the modes
+     * \return void
+     */
     void _setGeodeModes(osg::Geode* geode);
 
+    /// The osg::MatrixTransform pointer holding the joint axis node
     osg::MatrixTransform* _jointAxisTF;
+
+    /// The osg::MatrixTransform pointer holding the link frame node
     osg::MatrixTransform* _bodyNodeAxesTF;
 
+    /// The osgGolems::Line pointer representing the joint axis
     osgGolems::Line* _jointAxis;
+
+    /// The osgGolems::Axes pointer representing the link frame
     osgGolems::Axes* _bodyNodeAxes;
 
+    /// The osg::LineWidth pointer holding the line width parameter of the 2D objects in the class
     osg::LineWidth* _lineWidth;
+
+    /// The osg::CullFace pointer holding the cull setting of the class
     osg::CullFace* _cullFace;
 };
 
-}
+} // end namespace osgDart
 
 #endif // BODYNODE_VISUALS_H
-
-
-/// Joint level
-// Joint axes
-// BodyNode frames
-// Center of mass
-// Projected center of mass
-// Collision mesh
-
-/// Skeleton level
-// Center of mass
-// Project center of mass
-// Contact forces

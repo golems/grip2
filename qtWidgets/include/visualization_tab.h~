@@ -145,7 +145,7 @@ protected:
     osgDart::DartNode* _worldNode;
 
     /// Tree_View pointer for getting the current object
-    TreeView* _treeView;
+    Tree_View* _treeView;
 
 }; // end class Visualization_Tab
 

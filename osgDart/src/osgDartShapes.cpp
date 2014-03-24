@@ -42,12 +42,6 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef DEBUG_BUILD
-#define DEBUG(x) do { std::cerr << x; } while (0); std::cerr << std::endl;
-#else
-#define DEBUG(x)
-#endif
-
 // DART includes
 #include <dart/dynamics/Shape.h>
 #include <dart/dynamics/BoxShape.h>
@@ -61,6 +55,10 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Node>
+#include <osg/Depth>
+#include <osg/Material>
+#include <osg/BlendFunc>
+#include <osg/io_utils>
 
 // Assimp includes
 #include <assimp/scene.h>
@@ -69,49 +67,46 @@
 #include "osgDartShapes.h"
 #include "osgAssimpSceneReader.h"
 #include "osgUtils.h"
-#include <osg/io_utils>
-
-using namespace dart;
 
 // TODO: get colors working for sdf files
 // TODO: find out what ellipsoid shapes are possible in DART. currently only doing spheres
-osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
+osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
 {
     osg::Geode* geode = new osg::Geode;
     osg::Matrix shapeMatrix = osgGolems::eigToOsgMatrix(inputShape->getLocalTransform());
 
     switch (inputShape->getShapeType()) {
-        case dynamics::Shape::BOX: {
-            dynamics::BoxShape* shape = (dynamics::BoxShape*)inputShape;
+        case dart::dynamics::Shape::BOX: {
+            dart::dynamics::BoxShape* shape = (dart::dynamics::BoxShape*)inputShape;
             osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getDim());
             osg::ShapeDrawable* osgShape =
                     new osg::ShapeDrawable(new osg::Box(osg::Vec3(0,0,0), size.x(), size.y(), size.z()));
-            osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), .5);
-//            std::cerr << "color: " << shape->getColor().transpose() << std::endl;
+            osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
+            std::cerr << "box color: " << shape->getColor().transpose() << std::endl;
 //            std::cerr << "osgColor: " << color << std::endl;
-            osgShape->setColor(color);
+//            osgShape->setColor(color);
             geode->addDrawable(osgShape);
             break;
         }
-        case dynamics::Shape::ELLIPSOID: {
-            dynamics::EllipsoidShape* shape = (dynamics::EllipsoidShape*)shape;
+        case dart::dynamics::Shape::ELLIPSOID: {
+            dart::dynamics::EllipsoidShape* shape = (dart::dynamics::EllipsoidShape*)shape;
             osg::ShapeDrawable* osgBox =
                     new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), .3));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
-//            std::cerr << "color: " << shape->getColor().transpose() << std::endl;
+            std::cerr << "ellipsoid color: " << shape->getColor().transpose() << std::endl;
 //            std::cerr << "osgColor: " << color << std::endl;
-            osgBox->setColor(color);
+//            osgBox->setColor(color);
             geode->addDrawable(osgBox);
             break;
         }
-        case dynamics::Shape::CYLINDER: {
-            dynamics::CylinderShape* shape = (dynamics::CylinderShape*)inputShape;
+        case dart::dynamics::Shape::CYLINDER: {
+            dart::dynamics::CylinderShape* shape = (dart::dynamics::CylinderShape*)inputShape;
             osg::ShapeDrawable* osgShape =
                     new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0,0,0), (float)shape->getRadius(), (float)shape->getHeight()));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
-//            std::cerr << "color: " << shape->getColor().transpose() << std::endl;
+            std::cerr << "cylinder color: " << shape->getColor().transpose() << std::endl;
 //            std::cerr << "osgColor: " << color << std::endl;
-            osgShape->setColor(color);
+//            osgShape->setColor(color);
             geode->addDrawable(osgShape);
             break;
         }
@@ -131,10 +126,11 @@ osg::Node* osgDart::convertShapeToOsgNode(dynamics::Shape* inputShape)
     return shapeTF.release();
 }
 
-osg::Node* osgDart::convertMeshToOsgNode(dynamics::Shape* mesh)
+osg::Node* osgDart::convertMeshToOsgNode(dart::dynamics::Shape* mesh)
 {
-//    DEBUG("Mesh");
-    dynamics::MeshShape* meshShape = (dynamics::MeshShape*)mesh;
+    dart::dynamics::MeshShape* meshShape = (dart::dynamics::MeshShape*)mesh;
+    std::cerr << "[osgDartShapes] Color of mesh: " << meshShape->getColor().transpose() << std::endl;
+    std::cerr << "[osgDartShapes] Color of shap: " << mesh->getColor().transpose() << std::endl;
     const aiScene* aiscene = meshShape->getMesh();
     aiNode* ainode = NULL;
     if(aiscene) {

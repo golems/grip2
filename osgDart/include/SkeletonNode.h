@@ -66,8 +66,6 @@
 #include <osg/MatrixTransform>
 #include <osg/CullFace>
 
-using namespace dart;
-
 /**
  * \namespace osgDart
  * \brief Namespace containing all the classes and functionality relating to the
@@ -76,19 +74,30 @@ using namespace dart;
 namespace osgDart {
 
 /// Definition of type JointMatrixMap, which maps dart::dynamics::Joint* to osg::MatrixTransform*
-typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> > BodyNodeMatrixMap;
+typedef std::map<const dart::dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> > BodyNodeMatrixMap;
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
-typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
+typedef std::map<const dart::dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
 
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
-typedef std::map<const dynamics::BodyNode*, osgDart::BodyNodeVisuals*> BodyNodeVisualsMap;
+typedef std::map<const dart::dynamics::BodyNode*, osg::ref_ptr<osgDart::BodyNodeVisuals> > BodyNodeVisualsMap;
+
+/**
+ * \enum renderMode_t
+ * \brief Render options for the skeleton
+ */
+typedef enum {
+    RENDER_VISUAL_MESH,
+    RENDER_COLLISION_MESH,
+    RENDER_WIREFRAME_ON,
+    RENDER_WIREFRAME_OFF
+} renderMode_t;
 
 /**
  * \class SkeletonNode SkeletonNode.h
  * \brief Class which inherits osg::Group
  */
-class SkeletonNode : public osg::Switch
+class SkeletonNode : public osg::Group
 {
 public:
 
@@ -102,7 +111,7 @@ public:
      * \param axisLength Length of the joint axes (meters)
      * \param debug Debug flag for printing debug statements to standard error
      */
-    SkeletonNode(const dynamics::Skeleton& skeleton, bool debug=false);
+    SkeletonNode(const dart::dynamics::Skeleton& skeleton, bool debug=false);
 
     /**
      * \brief Destructor for SkeletonNode
@@ -116,11 +125,67 @@ public:
      */
     void update();
 
-    void setJointAxesVisible(bool isVisible=false);
-    void setBodyNodeAxesVisible(bool isVisible=false);
-    void setBodyNodeCoMVisible(bool isVisible=false);
-    void setSkeletonCoMVisible(bool isVisible=false);
-    void setSkeletonCoMProjectedVisible(bool isVisible=false);
+    /**
+     * \brief Shows or hides the individual joint axes. This applies to skeletons with more than one
+     * link. A single line with an arrow is displayed representing the axis of rotation of the joint.
+     * This currently only applies to revolute joints.
+     * \param makeVisible Whether or not to visualize the joint axes
+     * \return void
+     */
+    void setJointAxesVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the individual link frames, represented by x,y,z axes using the color
+     * scheme red, green, blue, respectively. Currently this function doesn't account for different
+     * sized objects so axes may not be visible for larger objects.
+     * \param makeVisible Whether or not to visualize the link axes
+     * \return void
+     */
+    void setBodyNodeAxesVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the individual link center of masses, represented by a sphere.
+     * Currently not implemented.
+     * \param makeVisible Whether or not to visualize link center of masses
+     * \return void
+     */
+    void setBodyNodeCoMVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the skeleton's center of mass, represented by a sphere.
+     * \param makeVisible Whether or not to visualize the skeleton's center of mass
+     * \return void
+     */
+    void setSkeletonCoMVisible(bool makeVisible=false);
+
+    /**
+     * \brief Shows or hides the skeleton's projected center of mass, represented by a circle on
+     * the ground.
+     * \param makeVisible Whether or not to visualize the skeleton's projected center of mass
+     * \return void
+     */
+    void setSkeletonCoMProjectedVisible(bool makeVisible=false);
+
+    /**
+     * \brief Set the render mode of the Skeleton.
+     * \param renderMode The render mode specified by the enumeration, renderMode_t
+     * \return void
+     */
+    void setSkeletonRenderMode(renderMode_t renderMode);
+
+    /**
+     * \brief Sets the transparency value of the specified BodyNode
+     * \param node dart::dynamics::BodyNode of which to set the transparency
+     * \param transparencyValue New transparency value for the node
+     * \return void
+     */
+    void setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue);
+
+    /**
+     * \brief Get root body node
+     * \return dart::dynamics::BodyNode pointer to the root body node
+     */
+    const dart::dynamics::BodyNode& getRootBodyNode();
 
 protected:
 
@@ -136,6 +201,11 @@ protected:
      */
     void _createSkeleton();
 
+    /**
+     * \brief Add visual elements of skeleton that can be toggled on or off, such as the
+     * center of mass.
+     * \return void
+     */
     void _addSkeletonVisuals();
 
     /**
@@ -147,7 +217,7 @@ protected:
      * and it will recursively add osg::MatrixTransforms and Geode for all the children
      * \param bodyNode The BodyNode to add to the osg skeleton along with its children
      */
-    void _addSkeletonObjectsRecursivley(const dynamics::BodyNode& bodyNode);
+    void _addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode& bodyNode);
 
     /**
      * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
@@ -155,16 +225,42 @@ protected:
      * visualization shapes and converting them from aiScene objects to osg::Node objects and adding
      * them as children to the BodyNode osg::Group.
      * \param node dart::dynamics::BodyNode of which to make an osg::Group*
-     * \return osg::Group* The osg::Group* corresponding the dart::dynamics::BodyNode
+     * \return osg::Group* The osg::Group* corresponding to the dart::dynamics::BodyNode
      */
-    osg::Group* _makeBodyNodeGroup(const dynamics::BodyNode &node);
+    osg::Group* _makeBodyNodeGroup(const dart::dynamics::BodyNode& node);
 
     /**
-     * \brief Convert BodyNode shapes to osg shapes
+     * \brief Create osg::Group* object from a dart::dynamics::BodyNode passed in by reference.
+     * It generates the shape information in an OpenSceneGraph format, looping through the BodyNode's
+     * collision shapes and converting them from aiScene objects to osg::Node objects and adding
+     * them as children to the BodyNode osg::Group.
+     * \param node const dart::dynamics::BodyNode reference of which to make an osg::Group*
+     * \return osg::Group* The osg::Group* corresponding to the dart::dynamics::BodyNode's collision shape
+     */
+    osg::Group* _makeBodyNodeCollisionMeshGroup(const dart::dynamics::BodyNode& node);
+
+    /**
+     * \brief Create an osgDart::BodyNodeVisuals* object from a dart::dynamics::BodyNode passed in
+     * by reference. It generates the BodyNode specific visuals such as link frame and joint axis
+     * for the passed-in BodyNode.
+     * \param node const dart::dynamics::BodyNode reference for which to create visuals.
+     * \return osgDart::BodyNodeVisuals pointer corresponding to the BodyNode's osg visuals
+     */
+    osgDart::BodyNodeVisuals* _makeBodyNodeVisuals(const dart::dynamics::BodyNode& node);
+
+    /**
+     * \brief Convert BodyNode visualization shapes to osg shapes
      * \param node BodyNode to get shapes from
      * \return void
      */
-    void _addShapesFromBodyNode(const dynamics::BodyNode& node);
+    void _addVisualizationShapesFromBodyNode(const dart::dynamics::BodyNode& node);
+
+    /**
+     * \brief Convert BodyNode collision shapes to osg shapes
+     * \param node BodyNode to get the collision shapes from
+     * \return void
+     */
+    void _addCollisionShapesFromBodyNode(const dart::dynamics::BodyNode& node);
 
     /**
      * \brief Update SkeletonNode recursively based on Skeleton transforms. This traverses through each
@@ -173,41 +269,49 @@ protected:
      * \param bodyNode BodyNode used to update the osg::MatrixTransform and its children
      * \return void
      */
-    void _updateRecursively(const dynamics::BodyNode& bodyNode);
-
-    void _updateSkeletonVisuals();
+    void _updateRecursively(const dart::dynamics::BodyNode& bodyNode);
 
     /**
-     * \brief Get root body node
-     * \return dynamics::BodyNode pointer to the root body node
+     * \brief Updates the skeleton visuals
+     * \return void
      */
-    const dynamics::BodyNode& getRootBodyNode();
-
+    void _updateSkeletonVisuals();
 
     //---------------------------------------------------------------
     //                    PROTECTED VARIABLES
     //---------------------------------------------------------------
 
     /// Root BodyNode
-    const dynamics::BodyNode& _rootBodyNode;
+    const dart::dynamics::BodyNode& _rootBodyNode;
 
     /// Array of osg::Group pointers for the dart::dynamics::BodyNode visualization objects
-    std::vector<osg::ref_ptr<osg::Group> > _bodyNodes;
+    std::vector<osg::ref_ptr<osg::Group> > _bodyNodeGroups;
 
+    /// Array of osgDart::BodyNodeVisuals ref pointers for showing/hiding them
     std::vector<osg::ref_ptr<osgDart::BodyNodeVisuals> > _bodyNodeVisuals;
+
+    /// osgDart::SkeletonVisuals ref pointer for showing/hiding them
     osg::ref_ptr<osgDart::SkeletonVisuals> _skeletonVisuals;
+
+    /// Array of osg::Group ref pointers for showing/hiding them
+    std::vector<osg::ref_ptr<osg::Group> > _bodyNodeCollisionMeshGroups;
 
     /// Map from dart::dynamics::Joint* to osg::MatrixTransform*
     BodyNodeMatrixMap _bodyNodeMatrixMap;
 
-    /// Map from dart::dynamics::BodyNode* to osg::Group*
+    /// Map from dart::dynamics::BodyNode* to osg::Group* for the visualization shapes
     BodyNodeGroupMap _bodyNodeGroupMap;
 
+    /// Map from dart::dynamics::BodyNode* to osg::Group* for the collision shapes
+    BodyNodeGroupMap _bodyNodeCollsionMeshGroupMap;
+
+    /// Map from dart::dynamics::BodyNode* to osgDart::BodyNodeVisuals for BodyNode visual shapes
     BodyNodeVisualsMap _bodyNodeVisualsMap;
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;
-};
+
+}; // end class SkeletonNode
 
 } // end osgDart namespace
 

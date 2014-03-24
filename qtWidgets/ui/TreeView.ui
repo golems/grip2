@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TreeView</class>
+ <widget class="QDockWidget" name="TreeView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>250</width>
+    <height>430</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>250</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>250</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget { 
+   font: 0.5pt &quot;Ubuntu&quot;;
+   color:rgb(255, 255, 255);
+}
+QDockWidget::title {
+     text-align: left;
+     subcontrol-position: top left;
+     position: absolute;
+     top: 0px; left: 0px; bottom: 0px;
+ }
+QDockWidget::close-button, QDockWidget::float-button {
+    icon-size: 14px; /* maximum icon size */
+ }
+QDockWidget::close-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 5px; bottom: 0px;
+     width: 14px;
+ }
+
+QDockWidget::float-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 20px; bottom: 0px;
+     width: 14px;
+ }</string>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>Object Explorer</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignRight">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="toolTip">
+       <string extracomment="click on this to see joint names instead of body node names"/>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string>Joint Names</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTreeWidget" name="treeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -91,6 +91,6 @@ protected:
      */
     static void createMaterialData(osg::StateSet* ss, const aiMaterial* aiMtl);
 
-};
+}; // end class osgAssimpSceneReader
 
 #endif // OSG_ASSIMP_SCENEREADER_H

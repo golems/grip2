@@ -122,7 +122,7 @@ void GripSimulation::startSimulation()
         simulateTimeStep();
     } else {
         emit setMessage(tr("Not simulating b/c there's no world"));
-        std::cerr << "Not simulating because there's no world yet. From line "
+        std::cerr << "[GripSimulation] Not simulating because there's no world yet. From line "
                   << __LINE__ << " of " << __FILE__
                   << std::endl;
     }
@@ -169,7 +169,7 @@ void GripSimulation::simulateTimeStep()
         }
     } else { // Get out of this function so we don't call ourselves again
         if(_debug) {
-            std::cerr << "Emitting stop signal and exiting simulation loop" << std::endl;
+            std::cerr << "[GripSimulation] Emitting stop signal and exiting simulation loop" << std::endl;
         }
         emit simulationStoppedSignal();
         return;
@@ -184,7 +184,7 @@ void GripSimulation::simulateSingleTimeStep()
     _simulateOneFrame = true;
 
     if(_debug) {
-        std::cerr << "Simulating a single timestep" << std::endl;
+        std::cerr << "[GripSimulation] Simulating a single timestep" << std::endl;
         this->simulateTimeStep();
     }
 
@@ -195,7 +195,7 @@ void GripSimulation::simulateSingleTimeStep()
 void GripSimulation::stopSimulation()
 {
     if(_debug) {
-        std::cerr << "Stoppin simulation" << std::endl;
+        std::cerr << "[GripSimulation] Stoppin simulation" << std::endl;
     }
     emit setMessage(tr("Simulation Stopped"));
     _simulating = false;
