@@ -259,20 +259,20 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
                 //inspector_ui->positionSpinBox_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 ///enable joint slider only
                 inspector_ui->Joint_Slider_GroupBox->setEnabled(true);
+//                inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+//               inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
+
+                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
+                pose = getPoseFromTransform(item_selected->getWorldTransform());
+                inspector_ui->positionSlider_1->setdsValue(pose(0));
+                inspector_ui->positionSlider_2->setdsValue(pose(1));
+                inspector_ui->positionSlider_3->setdsValue(pose(2));
+
+                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
+                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
+                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
                 inspector_ui->Position_Slider_GroupBox->setDisabled(true);
                 inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
-
-//                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-//                pose = getPoseFromTransform(item_selected->getWorldTransform());
-//                inspector_ui->positionSlider_1->setdsValue(pose(0));
-//                inspector_ui->positionSlider_2->setdsValue(pose(1));
-//                inspector_ui->positionSlider_3->setdsValue(pose(2));
-
-//                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
-//                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
-//                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
-//                inspector_ui->Position_Slider_GroupBox->setDisabled(true);
-//                inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 
             }
 
@@ -296,9 +296,9 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
                 inspector_ui->Orientation_Slider_GroupBox->setEnabled(true);
 
                 Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-                pose = getPoseFromTransform(item_selected->getWorldTransform());
-                //pose = getRootTransform(simworld->getSkeleton(treeview->getActiveItem()->skeletonID));
-                std::cerr << "Pose: " << pose << std::endl;
+                //pose = getPoseFromTransform(item_selected->getWorldTransform());
+                pose = getRootTransform(simworld->getSkeleton(treeview->getActiveItem()->skeletonID));
+                //std::cerr << "Pose: " << pose << std::endl;
                 inspector_ui->positionSlider_1->setdsValue(pose(0));
                 inspector_ui->positionSlider_2->setdsValue(pose(1));
                 inspector_ui->positionSlider_3->setdsValue(pose(2));
