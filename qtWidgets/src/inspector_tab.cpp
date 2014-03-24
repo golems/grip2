@@ -297,6 +297,7 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 
                 Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
                 pose = getPoseFromTransform(item_selected->getWorldTransform());
+                //pose = getRootTransform(simworld->getSkeleton(treeview->getActiveItem()->skeletonID));
                 std::cerr << "Pose: " << pose << std::endl;
                 inspector_ui->positionSlider_1->setdsValue(pose(0));
                 inspector_ui->positionSlider_2->setdsValue(pose(1));
@@ -355,29 +356,29 @@ void Inspector_Tab::initializeTab()
         inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 }
 
-// /**
-// * @function getRootTransform
-// * @brief Return <x,y,z, r, p, y> Remember that get_q() gives you the screw so
-// * do NOT use it directly
-// */
+ /**
+ * @function getRootTransform
+ * @brief Return <x,y,z, r, p, y> Remember that get_q() gives you the screw so
+ * do NOT use it directly
+ */
 
-//Eigen::Matrix<double, 6, 1> Inspector_Tab::getRootTransform(dart::dynamics::Skeleton* robot)
-//{
-//    dart::dynamics::Joint *joint = robot->getRootBodyNode()->getParentJoint();
-//    Eigen::Matrix<double, 6, 1> pose;
+Eigen::Matrix<double, 6, 1> Inspector_Tab::getRootTransform(dart::dynamics::Skeleton* robot)
+{
+    dart::dynamics::Joint *joint = robot->getRootBodyNode()->getParentJoint();
+    Eigen::Matrix<double, 6, 1> pose;
 
-//    if(joint->getJointType() == dart::dynamics::Joint::FREE) {
-//        Matrix<double, 6, 1> q = joint->get_q();
-//        Eigen::Isometry3d Tf = dart::math::expMap( joint->get_q() );
-//        pose.head<3>() = Tf.translation();
-//        pose.tail<3>() = dart::math::matrixToEulerXYZ( Tf.linear() );
-//    }
-//    else {
-//        pose = getPoseFromTransform(joint->getTransformFromParentBodyNode());
-//    }
+    if(joint->getJointType() == dart::dynamics::Joint::FREE) {
+        Matrix<double, 6, 1> q = joint->get_q();
+        Eigen::Isometry3d Tf = dart::math::expMap( joint->get_q() );
+        pose.head<3>() = Tf.translation();
+        pose.tail<3>() = dart::math::matrixToEulerXYZ( Tf.linear() );
+    }
+    else {
+        pose = getPoseFromTransform(joint->getTransformFromParentBodyNode());
+    }
 
-//    return pose;
-//}
+    return pose;
+}
 
 /**
  * @function setRootTransform

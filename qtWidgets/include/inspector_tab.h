@@ -26,7 +26,7 @@ private:
     simulation::World *simworld;
     Tree_View *treeview;
 
-//    Eigen::Matrix<double, 6, 1> getRootTransform(dart::dynamics::Skeleton* robot);
+    Eigen::Matrix<double, 6, 1> getRootTransform(dart::dynamics::Skeleton* robot);
     void setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose);
     Eigen::Matrix<double, 6, 1> getPoseFromTransform(const Eigen::Isometry3d& tf);
     int selected_type_from_tree;
