@@ -347,9 +347,11 @@ osg::Group* SkeletonNode::_makeBodyNodeCollisionMeshGroup(const dart::dynamics::
 
 void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::BodyNode& node)
 {
+    std::cerr << node.getSkeleton()->getName() << ". numShapes: " << node.getNumVisualizationShapes() << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     for(int i=0; i<node.getNumVisualizationShapes(); ++i) {
         switch (node.getVisualizationShape(i)->getShapeType()) {
+            std::cerr << node.getName() << std::endl;
             case dart::dynamics::Shape::BOX:
             case dart::dynamics::Shape::ELLIPSOID:
             case dart::dynamics::Shape::CYLINDER: {

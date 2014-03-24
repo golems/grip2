@@ -135,8 +135,9 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
 
 /**
  * \brief Adds a wireframe mode to the node passed in
- * \param node Node for which to add a wireframe mode
+ * \param[out] node Node for which to add a wireframe mode
  * \return void
+ * \todo Fix everything
  */
 inline void addWireFrameMode(osg::Node* node)
 {

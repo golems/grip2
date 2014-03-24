@@ -129,6 +129,8 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
 osg::Node* osgDart::convertMeshToOsgNode(dart::dynamics::Shape* mesh)
 {
     dart::dynamics::MeshShape* meshShape = (dart::dynamics::MeshShape*)mesh;
+    std::cerr << "Color of mesh: " << meshShape->getColor().transpose() << std::endl;
+    std::cerr << "Color of shap: " << mesh->getColor().transpose() << std::endl;
     const aiScene* aiscene = meshShape->getMesh();
     aiNode* ainode = NULL;
     if(aiscene) {

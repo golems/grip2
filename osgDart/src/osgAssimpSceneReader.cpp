@@ -89,7 +89,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
                 (*na)[i].set(n.x, n.y, n.z);
             }
             if(ca) {
-                std::cerr << "has color" << std::endl;
+                std::cerr << "has color: " << mesh->mColors[0] << ", " << mesh->mColors[1] << ", " << mesh->mColors[2] << std::endl;
                 const aiColor4D& c = mesh->mColors[0][i];
                 (*ca)[i].set(c.r, c.g, c.b, c.a);
             }
@@ -198,15 +198,19 @@ void osgAssimpSceneReader::createMaterialData(osg::StateSet* ss, const aiMateria
     aiColor4D c;
     osg::Material* material = new osg::Material;
     if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_AMBIENT, &c)==AI_SUCCESS) {
+        std::cerr << "Has ambient: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_DIFFUSE, &c)==AI_SUCCESS) {
+        std::cerr << "Has diffuse: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_SPECULAR, &c)==AI_SUCCESS) {
+        std::cerr << "Has specular: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_EMISSIVE, &c)==AI_SUCCESS) {
+        std::cerr << "Has emissive: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
 
