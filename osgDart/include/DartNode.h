@@ -99,6 +99,19 @@ public:
     DartNode(bool debug=false);
 
     /**
+     * \brief Creates arrows for contact forces in the world during simulation
+     * \return void
+     */
+    void _updateContactForces();
+
+    /**
+     * \brief Toggles contact forces visibility on/off
+     * \param makeVisible Whether or not to make them visible
+     * \return void
+     */
+    void setContactForcesVisible(bool makeVisible);
+
+    /**
      * \brief Create a dart::dynamics::Skeleton pointer from a skeleton urdf file
      * using DART's DartLoader.
      * \param urdfFile The name of the urdf file
@@ -326,6 +339,7 @@ protected:
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;
+    bool _showContactForces;
 };
 
 } // end namespace osgDart

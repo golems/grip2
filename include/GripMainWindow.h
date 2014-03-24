@@ -98,6 +98,7 @@ public:
     /// Tree viewer for viewing the objects in the world
     Tree_View* treeviewer;
 
+    std::vector<GripTimeslice>* _timeline;
     /// Tab for manually manipulating objects in the world
     Inspector_Tab* inspectortab;
 

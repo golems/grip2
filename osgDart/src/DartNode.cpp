@@ -45,6 +45,8 @@
 // DART includes
 #include <dart/utils/urdf/DartLoader.h>
 #include <dart/utils/sdf/SdfParser.h>
+#include <dart/collision/CollisionDetector.h>
+#include <dart/constraint/Constraint.h>
 
 // osgDart includes
 #include "DartNode.h"
@@ -57,7 +59,7 @@
 
 using namespace osgDart;
 
-DartNode::DartNode(bool debug) : _world(0), _debug(debug)
+DartNode::DartNode(bool debug) : _world(0), _debug(debug), _showContactForces(false)
 {
     this->setUpdateCallback(new DartNodeCallback);
 }
@@ -67,6 +69,103 @@ void DartNode::update()
     for(size_t i=0; i<_skeletonNodes.size(); ++i) {
         _skeletonNodes[i]->update();
     }
+
+    // Update contact forces
+    _updateContactForces();
+}
+
+void DartNode::_updateContactForces()
+{
+//    // FIXME this should be updated based on the selected node in the Qt treeview
+//    dart::dynamics::BodyNode* selectedNode = new dart::dynamics::BodyNode;
+
+//    // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
+//    // vector to represent them
+//    if(_world && _world->getConstraintHandler()) {
+//        int numContacts = mWorld->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+//        std::vector<Eigen::Vector3d> contactPoint(numContacts);
+//        std::vector<Eigen::Vector3d> contactForce(numContacts);
+//        std::vector<float> forceVectorLengths(numContacts);
+//        std::vector<bool> nodeIsSelected(numContacts);
+//        float maxForceVectorLength = 0;
+//        for (int i = 0; i < numContacts; i++) {
+//            // Extract contact force
+//            dart::collision::Contact contact = mWorld->getConstraintHandler()->
+//                    getCollisionDetector()->getContact(i);
+//            contactPoint[i] = contact.point;
+//            contactForce[i] = contact.force.normalized() * .1 * log(contact.force.norm());
+//            forceVectorLengths[i] = (contactPoint[i] - contactForce[i]).norm();
+//            // Update max force vector length variable if current force vector length is larger than max
+//            if (forceVectorLengths[i] > maxForceVectorLength) {
+//                maxForceVectorLength = forceVectorLengths[i];
+//            }
+//            nodeIsSelected[i] = false;
+//            // If either of the BodyNodes in contact are the user-selected node, mark it
+//            if (contact.collisionNode1->getBodyNode() == selectedNode
+//                    || contact.collisionNode2->getBodyNode() == selectedNode) {
+//                nodeIsSelected[i] = true;
+//            }
+
+//            //--------------------------------------------------------------------------
+
+//            // Create force arrows to render
+//            osgGolems::Line* forceVector = new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW);
+
+//            // Create TF
+//            osg::ref_ptr<osg::MatrixTransform> lineTF = new osg::MatrixTransform;
+//            Eigen::Quaterniond forceQuat;
+//            forceQuat.setFromTwoVectors(Eigen::Vector3d(1,0,0), contactForce[i].normalized());
+//            Eigen::Isometry3d forceTF = Eigen::Isometry3d(forceQuat);
+//            lineTF->setMatrix(osgGolems::eigToOsgMatrix(forceTF));
+
+//            osg::Geode* lineGeode = new osg::Geode;
+//            lineGeode->addDrawable(forceVector);
+//        }
+
+
+//        }
+
+
+//        Eigen::Vector3d v;
+//        Eigen::Vector3d f;
+//        Eigen::Vector3d vf;
+//        Eigen::Vector3d arrowheadDir;
+//        Eigen::Vector3d arrowheadBase;
+//        glBegin(GL_LINES);
+//        for (int k = 0; k < nContacts; k++) {
+//            if (selected[k]) {
+//                glColor3d(0.0, 1.0, 0.0);
+//            }
+//            else {
+//                glColor3d(lens[k] / (2 * maxl) + .5, 0.0, 0.0);
+//            }
+//            v = vs[k];
+//            f = fs[k];
+//            vf = v + f;
+//            arrowheadDir = v.cross(f).normalized() * .0075;
+//            arrowheadBase = vf - f.normalized() * .02;
+//            glVertex3f(v[0], v[1], v[2]);
+//            glVertex3f(vf[0], vf[1], vf[2]);
+//            glVertex3f(vf[0], vf[1], vf[2]);
+//            glVertex3f(arrowheadBase[0] + arrowheadDir[0], arrowheadBase[1] + arrowheadDir[1], arrowheadBase[2] + arrowheadDir[2]);
+//            glVertex3f(vf[0], vf[1], vf[2]);
+//            glVertex3f(arrowheadBase[0] - arrowheadDir[0], arrowheadBase[1] - arrowheadDir[1], arrowheadBase[2] - arrowheadDir[2]);
+//        }
+//        glEnd();
+
+
+
+//    } else {
+//        return;
+//    }
+
+
+
+}
+
+void DartNode::setContactForcesVisible(bool makeVisible)
+{
+    _showContactForces = makeVisible;
 }
 
 void DartNode::setJointAxesVisible(bool makeVisible)
