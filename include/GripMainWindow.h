@@ -50,10 +50,10 @@
 #include <QList>
 
 ///including the base class
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 #include <ViewerWidget.h>
-#include <tree_view.h>
+#include <TreeView.h>
 
 #include <inspector_tab.h>
 #include <visualization_tab.h>
@@ -61,7 +61,7 @@
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 
-#include "ui_tree_view.h"
+#include "ui_TreeView.h"
 #include "GripTab.h"
 #include "ui_time_display.h"
 
@@ -74,7 +74,7 @@ using namespace std;
 
 class GripMainWindow : public MainWindow
 {
-    //Q_OBJECT
+//    Q_OBJECT
 
 public:
     GripMainWindow();
@@ -137,7 +137,7 @@ private:
     QList<GripTab*>* pluginList;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
-    Tree_View* treeviewer;
+    TreeView* treeviewer;
 
     /** Private Methods */
     void createRenderingWindow();

@@ -58,7 +58,7 @@
 #include <QMetaType>
 
 //// Local includes
-#include "MainWindow.h"
+#include "mainwindow.h"
 
 class GripMainWindow;
 

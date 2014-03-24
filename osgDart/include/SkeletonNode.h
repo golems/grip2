@@ -52,6 +52,8 @@
 
 // Grip includes
 #include "../../osgNodes/include/Axes.h"
+#include "BodyNodeVisuals.h"
+#include "SkeletonVisuals.h"
 
 // Dart includes
 #include <dart/dynamics/Skeleton.h>
@@ -79,6 +81,9 @@ typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::MatrixTransform> >
 /// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
 typedef std::map<const dynamics::BodyNode*, osg::ref_ptr<osg::Group> > BodyNodeGroupMap;
 
+/// Definition of type BodyNodeGroupMap, which maps dart::dynamics::BodyNode* to osg::Group*
+typedef std::map<const dynamics::BodyNode*, osgDart::BodyNodeVisuals*> BodyNodeVisualsMap;
+
 /**
  * \class SkeletonNode SkeletonNode.h
  * \brief Class which inherits osg::Group
@@ -97,7 +102,7 @@ public:
      * \param axisLength Length of the joint axes (meters)
      * \param debug Debug flag for printing debug statements to standard error
      */
-    SkeletonNode(const dynamics::Skeleton& skeleton, float axisLength=0.2, bool debug=false);
+    SkeletonNode(const dynamics::Skeleton& skeleton, bool debug=false);
 
     /**
      * \brief Destructor for SkeletonNode
@@ -110,6 +115,12 @@ public:
      * \return void
      */
     void update();
+
+    void setJointAxesVisible(bool isVisible=false);
+    void setBodyNodeAxesVisible(bool isVisible=false);
+    void setBodyNodeCoMVisible(bool isVisible=false);
+    void setSkeletonCoMVisible(bool isVisible=false);
+    void setSkeletonCoMProjectedVisible(bool isVisible=false);
 
 protected:
 
@@ -124,6 +135,8 @@ protected:
      * \return void
      */
     void _createSkeleton();
+
+    void _addSkeletonVisuals();
 
     /**
      * \brief Recursively build osg skeleton starting with a BodyNode and recursively creating its
@@ -162,6 +175,8 @@ protected:
      */
     void _updateRecursively(const dynamics::BodyNode& bodyNode);
 
+    void _updateSkeletonVisuals();
+
     /**
      * \brief Get root body node
      * \return dynamics::BodyNode pointer to the root body node
@@ -179,14 +194,16 @@ protected:
     /// Array of osg::Group pointers for the dart::dynamics::BodyNode visualization objects
     std::vector<osg::ref_ptr<osg::Group> > _bodyNodes;
 
+    std::vector<osg::ref_ptr<osgDart::BodyNodeVisuals> > _bodyNodeVisuals;
+    osg::ref_ptr<osgDart::SkeletonVisuals> _skeletonVisuals;
+
     /// Map from dart::dynamics::Joint* to osg::MatrixTransform*
     BodyNodeMatrixMap _bodyNodeMatrixMap;
 
     /// Map from dart::dynamics::BodyNode* to osg::Group*
     BodyNodeGroupMap _bodyNodeGroupMap;
 
-    /// Length of joint axes visualization
-    float _axisLength;
+    BodyNodeVisualsMap _bodyNodeVisualsMap;
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;

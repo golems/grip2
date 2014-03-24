@@ -27,6 +27,9 @@ public:
 
     /// used to differentiate between the skeleton object and BodyNode object
     DataType dType;
+    
+    ///used to identify skeleton id number
+    int skeletonID;
 };
 Q_DECLARE_METATYPE(TreeViewReturn*);
 

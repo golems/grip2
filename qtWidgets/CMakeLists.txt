@@ -11,7 +11,7 @@ if(Qt4_NOT_FOUND)
 endif()
 
 # Add include directory to include_directories variable
-include_directories(include)
+include_directories(include "../osgDart/include" "../osgNodes/include")
 
 # Add include directory in order to find ui_*.h files
 include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
