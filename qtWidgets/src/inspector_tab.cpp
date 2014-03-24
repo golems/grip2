@@ -36,7 +36,7 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     /// robot position and orientation sliders
     connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_1->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
-    inspector_ui->positionSlider_1->setValue(0);
+    inspector_ui->positionSlider_1->setdsValue(0.0);
     inspector_ui->positionSpinBox_1->setRange(-10.0,10.0);
     inspector_ui->positionSpinBox_1->setDecimals(position_precision_decimal);
     inspector_ui->positionSpinBox_1->setSingleStep(pow(10,-position_precision_decimal));
@@ -44,35 +44,35 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 
     connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_2->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
-    inspector_ui->positionSlider_2->setValue(0);
+    inspector_ui->positionSlider_2->setdsValue(0.0);
     inspector_ui->positionSpinBox_2->setRange(-10.0,10.0);
     inspector_ui->positionSpinBox_2->setDecimals(position_precision_decimal);
     inspector_ui->positionSpinBox_2->setSingleStep(pow(10,-position_precision_decimal));
 
     connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_3->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
-    inspector_ui->positionSlider_3->setValue(0);
+    inspector_ui->positionSlider_3->setdsValue(0.0);
     inspector_ui->positionSpinBox_3->setRange(-10.0,10.0);
     inspector_ui->positionSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->positionSpinBox_3->setSingleStep(pow(10,-position_precision_decimal));
 
     connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_1->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
-    inspector_ui->orientationSlider_1->setValue(0);
+    inspector_ui->orientationSlider_1->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_1->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_1->setDecimals(orientation_precision_decimal);
     inspector_ui->orientationSpinBox_1->setSingleStep(pow(10,-orientation_precision_decimal));
 
     connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_2->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
-    inspector_ui->orientationSlider_2->setValue(0);
+    inspector_ui->orientationSlider_2->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_2->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_2->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_2->setSingleStep(pow(10,-orientation_precision_decimal));
 
     connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_3->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
-    inspector_ui->orientationSlider_3->setValue(0);
+    inspector_ui->orientationSlider_3->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_3->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
@@ -182,6 +182,10 @@ void Inspector_Tab::changeSelectedJoint(int sliderValue){
                          simworld->getSkeleton(treeview->getActiveItem()->skeletonID)->setConfig(indx, config); //getSkeleton(i) - choose ith object
 
                      }
+                     else
+                     {
+                     // do nothing
+                     }
              }
         }
         else
@@ -203,7 +207,7 @@ Inspector_Tab::~Inspector_Tab()
 }
 
 /**
- * @function sreceiveSeletedItem
+ * @function receiveSeletedItem
  * @brief identify type of selected item from treeview and set the sliders properly
  */
 void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
@@ -244,29 +248,31 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
             {
                 ///joint max,min and decimal point setting
                 int joint_precision_decimal  = 2;
+                //std::cerr << "Joint is selected" << std::endl;
                 inspector_ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),
                                                                       RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),joint_precision_decimal);
-                inspector_ui->positionSlider_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 inspector_ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
                 inspector_ui->positionSpinBox_0->setDecimals(joint_precision_decimal);
                 inspector_ui->positionSpinBox_0->setSingleStep(pow(10,-joint_precision_decimal));
-                inspector_ui->positionSpinBox_0->setValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+
+                inspector_ui->positionSlider_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+                //inspector_ui->positionSpinBox_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 ///enable joint slider only
                 inspector_ui->Joint_Slider_GroupBox->setEnabled(true);
-                inspector_ui->Position_Slider_GroupBox->setEnabled(true);
-                inspector_ui->Orientation_Slider_GroupBox->setEnabled(true);
-
-                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-                pose = getPoseFromTransform(item_selected->getWorldTransform());
-                inspector_ui->positionSlider_1->setdsValue(pose(0));
-                inspector_ui->positionSlider_2->setdsValue(pose(1));
-                inspector_ui->positionSlider_3->setdsValue(pose(2));
-
-                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
-                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
-                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
                 inspector_ui->Position_Slider_GroupBox->setDisabled(true);
                 inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
+
+//                Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
+//                pose = getPoseFromTransform(item_selected->getWorldTransform());
+//                inspector_ui->positionSlider_1->setdsValue(pose(0));
+//                inspector_ui->positionSlider_2->setdsValue(pose(1));
+//                inspector_ui->positionSlider_3->setdsValue(pose(2));
+
+//                inspector_ui->orientationSlider_1->setdsValue(RAD2DEG(pose(3)));
+//                inspector_ui->orientationSlider_2->setdsValue(RAD2DEG(pose(4)));
+//                inspector_ui->orientationSlider_3->setdsValue(RAD2DEG(pose(5)));
+//                inspector_ui->Position_Slider_GroupBox->setDisabled(true);
+//                inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 
             }
 
@@ -291,6 +297,7 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 
                 Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
                 pose = getPoseFromTransform(item_selected->getWorldTransform());
+                std::cerr << "Pose: " << pose << std::endl;
                 inspector_ui->positionSlider_1->setdsValue(pose(0));
                 inspector_ui->positionSlider_2->setdsValue(pose(1));
                 inspector_ui->positionSlider_3->setdsValue(pose(2));
@@ -317,22 +324,27 @@ void Inspector_Tab::receiveSeletedItem(TreeViewReturn* active_item)
 
 }
 
+/**
+ * @function initializeTab
+ * @brief initialize inspector tab when a new model is loaded
+ */
+
 void Inspector_Tab::initializeTab()
 {
     if (inspector_ui->positionSlider_0->getdsValue() != 0.0)
-        inspector_ui->positionSlider_0->setdsValue(0);
+        inspector_ui->positionSlider_0->setdsValue(0.0);
     if (inspector_ui->positionSlider_1->getdsValue() != 0.0)
-        inspector_ui->positionSlider_1->setdsValue(0);
+        inspector_ui->positionSlider_1->setdsValue(0.0);
     if (inspector_ui->positionSlider_2->getdsValue() != 0.0)
-        inspector_ui->positionSlider_2->setdsValue(0);
+        inspector_ui->positionSlider_2->setdsValue(0.0);
     if (inspector_ui->positionSlider_3->getdsValue() != 0.0)
-        inspector_ui->positionSlider_3->setdsValue(0);
+        inspector_ui->positionSlider_3->setdsValue(0.0);
     if (inspector_ui->orientationSlider_1->getdsValue() != 0.0)
-        inspector_ui->orientationSlider_1->setdsValue(0);
+        inspector_ui->orientationSlider_1->setdsValue(0.0);
     if (inspector_ui->orientationSlider_2->getdsValue() != 0.0)
-        inspector_ui->orientationSlider_2->setdsValue(0);
+        inspector_ui->orientationSlider_2->setdsValue(0.0);
     if (inspector_ui->orientationSlider_3->getdsValue() != 0.0)
-        inspector_ui->orientationSlider_3->setdsValue(0);
+        inspector_ui->orientationSlider_3->setdsValue(0.0);
 
 
     if (inspector_ui->Joint_Slider_GroupBox->isEnabled())
@@ -343,7 +355,7 @@ void Inspector_Tab::initializeTab()
         inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 }
 
-///**
+// /**
 // * @function getRootTransform
 // * @brief Return <x,y,z, r, p, y> Remember that get_q() gives you the screw so
 // * do NOT use it directly
