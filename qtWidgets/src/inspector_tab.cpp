@@ -32,7 +32,10 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->positionSlider_0->setValue(0);
 //    inspector_ui->positionSpinBox_0->setRange(-180.0,180.0);
 //    inspector_ui->positionSpinBox_0->setValue(0.0);
-
+    inspector_ui->positionSlider_0->setMinMaxDecimalValue(-20.0,10.0,1);
+    inspector_ui->positionSpinBox_0->setRange(-20.0,10.0);
+    inspector_ui->positionSpinBox_0->setDecimals(1);
+    std::cerr << "slider min vlaue :" << inspector_ui->positionSlider_0->getMinValue() << std::endl;
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(ChangeJoint(int)));
     //std::cout << "test simWorld in inspector constructor: " << simWorld << std::endl;
     simworld = simWorld;

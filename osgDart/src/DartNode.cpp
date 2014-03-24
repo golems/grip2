@@ -118,30 +118,41 @@ simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     }
 }
 
-
 size_t DartNode::addWorld(std::string file)
 {
-    // try urdf first
-    simulation::World* world = parseWorldUrdf(file);
-    if(world) {
-        this->addWorld(world);
-        return _skeletons.size();
-    } else {
-        dynamics::Skeleton* skel = parseSkeletonUrdf(file);
-        if(skel) {
-            this->addSkeleton(*skel);
-            return _skeletons.size();
+    std::string extension = file.substr(file.find_last_of(".") + 1);
+    std::cerr << "Extension: " << extension << std::endl;
+    if(extension == "urdf") {
+        simulation::World* world = parseWorldUrdf(file);
+        if(world) {
+            this->addWorld(world);
         } else {
-            world = parseWorldSdf(file);
+            dynamics::Skeleton* skel = parseSkeletonUrdf(file);
+            if(skel) {
+                this->addSkeleton(*skel);
+            }
+        }
+    } else if(extension == "sdf") {
+        simulation::World* world = parseWorldSdf(file);
+        if(world) {
+            this->addWorld(world);
+        } else {
+            std::cerr << "[addWorld] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        }
+    } else {
+        simulation::World* world = parseWorldSdf(file);
+        if(world) {
+            this->addWorld(world);
+        } else {
+            world = parseWorldUrdf(file);
             if(world) {
                 this->addWorld(world);
-                return _skeletons.size();
             } else {
                 std::cerr << "[addWorld] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
-                return _skeletons.size();
             }
         }
     }
+    return _skeletons.size();
 }
 
 size_t DartNode::addWorldFromSdf(std::string sdfFile)
@@ -149,11 +160,11 @@ size_t DartNode::addWorldFromSdf(std::string sdfFile)
     simulation::World* world = parseWorldSdf(sdfFile);
     if(world) {
         addWorld(world);
-        return _skeletons.size();
     } else {
+        delete world;
         std::cerr << "[addWorldFromSdf] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
-        return _skeletons.size();
     }
+    return _skeletons.size();
 }
 
 size_t DartNode::addSkeleton(std::string urdfFile)

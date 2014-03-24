@@ -5,25 +5,28 @@
 #include "doubleslider.h"
 
 DoubleSlider::DoubleSlider (QWidget *parent)
-  : QSlider(parent)
-{
+  : QSlider(parent), dsvalue(0.0), min_value(-180.0), max_value(180.0), decimal_point(1)
+  {
     //this->setRange(-1800,1800); //I cannot override settings here. It seems settings from the designer have priorities.
-    dsvalue = 0.0;
+
     connect (this, SIGNAL(valueChanged(int)), this, SLOT(setValueAndEmit(int)));
+//    int min_value_integer = ceil((double)min_value*pow(10.0,(double)decimal_point));
+//    int max_value_integer = ceil((double)max_value*pow(10.0,(double)decimal_point));
+//    this->setRange(min_value_integer,max_value_integer);
 
 }
 
 double DoubleSlider::changeTOdouble(int intvalue)
 {
     double temp = (double)intvalue;
-    double doublevalue = temp/10.0;
+    double doublevalue = temp/pow(10.0,(double)decimal_point);
 
     return doublevalue;
 }
 
 int DoubleSlider::changeTOinteger(double doublevalue)
 {
-    double temp = doublevalue*10.0;
+    double temp = doublevalue*pow(10.0,(double)decimal_point);
     int integervalue = ceil(temp);
     return integervalue;
 }
@@ -38,7 +41,7 @@ void DoubleSlider::setdsValue(double valueindouble)
 double DoubleSlider::getdsvalue()
 {
     double temp = (double)value();
-    temp = temp/10.0;
+    temp = temp/pow(10.0,(double)decimal_point);
     if (temp != dsvalue) {
         dsvalue = temp;
         }
@@ -65,6 +68,32 @@ void DoubleSlider::getValueAndEmit(double spinboxvalue)
      emit valueChanged(temp);
 }
 
+void DoubleSlider::setMinMaxDecimalValue(double minvalue, double maxvalue, int decimalvalue)
+{
+    min_value = minvalue;
+    max_value = maxvalue;
+    decimal_point = decimalvalue;
+    int min_value_integer = ceil((double)min_value*pow(10.0,(double)decimal_point));
+    int max_value_integer = ceil((double)max_value*pow(10.0,(double)decimal_point));
+    //std::cerr << "base^decimal: " << (double)max_value*pow(10.0,(double)decimal_point) << std::endl;
+    //std::cerr << "min value of the slider : " << min_value_integer <<" max value of the slider : " <<max_value_integer << std::endl;
+    this->setRange(min_value_integer,max_value_integer);
+}
+
+double DoubleSlider::getMinValue()
+{
+    return min_value;
+}
+
+double DoubleSlider::getMaxValue()
+{
+    return max_value;
+}
+
+int DoubleSlider::getDecimalPoint()
+{
+    return decimal_point ;
+}
 /*
  class DoubleSlider : public QSlider
 {

@@ -62,8 +62,11 @@
 #include "ui_inspector_tab.h"
 
 #include "ui_tree_view.h"
+<<<<<<< HEAD
 #include "GripTab.h"
+=======
 #include "ui_time_display.h"
+>>>>>>> origin/feature/simulation
 
 #include "DartNode.h"
 #include "GripSimulation.h"

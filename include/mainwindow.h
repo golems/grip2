@@ -92,6 +92,7 @@ protected slots:
     virtual void hd1280x720() = 0;
     virtual void simulationStopped() = 0;
     virtual void setSimulationRelativeTime(double time) = 0;
+    void setMessageSlot(QString msg);
     void about();
 
 private:

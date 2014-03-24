@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Time_Display</class>
+ <widget class="QDockWidget" name="Time_Display">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>309</width>
+    <height>70</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget { 
+   font: 0.5pt &quot;Ubuntu&quot;;
+   color:rgb(255, 255, 255);
+}
+QDockWidget::title {
+     text-align: left;
+     subcontrol-position: top left;
+     position: absolute;
+     top: 0px; left: 0px; bottom: 0px;
+ }
+QDockWidget::close-button, QDockWidget::float-button {
+    icon-size: 14px; /* maximum icon size */
+ }
+QDockWidget::close-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 5px; bottom: 0px;
+     width: 14px;
+ }
+
+QDockWidget::float-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 20px; bottom: 0px;
+     width: 14px;
+ }</string>
+  </property>
+  <property name="windowTitle">
+   <string>Time_Display</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Simulation Time</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="time_edit_sim"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Sim/Real</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="time_edit_rel"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -44,8 +44,11 @@ GripMainWindow::GripMainWindow() :
     //createSliders();
     createTimeDisplays();
     createTabs();
+<<<<<<< HEAD
     loadPlugins();
+=======
     this->setStatusBar(this->statusBar());
+>>>>>>> origin/feature/simulation
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 }

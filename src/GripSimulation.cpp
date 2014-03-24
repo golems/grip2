@@ -1,4 +1,46 @@
-
+/*
+ * Copyright (c) 2014, Georgia Tech Research Corporation
+ * All rights reserved.
+ *
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
+ *
+ * Humanoid skeletonics Lab      Georgia Institute of Technology
+ * Director: Mike Stilman     http://www.golems.org
+ *
+ *
+ * This file is provided under the following "BSD-style" License:
+ *   Redistribution and use in source and binary forms, with or
+ *   without modification, are permitted provided that the following
+ *   conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *
+ *   * Neither the name of the Humanoid Robotics Lab nor the names of
+ *     its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written
+ *     permission
+ *
+ *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ *   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ *   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ *   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ *   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ *   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ *   AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *   POSSIBILITY OF SUCH DAMAGE.
+ */
 
 // Local includes
 #include "GripSimulation.h"
@@ -31,7 +73,13 @@ GripSimulation::GripSimulation(dart::simulation::World* world, MainWindow* paren
     connect(this, SIGNAL(simulationStoppedSignal()), parent, SLOT(simulationStopped()));
 
     // Signal and slot for sending the simulation time relative to real time (instantaneous) to the parent
-    connect(this, SIGNAL(relTimeChanged(double)), parent, SLOT(setSimulationRelativeTime(double)));
+    connect(this, SIGNAL(signalRelTimeChanged(double)), parent, SLOT(setSimulationRelativeTime(double)));
+
+    // Signal and slot for sending a message to the status bar
+    connect(this, SIGNAL(setMessage(QString)), parent, SLOT(setMessageSlot(QString)));
+
+//    connect(this, SIGNAL(signalAddTimesliceToTimeline(GripTimeslice)), parent, SLOT(GripMainWindow::slotAddTimesliceToTimeline(const GripTimeslice&)));
+
     this->moveToThread(_thread);
     _thread->start();
 }
@@ -44,11 +92,9 @@ GripSimulation::~GripSimulation()
 
 void GripSimulation::reset()
 {
-    _timeline.clear();
-//    _simulationDuration = 0;
+    _simulationDuration = 0;
     _simulationStartTime = 0;
     _simTimeRelToRealTimeInstantaneous = 0;
-//    _simTimeRelToRealTimeOverall = 0;
     _prevTime = 0;
 }
 
@@ -57,7 +103,7 @@ void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAd
     GripTimeslice timeslice;
     timeslice.time = worldToAdd.getTime();
     timeslice.state = worldToAdd.getState();
-    _timeline.push_back(timeslice);
+    emit signalAddTimesliceToTimeline(timeslice);
 }
 
 void GripSimulation::startSimulation()
@@ -69,11 +115,13 @@ void GripSimulation::startSimulation()
     _simulating = true;
 
     if(_world) {
+        emit this->setMessage(tr("Simulating"));
         _simulationStartTime = grip::getTime();
         _prevTime = grip::getTime();
 
         simulateTimeStep();
     } else {
+        emit setMessage(tr("Not simulating b/c there's no world"));
         std::cerr << "Not simulating because there's no world yet. From line "
                   << __LINE__ << " of " << __FILE__
                   << std::endl;
@@ -100,11 +148,10 @@ void GripSimulation::simulateTimeStep()
 
         double curTime = grip::getTime();
         double timeStepDuration = curTime - _prevTime;
-//        _simulationDuration = _simulationDuration + timeStepDuration;
+        _simulationDuration = _simulationDuration + timeStepDuration;
         _simTimeRelToRealTimeInstantaneous = _world->getTimeStep() / timeStepDuration;
-//        _simTimeRelToRealTimeOverall = _world->getTime() / _simulationDuration;
         _prevTime = curTime;
-        emit relTimeChanged(_simTimeRelToRealTimeInstantaneous);
+        emit signalRelTimeChanged(_simTimeRelToRealTimeInstantaneous);
 
 //        std::cerr << "Sim2 | Real | RelInst | RelOverall: "
 //                  << _world->getTime() << " | "
@@ -150,5 +197,6 @@ void GripSimulation::stopSimulation()
     if(_debug) {
         std::cerr << "Stoppin simulation" << std::endl;
     }
+    emit setMessage(tr("Simulation Stopped"));
     _simulating = false;
 }

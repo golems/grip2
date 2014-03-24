@@ -1,3 +1,51 @@
+/*
+ * Copyright (c) 2014, Georgia Tech Research Corporation
+ * All rights reserved.
+ *
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
+ *
+ * Humanoid skeletonics Lab      Georgia Institute of Technology
+ * Director: Mike Stilman     http://www.golems.org
+ *
+ *
+ * This file is provided under the following "BSD-style" License:
+ *   Redistribution and use in source and binary forms, with or
+ *   without modification, are permitted provided that the following
+ *   conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   * Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials provided
+ *     with the distribution.
+ *
+ *   * Neither the name of the Humanoid Robotics Lab nor the names of
+ *     its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written
+ *     permission
+ *
+ *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ *   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ *   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ *   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ *   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ *   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ *   AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *   POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * \file GripSimulation.h
+ * \brief Class for running the simulation loop in its own thread.
+ */
 
 #ifndef GRIP_SIMULATION_H
 #define GRIP_SIMULATION_H
@@ -7,9 +55,12 @@
 
 // Qt includes
 #include <QObject>
+#include <QMetaType>
 
 //// Local includes
 #include "mainwindow.h"
+
+class GripMainWindow;
 
 /**
  * \class GripTimeslice
@@ -19,9 +70,14 @@
 class GripTimeslice
 {
 public:
+    GripTimeslice(){}
+    GripTimeslice(const GripTimeslice &copy){}
+    ~GripTimeslice(){}
     double time; ///< Timestamp for the world state
     Eigen::VectorXd state; ///< State of the world at this time
 };
+
+Q_DECLARE_METATYPE(GripTimeslice)
 
 /**
  * \class GripSimulation GripSimulation.h
@@ -75,7 +131,11 @@ signals:
      * \brief Signal to pass the time value of the simulation real time
      * \param
      */
-    void relTimeChanged(double simTimeRelToRealTimeInstantaneous);
+    void signalRelTimeChanged(double simTimeRelToRealTimeInstantaneous);
+
+    void signalAddTimesliceToTimeline(const GripTimeslice& timeslice);
+
+    void setMessage(QString msg);
 
 public slots:
     /**
@@ -119,18 +179,14 @@ protected:
     /// Local thread to move object into
     QThread* _thread;
 
-    /// Vector to hold timeslice objects for the slider and playback
-    std::vector<GripTimeslice> _timeline;
-
-//    double _simulationDuration;  ///< Simulation time in realtime
+    double _simulationDuration;  ///< Simulation time in realtime
     double _simulationStartTime; ///< Initial system clock time when simulation started
     double _simTimeRelToRealTimeInstantaneous; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
-//    double _simTimeRelToRealTimeOverall; ///< Simulation time relative to realtime (ie. 1.0 is realtime. 0.5 is half the speed of realtime)
     double _prevTime; ///< Real time on the last time step
 
-    bool _simulating; /// Bool for whether or not we are simulating
-    bool _simulateOneFrame; /// Bool for whether or not to simulate only one frame
-    bool _debug; /// Bool for whether or not to print debug output to standard error
+    bool _simulating; ///< Bool for whether or not we are simulating
+    bool _simulateOneFrame; ///< Bool for whether or not to simulate only one frame
+    bool _debug; ///< Bool for whether or not to print debug output to standard error
 };
 
 #endif // GRIP_SIMULATION_H
