@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# files created by the Qt Editor
+grip2.*
+
 doc/html
 doc/latex
 build
