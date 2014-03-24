@@ -56,8 +56,6 @@
 // OpenSceneGraph includes
 #include <osg/Node>
 
-using namespace dart;
-
 /**
  * \namespace osgDart
  * \brief Namespace containing all the classes and functionality relating to the
@@ -70,7 +68,7 @@ namespace osgDart {
  * \param inputShape One of the dart::dynamics::Shape types
  * \return osg::MatrixTransform as an osg::Node pointer
  */
-osg::Node* convertShapeToOsgNode(dynamics::Shape* inputShape);
+osg::Node* convertShapeToOsgNode(dart::dynamics::Shape* inputShape);
 
 /**
  * \brief Convert dart::dynamics::MeshShape to an osgNode.
@@ -80,7 +78,7 @@ osg::Node* convertShapeToOsgNode(dynamics::Shape* inputShape);
  * that is actually a MeshShape.
  * \return osg::MatrixTransform as an osg::Node pointer
  */
-osg::Node* convertMeshToOsgNode(dynamics::Shape* mesh);
+osg::Node* convertMeshToOsgNode(dart::dynamics::Shape* mesh);
 
 } // end namespace osgDart
 

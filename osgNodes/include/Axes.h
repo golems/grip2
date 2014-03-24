@@ -58,6 +58,10 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
+/**
+ * \namespace osgGolems
+ * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
+ */
 namespace osgGolems {
 
 /**
@@ -99,6 +103,13 @@ public:
         this->setVertexArray(_verts);
     }
 
+    /**
+     * \brief Sets the colors of the axes
+     * \param xAxis osg::Vec4 reference for the color of the x-axis, in rgba format in range (0,1)
+     * \param yAxis osg::Vec4 reference for the color of the y-axis, in rgba format in range (0,1)
+     * \param zAxis osg::Vec4 reference for the color of the z-axis, in rgba format in range (0,1)
+     * \return void
+     */
     inline void setColors(const osg::Vec4& xAxis, const osg::Vec4& yAxis, const osg::Vec4& zAxis)
     {
         (*_colors)[0] = xAxis;
@@ -107,13 +118,17 @@ public:
         this->setColorArray(_colors);
     }
 
+    /**
+     * \brief Sets the width of the axes
+     * \param newLineWidth The new line width to use
+     * \return void
+     */
     inline void setLineWidth(float newLineWidth)
     {
         _lineWidth->setWidth(newLineWidth);
         this->getOrCreateStateSet()->setAttribute(_lineWidth);
     }
-    
-    
+
 protected:
     
     /**
@@ -151,9 +166,10 @@ protected:
     /// Array of colors defining the color the axes
     osg::Vec4Array* _colors;
 
+    /// Line width pointer
     osg::LineWidth* _lineWidth;
     
-};
+}; // end class Axes
 
 } // end namespace osgGolems
 

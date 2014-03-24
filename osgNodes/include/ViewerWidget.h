@@ -88,18 +88,68 @@ public:
      */
     QWidget* addViewWidget(osg::Camera* camera, osg::Node* scene);
 
+    /**
+     * \brief Creates a camera for the viewer
+     * \param x x-coordinate of the upper-left corner of the window
+     * \param y y-coordinate of the upper-left corner of the window
+     * \param w Width of the window
+     * \param h Height of the window
+     * \param name Name of the window
+     * \param windowDecoration Whether or not to add window decoration
+     * \return void
+     */
     osg::Camera* createCamera(int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
 
+    /**
+     * \brief Gets the view matrix
+     * \return osg::Matrixd
+     */
     osg::Matrixd getViewMatrix();
+
+    /**
+     * \brief Sets the viewMatrix of the specified view
+     * \param i View to change the view matrix of
+     * \param m New view matrix
+     * \return void
+     */
     void setViewMatrix(uint i, osg::Matrixd m);
+
+    /**
+     * \brief Sets the matrix of the camera manipulator to front view
+     * \return void
+     */
     void setToFrontView();
+
+    /**
+     * \brief Sets the matrix of the camera manipulator to top view
+     * \return void
+     */
     void setToTopView();
+
+    /**
+     * \brief Sets the matrix of the camera manipulator to side view
+     * \return void
+     */
     void setToSideView();
+
+    /**
+     * \brief Sets the matrix of the specified camera
+     * \param newMatrix osg::Matrix reference to set the camera to
+     * \param viewNum The view of which to set the camera matrix
+     * \return void
+     */
     void setCameraMatrix(osg::Matrix& newMatrix, uint viewNum=0);
+
+    /**
+     * \brief Adds an osg node to the scene in the view specified by the user
+     * \param node osg::Node pointer to add to the scene
+     * \param viewNum View of which to add the node to
+     * \return void
+     */
     void addNodeToScene(osg::Node *node, uint viewNum=0);
 
     /**
-     * \brief Set background color of the view number "viewNum" with the
+     * \brief Sets background color of the view number "viewNum" with the
      * "color". If an invalid view number is provided an error message is printed
      * and no change occurs to any view.
      * \param color osg::Vec4 RGBA (red, green blue, alpha) color vector.
@@ -109,19 +159,34 @@ public:
     void setBackgroundColor(const osg::Vec4& color, uint viewNum=0);
 
     /**
-     * \brief Get the camera manipulator for a certain view, specified
+     * \brief Gets the camera manipulator for a certain view, specified
      * by it's view number "viewNum".
      * \param viewNum Number of the view of which to get the camera manipulator.
      * \return osgGA::CameraManipulator pointer.
      */
     osgGA::CameraManipulator* getCameraManipulator(uint viewNum=0);
 
+    /**
+     * \brief Sets the the camera the in the specified view to its home position
+     * \param viewNum View for which to set the camera to home position
+     * \return void
+     */
     void setCameraToHomePosition(uint viewNum=0);
 
-//    void addCenterAxes();
-
+    /**
+     * \brief Adds a grid to the viewer
+     * \param width Width of the entire grid in meters
+     * \param depth Depth of the entire grid in meters
+     * \param gridSize Length of side of each grid square in meters
+     * \return void
+     */
     void addGrid(uint width, uint depth, uint gridSize);
 
+    /**
+     * \brief Renders the scene
+     * \param event QPaint event
+     * \return void
+     */
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }
 
@@ -139,7 +204,7 @@ protected:
      * \return bool Whether or not the view number exists
      */
     bool viewNumIsValid(uint viewNum);
-};
 
+}; // end class ViewerWidget
 
 #endif // VIEWER_WIDGET_H

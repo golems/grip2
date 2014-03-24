@@ -42,9 +42,10 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "Grid.h"
 #include <iostream>
+
+using namespace osgGolems;
 
 //-----------------------------------------------
 //            PUBLIC MEMBER FUNCTIONS
@@ -89,7 +90,7 @@ void Grid::_createVertices(uint width, uint depth, uint gridSize)
     // Compute number of lines for width and depth directions
     if(gridSize >= width || gridSize >= depth) {
         gridSize = std::min(width, depth) / 2;
-        std::cerr << "Error!. Request grid size is larger that either width or depth.\n"
+        std::cerr << "[Grid] Error!. Request grid size is larger that either width or depth.\n"
                   << "Setting grid size to " << gridSize << std::endl;
     }
     uint numLinesWidth = (uint)(width / gridSize + 1);

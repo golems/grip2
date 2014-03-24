@@ -46,60 +46,218 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+// Qt includes
 #include <QMainWindow>
+
+// C++ Standard includes
 #include <iostream>
 #include <cstdio>
 
 using namespace std;
 
+// Forward declarations
 class QAction;
 class QActionGroup;
 class QLabel;
 class QMenu;
 
+/**
+ * \class MainWindow MainWindow.h
+ * \brief Main window for robot simulation interface. A virtual base class
+ * that subclasses QMainWindow
+ */
 class MainWindow : public QMainWindow
 {
+    /// Meta object macro to use signals and slots
     Q_OBJECT
 
 public:
+    /**
+     * \brief Constructs a MainWindow object
+     */
     MainWindow();
+
+    /**
+     * \brief Destructs a MainWindow object
+     */
     ~MainWindow();
+
+    /**
+     * \brief Creates a toolbar
+     * \return void
+     */
     void Toolbar();
 
 protected:
+    /// QToolBar object for showing/hiding buttons
     QToolBar* getToolBar();
 
 protected slots:
+    /**
+     * \brief Loads a scene with a dialog box
+     * \return void
+     */
     void load();
+
+    /**
+     * \brief Loads the last loaded scene
+     * \return void
+     */
     void quickLoad();
+
+    /**
+     * \brief Saves the loaded scene to file for quick load functionality
+     * \return void
+     */
     void saveScene();
+
+    /**
+     * \brief Closes the Window
+     * \return void
+     */
     void close();
+
+    /**
+     * \brief Exits the program
+     * \return void
+     */
     void exit();
+
+    /**
+     * \brief Sets the view to front view
+     * \return void
+     */
     virtual void front() = 0;
+
+    /**
+     * \brief Sets the view to top view
+     * \return void
+     */
     virtual void top() = 0;
+
+    /**
+     * \brief Sets the view to side view
+     * \return void
+     */
     virtual void side() = 0;
+
+    /**
+     * \brief Starts the simulation
+     * \return void
+     */
     virtual void startSimulation() = 0;
+
+    /**
+     * \brief Stops the simulation
+     * \return void
+     */
     virtual void stopSimulation() = 0;
+
+    /**
+     * \brief Simulates a single time step of the simulation
+     * \return void
+     */
     virtual void simulateSingleStep() = 0;
+
+    /**
+     * \brief Turns on rendering during simulation, which will simulation slower than if
+     * rendering is turned off.
+     */
     virtual void renderDuringSimulation() = 0;
+
+    /**
+     * \brief Sets the background color of the window to white
+     * \return void
+     */
     virtual void white() = 0;
+
+    /**
+     * \brief Sets the background color of the window to gray
+     * \return void
+     */
     virtual void gray() = 0;
+
+    /**
+     * \brief Sets the background color of the window to black
+     * \return void
+     */
     virtual void black() = 0;
+
+    /**
+     * \brief Puts the camera back to its home position
+     * \return void
+     */
     virtual void resetCamera() = 0;
+
     virtual void xga1024x768() = 0;
+
     virtual void vga640x480() = 0;
+
     virtual void hd1280x720() = 0;
+
+    /**
+     * \brief Notifies thread that simulation has stopped
+     * \return void
+     */
     virtual void simulationStopped() = 0;
+
+    /**
+     * \brief Sets the time box for simulation time relative to real time
+     * \param time The simulation time relative to real time
+     * \return void
+     */
     virtual void setSimulationRelativeTime(double time) = 0;
+
+    /**
+     * \brief Sets the status bar message
+     * \param msg Message to display on the status bar
+     * \return void
+     */
     void setMessageSlot(QString msg);
+
+    /**
+     * \brief Displays information about the application
+     * \return void
+     */
     void about();
 
 private:
+    /**
+     * \brief Creates actions
+     * \return void
+     */
     void createActions();
+
+    /**
+     * \brief Creates the menu at the top
+     * \return void
+     */
     void createMenus();
+
+    /**
+     * \brief Creates the rendering window
+     * \return void
+     */
     virtual void createRenderingWindow() = 0;
+
+    /**
+     * \brief Create the tree view
+     * \return void
+     */
     virtual void createTreeView() = 0;
+
+    /**
+     * \brief Create the default tabs
+     * \return void
+     */
     virtual void createTabs() = 0;
+
+    /**
+     * \brief Load the scene and renders it. This function resets everything
+     * on each load.
+     * \param fileName Name of scene file to load
+     * \return void
+     */
     virtual void doLoad(string fileName) = 0;
 
     QMenu *fileMenu;

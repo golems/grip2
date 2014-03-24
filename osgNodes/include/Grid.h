@@ -51,7 +51,14 @@
 #ifndef GRID_H
 #define GRID_H
 
+// OpenSceneGraph includes
 #include <osg/Geometry>
+
+/**
+ * \namespace osgGolems
+ * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
+ */
+namespace osgGolems {
 
 /**
  * \class Grid Grid.h
@@ -105,10 +112,17 @@ protected:
      */
     uint _makeEven(uint num);
 
-    osg::ref_ptr<osg::Vec3Array> _verts;  // Array of vertices corresponding to grid line endpoints
-    osg::ref_ptr<osg::Vec4Array> _colors; // Array of colors corresponding to grid line colors
-    static const uint maxLength = 500;    // Maximum grid perimeter side length
+    /// Array of vertices corresponding to grid line endpoints
+    osg::ref_ptr<osg::Vec3Array> _verts;
 
-};
+    /// Array of colors corresponding to grid line colors
+    osg::ref_ptr<osg::Vec4Array> _colors;
+
+    /// Maximum grid perimeter side length
+    static const uint maxLength = 500;
+
+}; // end class Grid
+
+} // end namespace osgGolems
 
 #endif // GRID_H

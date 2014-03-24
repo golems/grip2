@@ -54,19 +54,36 @@
 #include <osg/Geode>
 #include <osg/LineWidth>
 
+/**
+ * \namespace osgGolems
+ * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
+ */
 namespace osgGolems {
 
-typedef enum lineType
-{
+/**
+ * \enum lineType
+ * \brief Enumeration for the different types of lines that this class can create
+ */
+typedef enum lineType {
     LINE = 0,
     LINE_ENDING_WITH_ARROW,
     LINE_WITH_ARROWS,
     NUM_LINE_TYPES
 } lineType_t;
 
+/**
+ * \class Line Line.h
+ * \brief Class that subclasses osg::Geode to create x,y,z axes
+ */
 class Line : public osg::Geometry
 {
 public:
+    /**
+     * \brief Constructs a line object
+     * \param lineType Type of line to create, specified by lineType_t
+     * \param length Length of the line in meter
+     * \param width Width of the line. Normal values are between 1 and 10
+     */
     inline Line(lineType_t lineType, float length = 0.5f, float width = 3) :
         _lineType(lineType)
     {
@@ -85,6 +102,11 @@ public:
         this->setWidth(width);
     }
 
+    /**
+     * \brief Converts enum to string for lineType enum
+     * \param lineType lineType enum to convert to a string
+     * \return std::string representing the lineType enum
+     */
     inline std::string lineTypeToString(lineType_t lineType)
     {
         switch(lineType) {
@@ -96,6 +118,11 @@ public:
         }
     }
 
+    /**
+     * \brief Sets the length of the line
+     * \param length A float representing the desired length of the line
+     * \return void
+     */
     inline void setLength(float length)
     {
         // Arrow vertices layout
@@ -135,13 +162,24 @@ public:
         setVertexArray(_verts);
     }
 
+    /**
+     * \brief Sets the width of the line
+     * \param width float representing the desired width of the line
+     * \return void
+     */
     inline void setWidth(float width)
     {
         _lineWidth->setWidth(width);
         this->getOrCreateStateSet()->setAttribute(_lineWidth);
     }
 
-    inline void setColor(const osg::Vec4f& newColor)
+    /**
+     * \brief Sets the color of the line
+     * \param newColor osg::Vec4 reference representing the desired color of the
+     * line in rgba format in range (0,1)
+     * \return void
+     */
+    inline void setColor(const osg::Vec4& newColor)
     {
         (*_color)[0] = newColor;
         this->setColorArray(_color);
@@ -149,6 +187,10 @@ public:
 
 protected:
 
+    /**
+     * \brief Creates line vertices depending on the line type specified by the user
+     * \return void
+     */
     inline void _createLine()
     {
         osg::DrawElementsUShort* elem =
@@ -183,11 +225,19 @@ protected:
         this->setColorBinding(osg::Geometry::BIND_OVERALL);
     }
 
+    /// Array of vertices
     osg::Vec3Array* _verts;
+
+    /// Array of colors. Only holds one color
     osg::Vec4Array* _color;
+
+    /// Line width object for specifying the width of the line
     osg::LineWidth* _lineWidth;
+
+    /// Linetype enum constant which is set by the user upon construction
     const lineType_t _lineType;
-};
+
+}; // end class Line
 
 } // end namepsace osgGolems
 
