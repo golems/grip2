@@ -68,6 +68,7 @@ osgAssimpSceneReader::~osgAssimpSceneReader()
 
 osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, const struct aiNode* aiNode)
 {
+    std::cerr << "[osgAssimpSceneReader] aiNode has " << aiNode->mNumMeshes << " num meshes" << std::endl;
     // Create main geode and loop through meshes
     osg::Geode* geode = new osg::Geode;
     for(uint n=0; n<aiNode->mNumMeshes; ++n) {
@@ -182,8 +183,8 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     mt = new osg::MatrixTransform;
     mt->setMatrix( osg::Matrixf((float*)&m));
 
-    for(uint n=0; n<aiNode->mNumChildren; ++n)
-    {
+    std::cerr << "aiNode has " << aiNode->mNumChildren << " children." << std::endl;
+    for(uint n=0; n<aiNode->mNumChildren; ++n) {
         osg::Node* child = traverseAIScene(aiScene, aiNode->mChildren[n]);
         if(child) {
             mt->addChild(child);

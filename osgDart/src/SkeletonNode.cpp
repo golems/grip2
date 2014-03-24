@@ -378,6 +378,7 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
 
 void SkeletonNode::_addCollisionShapesFromBodyNode(const dart::dynamics::BodyNode& node)
 {
+    std::cerr << "[SkeletonNode] " << node.getName() << " has " << node.getNumCollisionShapes() << " collision shapes" << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     for(int i=0; i<node.getNumCollisionShapes(); ++i) {
         switch (node.getCollisionShape(i)->getShapeType()) {
