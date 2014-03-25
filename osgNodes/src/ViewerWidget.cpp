@@ -136,7 +136,7 @@ osg::Matrixd ViewerWidget::getViewMatrix()
 
 void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
 {
-    if(viewNumIsValid(i)) {
+    if (viewNumIsValid(i)) {
         this->getView(i)->getCameraManipulator()->setByMatrix(m);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
             dynamic_cast<osgGA::OrbitManipulator*>(this->getView(i)->getCameraManipulator());
@@ -184,8 +184,7 @@ void ViewerWidget::setToSideView()
 
 void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
 {
-    std::cerr << "Camera Matrix: \n" << newMatrix << std::endl;
-    if(viewNumIsValid(viewNum)) {
+    if (viewNumIsValid(viewNum)) {
         this->getCameraManipulator(viewNum)->setByMatrix(newMatrix);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
             dynamic_cast<osgGA::OrbitManipulator*>(this->getCameraManipulator(viewNum));
@@ -196,7 +195,7 @@ void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
 void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
 {
     osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
-    if(scene != scene) {
+    if (scene != scene) {
         std::cerr << "Error! Can not convert from osg::Node to osg::Group."
                   << std::endl;
     } else {
@@ -213,7 +212,7 @@ void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
 void ViewerWidget::setBackgroundColor(const osg::Vec4 &color, uint viewNum)
 {
     // If the view number is valid, set the background color the view's camera
-    if(viewNumIsValid(viewNum)) {
+    if (viewNumIsValid(viewNum)) {
         this->getView(viewNum)->getCamera()->setClearColor(color);
     }
 }
@@ -222,7 +221,7 @@ osgGA::CameraManipulator* ViewerWidget::getCameraManipulator(uint viewNum)
 {
     // If the view number is valid, get its camera manipulator,
     // otherwise return a NULL pointer
-    if(viewNumIsValid(viewNum)) {
+    if (viewNumIsValid(viewNum)) {
         return this->getView(viewNum)->getCameraManipulator();
     } else {
         return NULL;
@@ -231,7 +230,7 @@ osgGA::CameraManipulator* ViewerWidget::getCameraManipulator(uint viewNum)
 
 void ViewerWidget::setCameraToHomePosition(uint viewNum)
 {
-    if(viewNumIsValid(viewNum)) {
+    if (viewNumIsValid(viewNum)) {
         this->getCameraManipulator(viewNum)->home(1.0);
     }
 }
@@ -240,7 +239,7 @@ void ViewerWidget::setCameraToHomePosition(uint viewNum)
 bool ViewerWidget::viewNumIsValid(uint viewNum)
 {
     // If viewNum exists, return true, otherwise report error and return false
-    if(viewNum >= 0 && viewNum < this->getNumViews()) {
+    if (viewNum >= 0 && viewNum < this->getNumViews()) {
         return true;
     } else {
         fprintf(stderr, "Error! Requested view #%d, but only %d views exist\n", viewNum, this->getNumViews());

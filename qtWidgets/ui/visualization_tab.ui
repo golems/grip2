@@ -77,7 +77,7 @@ QGroupBox::title {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QSlider" name="sliderTranparency">
+          <widget class="QSlider" name="sliderTransparency">
            <property name="maximum">
             <number>100</number>
            </property>

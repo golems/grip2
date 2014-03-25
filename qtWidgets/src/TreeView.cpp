@@ -27,7 +27,7 @@ using namespace std;
 
 TreeView::TreeView(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(parent), ui(new Ui::TreeView)
 {
-    activeItem = active_item;
+    activeItem = 0;
     ui->setupUi(this);
     ui_treeWidget = ui->treeWidget;
     ui_treeWidget->header()->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -53,7 +53,7 @@ void TreeView::treeView_itemSelected(QTreeWidgetItem * item, int column)
 
 TreeViewReturn* TreeView::getActiveItem()
 {
- return activeItem;
+    return activeItem;
 }
 
 QTreeWidgetItem* TreeView::addParent(dynamics::Skeleton* skel, QIcon icon, int skeleton_id)

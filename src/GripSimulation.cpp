@@ -57,13 +57,16 @@
 // QT includes
 #include <QThread>
 
-GripSimulation::GripSimulation(dart::simulation::World* world, MainWindow* parent, bool debug) :
-    QObject(),
-    _world(world),
-    _debug(debug),
-    _thread(new QThread),
-    _simulating(false),
-    _simulateOneFrame(false)
+GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripTimeslice>* timeline,
+                               QList<GripTab*>* pluginList, MainWindow* parent, bool debug)
+    : QObject(),
+      _world(world),
+      _timeline(timeline),
+      _plugins(pluginList),
+      _debug(debug),
+      _thread(new QThread),
+      _simulating(false),
+      _simulateOneFrame(false)
 {
     // Signals and slots for the worker object and thread
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
@@ -76,10 +79,9 @@ GripSimulation::GripSimulation(dart::simulation::World* world, MainWindow* paren
     connect(this, SIGNAL(signalRelTimeChanged(double)), parent, SLOT(setSimulationRelativeTime(double)));
 
     // Signal and slot for sending a message to the status bar
-    connect(this, SIGNAL(setMessage(QString)), parent, SLOT(setMessageSlot(QString)));
+    connect(this, SIGNAL(signalSendMessage(QString)), parent, SLOT(slotSetStatusBarMessage(QString)));
 
-//    connect(this, SIGNAL(signalAddTimesliceToTimeline(GripTimeslice)), parent, SLOT(GripMainWindow::slotAddTimesliceToTimeline(const GripTimeslice&)));
-
+    // Move class instance to its own thread and start the thread
     this->moveToThread(_thread);
     _thread->start();
 }
@@ -103,25 +105,25 @@ void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAd
     GripTimeslice timeslice;
     timeslice.time = worldToAdd.getTime();
     timeslice.state = worldToAdd.getState();
-    emit signalAddTimesliceToTimeline(timeslice);
+    _timeline->push_back(timeslice);
 }
 
 void GripSimulation::startSimulation()
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "Simulating" << std::endl;
     }
 
     _simulating = true;
 
-    if(_world) {
-        emit this->setMessage(tr("Simulating"));
+    if (_world) {
+        emit this->signalSendMessage(tr("Simulating"));
         _simulationStartTime = grip::getTime();
         _prevTime = grip::getTime();
 
         simulateTimeStep();
     } else {
-        emit setMessage(tr("Not simulating b/c there's no world"));
+        emit signalSendMessage(tr("Not simulating b/c there's no world"));
         std::cerr << "[GripSimulation] Not simulating because there's no world yet. From line "
                   << __LINE__ << " of " << __FILE__
                   << std::endl;
@@ -133,18 +135,19 @@ void GripSimulation::simulateTimeStep()
     if (_simulating) {
 
         // Run each tabs doBeforeSimulationTimeStep function
-        // for each tab
-        //     tabs->doBeforeSimulationTimeStep
-        // end
+        for (size_t i=0; i<_plugins->size(); ++i) {
+            std::cerr << "i: " << i << std::endl;
+            _plugins->at(i)->GRIPEventSimulationBeforeTimestep();
+        }
 
         // Simulate timestep by stepping the world dynamics forward one step
         _world->step();
         addWorldToTimeline(*_world);
 
         // Run each tabs doBeforeSimulationTimeStep function
-        // for each tab
-        //     tabs->doAfterSimulationTimeStep
-        // end
+        for (size_t i=0; i<_plugins->size(); ++i) {
+            _plugins->at(i)->GRIPEventSimulationAfterTimestep();
+        }
 
         double curTime = grip::getTime();
         double timeStepDuration = curTime - _prevTime;
@@ -174,8 +177,6 @@ void GripSimulation::simulateTimeStep()
         emit simulationStoppedSignal();
         return;
     }
-
-
 }
 
 void GripSimulation::simulateSingleTimeStep()
@@ -183,7 +184,7 @@ void GripSimulation::simulateSingleTimeStep()
     _simulating = true;
     _simulateOneFrame = true;
 
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[GripSimulation] Simulating a single timestep" << std::endl;
         this->simulateTimeStep();
     }
@@ -194,9 +195,9 @@ void GripSimulation::simulateSingleTimeStep()
 
 void GripSimulation::stopSimulation()
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[GripSimulation] Stoppin simulation" << std::endl;
     }
-    emit setMessage(tr("Simulation Stopped"));
+    emit signalSendMessage(tr("Simulation Stopped"));
     _simulating = false;
 }

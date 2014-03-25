@@ -47,166 +47,173 @@
 #include <dart/utils/sdf/SdfParser.h>
 #include <dart/collision/CollisionDetector.h>
 #include <dart/constraint/Constraint.h>
+#include <dart/constraint/ConstraintDynamics.h>
 
 // osgDart includes
 #include "DartNode.h"
 #include "SkeletonNode.h"
 #include "DartNodeCallback.h"
 #include "osgUtils.h"
+#include "WorldVisuals.h"
 
 // Standard includes
 #include <stdexcept>
 
 using namespace osgDart;
 
-DartNode::DartNode(bool debug) : _world(0), _debug(debug), _showContactForces(false)
+DartNode::DartNode(bool debug)
+    : _world(0),
+      _debug(debug),
+      _showContactForces(0)
 {
     this->setUpdateCallback(new DartNodeCallback);
 }
 
+int xx = 0;
 void DartNode::update()
 {
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
         _skeletonNodes[i]->update();
     }
 
     // Update contact forces
-    _updateContactForces();
+    if (_showContactForces) {
+        ++xx;
+        if (xx == 5) {
+            _updateContactForces();
+            xx = 0;
+        }
+    }
 }
 
 void DartNode::_updateContactForces()
 {
-//    // FIXME this should be updated based on the selected node in the Qt treeview
+    // FIXME this should be updated based on the selected node in the Qt treeview
 //    dart::dynamics::BodyNode* selectedNode = new dart::dynamics::BodyNode;
 
-//    // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
-//    // vector to represent them
-//    if(_world && _world->getConstraintHandler()) {
-//        int numContacts = mWorld->getConstraintHandler()->getCollisionDetector()->getNumContacts();
-//        std::vector<Eigen::Vector3d> contactPoint(numContacts);
-//        std::vector<Eigen::Vector3d> contactForce(numContacts);
-//        std::vector<float> forceVectorLengths(numContacts);
-//        std::vector<bool> nodeIsSelected(numContacts);
-//        float maxForceVectorLength = 0;
-//        for (int i = 0; i < numContacts; i++) {
-//            // Extract contact force
-//            dart::collision::Contact contact = mWorld->getConstraintHandler()->
-//                    getCollisionDetector()->getContact(i);
-//            contactPoint[i] = contact.point;
-//            contactForce[i] = contact.force.normalized() * .1 * log(contact.force.norm());
-//            forceVectorLengths[i] = (contactPoint[i] - contactForce[i]).norm();
-//            // Update max force vector length variable if current force vector length is larger than max
-//            if (forceVectorLengths[i] > maxForceVectorLength) {
-//                maxForceVectorLength = forceVectorLengths[i];
-//            }
+    // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
+    // vector to represent them
+    if (_world && _world->getConstraintHandler()) {
+        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        std::vector<Eigen::Vector3d> contactPoints(numContacts);
+        std::vector<Eigen::Vector3d> contactForces(numContacts);
+        std::vector<float> forceVectorLengths(numContacts);
+        std::vector<bool> nodeIsSelected(numContacts);
+        float maxForceVectorLength = 0;
+
+        // Extract contact force from world
+        for (size_t i = 0; i < numContacts; ++i) {
+            dart::collision::Contact contact = _world->getConstraintHandler()->getCollisionDetector()->getContact(i);
+
+            contactPoints[i] = contact.point;
+            contactForces[i] = contact.force/*.normalized() * .1 * log(contact.force.norm()*//*)*/;
+            forceVectorLengths[i] = (contactForces[i] - contactPoints[i]).norm();
+            if (forceVectorLengths[i] != forceVectorLengths[i]) {
+                forceVectorLengths[i] = 0;
+            }
+
+            // Update max force vector length variable if current force vector length is larger than max
+            if (forceVectorLengths[i] > maxForceVectorLength) {
+                maxForceVectorLength = forceVectorLengths[i];
+            }
 //            nodeIsSelected[i] = false;
 //            // If either of the BodyNodes in contact are the user-selected node, mark it
 //            if (contact.collisionNode1->getBodyNode() == selectedNode
 //                    || contact.collisionNode2->getBodyNode() == selectedNode) {
 //                nodeIsSelected[i] = true;
 //            }
+        }
 
-//            //--------------------------------------------------------------------------
+        // Create force arrows to render
+        for (size_t i = 0; i < numContacts; ++i) {
+            ContactForceVisual* contactForceLine;
+            // If we have some, use existing contactForceArrows and update them to the
+            // current contact force values
+            if (_contactForceArrows.size() > i) {
+                contactForceLine = _contactForceArrows[i];
+                contactForceLine->update(forceVectorLengths[i]/maxForceVectorLength, contactPoints[i], contactForces[i]);
+            // Otherwise create a new one and add it to the existing ones
+            } else {
+                contactForceLine = new ContactForceVisual;
+                float forceMagnitude = 0;
+                if (fabs(maxForceVectorLength) < 1e-3 || fabs(forceVectorLengths[i]) < 1e-3) {
+                    forceMagnitude = 0;
+                } else {
+                    forceMagnitude = forceVectorLengths[i] / maxForceVectorLength;
+                }
+                contactForceLine->createForceVector(forceMagnitude, contactPoints[i], contactForces[i]);
+                _contactForceArrows.push_back(contactForceLine);
+            }
+            this->addChild(contactForceLine);
+        }
 
-//            // Create force arrows to render
-//            osgGolems::Line* forceVector = new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW);
-
-//            // Create TF
-//            osg::ref_ptr<osg::MatrixTransform> lineTF = new osg::MatrixTransform;
-//            Eigen::Quaterniond forceQuat;
-//            forceQuat.setFromTwoVectors(Eigen::Vector3d(1,0,0), contactForce[i].normalized());
-//            Eigen::Isometry3d forceTF = Eigen::Isometry3d(forceQuat);
-//            lineTF->setMatrix(osgGolems::eigToOsgMatrix(forceTF));
-
-//            osg::Geode* lineGeode = new osg::Geode;
-//            lineGeode->addDrawable(forceVector);
-//        }
-
-
-//        }
-
-
-//        Eigen::Vector3d v;
-//        Eigen::Vector3d f;
-//        Eigen::Vector3d vf;
-//        Eigen::Vector3d arrowheadDir;
-//        Eigen::Vector3d arrowheadBase;
-//        glBegin(GL_LINES);
-//        for (int k = 0; k < nContacts; k++) {
-//            if (selected[k]) {
-//                glColor3d(0.0, 1.0, 0.0);
-//            }
-//            else {
-//                glColor3d(lens[k] / (2 * maxl) + .5, 0.0, 0.0);
-//            }
-//            v = vs[k];
-//            f = fs[k];
-//            vf = v + f;
-//            arrowheadDir = v.cross(f).normalized() * .0075;
-//            arrowheadBase = vf - f.normalized() * .02;
-//            glVertex3f(v[0], v[1], v[2]);
-//            glVertex3f(vf[0], vf[1], vf[2]);
-//            glVertex3f(vf[0], vf[1], vf[2]);
-//            glVertex3f(arrowheadBase[0] + arrowheadDir[0], arrowheadBase[1] + arrowheadDir[1], arrowheadBase[2] + arrowheadDir[2]);
-//            glVertex3f(vf[0], vf[1], vf[2]);
-//            glVertex3f(arrowheadBase[0] - arrowheadDir[0], arrowheadBase[1] - arrowheadDir[1], arrowheadBase[2] - arrowheadDir[2]);
-//        }
-//        glEnd();
-
-
-
-//    } else {
-//        return;
-//    }
-
-
-
+        // Hide unused contact force arrows
+        for (size_t i = numContacts; i < _contactForceArrows.size(); ++i) {
+            _contactForceArrows[i]->setNodeMask(0x0);
+        }
+    } else {
+//        delete selectedNode;
+        return;
+    }
+//    delete selectedNode;
 }
 
 void DartNode::setContactForcesVisible(bool makeVisible)
 {
+    if(_debug) {
+        std::cerr << "[DartNode] " << (makeVisible ? "Showing " : "Hiding ") << "contact forces" << std::endl;
+    }
+    if (_world && _world->getConstraintHandler()) {
+        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        if(_debug) {
+            std::cerr << "Number of contact forces: " << numContacts << std::endl;
+        }
+        for(size_t i = 0; i < numContacts && i < _contactForceArrows.size(); ++i) {
+            _contactForceArrows[i]->setNodeMask(makeVisible ? 0xffffffff : 0x0);
+        }
+    }
     _showContactForces = makeVisible;
 }
 
 void DartNode::setJointAxesVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting Joint axis visibility for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (makeVisible ? "True" : "False") << std::endl;
     }
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
         _skeletonNodes[i]->setJointAxesVisible(makeVisible);
     }
 }
 
 void DartNode::setBodyNodeAxesVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting BodyNode axes visibility for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (makeVisible ? "True" : "False") << std::endl;
     }
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
         _skeletonNodes[i]->setBodyNodeAxesVisible(makeVisible);
     }
 }
 
 void DartNode::setSkeletonCoMVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting Skeleton CoM visibility for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (makeVisible ? "True" : "False") << std::endl;
     }
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
         _skeletonNodes[i]->setSkeletonCoMVisible(makeVisible);
     }
 }
 
 void DartNode::setSkeletonCoMProjectedVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting Skeleton projected CoM visibility for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (makeVisible ? "True" : "False") << std::endl;
@@ -218,13 +225,13 @@ void DartNode::setSkeletonCoMProjectedVisible(bool makeVisible)
 
 void DartNode::setSkeletonCollisionMeshOn(bool enable)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting Skeleton render collision mesh for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (enable ? "True" : "False") << std::endl;
     }
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
-        if(enable) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
+        if (enable) {
             _skeletonNodes[i]->setSkeletonRenderMode(osgDart::RENDER_COLLISION_MESH);
         } else {
             _skeletonNodes[i]->setSkeletonRenderMode(osgDart::RENDER_VISUAL_MESH);
@@ -234,13 +241,13 @@ void DartNode::setSkeletonCollisionMeshOn(bool enable)
 
 void DartNode::setSkeletonWireFrameOn(bool enable)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Setting Skeleton render wireframe mode for "
                   << _skeletonNodes.size() << " skeletons to "
                   << (enable ? "True" : "False") << std::endl;
     }
-    for(size_t i=0; i<_skeletonNodes.size(); ++i) {
-        if(enable) {
+    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
+        if (enable) {
             _skeletonNodes[i]->setSkeletonRenderMode(osgDart::RENDER_WIREFRAME_ON);
         } else {
             _skeletonNodes[i]->setSkeletonRenderMode(osgDart::RENDER_WIREFRAME_OFF);
@@ -253,11 +260,11 @@ dart::dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
     // Load robot model from urdf and check if valid
     dart::utils::DartLoader loader;
     dart::dynamics::Skeleton* skeleton = loader.parseSkeleton(urdfFile);
-    if(!skeleton) {
+    if (!skeleton) {
         std::cerr << "[DartNode] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[DartNode] Successfully parsed robot urdf " << urdfFile << std::endl;
         }
 
@@ -269,11 +276,11 @@ dart::simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
 {
     dart::utils::SdfParser loader;
     dart::simulation::World* world = loader.readSdfFile(sdfFile);
-    if(!world) {
+    if (!world) {
         std::cerr << "[[DartNode] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[DartNode] Successfully parsed world sdf " << sdfFile << std::endl;
         }
         return world;
@@ -285,11 +292,11 @@ dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     // Load world model from urdf and check if valid
     dart::utils::DartLoader loader;
     dart::simulation::World* world = loader.parseWorld(urdfFile);
-    if(!world) {
+    if (!world) {
         std::cerr << "[DartNode] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[DartNode] Successfully parsed world urdf " << urdfFile << std::endl;
         }
         return world;
@@ -299,30 +306,30 @@ dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 size_t DartNode::addWorld(std::string file)
 {
     std::string extension = file.substr(file.find_last_of(".") + 1);
-    if(extension == "urdf") {
+    if (extension == "urdf") {
         dart::simulation::World* world = parseWorldUrdf(file);
-        if(world) {
+        if (world) {
             this->addWorld(world);
         } else {
             dart::dynamics::Skeleton* skel = parseSkeletonUrdf(file);
-            if(skel) {
+            if (skel) {
                 this->addSkeleton(*skel);
             }
         }
-    } else if(extension == "sdf") {
+    } else if (extension == "sdf") {
         dart::simulation::World* world = parseWorldSdf(file);
-        if(world) {
+        if (world) {
             this->addWorld(world);
         } else {
             std::cerr << "[DartNode] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     } else {
         dart::simulation::World* world = parseWorldSdf(file);
-        if(world) {
+        if (world) {
             this->addWorld(world);
         } else {
             world = parseWorldUrdf(file);
-            if(world) {
+            if (world) {
                 this->addWorld(world);
             } else {
                 std::cerr << "[DartNode] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
@@ -335,7 +342,7 @@ size_t DartNode::addWorld(std::string file)
 size_t DartNode::addWorldFromSdf(std::string sdfFile)
 {
     dart::simulation::World* world = parseWorldSdf(sdfFile);
-    if(world) {
+    if (world) {
         addWorld(world);
     } else {
         delete world;
@@ -347,7 +354,7 @@ size_t DartNode::addWorldFromSdf(std::string sdfFile)
 size_t DartNode::addSkeleton(std::string urdfFile)
 {
     dart::dynamics::Skeleton* skeleton = parseSkeletonUrdf(urdfFile);
-    if(skeleton) {
+    if (skeleton) {
         addSkeleton(*skeleton);
         return _skeletons.size()-1;
     } else {
@@ -357,8 +364,8 @@ size_t DartNode::addSkeleton(std::string urdfFile)
 
 size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
 {
-    if(!_world) {
-        if(_debug) {
+    if (!_world) {
+        if (_debug) {
             std::cerr << "[DartNode] Creating world in DartNode" << std::endl;
         }
         _world = new dart::simulation::World();
@@ -370,7 +377,7 @@ size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
     _skeletonNodes.push_back(skelNode);
     _skelNodeMap.insert(std::make_pair(&skeleton, skelNode));
     this->addChild(skelNode);
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Added robot:\n\t" << skeleton.getName() << std::endl;
     }
 
@@ -379,10 +386,10 @@ size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
 
 dart::dynamics::Skeleton* DartNode::getSkeleton(size_t skeletonIndex)
 {
-    if(skeletonIndexIsValid(skeletonIndex)) {
+    if (skeletonIndexIsValid(skeletonIndex)) {
         return _world->getSkeleton(skeletonIndex);;
     } else {
-        if(_world) {
+        if (_world) {
             std::cerr << "[DartNode] Error. There are only " << _world->getNumSkeletons() << " robots in this DartNode"
                       << std::endl;
         }
@@ -394,12 +401,12 @@ int DartNode::removeSkeleton(const dart::dynamics::Skeleton* skeletonToRemove)
 {
     try {
         this->removeChild(_skelNodeMap.at(skeletonToRemove));
-    } catch(const std::out_of_range& oor) {
+    } catch (const std::out_of_range& oor) {
         std::cerr << "[DartNode] Error: Out-of-range " << oor.what() << std::endl;
         return 0;
     }
 
-    if(_skelNodeMap.erase(skeletonToRemove)) {
+    if (_skelNodeMap.erase(skeletonToRemove)) {
         return 1;
     } else {
         std::cerr << "[DartNode] Tried to remove a robot that doesn't exist" << std::endl;
@@ -409,9 +416,9 @@ int DartNode::removeSkeleton(const dart::dynamics::Skeleton* skeletonToRemove)
 
 int DartNode::removeSkeleton(size_t skeletonIndex)
 {
-    if(skeletonIndexIsValid(skeletonIndex)) {
+    if (skeletonIndexIsValid(skeletonIndex)) {
         std::cerr << "[DartNode] Removing skeleton named: " << _skeletons.at(skeletonIndex)->getName() << std::endl;
-        if(removeSkeleton(_skeletons.at(skeletonIndex))) {
+        if (removeSkeleton(_skeletons.at(skeletonIndex))) {
             _skeletons.erase(_skeletons.begin() + skeletonIndex-1);
             return 1;
         } else {
@@ -425,28 +432,29 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
 
 void DartNode::clear()
 {
-    if(this->getNumChildren()) {
+    if (this->getNumChildren()) {
         this->removeChildren(0, this->getNumChildren());
         _skeletons.clear();
         _skeletonNodes.clear();
         _skelNodeMap.clear();
+        _contactForceArrows.clear();
     }
     assert(this->getNumChildren() == 0);
 }
 
 void DartNode::hideSkeleton(int i)
 {
-    if(skeletonIndexIsValid(i)) {
+    if (skeletonIndexIsValid(i)) {
 //        _skeletonNodes(i)->setNodeMask(0x0);
     }
 }
 
 dart::simulation::World* DartNode::getWorld()
 {
-    if(_world) {
+    if (_world) {
         return _world;
     } else {
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[DartNode] No world exists in the DartNode yet" << std::endl;
         }
         return NULL;
@@ -455,7 +463,7 @@ dart::simulation::World* DartNode::getWorld()
 
 int DartNode::skeletonIndexIsValid(size_t skeletonIndex)
 {
-    if(skeletonIndex < _skeletons.size() && skeletonIndex >= 0) {
+    if (skeletonIndex < _skeletons.size() && skeletonIndex >= 0) {
         return 1;
     } else {
         std::cerr << "[DartNode] Requested an invalid robot index of " << skeletonIndex
@@ -467,7 +475,7 @@ int DartNode::skeletonIndexIsValid(size_t skeletonIndex)
 void DartNode::printInfo()
 {
     std::cout << "DartNode Robots:";
-    for(int i=0; i<_skeletons.size(); ++i) {
+    for (int i=0; i<_skeletons.size(); ++i) {
         std::cout << "\n    " << _skeletons[i]->getName()
                   << ": " << _skeletons[i]->getNumBodyNodes() << " BodyNodes";
     }
@@ -477,7 +485,7 @@ void DartNode::printInfo()
 
 void DartNode::setSkeletonTransparency(const dart::dynamics::Skeleton& skel, float transparencyValue)
 {
-    if(_world && _world->getSkeleton(skel.getName())) {
+    if (_world && _world->getSkeleton(skel.getName())) {
         osgGolems::setTransparency(_skelNodeMap.at(&skel), transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting Skeleton transparency" << std::endl;
@@ -486,7 +494,7 @@ void DartNode::setSkeletonTransparency(const dart::dynamics::Skeleton& skel, flo
 
 void DartNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue)
 {
-    if(_world && _world->getSkeleton(node.getSkeleton()->getName())) {
+    if (_world && _world->getSkeleton(node.getSkeleton()->getName())) {
         _skelNodeMap.at(node.getSkeleton())->setBodyNodeTransparency(node, transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting BodyNode transparency" << std::endl;
@@ -500,23 +508,23 @@ size_t DartNode::getNumSkeletons()
 
 size_t DartNode::addWorld(dart::simulation::World* world)
 {
-    if(!_world) {
+    if (!_world) {
         _world = world;
     } else {
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[DartNode] This DartNode already has a world object. Not going to create another one" << std::endl;
         }
-        for(int i=0; i<world->getNumSkeletons(); ++i) {
+        for (int i=0; i<world->getNumSkeletons(); ++i) {
             _world->addSkeleton(world->getSkeleton(i));
         }
     }
 
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[DartNode] Added world with the following " << world->getNumSkeletons() << " objects:";
     }
-    for(int i=0; i<world->getNumSkeletons(); ++i) {
+    for (int i=0; i<world->getNumSkeletons(); ++i) {
         _skeletons.push_back(world->getSkeleton(i));
-        if(_debug) {
+        if (_debug) {
             std::cerr << "    " << world->getSkeleton(i)->getName() << std::endl;
         }
         osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*world->getSkeleton(i), _debug);

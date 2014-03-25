@@ -133,13 +133,13 @@ osg::Node* osgDart::convertMeshToOsgNode(dart::dynamics::Shape* mesh)
     std::cerr << "[osgDartShapes] Color of shap: " << mesh->getColor().transpose() << std::endl;
     const aiScene* aiscene = meshShape->getMesh();
     aiNode* ainode = NULL;
-    if(aiscene) {
+    if (aiscene) {
         try {
             ainode = aiscene->mRootNode;
         } catch(std::exception const& e) {
             std::cout << "Exception: " << e.what() << std::endl;
         }
-        if(ainode) {
+        if (ainode) {
             osg::Node* node = osgAssimpSceneReader::traverseAIScene(aiscene, aiscene->mRootNode);
             osgGolems::addWireFrameMode(node);
             return node;

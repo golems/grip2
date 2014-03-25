@@ -71,7 +71,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     std::cerr << "[osgAssimpSceneReader] aiNode has " << aiNode->mNumMeshes << " num meshes" << std::endl;
     // Create main geode and loop through meshes
     osg::Geode* geode = new osg::Geode;
-    for(uint n=0; n<aiNode->mNumMeshes; ++n) {
+    for (uint n=0; n<aiNode->mNumMeshes; ++n) {
         const struct aiMesh* mesh = aiScene->mMeshes[aiNode->mMeshes[n]];
         osg::Geometry* geom = new osg::Geometry;
         geode->addDrawable(geom);
@@ -82,14 +82,14 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
         osg::Vec4Array* ca = (mesh->mColors[0] ? new osg::Vec4Array(mesh->mNumVertices) : NULL);
 
         // Add vertices, normals and colors to osg arrays from assimp arrays
-        for(uint i=0; i<mesh->mNumVertices; ++i) {
+        for (uint i=0; i<mesh->mNumVertices; ++i) {
             const aiVector3D& v = mesh->mVertices[i];
             (*va)[i].set(v.x, v.y, v.z);
-            if(na) {
+            if (na) {
                 const aiVector3D& n = mesh->mNormals[i];
                 (*na)[i].set(n.x, n.y, n.z);
             }
-            if(ca) {
+            if (ca) {
                 std::cerr << "has color: " << mesh->mColors[0] << ", " << mesh->mColors[1] << ", " << mesh->mColors[2] << std::endl;
                 const aiColor4D& c = mesh->mColors[0][i];
                 (*ca)[i].set(c.r, c.g, c.b, c.a);
@@ -98,11 +98,11 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
 
         // Set vertex, normal and color arrays of the osg::Geometry
         geom->setVertexArray(va);
-        if(na) {
+        if (na) {
             geom->setNormalArray(na);
             geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
         }
-        if(ca) {
+        if (ca) {
             geom->setColorArray(ca);
             geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
         }
@@ -110,8 +110,8 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
         // Create geometry texture coordinates
         uint unit = 0;
         const aiVector3D* aiTexCoords = mesh->mTextureCoords[unit];
-        while(aiTexCoords!=NULL) {
-            switch(mesh->mNumUVComponents[unit]) {
+        while (aiTexCoords!=NULL) {
+            switch (mesh->mNumUVComponents[unit]) {
                 case 1: {
                     osg::FloatArray* ta = new osg::FloatArray(mesh->mNumVertices);
                     for(uint i=0; i<mesh->mNumVertices; ++i) {
@@ -122,7 +122,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
                 }
                 case 2: {
                     osg::Vec2Array* ta = new osg::Vec2Array(mesh->mNumVertices);
-                    for(uint i=0; i<mesh->mNumVertices; ++i) {
+                    for (uint i=0; i<mesh->mNumVertices; ++i) {
                         const aiVector3D& t = aiTexCoords[i];
                         (*ta)[i].set(t.x, t.y);
                     }
@@ -131,7 +131,7 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
                 }
                 case 3: {
                     osg::Vec3Array* ta = new osg::Vec3Array(mesh->mNumVertices);
-                    for(uint i=0; i<mesh->mNumVertices; ++i) {
+                    for (uint i=0; i<mesh->mNumVertices; ++i) {
                         const aiVector3D& t = aiTexCoords[i];
                         (*ta)[i].set(t.x, t.y, t.z);
                     }
@@ -151,19 +151,19 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
         de[0] = new osg::DrawElementsUInt(GL_POLYGON);
 
         osg::DrawElementsUInt* current = NULL;
-        for(uint f=0; f<mesh->mNumFaces; ++f) {
+        for (uint f=0; f<mesh->mNumFaces; ++f) {
             const struct aiFace& face = mesh->mFaces[f];
-            if(face.mNumIndices>4) {
+            if (face.mNumIndices>4) {
                 current = de[0].get();
             } else {
                 current = de[face.mNumIndices].get();
             }
-            for(unsigned i=0; i<face.mNumIndices; ++i) {
+            for (unsigned i=0; i<face.mNumIndices; ++i) {
                 current->push_back(face.mIndices[i]);
             }
         }
 
-        for(uint i=0; i<5; ++i) {
+        for (uint i=0; i<5; ++i) {
             if(de[i]->size()>0) {
                 geom->addPrimitiveSet( de[i].get());
             }
@@ -184,9 +184,9 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     mt->setMatrix( osg::Matrixf((float*)&m));
 
     std::cerr << "aiNode has " << aiNode->mNumChildren << " children." << std::endl;
-    for(uint n=0; n<aiNode->mNumChildren; ++n) {
+    for (uint n=0; n<aiNode->mNumChildren; ++n) {
         osg::Node* child = traverseAIScene(aiScene, aiNode->mChildren[n]);
-        if(child) {
+        if (child) {
             mt->addChild(child);
         }
     }
@@ -198,26 +198,26 @@ void osgAssimpSceneReader::createMaterialData(osg::StateSet* ss, const aiMateria
 {
     aiColor4D c;
     osg::Material* material = new osg::Material;
-    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_AMBIENT, &c)==AI_SUCCESS) {
+    if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_AMBIENT, &c)==AI_SUCCESS) {
         std::cerr << "Has ambient: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
-    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_DIFFUSE, &c)==AI_SUCCESS) {
+    if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_DIFFUSE, &c)==AI_SUCCESS) {
         std::cerr << "Has diffuse: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
-    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_SPECULAR, &c)==AI_SUCCESS) {
+    if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_SPECULAR, &c)==AI_SUCCESS) {
         std::cerr << "Has specular: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
-    if(aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_EMISSIVE, &c)==AI_SUCCESS) {
+    if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_EMISSIVE, &c)==AI_SUCCESS) {
         std::cerr << "Has emissive: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
         material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
     }
 
     unsigned int maxValue = 1;
     float shininess = 0.0f, strength = 1.0f;
-    if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS, &shininess, &maxValue)==AI_SUCCESS) {
+    if (aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS, &shininess, &maxValue)==AI_SUCCESS) {
         maxValue = 1;
         if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &maxValue)==AI_SUCCESS)
             shininess *= strength;
@@ -230,7 +230,7 @@ void osgAssimpSceneReader::createMaterialData(osg::StateSet* ss, const aiMateria
     ss->setAttributeAndModes(material);
 
     int wireframe = 0; maxValue = 1;
-    if(aiGetMaterialIntegerArray(aiMtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &maxValue)==AI_SUCCESS) {
+    if (aiGetMaterialIntegerArray(aiMtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &maxValue)==AI_SUCCESS) {
         ss->setAttributeAndModes( new osg::PolygonMode( osg::PolygonMode::FRONT_AND_BACK, wireframe ? osg::PolygonMode::LINE : osg::PolygonMode::FILL) );
     }
 }

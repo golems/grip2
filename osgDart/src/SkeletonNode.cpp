@@ -87,12 +87,12 @@ SkeletonNode::~SkeletonNode()
 
 void SkeletonNode::setJointAxesVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[SkeletonNode] " << (makeVisible ? "Showing " : "Hiding ")
                   << "Joint Axes for " << this->getName() << std::endl;
     }
-    for(size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
-        if(_bodyNodeVisuals.at(i)->getJointAxisTF()) {
+    for (size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
+        if (_bodyNodeVisuals.at(i)->getJointAxisTF()) {
             _bodyNodeVisuals.at(i)->getJointAxisTF()->setNodeMask(makeVisible ? 0xffffffff : 0x0);
         }
     }
@@ -100,12 +100,12 @@ void SkeletonNode::setJointAxesVisible(bool makeVisible)
 
 void SkeletonNode::setBodyNodeAxesVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[SkeletonNode] " << (makeVisible ? "Showing " : "Hiding ")
                   << "BodyNode Axes for " << this->getName() << std::endl;
     }
-    for(size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
-        if(_bodyNodeVisuals.at(i)->getBodyNodeAxesTF()) {
+    for (size_t i=0; i<_bodyNodeVisuals.size(); ++i) {
+        if (_bodyNodeVisuals.at(i)->getBodyNodeAxesTF()) {
             _bodyNodeVisuals.at(i)->getBodyNodeAxesTF()->setNodeMask(makeVisible ? 0xffffffff : 0x0);
         }
     }
@@ -113,45 +113,45 @@ void SkeletonNode::setBodyNodeAxesVisible(bool makeVisible)
 
 void SkeletonNode::setSkeletonCoMVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[SkeletonNode] " << (makeVisible ? "Showing " : "Hiding ")
                   << "CoM for " << this->getName() << std::endl;
     }
 
-    if(_skeletonVisuals->getCenterOfMassTF()) {
+    if (_skeletonVisuals->getCenterOfMassTF()) {
         _skeletonVisuals->getCenterOfMassTF()->setNodeMask(makeVisible ? 0xffffffff : 0x0);
     }
 }
 
 void SkeletonNode::setSkeletonCoMProjectedVisible(bool makeVisible)
 {
-    if(_debug) {
+    if (_debug) {
         std::cerr << "[SkeletonNode] " << (makeVisible ? "Showing " : "Hiding ")
                   << "Projected CoM for " << this->getName() << std::endl;
     }
 
-    if(_skeletonVisuals->getProjectedCenterOfMassTF()) {
+    if (_skeletonVisuals->getProjectedCenterOfMassTF()) {
         _skeletonVisuals->getProjectedCenterOfMassTF()->setNodeMask(makeVisible ? 0xffffffff : 0x0);
     }
 }
 
 void SkeletonNode::setSkeletonRenderMode(renderMode_t renderMode)
 {
-    switch(renderMode) {
+    switch (renderMode) {
         case RENDER_VISUAL_MESH: {
-            for(size_t i=0; i<_bodyNodeGroups.size(); ++i) {
+            for (size_t i=0; i<_bodyNodeGroups.size(); ++i) {
                 _bodyNodeGroups[i]->setNodeMask(0xffffffff);
             }
-            for(size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
+            for (size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
                 _bodyNodeCollisionMeshGroups[i]->setNodeMask(0x0);
             }
             break;
         }
         case RENDER_COLLISION_MESH: {
-            for(size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
+            for (size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
                 _bodyNodeCollisionMeshGroups[i]->setNodeMask(0xffffffff);
             }
-            for(size_t i=0; i<_bodyNodeGroups.size(); ++i) {
+            for (size_t i=0; i<_bodyNodeGroups.size(); ++i) {
                 _bodyNodeGroups[i]->setNodeMask(0x0);
             }
             break;
@@ -162,21 +162,21 @@ void SkeletonNode::setSkeletonRenderMode(renderMode_t renderMode)
                     osgGolems::setWireFrameOn(_bodyNodeGroups.at(i)->getChild(j));
                 }
             }
-            for(size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
-                for(size_t j=0; j<_bodyNodeCollisionMeshGroups.at(i)->getNumChildren(); ++j) {
+            for (size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
+                for (size_t j=0; j<_bodyNodeCollisionMeshGroups.at(i)->getNumChildren(); ++j) {
                     osgGolems::setWireFrameOn(_bodyNodeCollisionMeshGroups.at(i)->getChild(j));
                 }
             }
             break;
         }
         case RENDER_WIREFRAME_OFF: {
-            for(size_t i=0; i<_bodyNodeGroups.size(); ++i) {
-                for(size_t j=0; j<_bodyNodeGroups.at(i)->getNumChildren(); ++j) {
+            for (size_t i=0; i<_bodyNodeGroups.size(); ++i) {
+                for (size_t j=0; j<_bodyNodeGroups.at(i)->getNumChildren(); ++j) {
                     osgGolems::setWireFrameOff(_bodyNodeGroups.at(i)->getChild(j));
                 }
             }
-            for(size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
-                for(size_t j=0; j<_bodyNodeCollisionMeshGroups.at(i)->getNumChildren(); ++j) {
+            for (size_t i=0; i<_bodyNodeCollisionMeshGroups.size(); ++i) {
+                for (size_t j=0; j<_bodyNodeCollisionMeshGroups.at(i)->getNumChildren(); ++j) {
                     osgGolems::setWireFrameOff(_bodyNodeCollisionMeshGroups.at(i)->getChild(j));
                 }
             }
@@ -188,7 +188,7 @@ void SkeletonNode::setSkeletonRenderMode(renderMode_t renderMode)
 void SkeletonNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue)
 {
     BodyNodeGroupMap::const_iterator it = _bodyNodeGroupMap.find(&node);
-    if(it != _bodyNodeGroupMap.end()) {
+    if (it != _bodyNodeGroupMap.end()) {
         osgGolems::setTransparency(_bodyNodeGroupMap.at(&node), transparencyValue);
     }
 
@@ -202,7 +202,7 @@ void SkeletonNode::update()
     _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
 
     // Then recursively update all the children of the root body node
-    for(int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
+    for (int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
         _updateRecursively(*_rootBodyNode.getChildBodyNode(i));
     }
 
@@ -213,7 +213,7 @@ void SkeletonNode::_updateSkeletonVisuals()
 {
     osg::Matrix comTF;
     comTF.makeTranslate(osgGolems::eigToOsgVec3(_rootBodyNode.getSkeleton()->getWorldCOM()));
-    if(_skeletonVisuals->getCenterOfMassTF()) {
+    if (_skeletonVisuals->getCenterOfMassTF()) {
         _skeletonVisuals->getCenterOfMassTF()->setMatrix(comTF);
     }
     comTF(3,2) = 0.0;
@@ -242,7 +242,7 @@ void SkeletonNode::_createSkeleton()
 
 void SkeletonNode::_addSkeletonVisuals()
 {
-    if(_rootBodyNode.getSkeleton()->getNumBodyNodes() > 1) {
+    if (_rootBodyNode.getSkeleton()->getNumBodyNodes() > 1) {
         _skeletonVisuals->addCenterOfMass();
     }
     _skeletonVisuals->addProjectedCenterOfMass();
@@ -253,7 +253,7 @@ void SkeletonNode::_addSkeletonVisuals()
 void SkeletonNode::_addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode& bodyNode)
 {
     // Add child BodyNodes to parent Joint
-    for(int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+    for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
         // Get child BodyNode and add its parent Joint to the grandparent Joint
         dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
         osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getWorldTransform()));
@@ -271,11 +271,11 @@ void SkeletonNode::_updateRecursively(const dart::dynamics::BodyNode& bodyNode)
 {
     // Get child node and update its transform. Then get its children and update theirs
     BodyNodeMatrixMap::const_iterator it = _bodyNodeMatrixMap.find(&bodyNode);
-    if(it != _bodyNodeMatrixMap.end()) {
+    if (it != _bodyNodeMatrixMap.end()) {
         _bodyNodeMatrixMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
         _bodyNodeVisualsMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
 
-        for(size_t i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+        for (size_t i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
             _updateRecursively(*bodyNode.getChildBodyNode(i));
         }
     }
@@ -312,8 +312,8 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
     visuals->addBodyNodesAxes();
     visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
-    if(node.getParentBodyNode() && node.getParentJoint()) {
-        if(node.getParentJoint()->getJointType() == dart::dynamics::Joint::REVOLUTE) {
+    if (node.getParentBodyNode() && node.getParentJoint()) {
+        if (node.getParentJoint()->getJointType() == dart::dynamics::Joint::REVOLUTE) {
             dart::dynamics::RevoluteJoint* parentJoint =
                     dynamic_cast<dart::dynamics::RevoluteJoint*>(node.getParentJoint());
 
@@ -349,7 +349,7 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
 {
     std::cerr << node.getSkeleton()->getName() << ". numShapes: " << node.getNumVisualizationShapes() << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
-    for(int i=0; i<node.getNumVisualizationShapes(); ++i) {
+    for (int i=0; i<node.getNumVisualizationShapes(); ++i) {
         switch (node.getVisualizationShape(i)->getShapeType()) {
             std::cerr << node.getName() << std::endl;
             case dart::dynamics::Shape::BOX:
@@ -380,7 +380,7 @@ void SkeletonNode::_addCollisionShapesFromBodyNode(const dart::dynamics::BodyNod
 {
     std::cerr << "[SkeletonNode] " << node.getName() << " has " << node.getNumCollisionShapes() << " collision shapes" << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
-    for(int i=0; i<node.getNumCollisionShapes(); ++i) {
+    for (int i=0; i<node.getNumCollisionShapes(); ++i) {
         switch (node.getCollisionShape(i)->getShapeType()) {
             case dart::dynamics::Shape::BOX:
             case dart::dynamics::Shape::ELLIPSOID:

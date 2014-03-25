@@ -101,7 +101,7 @@ void BodyNodeVisuals::setBodyNodeAxesColors(const osg::Vec4& xAxis, const osg::V
 void BodyNodeVisuals::setLineWidth(float lineWidth)
 {
     _lineWidth->setWidth(lineWidth);
-    for(int i=0; i<this->getNumChildren(); ++i) {
+    for (int i=0; i<this->getNumChildren(); ++i) {
         this->getChild(i)->getOrCreateStateSet()->setAttribute(_lineWidth);
     }
 }

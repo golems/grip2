@@ -45,24 +45,36 @@
 
 #include "visualization_tab.h"
 #include <iostream>
+#include <dart/collision/CollisionDetector.h>
+#include <dart/constraint/ConstraintDynamics.h>
+#include <dart/constraint/Constraint.h>
 
-Visualization_Tab::Visualization_Tab(osgDart::DartNode *worldNode, TreeView* treeView, QWidget *parent)
-    : QDockWidget(parent), _worldNode(worldNode), _treeView(treeView), visualizer_ui(new Ui::Visualization_Tab)
+Visualization_Tab::Visualization_Tab(osgDart::DartNode *worldNode, TreeView* treeView, MainWindow *parent)
+    : QDockWidget(parent), _parent(parent)
 {
-    //QDockWidget *widget = new QDockWidget(this);
-    //visualizer_ui.setupUi(widget);
-    //setMainWidget(widget);
-    //Ui_Visualizer::setupUi(this);
-    //this->addDockWidget(Qt::BottomDockWidgetArea, widget);
-    //widget->show();
+    visualizer_ui = new Ui::Visualization_Tab;
+    _worldNode = worldNode;
+    _treeView = treeView;
+    _selectedTreeViewItem = 0;
+
     visualizer_ui->setupUi(this);
+
+    // Signals from parent to my slots
+    connect(this, SIGNAL(signalSendMessage(QString)), _parent, SLOT(slotSetStatusBarMessage(QString)));
+
+    // Signals from my widgets to my slots
     connect(visualizer_ui->checkBoxShowJointAxes, SIGNAL(toggled(bool)), this, SLOT(slotToggleJointAxesVisibility(bool)));
     connect(visualizer_ui->checkBoxShowBodyNodeFrames, SIGNAL(toggled(bool)), this, SLOT(slotToggleBodyNodeAxesVisibility(bool)));
     connect(visualizer_ui->checkBoxShowCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCoMVisibility(bool)));
     connect(visualizer_ui->checkBoxShowProjCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonProjCoMVisibility(bool)));
     connect(visualizer_ui->checkBoxRenderUsingCollsionMesh, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCollisionMeshMode(bool)));
     connect(visualizer_ui->checkBoxRenderWireframe, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonWireFrameMode(bool)));
-    connect(visualizer_ui->sliderTranparency, SIGNAL(valueChanged(int)), this, SLOT(slotSetTransparencyValue(int)));
+    connect(visualizer_ui->sliderTransparency, SIGNAL(valueChanged(int)), this, SLOT(slotSetTransparencyValue(int)));
+    connect(visualizer_ui->checkBoxShowContactForces, SIGNAL(toggled(bool)), this, SLOT(slotToggleContactForcesVisibility(bool)));
+
+    // Signals from TreeView to my slots
+    connect(_treeView, SIGNAL(itemSelected(TreeViewReturn*)), this, SLOT(slotSetTransparencySliderFromSelectedItem()));
+    connect(_treeView, SIGNAL(itemSelected(TreeViewReturn*)), this, SLOT(slotSetSelectedTreeViewItem()));
 }
 
 Visualization_Tab::~Visualization_Tab()
@@ -77,13 +89,11 @@ void Visualization_Tab::update()
     slotToggleSkeletonProjCoMVisibility(visualizer_ui->checkBoxShowProjCoM->checkState());
     slotToggleSkeletonCollisionMeshMode(visualizer_ui->checkBoxRenderUsingCollsionMesh->checkState());
     slotToggleSkeletonWireFrameMode(visualizer_ui->checkBoxRenderWireframe->checkState());
+    slotToggleContactForcesVisibility(visualizer_ui->checkBoxShowContactForces->checkState());
 }
 
 void Visualization_Tab::slotToggleJointAxesVisibility(bool checked)
 {
-    if(true) {
-        std::cerr << "[Visualization_Tab] Setting Joint visibility to " << (checked == false ? "False" : "True") << std::endl;
-    }
     _worldNode->setJointAxesVisible(checked);
 }
 
@@ -114,18 +124,43 @@ void Visualization_Tab::slotToggleSkeletonWireFrameMode(bool checked)
 
 void Visualization_Tab::slotSetTransparencyValue(int transparencyValue)
 {
-    TreeViewReturn* selectedItem = _treeView->getActiveItem();
-    if(!selectedItem) {
-        std::cerr << "[VisualizationTab] No item selected" << std::endl;
+    if(!_selectedTreeViewItem) {
+        emit signalSendMessage("VisualizationTab] No item selected in TreeView");
         return;
     }
-    if(Return_Type_Robot == selectedItem->dType) {
-        dart::dynamics::Skeleton* skel = (dart::dynamics::Skeleton*)selectedItem->object;
+
+    if(Return_Type_Robot == _selectedTreeViewItem->dType) {
+        dart::dynamics::Skeleton* skel = (dart::dynamics::Skeleton*)_selectedTreeViewItem->object;
         _worldNode->setSkeletonTransparency(*skel, (float)transparencyValue/100.0);
-    } else if(Return_Type_Node == selectedItem->dType) {
-        dart::dynamics::BodyNode* node = (dart::dynamics::BodyNode*)selectedItem->object;
+    } else if(Return_Type_Node == _selectedTreeViewItem->dType) {
+        dart::dynamics::BodyNode* node = (dart::dynamics::BodyNode*)_selectedTreeViewItem->object;
         _worldNode->setBodyNodeTransparency(*node, (float)transparencyValue/100.0);
     } else {
-        std::cerr << "[VisualizationTab] Unknown type selected in tree view" << std::endl;
+        emit signalSendMessage("[VisualizationTab] Unknown type selected in TreeView");
     }
+}
+
+void Visualization_Tab::slotSetTransparencySliderFromSelectedItem()
+{
+
+}
+
+void Visualization_Tab::slotToggleContactForcesVisibility(bool checked)
+{
+    _worldNode->setContactForcesVisible(checked);
+}
+
+void Visualization_Tab::slotSetSelectedTreeViewItem()
+{
+    // Check if we have a world
+    if(!_worldNode->getNumSkeletons()) {
+        return;
+    }
+
+    // Get the selected treeview item and check if it's valid
+    _selectedTreeViewItem = _treeView->getActiveItem();
+    if(!_selectedTreeViewItem) {
+        return;
+    }
+
 }

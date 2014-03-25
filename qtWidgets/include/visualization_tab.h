@@ -55,6 +55,7 @@
 #include "ui_visualization_tab.h"
 #include "DartNode.h"
 #include "TreeView.h"
+#include <MainWindow.h>
 
 /**
  * \class Visualization_Tab Visualization_Tab.h
@@ -70,7 +71,7 @@ public:
     /**
      * \brief Constructs a Visualization_Tab object
      */
-    Visualization_Tab(osgDart::DartNode* worldNode, TreeView* treeView, QWidget *parent = 0);
+    Visualization_Tab(osgDart::DartNode* worldNode, TreeView* treeView, MainWindow *parent);
 
     /**
      * \brief Destructs a Visualization_Tab object
@@ -85,7 +86,10 @@ public:
      */
     void update();
 
-public slots:
+signals:
+    void signalSendMessage(QString msg);
+
+protected slots:
 
     /**
      * \brief Shows/hides the joint axes of the skeletons
@@ -137,15 +141,31 @@ public slots:
      */
      void slotSetTransparencyValue(int transparencyValue);
 
+     /**
+      * \brief Turns on/off visualization of contact forces
+      * \param checked Whether or not to show contact forces
+      * return void
+      */
+     void slotToggleContactForcesVisibility(bool checked);
+
+     void slotSetTransparencySliderFromSelectedItem();
+
+     void slotSetSelectedTreeViewItem();
+
 protected:
     /// Ui object that contains all the widgets of the tab
     Ui::Visualization_Tab *visualizer_ui;
+
+    /// Parent
+    MainWindow* _parent;
 
     /// osgDart::DartNode pointer in order to change visualization options of the the world
     osgDart::DartNode* _worldNode;
 
     /// Tree_View pointer for getting the current object
     TreeView* _treeView;
+
+    TreeViewReturn* _selectedTreeViewItem;
 
 }; // end class Visualization_Tab
 

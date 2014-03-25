@@ -63,7 +63,7 @@ osgViewer::View* osgGolems::createView(int x, int y, int w, int h, osg::Node* sc
     view->getCamera()->setClearColor(osg::Vec4(0.5, 0.5, 0.5, 0.5));
     view->setUpViewInWindow(x, y, w, h);
     view->addEventHandler(new osgViewer::StatsHandler);
-    if(scene == scene) {
+    if (scene == scene) {
         view->setSceneData(scene);
     }
     return view;

@@ -66,6 +66,7 @@
 
 // osgDart includes
 #include "SkeletonNode.h"
+#include "WorldVisuals.h"
 
 /**
  * \namespace osgDart
@@ -306,6 +307,9 @@ public:
      */
     void hideSkeleton(int i);
 
+    osg::MatrixTransform* createForceVector(float lineLength, const Eigen::Vector3d &contactForce);
+
+
 protected:
 
     //---------------------------------------------------------------
@@ -336,6 +340,9 @@ protected:
 
     /// Map from dart::dynamics::Skeleton* to osg::SkeletonNode
     SkeletonNodeMap _skelNodeMap;
+
+    /// Array of osg::MatrixTransforms representing contactForces in the world
+    std::vector<osg::ref_ptr<osgDart::ContactForceVisual> > _contactForceArrows;
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;

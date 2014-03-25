@@ -109,17 +109,27 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
     joint_Value = inspector_ui->positionSlider_0->getdsValue();
 
-    if (treeview->getActiveItem()->dType == 0) //if Robot, active_item->object = *skel
+    if (!simworld->getNumSkeletons()) {
+        return;
+    }
+
+    TreeViewReturn* activeItem = treeview->getActiveItem();
+
+    if (!activeItem) {
+        return;
+    }
+
+    if (activeItem->dType == 0) //if Robot, active_item->object = *skel
      {
          dart::dynamics::Skeleton* item_selected;
-         item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
+         item_selected = (dart::dynamics::Skeleton*)activeItem->object;
          std::cerr << "Skeleton Selected" << std::endl;
          qDebug() << QString::fromStdString(item_selected->getName()) ;
      }
-    else if (treeview->getActiveItem()->dType == 1) //if Node, active_item->object = *node
+    else if (activeItem->dType == 1) //if Node, active_item->object = *node
      {
          dart::dynamics::BodyNode* item_selected;
-         item_selected = (dart::dynamics::BodyNode*)treeview->getActiveItem()->object;
+         item_selected = (dart::dynamics::BodyNode*)activeItem->object;
          std::cerr << "BodyNode Selected" << std::endl;
          qDebug() << QString::fromStdString(item_selected->getParentJoint()->getName()) ;
      }
@@ -133,11 +143,11 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
     if(simworld) {
         std::cerr << "Num skels: " << simworld->getNumSkeletons() << std::endl;
 
-        if (treeview->getActiveItem()->dType == 0) //if robot, do nothing
+        if (activeItem->dType == 0) //if robot, do nothing
         {
          //indx.push_back( simworld->getSkeleton(1)->getJoint("LSR")->getGenCoord(0)->getSkeletonIndex() );
         }
-        else if (treeview->getActiveItem()->dType == 1) //if bodynode, change configuration using slider
+        else if (activeItem->dType == 1) //if bodynode, change configuration using slider
         {
          std::cerr << "node selected" << std::endl;
          dart::dynamics::BodyNode* item_selected;

@@ -59,6 +59,7 @@
 
 //// Local includes
 #include "MainWindow.h"
+#include "GripTab.h"
 
 class GripMainWindow;
 
@@ -98,7 +99,8 @@ public:
      * \param parent Pointer to the parent widget. Default is 0
      * \param debug Flag for whether or not to output debug statements
      */
-    GripSimulation(dart::simulation::World* world, MainWindow *parent=0, bool debug=false);
+    GripSimulation(dart::simulation::World* world, std::vector<GripTimeslice>* timeline,
+                   QList<GripTab*>* pluginLinst, MainWindow *parent=0, bool debug=false);
 
     /**
      * \brief Destroys the GripSimulation object
@@ -129,13 +131,17 @@ signals:
 
     /**
      * \brief Signal to pass the time value of the simulation real time
-     * \param
+     * \param simTimeRelToRealTimeInstantaneous The simluation time relative to real time
+     * \return void
      */
     void signalRelTimeChanged(double simTimeRelToRealTimeInstantaneous);
 
-    void signalAddTimesliceToTimeline(const GripTimeslice& timeslice);
-
-    void setMessage(QString msg);
+    /**
+     * \brief Signal to pass message to status bar in main window
+     * \param msg QString message to display in status bar
+     * \return void
+     */
+    void signalSendMessage(QString msg);
 
 public slots:
     /**
@@ -175,6 +181,12 @@ protected:
 
     /// World object received from creator that we need to simulate
     dart::simulation::World* _world;
+
+    /// Array of GripTimeSlice objects for simulation/kinematic playback
+    std::vector<GripTimeslice>* _timeline;
+
+    /// List of plugin pointers in order call their functions every timestep of simulation
+    QList<GripTab*>* _plugins;
 
     /// Local thread to move object into
     QThread* _thread;

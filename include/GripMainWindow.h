@@ -111,6 +111,9 @@ public:
     /// Display for the simluation time and its time relative to real time
     Time_Display* simulation_time_display;
 
+    /// Array of GripTimeSlice objects stored for simulation/kinematic playback
+    std::vector<GripTimeslice>* timeline;
+
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
     /// void* object can store a dart Skeleton object or BodyNode object
@@ -126,9 +129,6 @@ public:
 
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
-
-    /// Vector to hold timeslice objects for the slider and playback
-    std::vector<GripTimeslice> timeline;
 
 protected slots:
     /**
@@ -212,8 +212,6 @@ private slots:
      * \return void
      */
     void simulationStopped();
-
-    void slotAddTimesliceToTimeline(const GripTimeslice& timeslice);
 
 private:
     /** Private Members */

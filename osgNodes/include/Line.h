@@ -51,7 +51,7 @@
 #define LINE_H
 
 // OpenSceneGraph includes
-#include <osg/Geode>
+#include <osg/Geometry>
 #include <osg/LineWidth>
 
 /**
@@ -87,7 +87,7 @@ public:
     inline Line(lineType_t lineType, float length = 0.5f, float width = 3) :
         _lineType(lineType)
     {
-        switch(lineType) {
+        switch (lineType) {
             case LINE_ENDING_WITH_ARROW: _verts = new osg::Vec3Array(5); break;
             case LINE_WITH_ARROWS: _verts = new osg::Vec3Array(8); break;
             case LINE:
@@ -109,7 +109,7 @@ public:
      */
     inline std::string lineTypeToString(lineType_t lineType)
     {
-        switch(lineType) {
+        switch (lineType) {
             case LINE: return "LINE";
             case LINE_ENDING_WITH_ARROW: return "LINE_ENDING_WITH_ARROW";
             case LINE_WITH_ARROWS: return "LINE_WITH_ARROWS";
@@ -137,7 +137,7 @@ public:
         float arrowWidth = 0.003 * _lineWidth->getWidth();
         float arrowLength = 0.015 * _lineWidth->getWidth();
 
-        switch(_lineType) {
+        switch (_lineType) {
             case LINE_ENDING_WITH_ARROW: {
                 // Set end arrow vertices
                 (*_verts)[2].set(length,arrowWidth, 0);
@@ -198,7 +198,7 @@ protected:
         elem->push_back(0); elem->push_back(1);
         this->addPrimitiveSet(elem);
 
-        switch(_lineType) {
+        switch (_lineType) {
             case LINE_ENDING_WITH_ARROW: {
                 osg::DrawElementsUShort* endArrow =
                         new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES, 0);

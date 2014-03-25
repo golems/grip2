@@ -85,9 +85,11 @@ GripMainWindow::GripMainWindow() :
     MainWindow(),
     world(new dart::simulation::World()),
     worldNode(new osgDart::DartNode(true)),
-    simulation(new GripSimulation(world, this, true)),
+    timeline(new std::vector<GripTimeslice>),
+    pluginList(new QList<GripTab*>),
     _simulating(false)
 {
+    simulation = new GripSimulation(world, timeline, pluginList, this, true);
     createRenderingWindow();
     createTreeView();
 //    createSliders();
@@ -105,14 +107,14 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(string fileName)
 {
-    if(_simulating) {
-        if(!stopSimulationWithDialog()) {
+    if (_simulating) {
+        if (!stopSimulationWithDialog()) {
             std::cerr << "Not loading a new world" << std::endl;
             return;
         }
     }
 
-    if(world->getTime() || world->getNumSkeletons()) {
+    if (world->getTime() || world->getNumSkeletons()) {
         std::cerr << "Deleting world" << std::endl;
         this->clear();
     }
@@ -132,6 +134,7 @@ void GripMainWindow::doLoad(string fileName)
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+    this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(fileName));
 }
 
 bool GripMainWindow::stopSimulationWithDialog()
@@ -145,7 +148,7 @@ bool GripMainWindow::stopSimulationWithDialog()
     msgBox.setDefaultButton(QMessageBox::Ok);
     int resp = msgBox.exec();
 
-    switch(resp) {
+    switch (resp) {
         case QMessageBox::Cancel: {
             return false;
         }
@@ -161,7 +164,7 @@ bool GripMainWindow::stopSimulationWithDialog()
     // Wait for simulation to stop by letting the event loop process
     // events until the "simulationStopped" slot is called which set the
     // _simulating flag to false.
-    while(_simulating) {
+    while (_simulating) {
         QCoreApplication::processEvents();
     }
 
@@ -173,9 +176,9 @@ bool GripMainWindow::stopSimulationWithDialog()
 
 void GripMainWindow::clear()
 {
-    if(world) {
+    if (world) {
         worldNode->clear();
-        while(world->getNumSkeletons()) {
+        while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));
         }
         world->setTime(0);
@@ -202,19 +205,9 @@ void GripMainWindow::setSimulationRelativeTime(double time)
     simulation_time_display->Update_Time(world->getTime(),time);
 }
 
-void GripMainWindow::slotAddTimesliceToTimeline(const GripTimeslice& timeslice)
-{
-    std::cerr << "Timeline: " << timeline.size() << std::endl;
-    timeline.push_back(timeslice);
-    ostringstream msg;
-    msg << "New timeslice. Size = " << timeline.size();
-    this->setMessageSlot(tr(msg.str().c_str()));
-}
-
 int GripMainWindow::saveText(string scenepath, const char* llfile)
 {
-    try
-    {
+    try {
         QFile file(llfile);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return 0;
@@ -222,8 +215,7 @@ int GripMainWindow::saveText(string scenepath, const char* llfile)
         out << QString::fromStdString(scenepath) << "\n";
     }
 
-    catch (const std::exception& e)
-    {
+    catch (const std::exception& e) {
         cout <<  e.what() << endl;
         return 0;
     }
@@ -253,7 +245,7 @@ void GripMainWindow::hd1280x720(){}
 
 void GripMainWindow::startSimulation()
 {
-    if(world) {
+    if (world->getNumSkeletons()) {
         _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
@@ -274,7 +266,7 @@ void GripMainWindow::stopSimulation()
 
 void GripMainWindow::swapStartStopButtons()
 {
-    if(this->getToolBar()->actions().at(3)->isVisible()) {
+    if (this->getToolBar()->actions().at(3)->isVisible()) {
         this->getToolBar()->actions().at(3)->setVisible(false);
         this->getToolBar()->actions().at(4)->setVisible(true);
     } else {
@@ -364,12 +356,12 @@ void GripMainWindow::loadPlugins()
             std::cout<<"Plugin loaded "<<(plugin->objectName()).toStdString()<<std::endl;
             GripTab* gt = qobject_cast<GripTab*>(plugin);
             pluginList->append(gt);
-            if(gt)
+            if (gt)
             {
                 gt->Load(activeItem, viewWidget);
 
                 QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
-                if(pluginWidget == NULL)
+                if (pluginWidget == NULL)
                     std::cout<<"is NULL"<<std::endl;
                 else
                     this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);

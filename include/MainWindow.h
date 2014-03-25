@@ -89,6 +89,14 @@ public:
     void Toolbar();
     void loadPlugins();
 
+public slots:
+    /**
+     * \brief Sets the status bar message
+     * \param msg Message to display on the status bar
+     * \return void
+     */
+    void slotSetStatusBarMessage(QString msg);
+
 protected:
     /// QToolBar object for showing/hiding buttons
     QToolBar* getToolBar();
@@ -208,13 +216,6 @@ protected slots:
      * \return void
      */
     virtual void setSimulationRelativeTime(double time) = 0;
-
-    /**
-     * \brief Sets the status bar message
-     * \param msg Message to display on the status bar
-     * \return void
-     */
-    void setMessageSlot(QString msg);
 
     /**
      * \brief Displays information about the application

@@ -42,7 +42,10 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Local includes
 #include "Grid.h"
+
+// C++ Standard includes
 #include <iostream>
 
 using namespace osgGolems;
@@ -58,8 +61,10 @@ Grid::Grid(uint width, uint depth, uint gridSize, const osg::Vec4& color)
     _colors = new osg::Vec4Array;
 
     // Ensure really large or negative numbers weren't passed in
-    if(width > maxLength) width = maxLength;
-    if(depth > maxLength) depth = maxLength;
+    if (width > maxLength)
+        width = maxLength;
+    if (depth > maxLength)
+        depth = maxLength;
 
     // Create the perimter vertices and connect them with lines
     _createVertices(width, depth, _makeEven(gridSize));
@@ -71,7 +76,7 @@ Grid::~Grid(){}
 void Grid::setGridColor(const osg::Vec4& color)
 {
     // Loop through color array and assign input color to it.
-    for(size_t i=0; i<_colors->size(); ++i) {
+    for (size_t i=0; i<_colors->size(); ++i) {
         _colors->at(i) = color;
     }
 
@@ -88,7 +93,7 @@ void Grid::setGridColor(const osg::Vec4& color)
 void Grid::_createVertices(uint width, uint depth, uint gridSize)
 {
     // Compute number of lines for width and depth directions
-    if(gridSize >= width || gridSize >= depth) {
+    if (gridSize >= width || gridSize >= depth) {
         gridSize = std::min(width, depth) / 2;
         std::cerr << "[Grid] Error!. Request grid size is larger that either width or depth.\n"
                   << "Setting grid size to " << gridSize << std::endl;
@@ -104,13 +109,13 @@ void Grid::_createVertices(uint width, uint depth, uint gridSize)
     _verts->resize(numLinesWidth*2 + numLinesDepth*2);
 
     // Create endpoints of width lines
-    for(int w=-halfwidth; w<=halfwidth;) {
+    for (int w=-halfwidth; w<=halfwidth;) {
         _verts->push_back(osg::Vec3(w, halfdepth, 0));
         _verts->push_back(osg::Vec3(w,-halfdepth, 0));
         w += gridSize;
     }
     // Create endpoints of depth lines
-    for(int d=-halfdepth; d<=halfdepth;) {
+    for (int d=-halfdepth; d<=halfdepth;) {
         _verts->push_back(osg::Vec3( halfwidth, d, 0));
         _verts->push_back(osg::Vec3(-halfwidth, d, 0));
         d += gridSize;
@@ -122,7 +127,7 @@ void Grid::_createVertices(uint width, uint depth, uint gridSize)
 
 void Grid::_drawGrid(const osg::Vec4& color)
 {
-    for(size_t l=0; l<_verts->size()-1;) {
+    for (size_t l=0; l<_verts->size()-1;) {
         osg::DrawElementsUShort* elem = new osg::DrawElementsUShort(osg::PrimitiveSet::LINES, 0);
         elem->push_back(l);
         elem->push_back(l+1);
@@ -139,7 +144,7 @@ void Grid::_drawGrid(const osg::Vec4& color)
 uint Grid::_makeEven(uint num)
 {
     // If even return number, else return number + 1
-    if(num % 2) {
+    if (num % 2) {
         return num;
     } else {
         return ++num;

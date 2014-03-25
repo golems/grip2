@@ -116,7 +116,7 @@ QToolBar* MainWindow::getToolBar()
     return toolbar;
 }
 
-void MainWindow::setMessageSlot(QString msg)
+void MainWindow::slotSetStatusBarMessage(QString msg)
 {
     this->statusBar()->showMessage(msg);
 }
@@ -150,8 +150,10 @@ void MainWindow::load()
 void MainWindow::quickLoad()
 {
     QFile file(".lastload");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        slotSetStatusBarMessage("No saved load file");
         return;
+    }
 
     QTextStream in(&file);
     QString line = in.readLine();
