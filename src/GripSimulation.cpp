@@ -130,7 +130,7 @@ void GripSimulation::startSimulation()
 }
 void GripSimulation::simulateTimeStep()
 {
-    if(_simulating) {
+    if (_simulating) {
 
         // Run each tabs doBeforeSimulationTimeStep function
         // for each tab
@@ -160,7 +160,7 @@ void GripSimulation::simulateTimeStep()
 //                  << _simTimeRelToRealTimeOverall
 //                  << std::endl;
 
-        if(_simulateOneFrame) {
+        if (_simulateOneFrame) {
             return;
         } else {
             // Call this method again using invokeMethod to give the EventLoop
@@ -168,7 +168,7 @@ void GripSimulation::simulateTimeStep()
             QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
         }
     } else { // Get out of this function so we don't call ourselves again
-        if(_debug) {
+        if (_debug) {
             std::cerr << "[GripSimulation] Emitting stop signal and exiting simulation loop" << std::endl;
         }
         emit simulationStoppedSignal();
