@@ -93,6 +93,7 @@ GripMainWindow::GripMainWindow() :
 //    createSliders();
     createTimeDisplays();
     createTabs();
+    pluginList = new QList<GripTab*>;
     loadPlugins();
     this->setStatusBar(this->statusBar());
 
