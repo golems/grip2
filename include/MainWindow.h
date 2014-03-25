@@ -87,6 +87,7 @@ public:
      * \return void
      */
     void Toolbar();
+    void loadPlugins();
 
 protected:
     /// QToolBar object for showing/hiding buttons

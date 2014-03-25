@@ -46,15 +46,15 @@
 #include "inspector_tab.h"
 #include <iostream>
 #include <dart/simulation/World.h>
-#include <tree_view.h>
+#include <TreeView.h>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
-//#include <typeinfo>
+
 #include <QDebug>
 #include <QString>
 
 
-Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
+Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, TreeView *treeViewer)
  : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab)
 {
  //   QDockWidget *widget = new QDockWidget(this);
@@ -107,7 +107,7 @@ void Inspector_Tab::ChangeJoint(int sliderValue){
 
     double joint_Value = 0.0;
 
-    joint_Value = inspector_ui->positionSlider_0->getdsvalue();
+    joint_Value = inspector_ui->positionSlider_0->getdsValue();
 
     if (treeview->getActiveItem()->dType == 0) //if Robot, active_item->object = *skel
      {

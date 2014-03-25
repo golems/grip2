@@ -54,7 +54,7 @@
 // Local includes
 #include "ui_visualization_tab.h"
 #include "DartNode.h"
-#include "tree_view.h"
+#include "TreeView.h"
 
 /**
  * \class Visualization_Tab Visualization_Tab.h
@@ -70,7 +70,7 @@ public:
     /**
      * \brief Constructs a Visualization_Tab object
      */
-    Visualization_Tab(osgDart::DartNode* worldNode, Tree_View* treeView, QWidget *parent = 0);
+    Visualization_Tab(osgDart::DartNode* worldNode, TreeView* treeView, QWidget *parent = 0);
 
     /**
      * \brief Destructs a Visualization_Tab object
@@ -145,7 +145,7 @@ protected:
     osgDart::DartNode* _worldNode;
 
     /// Tree_View pointer for getting the current object
-    Tree_View* _treeView;
+    TreeView* _treeView;
 
 }; // end class Visualization_Tab
 

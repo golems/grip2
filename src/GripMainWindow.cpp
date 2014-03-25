@@ -45,15 +45,23 @@
 // Local includes
 #include "GripMainWindow.h"
 #include "ViewerWidget.h"
+
+/// including tab files
 #include "visualization_tab.h"
 #include "ui_visualization_tab.h"
+
 #include "inspector_tab.h"
 #include "ui_inspector_tab.h"
-#include "tree_view.h"
-#include "ui_tree_view.h"
+
+#include "TreeView.h"
+#include "ui_TreeView.h"
+
 #include "time_display.h"
 #include "ui_time_display.h"
+
 #include "doubleslider.h"
+
+
 #include "Grid.h"
 #include "Line.h"
 #include "DartNode.h"
@@ -85,6 +93,7 @@ GripMainWindow::GripMainWindow() :
 //    createSliders();
     createTimeDisplays();
     createTabs();
+    loadPlugins();
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
@@ -325,8 +334,54 @@ void GripMainWindow::createRenderingWindow()
 
 void GripMainWindow::createTreeView()
 {
-    treeviewer = new Tree_View(this, activeItem);
+    treeviewer = new TreeView(this, activeItem);
     this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
+}
+
+void GripMainWindow::loadPlugins()
+{
+    QObject* plugin;
+    QDir pluginsDir = QDir(qApp->applicationDirPath());
+
+#if defined(Q_OS_WIN)
+    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+        pluginsDir.cdUp();
+#elif defined(Q_OS_MAC)
+    if (pluginsDir.dirName() == "MacOS") {
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+    }
+#endif
+    pluginsDir.cdUp();
+    pluginsDir.cd("plugin");
+
+    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+        std::cout<<"Attempting to load plugin: "<<fileName.toStdString()<<std::endl;
+        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+        plugin = loader.instance();
+        if (plugin) {
+            std::cout<<"Plugin loaded "<<(plugin->objectName()).toStdString()<<std::endl;
+            GripTab* gt = qobject_cast<GripTab*>(plugin);
+            pluginList->append(gt);
+            if(gt)
+            {
+                gt->Load(activeItem, viewWidget);
+
+                QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
+                if(pluginWidget == NULL)
+                    std::cout<<"is NULL"<<std::endl;
+                else
+                    this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+
+                tabifyDockWidget(visualizationtab, pluginWidget);
+            }
+        }
+        else {
+            std::cout<<"Plugin could not be loaded"<<std::endl;
+            std::cout<<"Error: "<<(loader.errorString()).toStdString()<<std::endl;
+        }
+    }
 }
 
 void GripMainWindow::createTabs()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Tree_View</class>
- <widget class="QDockWidget" name="Tree_View">
+ <class>TreeView</class>
+ <widget class="QDockWidget" name="TreeView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,6 +27,34 @@
     <width>250</width>
     <height>1000</height>
    </size>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget { 
+   font: 0.5pt &quot;Ubuntu&quot;;
+   color:rgb(255, 255, 255);
+}
+QDockWidget::title {
+     text-align: left;
+     subcontrol-position: top left;
+     position: absolute;
+     top: 0px; left: 0px; bottom: 0px;
+ }
+QDockWidget::close-button, QDockWidget::float-button {
+    icon-size: 14px; /* maximum icon size */
+ }
+QDockWidget::close-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 5px; bottom: 0px;
+     width: 14px;
+ }
+
+QDockWidget::float-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 20px; bottom: 0px;
+     width: 14px;
+ }</string>
   </property>
   <property name="allowedAreas">
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>

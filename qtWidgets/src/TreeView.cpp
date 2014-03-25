@@ -1,50 +1,5 @@
-/*
- * Copyright (c) 2014, Georgia Tech Research Corporation
- * All rights reserved.
- *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
- * Date: Jan 2014
- *
- * Humanoid Robotics Lab      Georgia Institute of Technology
- * Director: Mike Stilman     http://www.golems.org
- *
- *
- * This file is provided under the following "BSD-style" License:
- *   Redistribution and use in source and binary forms, with or
- *   without modification, are permitted provided that the following
- *   conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   * Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *
- *   * Neither the name of the Humanoid Robotics Lab nor the names of
- *     its contributors may be used to endorse or promote products
- *     derived from this software without specific prior written
- *     permission
- *
- *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
- *   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
- *   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- *   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- *   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- *   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- *   USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- *   AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *   POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 #include <QtGui>
-#include "tree_view.h"
+#include "TreeView.h"
 #include <iostream>
 #include <cstdio>
 
@@ -70,7 +25,7 @@
 using namespace dart;
 using namespace std;
 
-Tree_View::Tree_View(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(parent), ui(new Ui::Tree_View)
+TreeView::TreeView(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(parent), ui(new Ui::TreeView)
 {
     activeItem = active_item;
     ui->setupUi(this);
@@ -84,24 +39,24 @@ Tree_View::Tree_View(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(
     connect(ui_checkBox, SIGNAL(stateChanged(int)), this, SLOT(nameChange_BodyNode_Joint(int)));
 }
 
-Tree_View::~Tree_View()
+TreeView::~TreeView()
 {
     delete ui;
 }
 
-void Tree_View::treeView_itemSelected(QTreeWidgetItem * item, int column)
+void TreeView::treeView_itemSelected(QTreeWidgetItem * item, int column)
 {
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
     activeItem = val;
     emit itemSelected(activeItem);
 }
 
-TreeViewReturn* Tree_View::getActiveItem()
+TreeViewReturn* TreeView::getActiveItem()
 {
  return activeItem;
 }
 
-QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
+QTreeWidgetItem* TreeView::addParent(dynamics::Skeleton* skel, QIcon icon, int skeleton_id)
 {
     QTreeWidgetItem *itm = new QTreeWidgetItem(ui_treeWidget);
     itm->setText(0, QString::fromStdString(skel->getName()));
@@ -110,6 +65,7 @@ QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
     TreeViewReturn* ret = new TreeViewReturn();
     ret->object = skel;
     ret->dType = Return_Type_Robot;
+    ret->skeletonID = skeleton_id;
 
     QVariant var;
     var.setValue(ret);
@@ -119,7 +75,7 @@ QTreeWidgetItem* Tree_View::addParent(dynamics::Skeleton* skel, QIcon icon)
     return itm;
 }
 
-QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon)
+QTreeWidgetItem* TreeView::addChildItem(dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon, int skeleton_id)
 {
     if(parent != NULL)
     {
@@ -130,6 +86,7 @@ QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetIt
         TreeViewReturn* ret = new TreeViewReturn();
         ret->object = node;
         ret->dType = Return_Type_Node;
+        ret->skeletonID = skeleton_id;
 
         QVariant var;
         var.setValue(ret);
@@ -144,7 +101,7 @@ QTreeWidgetItem* Tree_View::addChildItem(dynamics::BodyNode* node, QTreeWidgetIt
     }
 }
 
-QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem* prev, QTreeWidgetItem* parent, bool chain)
+QTreeWidgetItem* TreeView::buildTree(dynamics::BodyNode* node, QTreeWidgetItem* prev, QTreeWidgetItem* parent, bool chain, int skeleton_id)
 {
     QPixmap fixedIcon((const char**) fixed_xpm);
     QPixmap freeIcon((const char**) free_xpm);
@@ -177,45 +134,45 @@ QTreeWidgetItem* Tree_View::buildTree(dynamics::BodyNode* node, QTreeWidgetItem*
     if (node->getNumChildBodyNodes() == 1)
     {
         if (node->getChildBodyNode(0)->getNumChildBodyNodes() == 1 && !chain)
-            prev = new_parent = addChildItem(node, parent, QIcon(icon));
+            prev = new_parent = addChildItem(node, parent, QIcon(icon), skeleton_id);
         else
         {
-            prev = addChildItem(node, parent, QIcon(icon));
+            prev = addChildItem(node, parent, QIcon(icon), skeleton_id);
         }
-        buildTree(node->getChildBodyNode(0), prev, new_parent, true);
+        buildTree(node->getChildBodyNode(0), prev, new_parent, true, skeleton_id);
     }
     else
     {
-        prev = new_parent = addChildItem(node, parent, QIcon(icon));
+        prev = new_parent = addChildItem(node, parent, QIcon(icon), skeleton_id);
         for (int i=0; i<node->getNumChildBodyNodes(); i++)
-            prev = buildTree(node->getChildBodyNode(i), prev, new_parent, false);
+            prev = buildTree(node->getChildBodyNode(i), prev, new_parent, false, skeleton_id);
     }
     return prev;
 }
 
-void Tree_View::populateTreeView(simulation::World *world)
+void TreeView::populateTreeView(simulation::World *world)
 {
     QPixmap robotIcon((const char**) robot_xpm);
     for (int i = 0; i<world->getNumSkeletons(); ++i)
     {
         dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {
-            QTreeWidgetItem* parent = addParent(skel,  QIcon(robotIcon));
-            buildTree(skel->getRootBodyNode(), parent, parent, false);
+            QTreeWidgetItem* parent = addParent(skel,  QIcon(robotIcon), i);
+            buildTree(skel->getRootBodyNode(), parent, parent, false,i);
         } else {
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     }
 }
 
-void Tree_View::clear()
+void TreeView::clear()
 {
     while(ui_treeWidget->topLevelItemCount()) {
         delete ui_treeWidget->takeTopLevelItem(0);
     }
 }
 
-void Tree_View::name_Joint(QTreeWidgetItem* node)
+void TreeView::name_Joint(QTreeWidgetItem* node)
 {
     TreeViewReturn* val = node->data(0, Qt::UserRole).value<TreeViewReturn*>();
     dynamics::Joint* joint = ((dynamics::BodyNode*)val->object)->getParentJoint();
@@ -229,7 +186,7 @@ void Tree_View::name_Joint(QTreeWidgetItem* node)
             name_Joint(node->child(i));
 }
 
-void Tree_View::name_BodyNode(QTreeWidgetItem* node)
+void TreeView::name_BodyNode(QTreeWidgetItem* node)
 {
     TreeViewReturn* val = node->data(0, Qt::UserRole).value<TreeViewReturn*>();
     dynamics::BodyNode* bodyNode = (dynamics::BodyNode*)val->object;
@@ -243,7 +200,7 @@ void Tree_View::name_BodyNode(QTreeWidgetItem* node)
             name_BodyNode(node->child(i));
 }
 
-void Tree_View::nameChange_BodyNode_Joint(int checkBoxState)
+void TreeView::nameChange_BodyNode_Joint(int checkBoxState)
 {
     int count = ui_treeWidget->topLevelItemCount();
     for(int i = 0; i < count; i++)
@@ -259,8 +216,3 @@ void Tree_View::nameChange_BodyNode_Joint(int checkBoxState)
         }
     }
 }
-
-//void Tree_View::itemSelected(TreeViewReturn* active_item)
-//{
-//
-//}

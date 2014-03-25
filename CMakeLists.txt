@@ -72,11 +72,11 @@ set(project_libs qtWidgets osgNodes osgDart)
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
-add_library(mainwindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainwindow ${project_libs} ${DART_LIBRARIES})
+add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
+target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES})
 
 # Set project libraries variable
-set(project_libs ${project_libs} mainwindow)
+set(project_libs ${project_libs} mainWindow)
 
 
 #-----------------------------------------------

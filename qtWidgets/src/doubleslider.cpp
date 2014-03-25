@@ -67,7 +67,7 @@ DoubleSlider::DoubleSlider (QWidget *parent)
 double DoubleSlider::changeTOdouble(int intvalue)
 {
     double temp = (double)intvalue;
-    double doublevalue = temp/pow(10.0,(double)decimal_point);
+    double doublevalue = temp*pow(10.0,-(double)decimal_point);
 
     return doublevalue;
 }
@@ -86,10 +86,10 @@ void DoubleSlider::setdsValue(double valueindouble)
      emit valueChanged(changeTOinteger(dsvalue));
 }
 
-double DoubleSlider::getdsvalue()
+double DoubleSlider::getdsValue()
 {
     double temp = (double)value();
-    temp = temp/pow(10.0,(double)decimal_point);
+    temp = temp*pow(10.0,-(double)decimal_point);
     if (temp != dsvalue) {
         dsvalue = temp;
         }

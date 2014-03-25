@@ -52,16 +52,19 @@
 // Base class include
 #include "MainWindow.h"
 
-// Local includes
-#include "ViewerWidget.h"
-#include "tree_view.h"
-#include "inspector_tab.h"
-#include "visualization_tab.h"
-#include "time_display.h"
+#include <ViewerWidget.h>
+#include <TreeView.h>
+
+#include <inspector_tab.h>
+#include <visualization_tab.h>
+#include <time_display.h>
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
-#include "ui_tree_view.h"
+
+#include "ui_TreeView.h"
+#include "GripTab.h"
 #include "ui_time_display.h"
+
 #include "DartNode.h"
 #include "GripSimulation.h"
 
@@ -95,8 +98,8 @@ public:
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
 
-    /// Tree viewer for viewing the objects in the world
-    Tree_View* treeviewer;
+    /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
+    TreeView* treeviewer;
 
     std::vector<GripTimeslice>* _timeline;
     /// Tab for manually manipulating objects in the world
@@ -213,10 +216,16 @@ private slots:
     void slotAddTimesliceToTimeline(const GripTimeslice& timeslice);
 
 private:
-    /**
-     * \brief Creates the rendering window
-     * \return void
-     */
+    /** Private Members */
+    /// Any plugin that is loaded successfully into the Grip will get stored in this QList
+    /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
+    /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
+    /// you first need to perform a qobject_cast. An example for the same is
+    /// GripTab* gt = qobject_cast<GripTab*>(plugin);
+    /// Once a pointer of type GripTab is created you can then call the function directly.
+    QList<GripTab*>* pluginList;
+
+    /** Private Methods */
     void createRenderingWindow();
 
     /**
@@ -282,6 +291,10 @@ private:
      * \return bool
      */
     bool _simulating;
+
+    /// This function reads a folder by the name of 'plugin' in source directory
+    /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
+    void loadPlugins();
 };
 
 

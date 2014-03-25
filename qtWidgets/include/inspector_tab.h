@@ -48,7 +48,7 @@
 
 // Local includes
 #include "ui_inspector_tab.h"
-#include "tree_view.h"
+#include <TreeView.h>
 
 // DART includes
 #include <dart/simulation/World.h>
@@ -67,7 +67,7 @@ public:
     /**
      * \brief Constructs an InspectorTab object
      */
-    Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer);
+    Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, TreeView *treeViewer);
 
     /**
      * \brief Destructs an InspectorTab object
@@ -83,7 +83,7 @@ private slots:
 private:
     Ui::Inspector_Tab *inspector_ui;
     simulation::World *simworld;
-    Tree_View *treeview;
+    TreeView *treeview;
     QSlider *positionSlider_0;
     QDoubleSpinBox *positionSpinBox_0;
 };

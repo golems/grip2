@@ -46,7 +46,7 @@
 #include "visualization_tab.h"
 #include <iostream>
 
-Visualization_Tab::Visualization_Tab(osgDart::DartNode *worldNode, Tree_View* treeView, QWidget *parent)
+Visualization_Tab::Visualization_Tab(osgDart::DartNode *worldNode, TreeView* treeView, QWidget *parent)
     : QDockWidget(parent), _worldNode(worldNode), _treeView(treeView), visualizer_ui(new Ui::Visualization_Tab)
 {
     //QDockWidget *widget = new QDockWidget(this);
