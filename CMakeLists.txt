@@ -13,11 +13,20 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Building in \"Debug\" mode. Defining DEBUG_BUILD macro.")
-    add_definitions(-DDEBUG_BUILD)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "Building in \"Release\" mode.")
 else()
 endif()
+
+#-----------------------------------------------
+#               UNINSTALL TARGET
+#-----------------------------------------------
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 #-----------------------------------------------
 #                FIND PACKAGES
@@ -85,6 +94,8 @@ set(project_libs ${project_libs} mainWindow)
 add_executable(Grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(Grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
+add_library(grip SHARED)
+target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -105,3 +116,16 @@ foreach(utest_src_file ${unit_tests_source})
     add_custom_target(${test_base}.run ${test_base} ${ARGN})
     add_dependencies(check ${test_base})
 endforeach(utest_src_file)
+
+
+#-----------------------------------------------
+#                 INSTALLATION
+#-----------------------------------------------
+INSTALL(PROGRAMS build/Grip
+        DESTINATION /usr/local/bin/)
+
+INSTALL(TARGETS grip
+        DESTINATION /usr/local/lib/)
+
+INSTALL(FILES "qtWidgets/include/GripTab.h"
+        DESTINATION /usr/local/include)
