@@ -15,6 +15,10 @@
 # files created by the Qt Editor
 grip2.*
 
+*.lastload
+CMakeLists.txt.user
+CMakeCache.txt
+
 doc/html
 doc/latex
 build

@@ -45,23 +45,15 @@
 // Local includes
 #include "GripMainWindow.h"
 #include "ViewerWidget.h"
-
-/// including tab files
 #include "visualization_tab.h"
 #include "ui_visualization_tab.h"
-
 #include "inspector_tab.h"
 #include "ui_inspector_tab.h"
-
 #include "TreeView.h"
 #include "ui_TreeView.h"
-
 #include "time_display.h"
 #include "ui_time_display.h"
-
 #include "doubleslider.h"
-
-
 #include "Grid.h"
 #include "Line.h"
 #include "DartNode.h"
@@ -92,11 +84,13 @@ GripMainWindow::GripMainWindow() :
     simulation = new GripSimulation(world, timeline, pluginList, this, true);
     createRenderingWindow();
     createTreeView();
-//    createSliders();
     createTimeDisplays();
+    createPlaybackSliders();
     createTabs();
     pluginList = new QList<GripTab*>;
     loadPlugins();
+    manageLayout();
+
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
@@ -135,6 +129,7 @@ void GripMainWindow::doLoad(string fileName)
 
     cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
+    inspectortab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(fileName));
 }
 
@@ -309,26 +304,14 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-    this->setCentralWidget(viewWidget);
-//    osg::MatrixTransform* tf = new osg::MatrixTransform;
-//    osg::Matrix m;
-////    m.makeTranslate(0, 0, .5);
-//    m.setRotate(osg::Quat(-M_PI/4, osg::Vec3(0, 1, 0)));
-//    std::cerr << "M \n" << m << std::endl;
-//    tf->setMatrix(m);
-//    osg::Geode* g = new osg::Geode;
-//    osgGolems::Line* l = new osgGolems::Line(osgGolems::LINE_WITH_ARROWS);
-//    l->setColor(osg::Vec4f(1, 0, 1, 1));
-//    g->addDrawable(l);
-//    tf->addChild(g);
-//    tf->addChild(new osgDart::DartVisuals);
-//    viewWidget->addNodeToScene(tf);
+//    this->setCentralWidget(viewidget);
+
 }
 
 void GripMainWindow::createTreeView()
 {
     treeviewer = new TreeView(this, activeItem);
-    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
+//    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
 void GripMainWindow::loadPlugins()
@@ -382,6 +365,7 @@ void GripMainWindow::createTabs()
     //setDockOptions(QMainWindow::AnimatedDocks);
     //setDockOptions(QMainWindow::VerticalTabs);
     //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
+
     setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
     //setDockOptions(QMainWindow::AllowNestedDocks);
 
@@ -407,12 +391,16 @@ void GripMainWindow::createTabs()
     //visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
     visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);//                  setFeatures(QDockWidget::DockWidgetClosable);
 
-    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+//    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea); //setFeatures(QDockWidget::DockWidgetClosable);
 
-    tabifyDockWidget(inspectortab, visualizationtab);
-    visualizationtab->show();
-    visualizationtab->raise();
+//    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+//    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+
+//     tabifyDockWidget(inspectortab, visualizationtab);
+
+//    visualizationtab->show();
+//    visualizationtab->raise();
+
     //visualizationtab->setFloating(false);
     //inspectortab->setFloating(false);
 
@@ -458,6 +446,59 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
 void GripMainWindow::createTimeDisplays()
 {
     simulation_time_display = new Time_Display(this);
-    this->addDockWidget(Qt::RightDockWidgetArea, simulation_time_display);
+//    this->addDockWidget(Qt::RightDockWidgetArea, simulation_time_display);
+
+}
+
+void GripMainWindow::createPlaybackSliders()
+{
+    pbSlider = new Playback_Slider(this);
+    pbSlider->setTitleBarWidget(new QWidget());
+
+//    pbSlider->setAllowedAreas(Qt::BottomDockWidgetArea);
+//    this->addDockWidget(Qt::BottomDockWidgetArea, pbSlider);
+
+}
+
+
+void GripMainWindow::manageLayout()
+{
+    this->setDockOptions(QMainWindow::AllowTabbedDocks);
+    this->setDockOptions(QMainWindow::AllowNestedDocks);
+
+    QVBoxLayout *topRightLayout = new QVBoxLayout;
+    topRightLayout->addWidget(treeviewer,1);
+    topRightLayout->addWidget(simulation_time_display,1);
+
+//    QVBoxLayout *topLeftLayout = new QVBoxLayout;
+//    topLeftLayout->addWidget(viewWidget,3);
+
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    //topLayout->addLayout(topLeftLayout,3);
+    topLayout->addWidget(viewWidget,3);
+    topLayout->addLayout(topRightLayout,1);
+
+//    QVBoxLayout *bottomLayout = new QVBoxLayout;
+//    bottomLayout->addWidget(pbSlider);
+//    bottomLayout->addWidget(inspectortab);
+//    bottomLayout->addWidget(visualizationtab);
+
+
+    QVBoxLayout *mainLayout = new QVBoxLayout();
+    mainLayout->addLayout(topLayout);
+    mainLayout->addWidget(pbSlider,4);
+//    mainLayout->addLayout(bottomLayout);
+
+    QWidget *layoutManager = new QWidget;
+    layoutManager->setLayout(mainLayout);
+
+    this->setCentralWidget(layoutManager);
+
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+
 
 }

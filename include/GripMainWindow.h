@@ -52,23 +52,22 @@
 // Base class include
 #include "MainWindow.h"
 
-#include <ViewerWidget.h>
-#include <TreeView.h>
-
-#include <inspector_tab.h>
-#include <visualization_tab.h>
-#include <time_display.h>
+// Local includes
+#include "ViewerWidget.h"
+#include "TreeView.h"
+#include "inspector_tab.h"
+#include "visualization_tab.h"
+#include "time_display.h"
+#include "playback_slider.h"
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
-
 #include "ui_TreeView.h"
 #include "GripTab.h"
 #include "ui_time_display.h"
-
+#include "ui_playback_slider.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
 
-using namespace std;
 
 /**
  * \class GripMainWindow GripMainWindow.h
@@ -77,7 +76,6 @@ using namespace std;
  */
 class GripMainWindow : public MainWindow
 {
-
 public:
     /**
      * \brief Constructs a GripMainWindow object
@@ -113,6 +111,8 @@ public:
 
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
     std::vector<GripTimeslice>* timeline;
+    
+	Playback_Slider* pbSlider;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -223,7 +223,10 @@ private:
     /// Once a pointer of type GripTab is created you can then call the function directly.
     QList<GripTab*>* pluginList;
 
-    /** Private Methods */
+    /**
+     * \brief Creates the rendering window
+     * \return void
+     */
     void createRenderingWindow();
 
     /**
@@ -249,6 +252,13 @@ private:
      * \return void
      */
     void createTimeDisplays();
+
+     /**
+     * \brief Manage layout of the main window
+     * \return void
+     */
+    void manageLayout();
+
 
     /**
      * \brief Clears the world, simulation and widgets

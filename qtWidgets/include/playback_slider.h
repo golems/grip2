@@ -43,59 +43,22 @@
  */
 
 
-#ifndef INSPECTOR_H
-#define INSPECTOR_H
+#ifndef PLAYBACK_SLIDER_H
+#define PLAYBACK_SLIDER_H
 
-// Local includes
-#include "ui_inspector_tab.h"
-#include "TreeView.h"
+#include "ui_playback_slider.h"
 
-// DART includes
-#include <dart/simulation/World.h>
+//class ..
 
-/**
- * \class InspectorTab InspectorTab.h
- * \brief Widget containing all the widgets that allow the user to manually manipulate
- * a skeleton. Subclasses QDockWidget.
- */
-class Inspector_Tab : public QDockWidget {
-
-    /// meta object macro for signals and slots usage
-    Q_OBJECT
+class Playback_Slider : public QDockWidget {
 
 public:
-    /**
-     * \brief Constructs an InspectorTab object
-     */
-    Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, TreeView *treeViewer);
-
-    /**
-     * \brief Destructs an InspectorTab object
-     */
-    ~Inspector_Tab();
-
-    void initializeTab();
-
-
-private slots:
-    void changeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
-    void receiveSeletedItem(TreeViewReturn* active_item);
-    void changePositionAndOrientation(int sliderValue);
-
+    Playback_Slider(QWidget *parent = 0);
+    ~Playback_Slider();
 
 private:
-    Ui::Inspector_Tab *inspector_ui;
-    simulation::World *simworld;
-    TreeView *treeview;
-    QSlider *positionSlider_0;
-    QDoubleSpinBox *positionSpinBox_0;
-
-    Eigen::Matrix<double, 6, 1> getRootTransform(dart::dynamics::Skeleton* robot);
-    void setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose);
-    Eigen::Matrix<double, 6, 1> getPoseFromTransform(const Eigen::Isometry3d& tf);
-    int selected_type_from_tree;
+    Ui::Playback_Slider *playback_slider_ui;
 
 };
 
 #endif
-

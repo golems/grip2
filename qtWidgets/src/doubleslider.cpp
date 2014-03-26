@@ -75,7 +75,7 @@ double DoubleSlider::changeTOdouble(int intvalue)
 int DoubleSlider::changeTOinteger(double doublevalue)
 {
     double temp = doublevalue*pow(10.0,(double)decimal_point);
-    int integervalue = ceil(temp);
+    int integervalue = round(temp); //ceil(temp);
     return integervalue;
 }
 void DoubleSlider::setdsValue(double valueindouble)
@@ -121,8 +121,8 @@ void DoubleSlider::setMinMaxDecimalValue(double minvalue, double maxvalue, int d
     min_value = minvalue;
     max_value = maxvalue;
     decimal_point = decimalvalue;
-    int min_value_integer = ceil((double)min_value*pow(10.0,(double)decimal_point));
-    int max_value_integer = ceil((double)max_value*pow(10.0,(double)decimal_point));
+    int min_value_integer = round((double)min_value*pow(10.0,(double)decimal_point));//ceil((double)min_value*pow(10.0,(double)decimal_point));
+    int max_value_integer = round((double)max_value*pow(10.0,(double)decimal_point));//ceil((double)max_value*pow(10.0,(double)decimal_point));
     //std::cerr << "base^decimal: " << (double)max_value*pow(10.0,(double)decimal_point) << std::endl;
     //std::cerr << "min value of the slider : " << min_value_integer <<" max value of the slider : " <<max_value_integer << std::endl;
     this->setRange(min_value_integer,max_value_integer);

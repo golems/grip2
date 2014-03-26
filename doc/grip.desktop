@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Grip
+Exec=/usr/local/bin/grip
+Icon=/home/pete/myRepos/grip2/src/icons/grip-icon.png
+Type=Application
+Categories=Development;
