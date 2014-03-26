@@ -91,11 +91,11 @@ set(project_libs ${project_libs} mainWindow)
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
-add_executable(Grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
-target_link_libraries(Grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
-
-add_library(grip SHARED)
+add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+
+add_library(griplib SHARED)
+target_link_libraries(griplib ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -121,11 +121,14 @@ endforeach(utest_src_file)
 #-----------------------------------------------
 #                 INSTALLATION
 #-----------------------------------------------
-INSTALL(PROGRAMS build/Grip
+INSTALL(PROGRAMS build/grip
         DESTINATION /usr/local/bin/)
 
-INSTALL(TARGETS grip
+INSTALL(TARGETS griplib
         DESTINATION /usr/local/lib/)
 
 INSTALL(FILES "qtWidgets/include/GripTab.h"
         DESTINATION /usr/local/include)
+
+INSTALL(FILES "doc/grip.desktop"
+        DESTINATION /usr/share/applications)
