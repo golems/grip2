@@ -333,6 +333,10 @@ void GripMainWindow::loadPlugins()
     pluginsDir.cd("plugin");
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+        QFileInfo fileInfo(fileName);
+        if (fileInfo.suffix() != ".so") {
+            continue;
+        }
         std::cout<<"Attempting to load plugin: "<<fileName.toStdString()<<std::endl;
         QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
         plugin = loader.instance();
