@@ -6,16 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>140</width>
+    <width>142</width>
     <height>70</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Ubuntu</family>
+    <pointsize>11</pointsize>
+    <weight>50</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="styleSheet">
-   <string notr="true">QDockWidget { 
-   font: 0.5pt &quot;Ubuntu&quot;;
-   color:rgb(255, 255, 255);
-}
-QDockWidget::title {
+   <string notr="true">QDockWidget::title {
      text-align: left;
      subcontrol-position: top left;
      position: absolute;
@@ -39,7 +44,7 @@ QDockWidget::float-button {
  }</string>
   </property>
   <property name="windowTitle">
-   <string>Time_Display</string>
+   <string>Time Display</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout">

@@ -10,8 +10,37 @@
     <height>86</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <strikeout>false</strikeout>
+   </font>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget::title {
+     text-align: left;
+     subcontrol-position: top left;
+     position: absolute;
+     top: 0px; left: 0px; bottom: 0px;
+ }
+QDockWidget::close-button, QDockWidget::float-button {
+    icon-size: 14px; /* maximum icon size */
+ }
+QDockWidget::close-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 5px; bottom: 0px;
+     width: 14px;
+ }
+
+QDockWidget::float-button {
+     subcontrol-position: top right;
+     position: absolute;
+     top: 0px; right: 20px; bottom: 0px;
+     width: 14px;
+ }</string>
+  </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string>Playback Slider</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">

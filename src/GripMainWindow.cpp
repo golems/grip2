@@ -429,7 +429,7 @@ void GripMainWindow::createTimeDisplays()
 void GripMainWindow::createPlaybackSliders()
 {
     pbSlider = new Playback_Slider(this);
-    pbSlider->setTitleBarWidget(new QWidget());
+   // pbSlider->setTitleBarWidget(new QWidget());
 
 }
 
@@ -439,18 +439,27 @@ void GripMainWindow::manageLayout()
     this->setDockOptions(QMainWindow::AllowTabbedDocks);
     this->setDockOptions(QMainWindow::AllowNestedDocks);
 
-    QVBoxLayout *topRightLayout = new QVBoxLayout;
-    topRightLayout->addWidget(treeviewer,1);
-    topRightLayout->addWidget(simulation_time_display,1);
+//    QVBoxLayout *topRightLayout = new QVBoxLayout;
 
+//    topRightLayout->addWidget(treeviewer,1);
 //    QVBoxLayout *topLeftLayout = new QVBoxLayout;
 //    topLeftLayout->addWidget(viewWidget,3);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     //topLayout->addLayout(topLeftLayout,3);
     topLayout->addWidget(viewWidget,3);
-    topLayout->addLayout(topRightLayout,1);
+    topLayout->addWidget(treeviewer,1);
 
+    QHBoxLayout *midLayout = new QHBoxLayout;
+    pbSlider->setTitleBarWidget(new QWidget());
+    simulation_time_display->setTitleBarWidget(new QWidget());
+    midLayout->addWidget(pbSlider,3);
+    midLayout->addWidget(simulation_time_display,1);
+
+    QDockWidget *slider_timerCombo = new QDockWidget;
+    QWidget *dummyWidgetForCombo = new QWidget;
+    dummyWidgetForCombo->setLayout(midLayout);
+    slider_timerCombo->setWidget(dummyWidgetForCombo);
 
     QMainWindow *tabs = new QMainWindow;
     tabs->setCentralWidget(new QWidget());
@@ -465,13 +474,15 @@ void GripMainWindow::manageLayout()
     visualizationtab->show();
     visualizationtab->raise();
 
-    QVBoxLayout *bottomLayout = new QVBoxLayout;
-    bottomLayout->addWidget(pbSlider);
-    bottomLayout->addWidget(tabs);
+//    QVBoxLayout *bottomLayout = new QVBoxLayout;
+//    bottomLayout->addWidget(tabs);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
-    mainLayout->addLayout(bottomLayout);
+    //mainLayout->addLayout(midLayout);
+    mainLayout->addWidget(slider_timerCombo);
+    mainLayout->addWidget(tabs);
+    //mainLayout->addLayout(bottomLayout);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
