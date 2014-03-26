@@ -342,7 +342,7 @@ void GripMainWindow::createTabs()
     //setDockOptions(QMainWindow::VerticalTabs);
     //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
-    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+//    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
     //setDockOptions(QMainWindow::AllowNestedDocks);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
@@ -431,9 +431,6 @@ void GripMainWindow::createPlaybackSliders()
     pbSlider = new Playback_Slider(this);
     pbSlider->setTitleBarWidget(new QWidget());
 
-//    pbSlider->setAllowedAreas(Qt::BottomDockWidgetArea);
-//    this->addDockWidget(Qt::BottomDockWidgetArea, pbSlider);
-
 }
 
 
@@ -454,27 +451,34 @@ void GripMainWindow::manageLayout()
     topLayout->addWidget(viewWidget,3);
     topLayout->addLayout(topRightLayout,1);
 
-//    QVBoxLayout *bottomLayout = new QVBoxLayout;
-//    bottomLayout->addWidget(pbSlider);
-//    bottomLayout->addWidget(inspectortab);
-//    bottomLayout->addWidget(visualizationtab);
 
+    QMainWindow *tabs = new QMainWindow;
+    tabs->setCentralWidget(new QWidget());
+    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+    //tabs->setDockOptions(QMainWindow::AllowTabbedDocks);
+    //tabs->setDockOptions(QMainWindow::ForceTabbedDocks);
+    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);
+    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
+    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    tabs->tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+
+    QVBoxLayout *bottomLayout = new QVBoxLayout;
+    bottomLayout->addWidget(pbSlider);
+    bottomLayout->addWidget(tabs);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
-    mainLayout->addWidget(pbSlider,4);
-//    mainLayout->addLayout(bottomLayout);
+    mainLayout->addLayout(bottomLayout);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
 
     this->setCentralWidget(layoutManager);
 
-    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    tabifyDockWidget(inspectortab, visualizationtab);
-    visualizationtab->show();
-    visualizationtab->raise();
+
 
 
 }

@@ -64,8 +64,7 @@ inline double DEG2RAD(double angle_deg)  { return (angle_deg * 0.017453292519943
 inline double RAD2DEG(double angle_rad)	 { return (angle_rad * 57.2957795130823208768); } //{ return (180.0/M_PI*angle_rad); }
 
 /**
- * @function Inspector_Tab()
- * @brief constructor of the class Inspector_Tab: setup the ui widget and connect signals and slots
+ * brief constructor of the class Inspector_Tab: setup the ui widget and connect signals and slots
  */
 
 Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
@@ -121,9 +120,6 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
 //    inspector_ui->orientationSpinBox_3->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
-
-
-
 
     connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSeletedItem(TreeViewReturn*)));
     inspector_ui->Joint_Slider_GroupBox->setDisabled(true);

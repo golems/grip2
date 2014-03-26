@@ -51,6 +51,7 @@ Time_Display::Time_Display (QWidget *parent)
 {
 
     time_display_ui->setupUi(this);
+
 }
 
 Time_Display::~Time_Display()
