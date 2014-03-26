@@ -69,12 +69,12 @@ inline double RAD2DEG(double angle_rad)	 { return (angle_rad * 57.29577951308232
  */
 
 Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld, Tree_View *treeViewer)
- : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab), simworld(simWorld), treeview(treeViewer), selected_type_from_tree(0)
+ : QDockWidget(parent), inspector_ui(new Ui::Inspector_Tab), simworld(simWorld), treeview(treeViewer), selected_type_from_tree(Return_Type_Robot)
 {
     inspector_ui->setupUi(this);
     int position_precision_decimal = 2;
     int orientation_precision_decimal = 2;
-
+//    int joint_precision_decimal = 2;  /* moved to receiveSeletedItem */
     /// selected joint slider
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(changeSelectedJoint(int)));
 
