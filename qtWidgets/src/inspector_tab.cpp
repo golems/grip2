@@ -79,7 +79,7 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     connect(inspector_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(changeSelectedJoint(int)));
 
     /// robot position and orientation sliders
-    connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    //connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_1->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_1->setdsValue(0.0);
     inspector_ui->positionSpinBox_1->setRange(-10.0,10.0);
@@ -87,46 +87,55 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     inspector_ui->positionSpinBox_1->setSingleStep(pow(10,-position_precision_decimal));
 
 
-    connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    //connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_2->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_2->setdsValue(0.0);
     inspector_ui->positionSpinBox_2->setRange(-10.0,10.0);
     inspector_ui->positionSpinBox_2->setDecimals(position_precision_decimal);
     inspector_ui->positionSpinBox_2->setSingleStep(pow(10,-position_precision_decimal));
 
-    connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+ //   connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->positionSlider_3->setMinMaxDecimalValue(-10.0,10.0,position_precision_decimal);
     inspector_ui->positionSlider_3->setdsValue(0.0);
     inspector_ui->positionSpinBox_3->setRange(-10.0,10.0);
     inspector_ui->positionSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->positionSpinBox_3->setSingleStep(pow(10,-position_precision_decimal));
 
-    connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+//    connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_1->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
     inspector_ui->orientationSlider_1->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_1->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_1->setDecimals(orientation_precision_decimal);
     inspector_ui->orientationSpinBox_1->setSingleStep(pow(10,-orientation_precision_decimal));
 
-    connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+//    connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_2->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
     inspector_ui->orientationSlider_2->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_2->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_2->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_2->setSingleStep(pow(10,-orientation_precision_decimal));
 
-    connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+//    connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
     inspector_ui->orientationSlider_3->setMinMaxDecimalValue(-180.0,180.0,position_precision_decimal);
     inspector_ui->orientationSlider_3->setdsValue(0.0);
 //    inspector_ui->orientationSpinBox_3->setRange(-180.0,180.0);
     inspector_ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
 
+
+
+
     connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSeletedItem(TreeViewReturn*)));
     inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
     inspector_ui->Position_Slider_GroupBox->setDisabled(true);
     inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 
+    connect(inspector_ui->positionSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    connect(inspector_ui->positionSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    connect(inspector_ui->positionSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    connect(inspector_ui->orientationSlider_1, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    connect(inspector_ui->orientationSlider_2, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
+    connect(inspector_ui->orientationSlider_3, SIGNAL(valueChanged(int)),this, SLOT(changePositionAndOrientation(int)));
 }
 
 /**

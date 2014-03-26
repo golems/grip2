@@ -58,10 +58,12 @@
 #include "inspector_tab.h"
 #include "visualization_tab.h"
 #include "time_display.h"
+#include "playback_slider.h"
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 #include "ui_tree_view.h"
 #include "ui_time_display.h"
+#include "ui_playback_slider.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
 
@@ -106,6 +108,8 @@ public:
 
     /// Display for the simluation time and its time relative to real time
     Time_Display* simulation_time_display;
+
+    Playback_Slider* pbSlider;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -236,11 +240,20 @@ private:
      */
     void createPlaybackSliders();
 
+
+
     /**
      * \brief Creates the time display boxes
      * \return void
      */
     void createTimeDisplays();
+
+     /**
+     * \brief Manage layout of the main window
+     * \return void
+     */
+    void manageLayout();
+
 
     /**
      * \brief Clears the world, simulation and widgets
