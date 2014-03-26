@@ -97,6 +97,13 @@ public slots:
      */
     void slotSetStatusBarMessage(QString msg);
 
+    virtual void slotSetWorldFromPlayback(int sliderTick) = 0;
+    virtual void slotPlaybackStart() = 0;
+    virtual void slotPlaybackPause() = 0;
+    virtual void slotPlaybackReverse() = 0;
+    virtual void slotPlaybackTimeStep(bool playForward) = 0;
+    virtual void slotPlaybackBeginning() = 0;
+
 protected:
     /// QToolBar object for showing/hiding buttons
     QToolBar* getToolBar();

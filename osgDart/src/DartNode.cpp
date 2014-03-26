@@ -134,7 +134,7 @@ void DartNode::_updateContactForces()
                 contactForceLine->update(forceVectorLengths[i]/maxForceVectorLength, contactPoints[i], contactForces[i]);
             // Otherwise create a new one and add it to the existing ones
             } else {
-                contactForceLine = new ContactForceVisual;
+                contactForceLine = new ContactForceVisual(_debug);
                 float forceMagnitude = 0;
                 if (fabs(maxForceVectorLength) < 1e-3 || fabs(forceVectorLengths[i]) < 1e-3) {
                     forceMagnitude = 0;

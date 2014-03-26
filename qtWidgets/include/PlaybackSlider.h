@@ -42,15 +42,41 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file PlaybackSlider.h
+ * \brief Class for simulation and kinematic playback
+ */
 
-#include "playback_slider.h"
-#include <cmath>
-Playback_Slider::Playback_Slider (QWidget *parent)
- : QDockWidget(parent), playback_slider_ui(new Ui::Playback_Slider)
-{
-    playback_slider_ui->setupUi(this);
-}
+#ifndef PLAYBACK_SLIDER_H
+#define PLAYBACK_SLIDER_H
 
-Playback_Slider::~Playback_Slider()
-{
-}
+// Local includes
+#include "ui_PlaybackSlider.h"
+#include "MainWindow.h"
+
+/**
+ * \class PlaybackSlider PlaybackSlider.h
+ * \brief Class for simulation and kinematic playback
+ */
+class PlaybackSlider : public QDockWidget {
+
+    Q_OBJECT
+
+public:
+    PlaybackSlider(MainWindow *parent);
+    ~PlaybackSlider();
+    Ui::PlaybackSlider *playbackSliderUi;
+
+    void slotUpdateTime(double simTime, double simRelTime);
+    void setSliderValue(int value);
+
+public slots:
+    void slotUpdateSliderMinMax(int max);
+
+private:
+
+    MainWindow* _parent;
+
+}; // end class PlaybackSlider
+
+#endif // PLAYBACK_SLIDER_H

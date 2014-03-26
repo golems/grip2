@@ -102,9 +102,12 @@ void GripSimulation::reset()
 
 void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)
 {
+    assert(worldToAdd.getTime() >= 0);
+    assert(worldToAdd.getState().rows() > 0);
+
     GripTimeslice timeslice;
-    timeslice.time = worldToAdd.getTime();
-    timeslice.state = worldToAdd.getState();
+    timeslice.setTime(worldToAdd.getTime());
+    timeslice.setState(worldToAdd.getState());
     _timeline->push_back(timeslice);
 }
 
@@ -136,7 +139,6 @@ void GripSimulation::simulateTimeStep()
 
         // Run each tabs doBeforeSimulationTimeStep function
         for (size_t i=0; i<_plugins->size(); ++i) {
-            std::cerr << "i: " << i << std::endl;
             _plugins->at(i)->GRIPEventSimulationBeforeTimestep();
         }
 
@@ -171,9 +173,6 @@ void GripSimulation::simulateTimeStep()
             QMetaObject::invokeMethod(this, "simulateTimeStep", Qt::QueuedConnection);
         }
     } else { // Get out of this function so we don't call ourselves again
-        if (_debug) {
-            std::cerr << "[GripSimulation] Emitting stop signal and exiting simulation loop" << std::endl;
-        }
         emit simulationStoppedSignal();
         return;
     }
@@ -185,6 +184,7 @@ void GripSimulation::simulateSingleTimeStep()
     _simulateOneFrame = true;
 
     if (_debug) {
+        emit signalSendMessage(tr("[GripSimulation] Simulating a single timestep"));
         std::cerr << "[GripSimulation] Simulating a single timestep" << std::endl;
         this->simulateTimeStep();
     }

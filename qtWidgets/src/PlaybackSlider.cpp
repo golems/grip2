@@ -43,22 +43,32 @@
  */
 
 
-#ifndef PLAYBACK_SLIDER_H
-#define PLAYBACK_SLIDER_H
+#include "PlaybackSlider.h"
+#include <cmath>
+PlaybackSlider::PlaybackSlider (MainWindow *parent)
+ : QDockWidget(parent), playbackSliderUi(new Ui::PlaybackSlider)
+{
+    _parent = parent;
+    playbackSliderUi->setupUi(this);
+    connect(playbackSliderUi->sliderMain, SIGNAL(sliderMoved(int)), _parent, SLOT(slotSetWorldFromPlayback(int)));
+    connect(playbackSliderUi->buttonPlay, SIGNAL(released()), _parent, SLOT(slotPlaybackStart()));
+    connect(playbackSliderUi->buttonPause, SIGNAL(released()), _parent, SLOT(slotPlaybackPause()));
+    connect(playbackSliderUi->buttonReverse, SIGNAL(released()), _parent, SLOT(slotPlaybackReverse()));
+    connect(playbackSliderUi->buttonBeginning, SIGNAL(released()), _parent, SLOT(slotPlaybackBeginning()));
+}
 
-#include "ui_playback_slider.h"
+PlaybackSlider::~PlaybackSlider()
+{
+}
 
-//class ..
+void PlaybackSlider::setSliderValue(int value)
+{
+    playbackSliderUi->sliderMain->setValue(value);
+}
 
-class Playback_Slider : public QDockWidget {
-
-public:
-    Playback_Slider(QWidget *parent = 0);
-    ~Playback_Slider();
-
-private:
-    Ui::Playback_Slider *playback_slider_ui;
-
-};
-
-#endif
+void PlaybackSlider::slotUpdateSliderMinMax(int max)
+{
+    playbackSliderUi->sliderMain->setMinimum(0);
+    playbackSliderUi->sliderMain->setMaximum(max);
+    playbackSliderUi->sliderMain->setValue(max);
+}

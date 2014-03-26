@@ -49,8 +49,9 @@
 
 using namespace osgDart;
 
-ContactForceVisual::ContactForceVisual()
-    : _contactForceLine(new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW))
+ContactForceVisual::ContactForceVisual(bool debug)
+    : _debug(debug),
+      _contactForceLine(new osgGolems::Line(osgGolems::LINE_ENDING_WITH_ARROW))
 {
 
 }

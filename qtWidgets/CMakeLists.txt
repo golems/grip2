@@ -25,7 +25,7 @@ FILE(GLOB MOC_FILES ./include/*.h)
 QT4_WRAP_CPP(MOC ${MOC_FILES})
 
 # Add .qrc files
-file(GLOB RC_FILES .rc/*.qrc)
+file(GLOB RC_FILES *.qrc)
 QT4_ADD_RESOURCES(RESOURCES ${RC_FILES})
 
 # Add source and header files

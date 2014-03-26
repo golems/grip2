@@ -71,14 +71,35 @@ class GripMainWindow;
 class GripTimeslice
 {
 public:
-    GripTimeslice(){}
-    GripTimeslice(const GripTimeslice &copy){}
+    GripTimeslice() : _time(0) {}
+    GripTimeslice(const GripTimeslice &copy)
+    {
+        _time = copy._time;
+        _state = copy._state;
+    }
     ~GripTimeslice(){}
-    double time; ///< Timestamp for the world state
-    Eigen::VectorXd state; ///< State of the world at this time
+    void setTime(double time)
+    {
+        _time = time;
+//        std::cerr << "_time: " << _time << std::endl;
+    }
+    void setState(const Eigen::VectorXd &state)
+    {
+//        _state.resize(state.rows());
+        _state = state;
+    }
+    double getTime() {
+        return _time;
+    }
+    const Eigen::VectorXd &getState() {
+        return _state;
+    }
+
+protected:
+    double _time; ///< Timestamp for the world state
+    Eigen::VectorXd _state; ///< State of the world at this time
 };
 
-Q_DECLARE_METATYPE(GripTimeslice)
 
 /**
  * \class GripSimulation GripSimulation.h

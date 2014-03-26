@@ -4,17 +4,17 @@ project(grip2)
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
-set(CMAKE_BUILD_TYPE "Debug")
-set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall")
+set(CMAKE_BUILD_TYPE "Release")
+set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall -O3")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "Building in \"Debug\" mode. Defining DEBUG_BUILD macro.")
+    message(STATUS "\nBuilding in \"Debug\" mode.\n-- CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "Building in \"Release\" mode.")
+    message(STATUS "\nBuilding in \"Release\" mode.\n-- CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
 else()
 endif()
 

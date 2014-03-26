@@ -58,13 +58,13 @@
 #include "inspector_tab.h"
 #include "visualization_tab.h"
 #include "time_display.h"
-#include "playback_slider.h"
+#include "PlaybackSlider.h"
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 #include "ui_TreeView.h"
 #include "GripTab.h"
 #include "ui_time_display.h"
-#include "ui_playback_slider.h"
+#include "ui_PlaybackSlider.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
 
@@ -80,7 +80,7 @@ public:
     /**
      * \brief Constructs a GripMainWindow object
      */
-    GripMainWindow();
+    GripMainWindow(bool debug=false);
 
     /**
      * \brief Destructs a GripMainWindow object
@@ -99,7 +99,6 @@ public:
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
     TreeView* treeviewer;
 
-    std::vector<GripTimeslice>* _timeline;
     /// Tab for manually manipulating objects in the world
     Inspector_Tab* inspectortab;
 
@@ -112,7 +111,7 @@ public:
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
     std::vector<GripTimeslice>* timeline;
     
-	Playback_Slider* pbSlider;
+    PlaybackSlider* playbackSlider;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
@@ -130,6 +129,18 @@ public:
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
 
+    bool _playingBack;
+    int _curPlaybackTick;
+    int _playbackSpeed;
+
+public slots:
+    void slotSetWorldFromPlayback(int sliderTick);
+    void slotPlaybackStart();
+    void slotPlaybackPause();
+    void slotPlaybackReverse();
+    void slotPlaybackBeginning();
+    void slotPlaybackTimeStep(bool playForward);
+
 protected slots:
     /**
      * \brief Sets the time box for simulation time relative to real time
@@ -138,7 +149,6 @@ protected slots:
      */
     void setSimulationRelativeTime(double time);
 
-private slots:
     /**
      * \brief Set the view to front view
      * \return void
@@ -213,7 +223,7 @@ private slots:
      */
     void simulationStopped();
 
-private:
+protected:
     /** Private Members */
     /// Any plugin that is loaded successfully into the Grip will get stored in this QList
     /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
@@ -303,6 +313,10 @@ private:
     /// This function reads a folder by the name of 'plugin' in source directory
     /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
     void loadPlugins();
+
+    void setWorldState_Issue122(const Eigen::VectorXd &_newState);
+
+    bool _debug;
 };
 
 

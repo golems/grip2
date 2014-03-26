@@ -89,8 +89,8 @@ void MainWindow::Toolbar()
     QAction *open = toolbar->addAction(QIcon(openIcon), "Open Scene (Ctrl + O)");
     QAction *redo = toolbar->addAction(QIcon(redoIcon), "Load last viewed scene (Ctrl + Shift + Q)");
     toolbar->addSeparator();
-    QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation");
-    QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation");
+    QAction *simulate = toolbar->addAction(QIcon(simulateIcon), "Start Simulation (Ctrl + R");
+    QAction *stop = toolbar->addAction(QIcon(stopIcon), "Stop Simulation (Ctrl + C");
     stop->setVisible(false);
     toolbar->addSeparator();
     QAction *camera = toolbar->addAction(QIcon(cameraIcon), "Export screenshot");
@@ -104,7 +104,7 @@ void MainWindow::Toolbar()
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
     connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-    connect(camera, SIGNAL(triggered()), this, SLOT(load()));
+//    connect(camera, SIGNAL(triggered()), this, SLOT(camera()));
 //    connect(film, SIGNAL(triggered()), this, SLOT(film()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
@@ -185,7 +185,7 @@ void MainWindow::createActions()
 
     //closeAct
     closeAct = new QAction(tr("&Close"), this);
-    closeAct->setShortcut(Qt::CTRL + Qt::Key_C);
+    closeAct->setShortcut(Qt::CTRL + Qt::Key_W);
     closeAct->setStatusTip(tr("Close Scene"));
     connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -212,15 +212,18 @@ void MainWindow::createActions()
 
     //startSimulationAct
     startSimulationAct = new QAction(tr("Start Simulation"), this);
+    startSimulationAct->setShortcut(Qt::CTRL + Qt::Key_R);
     connect(startSimulationAct, SIGNAL(triggered()), this, SLOT(startSimulation()));
 
     //stopSimulationAct
     stopSimulationAct = new QAction(tr("Stop Simulation"), this);
+    stopSimulationAct->setShortcut(Qt::CTRL + Qt::Key_C);
     connect(stopSimulationAct, SIGNAL(triggered()), this, SLOT(stopSimulation()));
 
     //simulateSingleStepAct
     simulateSingleStepAct = new QAction(tr("Simulate Single Step"), this);
     simulateSingleStepAct->setStatusTip(tr("Simulates one step at a time"));
+    simulateSingleStepAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_R);
     connect(simulateSingleStepAct, SIGNAL(triggered()), this, SLOT(simulateSingleStep()));
 
     //renderDuringSimulationAct

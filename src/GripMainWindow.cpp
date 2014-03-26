@@ -73,15 +73,19 @@
 #include <dart/utils/urdf/DartLoader.h>
 
 
-GripMainWindow::GripMainWindow() :
+GripMainWindow::GripMainWindow(bool debug) :
     MainWindow(),
+    _debug(debug),
     world(new dart::simulation::World()),
-    worldNode(new osgDart::DartNode(true)),
-    timeline(new std::vector<GripTimeslice>),
+    worldNode(new osgDart::DartNode(debug)),
     pluginList(new QList<GripTab*>),
-    _simulating(false)
+    _simulating(false),
+    _playingBack(false),
+    _curPlaybackTick(0),
+    _playbackSpeed(1)
 {
-    simulation = new GripSimulation(world, timeline, pluginList, this, true);
+    timeline = new std::vector<GripTimeslice>(0);
+    simulation = new GripSimulation(world, timeline, pluginList, this, debug);
     createRenderingWindow();
     createTreeView();
     createTimeDisplays();
@@ -104,13 +108,13 @@ void GripMainWindow::doLoad(string fileName)
 {
     if (_simulating) {
         if (!stopSimulationWithDialog()) {
-            std::cerr << "Not loading a new world" << std::endl;
+            if (_debug) std::cerr << "Not loading a new world" << std::endl;
             return;
         }
     }
 
     if (world->getTime() || world->getNumSkeletons()) {
-        std::cerr << "Deleting world" << std::endl;
+        if (_debug) std::cerr << "Deleting world" << std::endl;
         this->clear();
     }
 
@@ -127,7 +131,7 @@ void GripMainWindow::doLoad(string fileName)
     treeviewer->populateTreeView(world);
     visualizationtab->update();
 
-    cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
+    if (_debug) cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
     inspectortab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(fileName));
@@ -180,14 +184,148 @@ void GripMainWindow::clear()
         world->setTime(0);
         treeviewer->clear();
         simulation->reset();
+        timeline->clear();
     }
-    std::cerr << "world state: \n" << world->getState().transpose() << std::endl;
 }
 
 void GripMainWindow::simulationStopped()
 {
-    std::cerr << "Got simulationStopped signal" << std::endl;
+    if(_debug) std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
+}
+
+void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
+{
+    if (_simulating || timeline->size() <= 0) {
+        playbackSlider->setSliderValue(0);
+        return;
+    }
+
+    assert(sliderTick < timeline->size() && sliderTick >= 0);
+
+    this->setWorldState_Issue122(timeline->at(sliderTick).getState());
+}
+
+void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
+{
+    // Before setting states, make sure the FreeJoints get their mT_Joints set
+    for (int i = 0; i < world->getNumSkeletons(); i++) {
+        int start = 2 * world->getIndex(i);
+        int size = 2 * (world->getSkeleton(i)->getNumGenCoords());
+        Eigen::VectorXd q = _newState.segment(start, size / 2);
+        // Set config calls updateTransform() [NO updateTransform_Issue122], which correctly initializes mT_Joint for FREE JOINT
+        world->getSkeleton(i)->setConfig(q);
+        // The usual line. The line above is actually repeating some processing, but there is no other way, unless you want to touch DART itself
+        world->getSkeleton(i)->setState(_newState.segment(start, size));
+    }
+}
+
+void GripMainWindow::slotPlaybackStart()
+{
+    if (timeline->size() <= 0) {
+        return;
+    }
+
+    this->slotSetStatusBarMessage(tr("Starting playback"));
+
+    if (_playingBack) {
+        slotPlaybackPause();
+    }
+
+    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+
+
+    for (size_t i = 0; i < pluginList->size(); ++i) {
+        pluginList->at(i)->GRIPEventPlaybackStart();
+    }
+
+    _playingBack = true;
+    this->slotPlaybackTimeStep(true);
+}
+
+void GripMainWindow::slotPlaybackPause()
+{
+    if (timeline->size() <= 0 || !_playingBack) {
+        return;
+    }
+
+    this->slotSetStatusBarMessage(tr("Pausing playback"));
+
+    _playingBack = false;
+
+    for (size_t i = 0; i < pluginList->size(); ++i) {
+        pluginList->at(i)->GRIPEventPlaybackStop();
+    }
+}
+
+void GripMainWindow::slotPlaybackReverse()
+{
+    if (timeline->size() <= 0) {
+        return;
+    }
+
+    this->slotSetStatusBarMessage(tr("Reversing playback"));
+
+    if (_playingBack) {
+        slotPlaybackPause();
+    }
+
+    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+
+    for (size_t i = 0; i < pluginList->size(); ++i) {
+        pluginList->at(i)->GRIPEventPlaybackStart();
+    }
+
+    _playingBack = true;
+    this->slotPlaybackTimeStep(false);
+}
+
+void GripMainWindow::slotPlaybackBeginning()
+{
+    if (timeline->size() <= 0) {
+        return;
+    }
+
+    this->slotSetStatusBarMessage(tr("Setting playback to beginning"));
+
+    _curPlaybackTick = 0;
+    playbackSlider->setSliderValue(_curPlaybackTick);
+    if (timeline->size() > 0) {
+        this->setWorldState_Issue122(timeline->front().getState());
+        _curPlaybackTick = 0;
+    }
+}
+
+void GripMainWindow::slotPlaybackTimeStep(bool playForward)
+{
+    if (_playingBack) {
+
+        // Call user tab functions before time step
+        for (size_t i = 0; i < pluginList->size(); ++i) {
+            pluginList->at(i)->GRIPEventPlaybackBeforeFrame();
+        }
+
+        // Play time step
+        this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
+        playbackSlider->setSliderValue(_curPlaybackTick);
+
+        if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward) || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
+            _playingBack = false;
+        } else {
+            playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
+        }
+
+        // Call user tab functions after time step
+        for (size_t i = 0; i < pluginList->size(); ++i) {
+            pluginList->at(i)->GRIPEventPlaybackAfterFrame();
+        }
+
+    } else {
+        return;
+    }
+
+    QMetaObject::invokeMethod(this, "slotPlaybackTimeStep",
+                              Qt::QueuedConnection, Q_ARG(bool, playForward));
 }
 
 void GripMainWindow::setSimulationRelativeTime(double time)
@@ -241,13 +379,27 @@ void GripMainWindow::hd1280x720(){}
 
 void GripMainWindow::startSimulation()
 {
+    // If we have a valid world, start simulating
     if (world->getNumSkeletons()) {
+        int curSliderValue = playbackSlider->playbackSliderUi->sliderMain->value();
+        for (int i = curSliderValue; i < timeline->size(); ++i) {
+            timeline->erase(timeline->begin() + i);
+        }
+
+        // Set world back to last simulated timestep
+        if (timeline->size()) {
+            world->setTime(timeline->back().getTime());
+            this->setWorldState_Issue122(timeline->back().getState());
+        }
+
+        playbackSlider->setDisabled(true);
+
         _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
         swapStartStopButtons();
     } else {
-        std::cerr << "Not simulating because there's no world yet" << std::endl;
+        slotSetStatusBarMessage(tr("Not simulating because there's no world yet"));
     }
 
 }
@@ -258,6 +410,8 @@ void GripMainWindow::stopSimulation()
     _simulating = false;
     // FIXME: Maybe use qsignalmapping or std::map for this
     swapStartStopButtons();
+    playbackSlider->setEnabled(true);
+    playbackSlider->slotUpdateSliderMinMax(timeline->size()-1);
 }
 
 void GripMainWindow::swapStartStopButtons()
@@ -300,7 +454,6 @@ void GripMainWindow::resetCamera()
 
 void GripMainWindow::createRenderingWindow()
 {
-    std::cerr << "Adding viewer widget" << std::endl;
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
@@ -337,11 +490,11 @@ void GripMainWindow::loadPlugins()
         if (fileInfo.suffix() != ".so") {
             continue;
         }
-        std::cout<<"Attempting to load plugin: "<<fileName.toStdString()<<std::endl;
+        if (_debug) std::cerr << "Attempting to load plugin: " << fileName.toStdString() << std::endl;
         QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
         plugin = loader.instance();
         if (plugin) {
-            std::cout<<"Plugin loaded "<<(plugin->objectName()).toStdString()<<std::endl;
+            if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
             GripTab* gt = qobject_cast<GripTab*>(plugin);
             pluginList->append(gt);
             if (gt)
@@ -350,7 +503,7 @@ void GripMainWindow::loadPlugins()
 
                 QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
                 if (pluginWidget == NULL)
-                    std::cout<<"is NULL"<<std::endl;
+                    if (_debug) std::cerr << "is NULL" << std::endl;
                 else
                     this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
 
@@ -358,8 +511,10 @@ void GripMainWindow::loadPlugins()
             }
         }
         else {
-            std::cout<<"Plugin could not be loaded"<<std::endl;
-            std::cout<<"Error: "<<(loader.errorString()).toStdString()<<std::endl;
+            if (_debug) {
+                std::cerr << "Plugin could not be loaded" << std::endl;
+                std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
+            }
         }
     }
 }
@@ -456,8 +611,8 @@ void GripMainWindow::createTimeDisplays()
 
 void GripMainWindow::createPlaybackSliders()
 {
-    pbSlider = new Playback_Slider(this);
-    pbSlider->setTitleBarWidget(new QWidget());
+    playbackSlider = new PlaybackSlider(this);
+    playbackSlider->setTitleBarWidget(new QWidget());
 
 //    pbSlider->setAllowedAreas(Qt::BottomDockWidgetArea);
 //    this->addDockWidget(Qt::BottomDockWidgetArea, pbSlider);
@@ -490,7 +645,7 @@ void GripMainWindow::manageLayout()
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
-    mainLayout->addWidget(pbSlider,4);
+    mainLayout->addWidget(playbackSlider,4);
 //    mainLayout->addLayout(bottomLayout);
 
     QWidget *layoutManager = new QWidget;

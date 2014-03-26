@@ -73,7 +73,7 @@ namespace osgDart {
 class ContactForceVisual : public osg::MatrixTransform
 {
 public:
-    ContactForceVisual();
+    ContactForceVisual(bool debug=false);
     ~ContactForceVisual();
 
     void createForceVector(float lineLength,
@@ -87,6 +87,8 @@ protected:
     osg::Matrix _convertVectorToOsgTF(const Eigen::Vector3d &point, const Eigen::Vector3d &vector);
 
     osgGolems::Line* _contactForceLine;
+
+    bool _debug;
 };
 
 
