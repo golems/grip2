@@ -60,6 +60,10 @@
 
 // Qt includes
 #include <QtGui>
+#include <QList>
+#include <QMenu>
+#include <QAction>
+
 
 // OpenSceneGraph includes
 #include <osg/io_utils>
@@ -656,38 +660,66 @@ void GripMainWindow::manageLayout()
     midLayout->addWidget(playbackSlider);
     midLayout->addWidget(simulation_time_display);
 
-    QDockWidget *slider_timerCombo = new QDockWidget;
+    QDockWidget *Combo = new QDockWidget;
     QWidget *dummyWidgetForCombo = new QWidget;
     dummyWidgetForCombo->setLayout(midLayout);
 
-    slider_timerCombo->setWidget(dummyWidgetForCombo);
-    slider_timerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    Combo->setWidget(dummyWidgetForCombo);
+    Combo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    Combo->setWindowTitle(QString("Slider Timer Combo"));
+    Combo->setStyleSheet("font: 0.5pt \"Ubuntu\";color:rgb(255, 255, 255);");
 
     QMainWindow *dummySliderTimerCombo = new QMainWindow;
     dummySliderTimerCombo->setCentralWidget(new QWidget());
-    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, slider_timerCombo);
+    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, Combo);
     dummySliderTimerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
-    QMainWindow *tabs = new QMainWindow;
-    tabs->setCentralWidget(new QWidget());
-    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    tabs->tabifyDockWidget(inspectortab, visualizationtab);
-    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+//    QMainWindow *tabs = new QMainWindow;
+//    tabs->setCentralWidget(new QWidget());
+//    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+//    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+//    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+//    tabs->tabifyDockWidget(inspectortab, visualizationtab);
+//    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
-    visualizationtab->show();
-    visualizationtab->raise();
+//    visualizationtab->show();
+//    visualizationtab->raise();
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
     //mainLayout->addWidget(slider_timerCombo);
     mainLayout->addWidget(dummySliderTimerCombo);
-    mainLayout->addWidget(tabs);
+    //mainLayout->addWidget(tabs);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
 
     this->setCentralWidget(layoutManager);
+    this->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+
+
+    QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
+
+    QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
+     if (dockwidgets.size()) {
+         //menu1 = new QMenu(this);
+         for (int i = 0; i < dockwidgets.size(); ++i) {
+             if ( QString(dockwidgets.at(i)->name()) == QString("PlaybackSlider")
+                 || QString(dockwidgets.at(i)->name()) == QString("Time_Display")) {
+
+                 // skip //
+             }
+             else {
+                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+             }
+
+         }
+     }
+
 
 }
