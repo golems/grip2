@@ -32,7 +32,7 @@
          <enum>Qt::ToolButtonIconOnly</enum>
         </property>
         <property name="autoRaise">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -55,7 +55,7 @@
          <enum>Qt::ToolButtonIconOnly</enum>
         </property>
         <property name="autoRaise">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -75,7 +75,7 @@
          </size>
         </property>
         <property name="autoRaise">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -111,7 +111,7 @@
          <bool>false</bool>
         </property>
         <property name="autoRaise">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

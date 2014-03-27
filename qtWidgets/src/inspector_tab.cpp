@@ -120,9 +120,6 @@ Inspector_Tab::Inspector_Tab(QWidget *parent, dart::simulation::World *simWorld,
     inspector_ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
     inspector_ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
 
-
-
-
     connect(treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSeletedItem(TreeViewReturn*)));
     inspector_ui->Joint_Slider_GroupBox->setDisabled(true);
     inspector_ui->Position_Slider_GroupBox->setDisabled(true);

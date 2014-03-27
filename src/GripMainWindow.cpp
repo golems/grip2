@@ -203,6 +203,7 @@ void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
 
     assert(sliderTick < timeline->size() && sliderTick >= 0);
 
+    world->setTime(timeline->at(_curPlaybackTick).getTime());
     this->setWorldState_Issue122(timeline->at(sliderTick).getState());
 }
 
@@ -291,9 +292,11 @@ void GripMainWindow::slotPlaybackBeginning()
     _curPlaybackTick = 0;
     playbackSlider->setSliderValue(_curPlaybackTick);
     if (timeline->size() > 0) {
+        world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->front().getState());
         _curPlaybackTick = 0;
     }
+    simulation_time_display->Update_Time(world->getTime(), 0);
 }
 
 void GripMainWindow::slotPlaybackTimeStep(bool playForward)
@@ -306,8 +309,10 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         }
 
         // Play time step
+        world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
         playbackSlider->setSliderValue(_curPlaybackTick);
+        this->setSimulationRelativeTime(0);
 
         if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward) || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
             _playingBack = false;
@@ -457,7 +462,7 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-//    this->setCentralWidget(viewidget);
+//    this->setCentralWidget(viewWidget);
 
 }
 
@@ -525,7 +530,7 @@ void GripMainWindow::createTabs()
     //setDockOptions(QMainWindow::VerticalTabs);
     //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
 
-    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+//    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
     //setDockOptions(QMainWindow::AllowNestedDocks);
 
     inspectortab = new Inspector_Tab(this, world,treeviewer);
@@ -543,12 +548,12 @@ void GripMainWindow::createTabs()
     //inspectortab->setFeatures(QDockWidget::DockWidgetMovable);
     //inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
     //inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
-    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
+
+//    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
 
     //visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
     //visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
     //visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
-    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);//                  setFeatures(QDockWidget::DockWidgetClosable);
 
 //    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea); //setFeatures(QDockWidget::DockWidgetClosable);
 
@@ -612,10 +617,7 @@ void GripMainWindow::createTimeDisplays()
 void GripMainWindow::createPlaybackSliders()
 {
     playbackSlider = new PlaybackSlider(this);
-    playbackSlider->setTitleBarWidget(new QWidget());
-
-//    pbSlider->setAllowedAreas(Qt::BottomDockWidgetArea);
-//    this->addDockWidget(Qt::BottomDockWidgetArea, pbSlider);
+//    playbackSlider->setTitleBarWidget(new QWidget());
 
 }
 
@@ -625,39 +627,56 @@ void GripMainWindow::manageLayout()
     this->setDockOptions(QMainWindow::AllowTabbedDocks);
     this->setDockOptions(QMainWindow::AllowNestedDocks);
 
-    QVBoxLayout *topRightLayout = new QVBoxLayout;
-    topRightLayout->addWidget(treeviewer,1);
-    topRightLayout->addWidget(simulation_time_display,1);
+//    QVBoxLayout *topRightLayout = new QVBoxLayout;
 
+//    topRightLayout->addWidget(treeviewer,1);
 //    QVBoxLayout *topLeftLayout = new QVBoxLayout;
 //    topLeftLayout->addWidget(viewWidget,3);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     //topLayout->addLayout(topLeftLayout,3);
     topLayout->addWidget(viewWidget,3);
-    topLayout->addLayout(topRightLayout,1);
+    topLayout->addWidget(treeviewer,1);
+
+    QHBoxLayout *midLayout = new QHBoxLayout;
+    playbackSlider->setTitleBarWidget(new QWidget());
+    simulation_time_display->setTitleBarWidget(new QWidget());
+    midLayout->addWidget(playbackSlider,3);
+    midLayout->addWidget(simulation_time_display,1);
+
+    QDockWidget *slider_timerCombo = new QDockWidget;
+    QWidget *dummyWidgetForCombo = new QWidget;
+    dummyWidgetForCombo->setLayout(midLayout);
+    slider_timerCombo->setWidget(dummyWidgetForCombo);
+
+    QMainWindow *tabs = new QMainWindow;
+    tabs->setCentralWidget(new QWidget());
+    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+    //tabs->setDockOptions(QMainWindow::AllowTabbedDocks);
+    //tabs->setDockOptions(QMainWindow::ForceTabbedDocks);
+    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);
+    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
+    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    tabs->tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
 
 //    QVBoxLayout *bottomLayout = new QVBoxLayout;
-//    bottomLayout->addWidget(pbSlider);
-//    bottomLayout->addWidget(inspectortab);
-//    bottomLayout->addWidget(visualizationtab);
-
+//    bottomLayout->addWidget(tabs);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
-    mainLayout->addWidget(playbackSlider,4);
-//    mainLayout->addLayout(bottomLayout);
+    //mainLayout->addLayout(midLayout);
+    mainLayout->addWidget(slider_timerCombo);
+    mainLayout->addWidget(tabs);
+    //mainLayout->addLayout(bottomLayout);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
 
     this->setCentralWidget(layoutManager);
 
-    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    tabifyDockWidget(inspectortab, visualizationtab);
-    visualizationtab->show();
-    visualizationtab->raise();
 
 
 }

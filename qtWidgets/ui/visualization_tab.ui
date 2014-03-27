@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true">QDockWidget { 
    font: 0.5pt &quot;Ubuntu&quot;;
-   color:rgb(255, 20, 0);
+   color:rgb(255, 255,255);
 }
 QDockWidget::title {
      text-align: left;
