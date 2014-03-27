@@ -624,97 +624,70 @@ void GripMainWindow::createPlaybackSliders()
 
 void GripMainWindow::manageLayout()
 {
-    this->setDockOptions(QMainWindow::AllowTabbedDocks);
-    this->setDockOptions(QMainWindow::AllowNestedDocks);
+//    this->setDockOptions(QMainWindow::AllowTabbedDocks);
+//    this->setDockOptions(QMainWindow::AllowNestedDocks);
 
-//    QVBoxLayout *topRightLayout = new QVBoxLayout;
+//    QSizePolicy policy;
+//    policy = viewWidget->sizePolicy();
+//    policy.setHorizontalPolicy(QSizePolicy::Expanding);
+//    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
+//    viewWidget->setSizePolicy(policy);
 
-//    topRightLayout->addWidget(treeviewer,1);
-//    QVBoxLayout *topLeftLayout = new QVBoxLayout;
-//    topLeftLayout->addWidget(viewWidget,3);
+    viewWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+    QMainWindow *dummyTreeViewer = new QMainWindow;
+    dummyTreeViewer->setCentralWidget(new QWidget());
+    dummyTreeViewer->setMaximumWidth(250);
+    dummyTreeViewer->addDockWidget(Qt::LeftDockWidgetArea, treeviewer);
+    dummyTreeViewer->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
-    //topLayout->addLayout(topLeftLayout,3);
     topLayout->addWidget(viewWidget);
-    topLayout->addWidget(treeviewer);
-    QSizePolicy policy = viewWidget->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-    viewWidget->setSizePolicy(policy);
+    topLayout->addWidget(dummyTreeViewer);
 
-    policy = treeviewer->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::Fixed);
-    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-    treeviewer->setSizePolicy(policy);
 
-    QHBoxLayout *midLayout = new QHBoxLayout;
     playbackSlider->setTitleBarWidget(new QWidget());
-    policy = playbackSlider->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::Expanding);
-    policy.setVerticalPolicy(QSizePolicy::Fixed);
-    playbackSlider->setSizePolicy(policy);
+    playbackSlider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     simulation_time_display->setTitleBarWidget(new QWidget());
-    policy = simulation_time_display->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::Fixed);
-    policy.setVerticalPolicy(QSizePolicy::Fixed);
-    simulation_time_display->setSizePolicy(policy);
+    simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
+    QHBoxLayout *midLayout = new QHBoxLayout;
     midLayout->addWidget(playbackSlider);
     midLayout->addWidget(simulation_time_display);
 
     QDockWidget *slider_timerCombo = new QDockWidget;
     QWidget *dummyWidgetForCombo = new QWidget;
     dummyWidgetForCombo->setLayout(midLayout);
-    slider_timerCombo->setWidget(dummyWidgetForCombo);
 
-    policy = slider_timerCombo->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-    policy.setVerticalPolicy(QSizePolicy::Fixed);
-    slider_timerCombo->setSizePolicy(policy);
+    slider_timerCombo->setWidget(dummyWidgetForCombo);
+    slider_timerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+
+    QMainWindow *dummySliderTimerCombo = new QMainWindow;
+    dummySliderTimerCombo->setCentralWidget(new QWidget());
+    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, slider_timerCombo);
+    dummySliderTimerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
     QMainWindow *tabs = new QMainWindow;
     tabs->setCentralWidget(new QWidget());
     tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-    //tabs->setDockOptions(QMainWindow::AllowTabbedDocks);
-    //tabs->setDockOptions(QMainWindow::ForceTabbedDocks);
-//    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea);
-//    policy = visualizationtab->sizePolicy();
-//    policy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-//    policy.setVerticalPolicy(QSizePolicy::Fixed);
-//    visualizationtab->setSizePolicy(policy);
-
-//    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
-//    policy = inspectortab->sizePolicy();
-//    policy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-//    policy.setVerticalPolicy(QSizePolicy::Fixed);
-//    inspectortab->setSizePolicy(policy);
-
     tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
     tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
     tabs->tabifyDockWidget(inspectortab, visualizationtab);
-    policy = tabs->sizePolicy();
-    policy.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-    policy.setVerticalPolicy(QSizePolicy::Fixed);
-    tabs->setSizePolicy(policy);
+    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+
     visualizationtab->show();
     visualizationtab->raise();
 
-//    QVBoxLayout *bottomLayout = new QVBoxLayout;
-//    bottomLayout->addWidget(tabs);
-
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
-    //mainLayout->addLayout(midLayout);
-    mainLayout->addWidget(slider_timerCombo);
+    //mainLayout->addWidget(slider_timerCombo);
+    mainLayout->addWidget(dummySliderTimerCombo);
     mainLayout->addWidget(tabs);
-    //mainLayout->addLayout(bottomLayout);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
 
     this->setCentralWidget(layoutManager);
-
-
 
 }
