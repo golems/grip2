@@ -54,7 +54,7 @@
 #define WORLD_VISUALS_H
 
 // Local includes
-#include "../../osgGolems/include/Line.h"
+#include "../osgGolems/Line.h"
 
 // OpenSceneGraph includes
 #include <osg/MatrixTransform>

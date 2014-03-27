@@ -65,15 +65,15 @@ include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 
 # Add QT Widgets library
 add_subdirectory(qtWidgets)
-include_directories(qtWidgets/include)
+include_directories(qtWidgets)
 
 # Add OpenSceneGraph Nodes library
 add_subdirectory(osgGolems)
-include_directories(osgGolems/include)
+include_directories(osgGolems)
 
 # Add DART OSG library
 add_subdirectory(osgDart)
-include_directories(osgDart/include)
+include_directories(osgDart)
 
 # Set project libraries variable
 set(project_libs qtWidgets osgGolems osgDart)
@@ -127,8 +127,17 @@ INSTALL(PROGRAMS build/grip
 INSTALL(TARGETS griplib
         DESTINATION /usr/local/lib/)
 
-INSTALL(FILES "qtWidgets/include/GripTab.h"
-        DESTINATION /usr/local/include)
+FILE(GLOB osgDartHeaders "osgDart/*.h")
+INSTALL(FILES ${osgDartHeaders}
+        DESTINATION /usr/local/include/grip/osgDart)
+
+FILE(GLOB osgGolemsHeaders "osgGolems/*.h")
+INSTALL(FILES ${osgGolemsHeaders}
+        DESTINATION /usr/local/include/grip/osgGolems)
+
+FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
+INSTALL(FILES ${qtWidgetsHeaders}
+        DESTINATION /usr/local/include/grip/qtWidgets)
 
 INSTALL(FILES "doc/grip.desktop"
         DESTINATION /usr/share/applications)

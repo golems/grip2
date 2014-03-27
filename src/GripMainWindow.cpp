@@ -191,6 +191,9 @@ void GripMainWindow::simulationStopped()
 {
     if(_debug) std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
+    playbackSlider->setEnabled(true);
+    playbackSlider->slotUpdateSliderMinMax(timeline->size() - 1);
+    playbackSlider->setSliderValue(timeline->size() - 1);
 }
 
 void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
@@ -226,13 +229,17 @@ void GripMainWindow::slotPlaybackStart()
         return;
     }
 
+    if (playbackSlider->getSliderValue() == (timeline->size() - 1)) {
+        this->slotPlaybackBeginning();
+    }
+
     this->slotSetStatusBarMessage(tr("Starting playback"));
 
     if (_playingBack) {
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+    _curPlaybackTick = playbackSlider->getSliderValue();
     _simulationDirty = true;
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
@@ -264,13 +271,21 @@ void GripMainWindow::slotPlaybackReverse()
         return;
     }
 
+    if (playbackSlider->getSliderValue() == 0) {
+        _curPlaybackTick = timeline->size() - 1;
+        playbackSlider->setSliderValue(_curPlaybackTick);
+        world->setTime(timeline->back().getTime());
+        this->setWorldState_Issue122(timeline->back().getState());
+        simulation_time_display->Update_Time(world->getTime(), 0);
+    }
+
     this->slotSetStatusBarMessage(tr("Reversing playback"));
 
     if (_playingBack) {
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+    _curPlaybackTick = playbackSlider->getSliderValue();
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
@@ -293,7 +308,6 @@ void GripMainWindow::slotPlaybackBeginning()
     if (timeline->size() > 0) {
         world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->front().getState());
-        _curPlaybackTick = 0;
     }
     simulation_time_display->Update_Time(world->getTime(), 0);
 }
@@ -313,8 +327,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         playbackSlider->setSliderValue(_curPlaybackTick);
         this->setSimulationRelativeTime(0);
 
-        if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward)
-                || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
+        if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
+                || ((_curPlaybackTick + _playbackSpeed) >= timeline->size() && playForward)) {
+            _curPlaybackTick = (playForward ? 0 : timeline->size() - 1);
             _playingBack = false;
         } else {
             playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
@@ -398,7 +413,7 @@ void GripMainWindow::startSimulation()
             }
 
             // Set world back to last simulated timestep
-            if (timeline->size()) {
+            if (timeline->size() > 0) {
                 world->setTime(timeline->at(_curPlaybackTick).getTime());
                 this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
             }
@@ -423,9 +438,6 @@ void GripMainWindow::stopSimulation()
     _simulating = false;
     // FIXME: Maybe use qsignalmapping or std::map for this
     swapStartStopButtons();
-    playbackSlider->setEnabled(true);
-    playbackSlider->slotUpdateSliderMinMax(timeline->size()-1);
-    playbackSlider->setSliderValue(0);
 }
 
 void GripMainWindow::swapStartStopButtons()
