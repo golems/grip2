@@ -8,7 +8,7 @@ set(CMAKE_BUILD_TYPE "Release")
 set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall -O3")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_ROOT}/Modules)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -94,8 +94,9 @@ set(project_libs ${project_libs} mainWindow)
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-add_library(griplib SHARED)
-target_link_libraries(griplib ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp)
+add_library(grip-core SHARED ${grip-srcs})
+target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -117,16 +118,18 @@ foreach(utest_src_file ${unit_tests_source})
     add_dependencies(check ${test_base})
 endforeach(utest_src_file)
 
-
 #-----------------------------------------------
 #                 INSTALLATION
 #-----------------------------------------------
+# Install grip
 INSTALL(PROGRAMS build/grip
         DESTINATION /usr/local/bin/)
 
-INSTALL(TARGETS griplib
+# Install library of grips libraries
+INSTALL(TARGETS grip-core
         DESTINATION /usr/local/lib/)
 
+# Install header files by namespace and directory
 FILE(GLOB osgDartHeaders "osgDart/*.h")
 INSTALL(FILES ${osgDartHeaders}
         DESTINATION /usr/local/include/grip/osgDart)
@@ -139,5 +142,10 @@ FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
 INSTALL(FILES ${qtWidgetsHeaders}
         DESTINATION /usr/local/include/grip/qtWidgets)
 
+# Install cmake find file for grip
+INSTALL(FILES cmake/FindGRIP.cmake
+        DESTINATION ${CMAKE_ROOT}/Modules)
+
+# Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
         DESTINATION /usr/share/applications)
