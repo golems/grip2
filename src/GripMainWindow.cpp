@@ -647,7 +647,7 @@ void GripMainWindow::manageLayout()
 //    viewWidget->setSizePolicy(policy);
     viewWidget->setMinimumWidth(500);
     viewWidget->setMinimumHeight(250);
-    viewWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+    viewWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
     treeviewer->setMinimumWidth(200);
     treeviewer->setMaximumWidth(210);
@@ -655,9 +655,9 @@ void GripMainWindow::manageLayout()
     QMainWindow *dummyTreeViewer = new QMainWindow;
     dummyTreeViewer->setCentralWidget(new QWidget());
     dummyTreeViewer->setMaximumWidth(210);
-    dummyTreeViewer->setMinimumWidth(200);
+    //dummyTreeViewer->setMinimumWidth(200);
     dummyTreeViewer->addDockWidget(Qt::LeftDockWidgetArea, treeviewer);
-    dummyTreeViewer->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Expanding);
+    dummyTreeViewer->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(viewWidget);
