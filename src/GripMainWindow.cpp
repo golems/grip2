@@ -645,18 +645,26 @@ void GripMainWindow::manageLayout()
 //    policy.setHorizontalPolicy(QSizePolicy::Expanding);
 //    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
 //    viewWidget->setSizePolicy(policy);
+    viewWidget->setMinimumWidth(500);
+    viewWidget->setMinimumHeight(250);
+    viewWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 
-    viewWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-
+    treeviewer->setMinimumWidth(200);
+    treeviewer->setMaximumWidth(210);
+    treeviewer->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     QMainWindow *dummyTreeViewer = new QMainWindow;
     dummyTreeViewer->setCentralWidget(new QWidget());
-    dummyTreeViewer->setMaximumWidth(250);
+    dummyTreeViewer->setMaximumWidth(210);
+    dummyTreeViewer->setMinimumWidth(200);
     dummyTreeViewer->addDockWidget(Qt::LeftDockWidgetArea, treeviewer);
-    dummyTreeViewer->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
+    dummyTreeViewer->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Expanding);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(viewWidget);
     topLayout->addWidget(dummyTreeViewer);
+    topLayout->setSpacing(0);
+    topLayout->setMargin(0);
+    topLayout->setContentsMargins(0,0,0,0);
 
 
     playbackSlider->setTitleBarWidget(new QWidget());
@@ -669,6 +677,10 @@ void GripMainWindow::manageLayout()
     QHBoxLayout *midLayout = new QHBoxLayout;
     midLayout->addWidget(playbackSlider);
     midLayout->addWidget(simulation_time_display);
+    midLayout->addWidget(viewWidget);
+    midLayout->setSpacing(0);
+    midLayout->setMargin(0);
+    midLayout->setContentsMargins(0,0,0,0);
 
     QDockWidget *Combo = new QDockWidget;
     QWidget *dummyWidgetForCombo = new QWidget;
@@ -699,6 +711,9 @@ void GripMainWindow::manageLayout()
     mainLayout->addLayout(topLayout);
     //mainLayout->addWidget(slider_timerCombo);
     mainLayout->addWidget(dummySliderTimerCombo);
+    mainLayout->setSpacing(0);
+    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0,0,0,0);
     //mainLayout->addWidget(tabs);
 
     QWidget *layoutManager = new QWidget;
