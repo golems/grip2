@@ -96,6 +96,9 @@ QGroupBox::title {
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
            </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -118,6 +121,9 @@ QGroupBox::title {
            <property name="styleSheet">
             <string notr="true">border: 1px solid gray; 
      border-radius: 3px; </string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

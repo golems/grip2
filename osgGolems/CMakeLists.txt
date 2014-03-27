@@ -8,5 +8,5 @@ include_directories(include)
 
 # OpenSceneGraph Nodes Library
 file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
-add_library(osgNodes ${srcs})
-target_link_libraries(osgNodes ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
+add_library(osgGolems SHARED ${srcs})
+target_link_libraries(osgGolems ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})

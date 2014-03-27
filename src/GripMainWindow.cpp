@@ -86,7 +86,8 @@ GripMainWindow::GripMainWindow(bool debug) :
     _simulating(false),
     _playingBack(false),
     _curPlaybackTick(0),
-    _playbackSpeed(1)
+    _playbackSpeed(1),
+    _simulationDirty(false)
 {
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
@@ -110,7 +111,7 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(string fileName)
 {
-    if (_simulating) {
+    if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
             if (_debug) std::cerr << "Not loading a new world" << std::endl;
             return;
@@ -145,35 +146,33 @@ bool GripMainWindow::stopSimulationWithDialog()
 {
     // Ask user if they really want to end the simulation and load a new world
     QMessageBox msgBox;
-    msgBox.setWindowTitle(tr("Stop Simulation and Open Scene?"));
-    msgBox.setText(tr("Ending simulation and opening new scene!"));
+
+    QString action = (_simulating ? "simulation" : "playback");
+    msgBox.setWindowTitle(tr("Stop " + action + " and Open Scene?"));
+    msgBox.setText(tr("Ending " + action + " and opening new scene!"));
     msgBox.setInformativeText("Are you sure?");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Ok);
     int resp = msgBox.exec();
 
-    switch (resp) {
-        case QMessageBox::Cancel: {
-            return false;
-        }
-        case QMessageBox::Ok:
-        default: {
-            break;
-        }
+    if (QMessageBox::Cancel == resp) {
+        return false;
     }
 
     // Stop simulation
-    simulation->stopSimulation();
-
-    // Wait for simulation to stop by letting the event loop process
-    // events until the "simulationStopped" slot is called which set the
-    // _simulating flag to false.
-    while (_simulating) {
-        QCoreApplication::processEvents();
+    if (_simulating) {
+        simulation->stopSimulation();
+        // Wait for simulation to stop by letting the event loop process
+        // events until the "simulationStopped" slot is called which set the
+        // _simulating flag to false.
+        while (_simulating) {
+            QCoreApplication::processEvents();
+        }
+        // Swap the start and stop buttons
+        this->swapStartStopButtons();
+    } else {
+        this->slotPlaybackPause();
     }
-
-    // Swap the start and stop buttons
-    this->swapStartStopButtons();
 
     return true;
 }
@@ -238,7 +237,7 @@ void GripMainWindow::slotPlaybackStart()
     }
 
     _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
-
+    _simulationDirty = true;
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
@@ -318,10 +317,12 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         playbackSlider->setSliderValue(_curPlaybackTick);
         this->setSimulationRelativeTime(0);
 
-        if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward) || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
+        if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward)
+                || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
             _playingBack = false;
         } else {
-            playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
+            playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
+                    : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
         }
 
         // Call user tab functions after time step
@@ -388,17 +389,24 @@ void GripMainWindow::hd1280x720(){}
 
 void GripMainWindow::startSimulation()
 {
+    if (_playingBack) {
+        slotSetStatusBarMessage(tr("Stop playback first"));
+        return;
+    }
+
     // If we have a valid world, start simulating
     if (world->getNumSkeletons()) {
-        int curSliderValue = playbackSlider->playbackSliderUi->sliderMain->value();
-        for (int i = curSliderValue; i < timeline->size(); ++i) {
-            timeline->erase(timeline->begin() + i);
-        }
+        if (_simulationDirty) {
+            while (timeline->size() > _curPlaybackTick + 1) {
+                timeline->erase(timeline->end());
+            }
 
-        // Set world back to last simulated timestep
-        if (timeline->size()) {
-            world->setTime(timeline->back().getTime());
-            this->setWorldState_Issue122(timeline->back().getState());
+            // Set world back to last simulated timestep
+            if (timeline->size()) {
+                world->setTime(timeline->at(_curPlaybackTick).getTime());
+                this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
+            }
+            _simulationDirty = false;
         }
 
         playbackSlider->setDisabled(true);
@@ -421,6 +429,7 @@ void GripMainWindow::stopSimulation()
     swapStartStopButtons();
     playbackSlider->setEnabled(true);
     playbackSlider->slotUpdateSliderMinMax(timeline->size()-1);
+    playbackSlider->setSliderValue(0);
 }
 
 void GripMainWindow::swapStartStopButtons()

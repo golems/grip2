@@ -70,5 +70,4 @@ void PlaybackSlider::slotUpdateSliderMinMax(int max)
 {
     playbackSliderUi->sliderMain->setMinimum(0);
     playbackSliderUi->sliderMain->setMaximum(max);
-    playbackSliderUi->sliderMain->setValue(max);
 }

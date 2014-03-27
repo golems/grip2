@@ -74,6 +74,9 @@ QDockWidget::float-button {
     <property name="frame">
      <bool>true</bool>
     </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLineEdit" name="time_edit_rel">
     <property name="geometry">
@@ -86,6 +89,9 @@ QDockWidget::float-button {
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation time relative to real time (ie. 0.5 is two times slower than real time. 2.0 is twice as fast as real time)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

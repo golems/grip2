@@ -2,7 +2,7 @@
 #define GRIPTAB_H
 
 #include "TreeViewReturn.h"
-#include "../../osgNodes/include/ViewerWidget.h"
+#include "../../osgGolems/include/ViewerWidget.h"
 #include <QDockWidget>
 #include <QtPlugin>
 

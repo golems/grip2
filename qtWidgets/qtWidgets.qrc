@@ -3,5 +3,6 @@
 	<file>icons/button-play.png</file>
 	<file>icons/button-pause.png</file>
 	<file>icons/button-reverse.png</file>
+    <file>icons/button-beginning.png</file>
 </qresource>
 </RCC>

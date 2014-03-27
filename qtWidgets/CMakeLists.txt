@@ -31,6 +31,6 @@ QT4_ADD_RESOURCES(RESOURCES ${RC_FILES})
 # Add source and header files
 file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
 
-# Add Qt Widgets library
-add_library(qtWidgets ${srcs} ${UI} ${MOC} ${RESOURCES})
+# Add Qt Widgets library as SHARED library to dynamically load icons during runtime
+add_library(qtWidgets SHARED ${srcs} ${UI} ${MOC} ${RESOURCES})
 target_link_libraries(qtWidgets  ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
