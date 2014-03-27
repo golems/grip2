@@ -18,10 +18,9 @@ if(DART_NOT_FOUND)
     link_directories(${DART_LIBRARY_DIRS})
 endif()
 
-
 # Include include directory
 include_directories(include)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../osgNodes/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../osgGolems/include)
 
 
 #-----------------------------------------------
@@ -29,5 +28,5 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/../osgNodes/include)
 #-----------------------------------------------
 # DART OpenSceneGraph Nodes Library
 file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
-add_library(osgDart ${srcs})
+add_library(osgDart SHARED ${srcs})
 target_link_libraries(osgDart ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})

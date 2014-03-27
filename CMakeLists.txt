@@ -68,15 +68,15 @@ add_subdirectory(qtWidgets)
 include_directories(qtWidgets/include)
 
 # Add OpenSceneGraph Nodes library
-add_subdirectory(osgNodes)
-include_directories(osgNodes/include)
+add_subdirectory(osgGolems)
+include_directories(osgGolems/include)
 
 # Add DART OSG library
 add_subdirectory(osgDart)
 include_directories(osgDart/include)
 
 # Set project libraries variable
-set(project_libs qtWidgets osgNodes osgDart)
+set(project_libs qtWidgets osgGolems osgDart)
 
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)

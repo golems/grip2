@@ -132,6 +132,7 @@ public:
     bool _playingBack;
     int _curPlaybackTick;
     int _playbackSpeed;
+    bool _simulationDirty;
 
 public slots:
     void slotSetWorldFromPlayback(int sliderTick);

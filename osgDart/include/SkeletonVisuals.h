@@ -56,7 +56,7 @@
 #include <osg/CullFace>
 
 // Local includes
-#include "Shapes.h"
+#include "../../osgGolems/include/Shapes.h"
 
 /**
  * \namespace osgDart

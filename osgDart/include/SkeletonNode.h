@@ -51,7 +51,7 @@
 #define SKELETONNODE_H
 
 // Grip includes
-#include "../../osgNodes/include/Axes.h"
+#include "../../osgGolems/include/Axes.h"
 #include "BodyNodeVisuals.h"
 #include "SkeletonVisuals.h"
 
