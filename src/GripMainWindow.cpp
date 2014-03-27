@@ -663,6 +663,7 @@ void GripMainWindow::manageLayout()
     playbackSlider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     simulation_time_display->setTitleBarWidget(new QWidget());
+    simulation_time_display->setStyleSheet("font: 11pt \"Ubuntu\";color:rgb(0,0,0);");
     simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
     QHBoxLayout *midLayout = new QHBoxLayout;
