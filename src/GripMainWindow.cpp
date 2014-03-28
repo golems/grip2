@@ -82,7 +82,7 @@ GripMainWindow::GripMainWindow(bool debug) :
     _simulating(false),
     _playingBack(false),
     _curPlaybackTick(0),
-    _playbackSpeed(1),
+    _playbackSpeed(5),
     _simulationDirty(false)
 {
     world->setTime(0);
@@ -136,6 +136,12 @@ void GripMainWindow::doLoad(string fileName)
     saveText(fileName,".lastload");
     inspectortab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(fileName));
+}
+
+void GripMainWindow::close()
+{
+    std::cerr << "Closing" << std::endl;
+    clear();
 }
 
 bool GripMainWindow::stopSimulationWithDialog()

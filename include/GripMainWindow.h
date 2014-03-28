@@ -221,6 +221,7 @@ protected slots:
 
     void hd1280x720();
 
+    void close();
     /**
      * \brief Notifies thread that simulation has stopped
      * \return void

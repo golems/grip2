@@ -370,10 +370,7 @@ void MainWindow::createMenus()
 }
 
 void MainWindow::saveScene(){}
-void MainWindow::close()
-{
-    QApplication::closeAllWindows();
-}
+void MainWindow::close(){}
 void MainWindow::exit()
 {
     QApplication::exit();

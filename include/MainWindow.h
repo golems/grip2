@@ -136,7 +136,7 @@ protected slots:
      * \brief Closes the Window
      * \return void
      */
-    void close();
+    virtual void close();
 
     /**
      * \brief Exits the program
