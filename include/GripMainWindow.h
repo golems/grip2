@@ -129,6 +129,8 @@ public:
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
 
+    QMainWindow* tabs;
+
     bool _playingBack;
     int _curPlaybackTick;
     int _playbackSpeed;
@@ -217,6 +219,8 @@ protected slots:
     void vga640x480();
 
     void hd1280x720();
+
+    void loadUserPlugins();
 
     /**
      * \brief Notifies thread that simulation has stopped
@@ -313,7 +317,7 @@ protected:
 
     /// This function reads a folder by the name of 'plugin' in source directory
     /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
-    void loadPlugins();
+    void loadPlugins(bool useDialog=false);
 
     void setWorldState_Issue122(const Eigen::VectorXd &_newState);
 

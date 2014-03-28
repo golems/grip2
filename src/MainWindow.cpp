@@ -100,7 +100,7 @@ void MainWindow::Toolbar()
     QAction *top = toolbar->addAction(QIcon(topViewIcon), "View scene from top");
     QAction *rightSide = toolbar->addAction(QIcon(rightSideViewIcon), "View scene from right");
 
-    connect(open, SIGNAL(triggered()), this, SLOT(load()));
+    connect(open, SIGNAL(triggered()), this, SLOT(loadScene()));
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
     connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
@@ -121,7 +121,7 @@ void MainWindow::slotSetStatusBarMessage(QString msg)
     this->statusBar()->showMessage(msg);
 }
 
-void MainWindow::load()
+void MainWindow::loadScene()
 {
     QStringList fileNames; //stores the entire path of the file that it attempts to open
 
@@ -165,10 +165,10 @@ void MainWindow::about(){}
 void MainWindow::createActions()
 {
     //loadAct
-    loadAct = new QAction(tr("&Load"), this);
+    loadAct = new QAction(tr("&Load Scene"), this);
     loadAct->setShortcut(Qt::CTRL + Qt::Key_O);
     loadAct->setStatusTip(tr("Load scene"));
-    connect(loadAct, SIGNAL(triggered()), this, SLOT(load()));
+    connect(loadAct, SIGNAL(triggered()), this, SLOT(loadScene()));
 
 
     //quickLoadAct
@@ -182,6 +182,12 @@ void MainWindow::createActions()
     saveSceneAct->setShortcut(Qt::CTRL + Qt::Key_S);
     saveSceneAct->setStatusTip(tr("Save Scene"));
     connect(saveSceneAct, SIGNAL(triggered()), this, SLOT(saveScene()));
+
+    //loadPlugingsAct
+    loadPluginsAct = new QAction(tr("&Load Plugins..."), this);
+    loadPluginsAct->setShortcut(Qt::CTRL + Qt::Key_P);
+    loadPluginsAct->setStatusTip(tr("Load user plugins"));
+    connect(loadPluginsAct, SIGNAL(triggered()), this, SLOT(loadUserPlugins()));
 
     //closeAct
     closeAct = new QAction(tr("&Close"), this);
@@ -272,6 +278,8 @@ void MainWindow::createMenus()
     fileMenu->addAction(loadAct);
     fileMenu->addAction(quickLoadAct);
     fileMenu->addAction(saveSceneAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(loadPluginsAct);
     fileMenu->addAction(closeAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
@@ -313,8 +321,14 @@ void MainWindow::createMenus()
 }
 
 void MainWindow::saveScene(){}
-void MainWindow::close(){}
-void MainWindow::exit(){}
+void MainWindow::close()
+{
+    QApplication::closeAllWindows();
+}
+void MainWindow::exit()
+{
+    QApplication::exit();
+}
 
 void MainWindow::loadPlugins()
 {

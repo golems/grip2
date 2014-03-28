@@ -393,8 +393,12 @@ void GripMainWindow::side()
 }
 
 
-void GripMainWindow::xga1024x768(){}
-void GripMainWindow::vga640x480(){}
+void GripMainWindow::xga1024x768()
+{}
+
+void GripMainWindow::vga640x480()
+{}
+
 void GripMainWindow::hd1280x720(){}
 
 
@@ -493,27 +497,53 @@ void GripMainWindow::createTreeView()
 //    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
-void GripMainWindow::loadPlugins()
+void GripMainWindow::loadUserPlugins()
+{
+    loadPlugins(true);
+}
+
+void GripMainWindow::loadPlugins(bool useDialog)
 {
     QObject* plugin;
-    QDir pluginsDir = QDir(qApp->applicationDirPath());
+    QDir pluginsDir;
 
-#if defined(Q_OS_WIN)
-    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+    if (useDialog) {
+        // Set file extension filters
+        QStringList filters;
+        filters << "Shared libraries (*.so)";
+
+        QFileDialog dialog(this);
+        dialog.setNameFilters(filters);
+        dialog.setAcceptMode(QFileDialog::AcceptOpen);
+        dialog.setFileMode(QFileDialog::Directory);
+        if (dialog.exec()) {
+            pluginsDir = dialog.directory();
+            slotSetStatusBarMessage(tr("plugin Dir: " + pluginsDir.path()));
+        } else {
+            slotSetStatusBarMessage(tr("Didn't find plugin directory"));
+        }
+    } else {
+
+        pluginsDir = QDir(qApp->applicationDirPath());
+
+    #if defined(Q_OS_WIN)
+        if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+            pluginsDir.cdUp();
+    #elif defined(Q_OS_MAC)
+        if (pluginsDir.dirName() == "MacOS") {
+            pluginsDir.cdUp();
+            pluginsDir.cdUp();
+            pluginsDir.cdUp();
+        }
+    #endif
         pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-    if (pluginsDir.dirName() == "MacOS") {
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
+        pluginsDir.cd("plugin");
     }
-#endif
-    pluginsDir.cdUp();
-    pluginsDir.cd("plugin");
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
         QFileInfo fileInfo(fileName);
-        if (fileInfo.suffix() != ".so") {
+        if (fileInfo.suffix() != "so") {
+            slotSetStatusBarMessage(tr("Incorrect file extension on plug: " + fileInfo.path() + " >>> " + fileInfo.suffix()));
             continue;
         }
         if (_debug) std::cerr << "Attempting to load plugin: " << fileName.toStdString() << std::endl;
@@ -531,9 +561,9 @@ void GripMainWindow::loadPlugins()
                 if (pluginWidget == NULL)
                     if (_debug) std::cerr << "is NULL" << std::endl;
                 else
-                    this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+                    tabs->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
 
-                tabifyDockWidget(visualizationtab, pluginWidget);
+                tabs->tabifyDockWidget(visualizationtab, pluginWidget);
             }
         }
         else {
@@ -689,7 +719,7 @@ void GripMainWindow::manageLayout()
     dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, slider_timerCombo);
     dummySliderTimerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
-    QMainWindow *tabs = new QMainWindow;
+    tabs = new QMainWindow;
     tabs->setCentralWidget(new QWidget());
     tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
     tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);

@@ -113,7 +113,7 @@ protected slots:
      * \brief Loads a scene with a dialog box
      * \return void
      */
-    void load();
+    void loadScene();
 
     /**
      * \brief Loads the last loaded scene
@@ -126,6 +126,8 @@ protected slots:
      * \return void
      */
     void saveScene();
+
+    virtual void loadUserPlugins() = 0;
 
     /**
      * \brief Closes the Window
@@ -282,6 +284,7 @@ private:
     QAction *loadAct;
     QAction *quickLoadAct;
     QAction *saveSceneAct;
+    QAction *loadPluginsAct;
     QAction *closeAct;
     QAction *exitAct;
     QAction *frontAct;
