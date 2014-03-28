@@ -102,7 +102,7 @@ Documentation
     One-line comments
 
         /// The radius of the cylinder
-        int _radius;
+        int _radus;
 
         int _height ///< Height of the cylinder
 

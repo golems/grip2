@@ -64,6 +64,7 @@ void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
+	std::cerr << "ThreadingModel: " << threadingModel << std::endl;
     setThreadingModel(threadingModel);
 //    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
