@@ -46,7 +46,7 @@
 #include "PlaybackSlider.h"
 #include <cmath>
 PlaybackSlider::PlaybackSlider (MainWindow *parent)
- : QDockWidget(parent), playbackSliderUi(new Ui::PlaybackSlider)
+ : QWidget(parent), playbackSliderUi(new Ui::PlaybackSlider)
 {
     _parent = parent;
     playbackSliderUi->setupUi(this);

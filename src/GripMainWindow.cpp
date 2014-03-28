@@ -51,8 +51,8 @@
 #include "ui_inspector_tab.h"
 #include "TreeView.h"
 #include "ui_TreeView.h"
-#include "time_display.h"
-#include "ui_time_display.h"
+#include "TimeDisplay.h"
+#include "ui_TimeDisplay.h"
 #include "doubleslider.h"
 #include "Grid.h"
 #include "Line.h"
@@ -539,59 +539,8 @@ void GripMainWindow::loadPlugins()
 
 void GripMainWindow::createTabs()
 {
-    //setDockOptions(QMainWindow::AnimatedDocks);
-    //setDockOptions(QMainWindow::VerticalTabs);
-    //setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
-
-//    setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-    //setDockOptions(QMainWindow::AllowNestedDocks);
-
     inspectortab = new Inspector_Tab(this, world,treeviewer);
     visualizationtab = new Visualization_Tab(worldNode, treeviewer, this);
-
-//    QDockWidget* emptyTitle1 = new QDockWidget();
-//    QDockWidget* emptyTitle2 = new QDockWidget();
-//    visualizationtab->setTitleBarWidget(emptyTitle1);
-//    inspectortab->setTitleBarWidget(emptyTitle2);
-//    QDockWidget* emptyTitle1 = new QDockWidget();
-//    QDockWidget* emptyTitle2 = new QDockWidget();
-//    delete emptyTitle1;
-//    delete emptyTitle2;
-
-    //inspectortab->setFeatures(QDockWidget::DockWidgetMovable);
-    //inspectortab->setFeatures(QDockWidget::DockWidgetFloatable);
-    //inspectortab->setFeatures(QDockWidget::DockWidgetClosable);
-
-//    inspectortab->setAllowedAreas(Qt::BottomDockWidgetArea);
-
-    //visualizationtab->setFeatures(QDockWidget::DockWidgetMovable);
-    //visualizationtab->setFeatures(QDockWidget::DockWidgetFloatable);
-    //visualizationtab->setFeatures(QDockWidget::DockWidgetClosable);
-
-//    visualizationtab->setAllowedAreas(Qt::BottomDockWidgetArea); //setFeatures(QDockWidget::DockWidgetClosable);
-
-//    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-//    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-
-//     tabifyDockWidget(inspectortab, visualizationtab);
-
-//    visualizationtab->show();
-//    visualizationtab->raise();
-
-    //visualizationtab->setFloating(false);
-    //inspectortab->setFloating(false);
-
-    //QDockWidget *viztabwidget = new QDockWidget(this);
-    //Ui_Visualizer::setupUi(viztabwidget);
-    //this->addDockWidget(Qt::BottomDockWidgetArea, viztabwidget);
-
-    //QDockWidget *inspectabwidget = new QDockWidget(this);
-    //Ui_Inspector::setupUi(inspectabwidget);
-    //this->addDockWidget(Qt::BottomDockWidgetArea, inspectabwidget);
-
-    //tabifyDockWidget(inspectabwidget, viztabwidget);
-    //viztabwidget->show();
-    //viztabwidget->raise();
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()
@@ -622,89 +571,36 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
 
 void GripMainWindow::createTimeDisplays()
 {
-    simulation_time_display = new Time_Display(this);
-//    this->addDockWidget(Qt::RightDockWidgetArea, simulation_time_display);
-
+    simulation_time_display = new TimeDisplay(this);
+    std::cout<<"Time display created"<<std::endl;
 }
 
 void GripMainWindow::createPlaybackSliders()
 {
     playbackSlider = new PlaybackSlider(this);
-//    playbackSlider->setTitleBarWidget(new QWidget());
-
 }
 
 
 void GripMainWindow::manageLayout()
 {
-//    this->setDockOptions(QMainWindow::AllowTabbedDocks);
-//    this->setDockOptions(QMainWindow::AllowNestedDocks);
+    QWidget* widget = new QWidget(this);
+    gridLayout = new QGridLayout;
 
-//    QSizePolicy policy;
-//    policy = viewWidget->sizePolicy();
-//    policy.setHorizontalPolicy(QSizePolicy::Expanding);
-//    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-//    viewWidget->setSizePolicy(policy);
+    gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-    viewWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    playbackSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    gridLayout->addWidget(playbackSlider, 1, 0);
 
-    QMainWindow *dummyTreeViewer = new QMainWindow;
-    dummyTreeViewer->setCentralWidget(new QWidget());
-    dummyTreeViewer->setMaximumWidth(250);
-    dummyTreeViewer->addDockWidget(Qt::LeftDockWidgetArea, treeviewer);
-    dummyTreeViewer->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
+    /// simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    gridLayout->addWidget(simulation_time_display, 1, 1);
 
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addWidget(viewWidget);
-    topLayout->addWidget(dummyTreeViewer);
+    widget->setLayout(gridLayout);
+    this->setCentralWidget(widget);
 
+    /// adding tree view
+    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 
-    playbackSlider->setTitleBarWidget(new QWidget());
-    playbackSlider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    simulation_time_display->setTitleBarWidget(new QWidget());
-    simulation_time_display->setStyleSheet("font: 11pt \"Ubuntu\";color:rgb(0,0,0);");
-    simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-
-    QHBoxLayout *midLayout = new QHBoxLayout;
-    midLayout->addWidget(playbackSlider);
-    midLayout->addWidget(simulation_time_display);
-
-    QDockWidget *Combo = new QDockWidget;
-    QWidget *dummyWidgetForCombo = new QWidget;
-    dummyWidgetForCombo->setLayout(midLayout);
-
-    Combo->setWidget(dummyWidgetForCombo);
-    Combo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
-    Combo->setWindowTitle(QString("Slider Timer Combo"));
-    Combo->setStyleSheet("font: 0.5pt \"Ubuntu\";color:rgb(255, 255, 255);");
-
-    QMainWindow *dummySliderTimerCombo = new QMainWindow;
-    dummySliderTimerCombo->setCentralWidget(new QWidget());
-    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, Combo);
-    dummySliderTimerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
-
-//    QMainWindow *tabs = new QMainWindow;
-//    tabs->setCentralWidget(new QWidget());
-//    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-//    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-//    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-//    tabs->tabifyDockWidget(inspectortab, visualizationtab);
-//    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
-
-//    visualizationtab->show();
-//    visualizationtab->raise();
-
-    QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->addLayout(topLayout);
-    //mainLayout->addWidget(slider_timerCombo);
-    mainLayout->addWidget(dummySliderTimerCombo);
-    //mainLayout->addWidget(tabs);
-
-    QWidget *layoutManager = new QWidget;
-    layoutManager->setLayout(mainLayout);
-
-    this->setCentralWidget(layoutManager);
+    /// adding the inspector and visualization tabs
     this->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
     this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
     this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
@@ -730,6 +626,12 @@ void GripMainWindow::manageLayout()
 
          }
      }
+}
 
-
+void GripMainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    int viewerWidth = viewWidget->width();
+    gridLayout->setColumnMinimumWidth(0, viewerWidth - 130);
+    playbackSlider->setMinimumWidth(viewerWidth - 130);
 }

@@ -43,23 +43,22 @@
  */
 
 
-#ifndef TIMEDISPLAY_H
-#define TIMEDISPLAY_H
+#include "TimeDisplay.h"
+#include <iostream>
+#include <cmath>
 
-#include "ui_time_display.h"
+TimeDisplay::TimeDisplay (QWidget *parent)
+ : QWidget(parent), time_display_ui(new Ui::TimeDisplay)
+{
+    time_display_ui->setupUi(this);
+}
 
-//class ..
+TimeDisplay::~TimeDisplay()
+{
+}
 
-class Time_Display : public QDockWidget {
-
-public:
-    Time_Display(QWidget *parent = 0);
-    ~Time_Display();
-    void Update_Time(double sim_time, double rel_time);
-
-private:
-    Ui::Time_Display *time_display_ui;
-
-};
-
-#endif
+void TimeDisplay::Update_Time(double sim_time, double rel_time)
+{
+    time_display_ui->time_edit_sim->setText(QString("%1").arg(sim_time));
+    time_display_ui->time_edit_rel->setText(QString("%1").arg(ceil(rel_time*100)/100));
+}

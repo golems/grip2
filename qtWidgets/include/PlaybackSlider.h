@@ -58,10 +58,8 @@
  * \class PlaybackSlider PlaybackSlider.h
  * \brief Class for simulation and kinematic playback
  */
-class PlaybackSlider : public QDockWidget {
-
+class PlaybackSlider : public QWidget {
     Q_OBJECT
-
 public:
     PlaybackSlider(MainWindow *parent);
     ~PlaybackSlider();

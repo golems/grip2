@@ -57,13 +57,13 @@
 #include "TreeView.h"
 #include "inspector_tab.h"
 #include "visualization_tab.h"
-#include "time_display.h"
+#include "TimeDisplay.h"
 #include "PlaybackSlider.h"
 #include "ui_visualization_tab.h"
 #include "ui_inspector_tab.h"
 #include "ui_TreeView.h"
 #include "GripTab.h"
-#include "ui_time_display.h"
+#include "ui_TimeDisplay.h"
 #include "ui_PlaybackSlider.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
@@ -106,7 +106,7 @@ public:
     Visualization_Tab* visualizationtab;
 
     /// Display for the simluation time and its time relative to real time
-    Time_Display* simulation_time_display;
+    TimeDisplay* simulation_time_display;
 
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
     std::vector<GripTimeslice>* timeline;
@@ -128,6 +128,9 @@ public:
 
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
+
+    /// called when the window gets resized
+    void resizeEvent(QResizeEvent* event);
 
     bool _playingBack;
     int _curPlaybackTick;
@@ -318,6 +321,9 @@ protected:
     void setWorldState_Issue122(const Eigen::VectorXd &_newState);
 
     bool _debug;
+
+    /// used to maintain the layout of the widgets that are not QDockWidgets
+    QGridLayout *gridLayout;
 };
 
 
