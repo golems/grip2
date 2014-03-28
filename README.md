@@ -105,23 +105,15 @@ Documentation
 
 Creating Grip2 Plugins
 ======================
-1. Download and install grip from https://github.com/golems/grip2
-2. Build grip using the commands
-	mkdir build
-	cd build/
-	cmake ..
-	make
-	make install
-
-3. Create a project for the plugin that you want to create
-4. In the CMakeLists.txt include the following
-
-	find_package(GRIP REQUIRED)
+1. Download and install grip 
+2. Create a project for the plugin that you want to create
+3. In the CMakeLists.txt include the following
+<pre><code>find_package(GRIP REQUIRED)
 	include_directories(${GRIP_INCLUDE_DIRS})
 	
 	add_executable(foo foo.cc)
 	target_link_libraries(foo ${GRIP_LIBRARIES})
-	
+</code></pre>
 Note: Remember that the plugin needs to compile into a library and not an executable file. Hence include the cmake commands to generate a library from your code. While creating the library add the GripTab.h file to the library else when the library is being executed it will not understand the reference to GripTab.
 	
 5. Create a UI file using QT Designer that is of type QDockWidget and add the UI elements as needed
