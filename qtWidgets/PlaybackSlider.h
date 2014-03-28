@@ -67,6 +67,7 @@ public:
 
     void slotUpdateTime(double simTime, double simRelTime);
     void setSliderValue(int value);
+    int getSliderValue();
 
 public slots:
     void slotUpdateSliderMinMax(int max);

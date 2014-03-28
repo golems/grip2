@@ -4,11 +4,11 @@ project(grip2)
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall -O3")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_ROOT}/Modules)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -22,7 +22,7 @@ endif()
 #               UNINSTALL TARGET
 #-----------------------------------------------
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
 add_custom_target(uninstall
@@ -65,15 +65,15 @@ include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 
 # Add QT Widgets library
 add_subdirectory(qtWidgets)
-include_directories(qtWidgets/include)
+include_directories(qtWidgets)
 
 # Add OpenSceneGraph Nodes library
 add_subdirectory(osgGolems)
-include_directories(osgGolems/include)
+include_directories(osgGolems)
 
 # Add DART OSG library
 add_subdirectory(osgDart)
-include_directories(osgDart/include)
+include_directories(osgDart)
 
 # Set project libraries variable
 set(project_libs qtWidgets osgGolems osgDart)
@@ -94,8 +94,9 @@ set(project_libs ${project_libs} mainWindow)
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-add_library(griplib SHARED)
-target_link_libraries(griplib ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp)
+add_library(grip-core SHARED ${grip-srcs})
+target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -117,18 +118,34 @@ foreach(utest_src_file ${unit_tests_source})
     add_dependencies(check ${test_base})
 endforeach(utest_src_file)
 
-
 #-----------------------------------------------
 #                 INSTALLATION
 #-----------------------------------------------
+# Install grip
 INSTALL(PROGRAMS build/grip
         DESTINATION /usr/local/bin/)
 
-INSTALL(TARGETS griplib
+# Install library of grips libraries
+INSTALL(TARGETS grip-core
         DESTINATION /usr/local/lib/)
 
-INSTALL(FILES "qtWidgets/include/GripTab.h"
-        DESTINATION /usr/local/include)
+# Install header files by namespace and directory
+FILE(GLOB osgDartHeaders "osgDart/*.h")
+INSTALL(FILES ${osgDartHeaders}
+        DESTINATION /usr/local/include/grip/osgDart)
 
+FILE(GLOB osgGolemsHeaders "osgGolems/*.h")
+INSTALL(FILES ${osgGolemsHeaders}
+        DESTINATION /usr/local/include/grip/osgGolems)
+
+FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
+INSTALL(FILES ${qtWidgetsHeaders}
+        DESTINATION /usr/local/include/grip/qtWidgets)
+
+# Install cmake find file for grip
+INSTALL(FILES cmake/FindGRIP.cmake
+        DESTINATION ${CMAKE_ROOT}/Modules)
+
+# Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
         DESTINATION /usr/share/applications)

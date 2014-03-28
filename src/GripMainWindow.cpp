@@ -60,10 +60,6 @@
 
 // Qt includes
 #include <QtGui>
-#include <QList>
-#include <QMenu>
-#include <QAction>
-
 
 // OpenSceneGraph includes
 #include <osg/io_utils>
@@ -89,6 +85,7 @@ GripMainWindow::GripMainWindow(bool debug) :
     _playbackSpeed(1),
     _simulationDirty(false)
 {
+    world->setTime(0);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
     createRenderingWindow();
@@ -97,7 +94,6 @@ GripMainWindow::GripMainWindow(bool debug) :
     createPlaybackSliders();
     createTabs();
     pluginList = new QList<GripTab*>;
-    loadPlugins();
     manageLayout();
 
     this->setStatusBar(this->statusBar());
@@ -195,6 +191,9 @@ void GripMainWindow::simulationStopped()
 {
     if(_debug) std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
+    playbackSlider->setEnabled(true);
+    playbackSlider->slotUpdateSliderMinMax(timeline->size() - 1);
+    playbackSlider->setSliderValue(timeline->size() - 1);
 }
 
 void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
@@ -230,13 +229,17 @@ void GripMainWindow::slotPlaybackStart()
         return;
     }
 
+    if (playbackSlider->getSliderValue() == (timeline->size() - 1)) {
+        this->slotPlaybackBeginning();
+    }
+
     this->slotSetStatusBarMessage(tr("Starting playback"));
 
     if (_playingBack) {
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+    _curPlaybackTick = playbackSlider->getSliderValue();
     _simulationDirty = true;
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
@@ -268,13 +271,21 @@ void GripMainWindow::slotPlaybackReverse()
         return;
     }
 
+    if (playbackSlider->getSliderValue() == 0) {
+        _curPlaybackTick = timeline->size() - 1;
+        playbackSlider->setSliderValue(_curPlaybackTick);
+        world->setTime(timeline->back().getTime());
+        this->setWorldState_Issue122(timeline->back().getState());
+        simulation_time_display->Update_Time(world->getTime(), 0);
+    }
+
     this->slotSetStatusBarMessage(tr("Reversing playback"));
 
     if (_playingBack) {
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->playbackSliderUi->sliderMain->value();
+    _curPlaybackTick = playbackSlider->getSliderValue();
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
@@ -297,7 +308,6 @@ void GripMainWindow::slotPlaybackBeginning()
     if (timeline->size() > 0) {
         world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->front().getState());
-        _curPlaybackTick = 0;
     }
     simulation_time_display->Update_Time(world->getTime(), 0);
 }
@@ -317,8 +327,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         playbackSlider->setSliderValue(_curPlaybackTick);
         this->setSimulationRelativeTime(0);
 
-        if ((_curPlaybackTick - _playbackSpeed <= 0 && !playForward)
-                || (_curPlaybackTick + _playbackSpeed >= timeline->size() - 1 && playForward)) {
+        if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
+                || ((_curPlaybackTick + _playbackSpeed) >= timeline->size() && playForward)) {
+            _curPlaybackTick = (playForward ? 0 : timeline->size() - 1);
             _playingBack = false;
         } else {
             playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
@@ -402,7 +413,7 @@ void GripMainWindow::startSimulation()
             }
 
             // Set world back to last simulated timestep
-            if (timeline->size()) {
+            if (timeline->size() > 0) {
                 world->setTime(timeline->at(_curPlaybackTick).getTime());
                 this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
             }
@@ -427,9 +438,6 @@ void GripMainWindow::stopSimulation()
     _simulating = false;
     // FIXME: Maybe use qsignalmapping or std::map for this
     swapStartStopButtons();
-    playbackSlider->setEnabled(true);
-    playbackSlider->slotUpdateSliderMinMax(timeline->size()-1);
-    playbackSlider->setSliderValue(0);
 }
 
 void GripMainWindow::swapStartStopButtons()
@@ -485,54 +493,49 @@ void GripMainWindow::createTreeView()
 //    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
-void GripMainWindow::loadPlugins()
+void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 {
-    QObject* plugin;
-    QDir pluginsDir = QDir(qApp->applicationDirPath());
+    std::cerr << "PPath: " << pluginsDirName.absolutePath().toStdString() << std::endl;
 
-#if defined(Q_OS_WIN)
-    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-        pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-    if (pluginsDir.dirName() == "MacOS") {
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-    }
-#endif
-    pluginsDir.cdUp();
-    pluginsDir.cd("plugin");
-
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    foreach (QString fileName, pluginsDirName.entryList(QDir::Files)) {
+        std::cerr << "Entry: " << fileName.toStdString() << std::endl;
         QFileInfo fileInfo(fileName);
-        if (fileInfo.suffix() != ".so") {
+        if (fileInfo.suffix() != "so") {
+            slotSetStatusBarMessage(tr("Incorrect file extension on plug: " + fileInfo.path() + " >>> " + fileInfo.suffix()));
             continue;
         }
-        if (_debug) std::cerr << "Attempting to load plugin: " << fileName.toStdString() << std::endl;
-        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-        plugin = loader.instance();
-        if (plugin) {
-            if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
-            GripTab* gt = qobject_cast<GripTab*>(plugin);
-            pluginList->append(gt);
-            if (gt)
-            {
-                gt->Load(activeItem, viewWidget);
+        if (_debug) std::cerr << "Attempting to load plugin: " << fileInfo.absoluteFilePath().toStdString() << std::endl;
+        this->loadPluginFile(pluginsDirName.absolutePath() + "/" + fileName);
+    }
+}
 
-                QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
-                if (pluginWidget == NULL)
-                    if (_debug) std::cerr << "is NULL" << std::endl;
-                else
-                    this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+void GripMainWindow::loadPluginFile(QString pluginFileName)
+{
+    std::cerr << "FileFile: " << pluginFileName.toStdString() << std::endl;
+    QPluginLoader loader(pluginFileName);
+    QObject* plugin = loader.instance();
+    if (plugin) {
+        if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
+        GripTab* gt = qobject_cast<GripTab*>(plugin);
+        pluginList->append(gt);
+        if (gt)
+        {
+            gt->Load(activeItem, viewWidget);
 
-                tabifyDockWidget(visualizationtab, pluginWidget);
-            }
+            QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
+            if (pluginWidget == NULL)
+                if (_debug) std::cerr << "is NULL" << std::endl;
+            else
+                this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+
+            this->tabifyDockWidget(visualizationtab, pluginWidget);
         }
-        else {
-            if (_debug) {
-                std::cerr << "Plugin could not be loaded" << std::endl;
-                std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
-            }
+    }
+    else {
+        slotSetStatusBarMessage(tr("Couldn't load plugin. " + loader.errorString()));
+        if (_debug) {
+            std::cerr << "Plugin could not be loaded" << std::endl;
+            std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
         }
     }
 }

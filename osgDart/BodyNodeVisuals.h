@@ -56,8 +56,8 @@
 #include <osg/CullFace>
 
 // Local includes
-#include "../../osgGolems/include/Axes.h"
-#include "../../osgGolems/include/Line.h"
+#include "../osgGolems/Axes.h"
+#include "../osgGolems/Line.h"
 
 /**
  * \namespace osgDart

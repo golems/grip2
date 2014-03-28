@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     XInitThreads();
 	QApplication app(argc, argv);
-    GripMainWindow window;
+    GripMainWindow window(true);
     window.Toolbar();
     window.show();
     return app.exec();

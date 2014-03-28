@@ -2,7 +2,7 @@ grip2
 =====
 
 Qt and OpenSceneGraph user interface for grip, currently being centered around DART (Dynamic Animation Robotics Toolkit), but being designed with modularity in mind in order to be useful to external kinematics and dynamics libraries.
-
+Grip2 is designed to be used with user plugins. Plugins can be loaded via "File->Load Plugins" and selecting a directory with the user's plugin shared library files.
 
 Overview
 ========
@@ -47,12 +47,24 @@ Compiling
     cmake ..
     make
 
-Installation (Not yet implemented)
+Installation
 ============
 
   After compiling run
 
     sudo make install
+
+Running Grip2
+=============
+
+  After installing grip2, you can start grip2 up using one of the two methods below:
+
+  - Open a terminal and type
+
+    grip
+
+  - Goto Dash Home by clicking on it in the Launcher or by pressing the Windows key, and search for "grip" or "Grip".
+
 
 Debugging
 =========

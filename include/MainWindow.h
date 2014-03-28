@@ -48,6 +48,7 @@
 
 // Qt includes
 #include <QMainWindow>
+#include <QDir>
 
 // C++ Standard includes
 #include <iostream>
@@ -87,7 +88,6 @@ public:
      * \return void
      */
     void Toolbar();
-    void loadPlugins();
 
 public slots:
     /**
@@ -113,7 +113,7 @@ protected slots:
      * \brief Loads a scene with a dialog box
      * \return void
      */
-    void load();
+    void loadScene();
 
     /**
      * \brief Loads the last loaded scene
@@ -126,6 +126,11 @@ protected slots:
      * \return void
      */
     void saveScene();
+
+    void loadPluginFileWithDialog();
+    void loadPluginDirWithDialog();
+    virtual void loadPluginDirectory(QDir pluginsDirName) = 0;
+    virtual void loadPluginFile(QString pluginFilename) = 0;
 
     /**
      * \brief Closes the Window
@@ -270,36 +275,37 @@ private:
     virtual void doLoad(string fileName) = 0;
 
     QMenu *fileMenu;
+        QAction *loadSceneAct;
+        QAction *quickLoadAct;
+        QAction *saveSceneAct;
+        QAction *loadPluginFileAct;
+        QAction *loadPluginDirAct;
+        QAction *closeSceneAct;
+        QAction *exitAct;
     QMenu *viewMenu;
+        QAction *frontAct;
+        QAction *topAct;
+        QAction *sideAct;
     QMenu *simulationMenu;
+        QAction *startSimulationAct;
+        QAction *stopSimulationAct;
+        QAction *simulateSingleStepAct;
     QMenu *settingsMenu;
+        QAction *renderDuringSimulationAct;
+        QMenu *backgroundMenu;
+            QAction *whiteAct;
+            QAction *grayAct;
+            QAction *blackAct;
+        QAction *resetCameraAct;
     QMenu *renderMenu;
+        QAction *xga1024x768Act;
+        QAction *vga640x480Act;
+        QAction *hd1280x720Act;
     QMenu *helpMenu;
-    QMenu *backgroundMenu;
+        QAction *aboutAct;
 
     QToolBar* toolbar;
-    QActionGroup *colorGroup;
-    QAction *loadAct;
-    QAction *quickLoadAct;
-    QAction *saveSceneAct;
-    QAction *closeAct;
-    QAction *exitAct;
-    QAction *frontAct;
-    QAction *topAct;
-    QAction *sideAct;
-    QAction *startSimulationAct;
-    QAction *stopSimulationAct;
-    QAction *simulateSingleStepAct;
-    QAction *renderDuringSimulationAct;
-    QAction *whiteAct;
-    QAction *grayAct;
-    QAction *blackAct;
-    QAction *resetCameraAct;
-    QAction *xga1024x768Act;
-    QAction *vga640x480Act;
-    QAction *hd1280x720Act;
-    QAction *aboutAct;
 
-};
+}; // end class MainWindow
 
 #endif // MAINWINDOW_H
