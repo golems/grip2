@@ -19,14 +19,12 @@ Note: Remember that the plugin needs to compile into a library and not an execut
 	
 5. Create a UI file using QT Designer that is of type QDockWidget and add the UI elements as needed
 6. In the header files add the following includes
-<pre><code>
-	#include &lt;grip/qtWidgets/GripTab.h&gt;
+<pre><code>#include &lt;grip/qtWidgets/GripTab.h&gt;
 	#include &lt;grip/qtWidgets/ViewerWidget.h&gt;
 </code></pre>
 7. The plugin class has to implement the GripTab interface in grip. Therefore you should change the inheritance from QDockWidget to GripTab
 8. The class definition should define the object as a Q_OBJECT and should inform that it is implementing an interface. A sample structure would be:
-<pre><code>
-	class Plugin_Name : public GripTab
+<pre><code>class Plugin_Name : public GripTab
 	{
 	    Q_OBJECT
 	    Q_INTERFACES(GripTab)
@@ -53,8 +51,7 @@ Note: Remember that the plugin needs to compile into a library and not an execut
 	}
 </code></pre>
 9. The plugin has access to the following objects from the grip implementation
-<pre><code>
-	/// used to manipulate the objects in the main window
+<pre><code>/// used to manipulate the objects in the main window
 	/// pointer to the object selected in the Tree View
 	TreeViewReturn* activeNode;
 
@@ -66,61 +63,60 @@ Note: Remember that the plugin needs to compile into a library and not an execut
 10. GripTab has the following list of pure virtual functions that need to be implemented in your plugin.The plugin has to implement the following methods though the implementation could be blank.
 
 
-    <pre><code>
-    /**
-     * \brief called from the main window whenever the model changes
-     */
-    virtual void Refresh() = 0;
-    /**
-     * \brief called from the main window whenever the plugin is added to grip
-     * This is initalize the members of the class
-     */
-    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
-    /**
-     * \brief called from the main window whenever the simulation is executing
-     * This method is executed before every simulation time step
-     */
-    virtual void GRIPEventSimulationBeforeTimestep() = 0;
-    /**
-     * \brief called from the main window whenever the simulation is executing
-     * This method is executed after every simulation time step
-     */
-    virtual void GRIPEventSimulationAfterTimestep() = 0;
-    /**
-     * \brief called from the main window whenever the simulation is executing
-     * This method is executed at the start of the simulation
-     */
-    virtual void GRIPEventSimulationStart() = 0;
-    /**
-     * \brief called from the main window whenever the simulation is executing
-     * This method is executed at the end of the simulation
-     */
-    virtual void GRIPEventSimulationStop() = 0;
-    /**
-     * \brief called from the main window whenever the simulation history slider is being played
-     * This method is executed before every playback time step
-     */
-    virtual void GRIPEventPlaybackBeforeFrame() = 0;
-    /**
-     * \brief called from the main window whenever the simulation history slider is being played
-     * This method is executed after every playback time step
-     */
-    virtual void GRIPEventPlaybackAfterFrame() = 0;
-    /**
-     * \brief called from the main window whenever the simulation history slider is being played
-     * This method is executed at the start of the playback
-     */
-    virtual void GRIPEventPlaybackStart() = 0;
-    /**
-     * \brief called from the main window whenever the simulation history slider is being played
-     * This method is executed at the end of the playback
-     */
-    virtual void GRIPEventPlaybackStop() = 0;
-    /**
-     * \brief called from the main window when a new object is selected in the treeview
-     */
-    virtual void GRIPEventTreeViewSelectionChanged() = 0;
-    </code></pre>
+<pre><code>/**
+ * \brief called from the main window whenever the model changes
+ */
+virtual void Refresh() = 0;
+/**
+ * \brief called from the main window whenever the plugin is added to grip
+ * This is initalize the members of the class
+ */
+virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
+/**
+ * \brief called from the main window whenever the simulation is executing
+ * This method is executed before every simulation time step
+ */
+virtual void GRIPEventSimulationBeforeTimestep() = 0;
+/**
+ * \brief called from the main window whenever the simulation is executing
+ * This method is executed after every simulation time step
+ */
+virtual void GRIPEventSimulationAfterTimestep() = 0;
+/**
+ * \brief called from the main window whenever the simulation is executing
+ * This method is executed at the start of the simulation
+ */
+virtual void GRIPEventSimulationStart() = 0;
+/**
+ * \brief called from the main window whenever the simulation is executing
+ * This method is executed at the end of the simulation
+ */
+virtual void GRIPEventSimulationStop() = 0;
+/**
+ * \brief called from the main window whenever the simulation history slider is being played
+ * This method is executed before every playback time step
+ */
+virtual void GRIPEventPlaybackBeforeFrame() = 0;
+/**
+ * \brief called from the main window whenever the simulation history slider is being played
+ * This method is executed after every playback time step
+ */
+virtual void GRIPEventPlaybackAfterFrame() = 0;
+/**
+ * \brief called from the main window whenever the simulation history slider is being played
+ * This method is executed at the start of the playback
+ */
+virtual void GRIPEventPlaybackStart() = 0;
+/**
+ * \brief called from the main window whenever the simulation history slider is being played
+ * This method is executed at the end of the playback
+ */
+virtual void GRIPEventPlaybackStop() = 0;
+/**
+ * \brief called from the main window when a new object is selected in the treeview
+ */
+virtual void GRIPEventTreeViewSelectionChanged() = 0;
+</code></pre>
 
 
 11. The plugin needs to be compiled into a library and placed in the plugin folder inside grip. If the plugin conforms to the GripTab structure, it will be loaded at runtime.
