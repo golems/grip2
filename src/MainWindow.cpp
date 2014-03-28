@@ -121,6 +121,50 @@ void MainWindow::slotSetStatusBarMessage(QString msg)
     this->statusBar()->showMessage(msg);
 }
 
+void MainWindow::loadPluginFileWithDialog()
+{
+    if (true) {
+        // Set file extension filters
+        QStringList filters;
+        filters << "Shared library (*.so)";
+
+        QFileDialog dialog(this);
+        dialog.setNameFilters(filters);
+        dialog.setAcceptMode(QFileDialog::AcceptOpen);
+        dialog.setFileMode(QFileDialog::ExistingFile);
+        if (dialog.exec()) {
+            QString pluginPath = dialog.selectedFiles().at(0);
+            std::cerr << "pluginPath: " << pluginPath.toStdString() << std::endl;
+            slotSetStatusBarMessage(tr("plugin file: " + pluginPath));
+            loadPluginFile(pluginPath);
+        } else {
+            slotSetStatusBarMessage(tr("Didn't find plugin directory"));
+        }
+    }
+}
+
+void MainWindow::loadPluginDirWithDialog()
+{
+    if (true) {
+        // Set file extension filters
+        QStringList filters;
+        filters << "Shared library (*.so)";
+
+        QFileDialog dialog(this);
+        dialog.setNameFilters(filters);
+        dialog.setAcceptMode(QFileDialog::AcceptOpen);
+        dialog.setFileMode(QFileDialog::Directory);
+        if (dialog.exec()) {
+            QDir pluginsDir = QDir(dialog.selectedFiles().at(0));
+            std::cerr << "pluginDir: " << pluginsDir.path().toStdString() << std::endl;
+            slotSetStatusBarMessage(tr("plugin Dir: " + pluginsDir.path()));
+            loadPluginDirectory(pluginsDir);
+        } else {
+            slotSetStatusBarMessage(tr("Didn't find plugin directory"));
+        }
+    }
+}
+
 void MainWindow::loadScene()
 {
     QStringList fileNames; //stores the entire path of the file that it attempts to open
@@ -165,10 +209,10 @@ void MainWindow::about(){}
 void MainWindow::createActions()
 {
     //loadAct
-    loadAct = new QAction(tr("&Load Scene"), this);
-    loadAct->setShortcut(Qt::CTRL + Qt::Key_O);
-    loadAct->setStatusTip(tr("Load scene"));
-    connect(loadAct, SIGNAL(triggered()), this, SLOT(loadScene()));
+    loadSceneAct = new QAction(tr("&Load Scene"), this);
+    loadSceneAct->setShortcut(Qt::CTRL + Qt::Key_O);
+    loadSceneAct->setStatusTip(tr("Load scene"));
+    connect(loadSceneAct, SIGNAL(triggered()), this, SLOT(loadScene()));
 
 
     //quickLoadAct
@@ -183,17 +227,21 @@ void MainWindow::createActions()
     saveSceneAct->setStatusTip(tr("Save Scene"));
     connect(saveSceneAct, SIGNAL(triggered()), this, SLOT(saveScene()));
 
-    //loadPlugingsAct
-    loadPluginsAct = new QAction(tr("&Load Plugins..."), this);
-    loadPluginsAct->setShortcut(Qt::CTRL + Qt::Key_P);
-    loadPluginsAct->setStatusTip(tr("Load user plugins"));
-    connect(loadPluginsAct, SIGNAL(triggered()), this, SLOT(loadUserPlugins()));
+    loadPluginFileAct = new QAction(tr("&Load Plugin"), this);
+    loadPluginFileAct->setShortcut(Qt::CTRL + Qt::Key_L);
+    loadPluginFileAct->setStatusTip(tr("Load plugin file"));
+    connect(loadPluginFileAct, SIGNAL(triggered()), this, SLOT(loadPluginFileWithDialog()));
+
+    loadPluginDirAct = new QAction(tr("&Load Plugin Directory"), this);
+    loadPluginDirAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_L);
+    loadPluginDirAct->setStatusTip(tr("Load all plugins in directory"));
+    connect(loadPluginDirAct, SIGNAL(triggered()), this, SLOT(loadPluginDirWithDialog()));
 
     //closeAct
-    closeAct = new QAction(tr("&Close"), this);
-    closeAct->setShortcut(Qt::CTRL + Qt::Key_W);
-    closeAct->setStatusTip(tr("Close Scene"));
-    connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
+    closeSceneAct = new QAction(tr("&Close"), this);
+    closeSceneAct->setShortcut(Qt::CTRL + Qt::Key_W);
+    closeSceneAct->setStatusTip(tr("Close Scene"));
+    connect(closeSceneAct, SIGNAL(triggered()), this, SLOT(close()));
 
     //exitAct
     exitAct = new QAction(tr("&Exit"), this);
@@ -275,12 +323,13 @@ void MainWindow::createMenus()
 {
     //fileMenu
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(loadAct);
+    fileMenu->addAction(loadSceneAct);
     fileMenu->addAction(quickLoadAct);
     fileMenu->addAction(saveSceneAct);
+    fileMenu->addAction(closeSceneAct);
     fileMenu->addSeparator();
-    fileMenu->addAction(loadPluginsAct);
-    fileMenu->addAction(closeAct);
+    fileMenu->addAction(loadPluginFileAct);
+    fileMenu->addAction(loadPluginDirAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
@@ -330,27 +379,27 @@ void MainWindow::exit()
     QApplication::exit();
 }
 
-void MainWindow::loadPlugins()
-{
-    QDir pluginsDir = QDir(qApp->applicationDirPath());
+//void MainWindow::loadPlugins()
+//{
+//    QDir pluginsDir = QDir(qApp->applicationDirPath());
 
-#if defined(Q_OS_WIN)
-    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-        pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-    if (pluginsDir.dirName() == "MacOS") {
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-        pluginsDir.cdUp();
-    }
-#endif
-    pluginsDir.cd("plugin");
+//#if defined(Q_OS_WIN)
+//    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+//        pluginsDir.cdUp();
+//#elif defined(Q_OS_MAC)
+//    if (pluginsDir.dirName() == "MacOS") {
+//        pluginsDir.cdUp();
+//        pluginsDir.cdUp();
+//        pluginsDir.cdUp();
+//    }
+//#endif
+//    pluginsDir.cd("plugin");
 
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = loader.instance();
-        if (plugin) {
-            std::cout<<"plugin loaded"<<std::endl;
-        }
-    }
-}
+//    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+//        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+//        QObject *plugin = loader.instance();
+//        if (plugin) {
+//            std::cout<<"plugin loaded"<<std::endl;
+//        }
+//    }
+//}

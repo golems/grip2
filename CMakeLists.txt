@@ -4,7 +4,7 @@ project(grip2)
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall -O3")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

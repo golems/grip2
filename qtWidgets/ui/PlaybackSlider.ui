@@ -22,8 +22,14 @@
     <height>78</height>
    </size>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget { 
+   font: 0.5pt &quot;Ubuntu&quot;;
+   color:rgb(255, 255, 255);
+}</string>
+  </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string>Playback Slider</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">

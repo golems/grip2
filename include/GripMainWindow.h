@@ -68,6 +68,8 @@
 #include "DartNode.h"
 #include "GripSimulation.h"
 
+#include <QDir>
+
 
 /**
  * \class GripMainWindow GripMainWindow.h
@@ -129,8 +131,6 @@ public:
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
 
-    QMainWindow* tabs;
-
     bool _playingBack;
     int _curPlaybackTick;
     int _playbackSpeed;
@@ -145,6 +145,7 @@ public slots:
     void slotPlaybackTimeStep(bool playForward);
 
 protected slots:
+
     /**
      * \brief Sets the time box for simulation time relative to real time
      * \param time The simulation time relative to real time
@@ -219,8 +220,6 @@ protected slots:
     void vga640x480();
 
     void hd1280x720();
-
-    void loadUserPlugins();
 
     /**
      * \brief Notifies thread that simulation has stopped
@@ -317,7 +316,8 @@ protected:
 
     /// This function reads a folder by the name of 'plugin' in source directory
     /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
-    void loadPlugins(bool useDialog=false);
+    void loadPluginDirectory(QDir pluginsDirName);
+    void loadPluginFile(QString pluginFileName);
 
     void setWorldState_Issue122(const Eigen::VectorXd &_newState);
 

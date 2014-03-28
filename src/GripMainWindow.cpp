@@ -93,7 +93,6 @@ GripMainWindow::GripMainWindow(bool debug) :
     createPlaybackSliders();
     createTabs();
     pluginList = new QList<GripTab*>;
-    loadPlugins();
     manageLayout();
 
     this->setStatusBar(this->statusBar());
@@ -393,12 +392,8 @@ void GripMainWindow::side()
 }
 
 
-void GripMainWindow::xga1024x768()
-{}
-
-void GripMainWindow::vga640x480()
-{}
-
+void GripMainWindow::xga1024x768(){}
+void GripMainWindow::vga640x480(){}
 void GripMainWindow::hd1280x720(){}
 
 
@@ -497,80 +492,49 @@ void GripMainWindow::createTreeView()
 //    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
-void GripMainWindow::loadUserPlugins()
+void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 {
-    loadPlugins(true);
-}
+    std::cerr << "PPath: " << pluginsDirName.absolutePath().toStdString() << std::endl;
 
-void GripMainWindow::loadPlugins(bool useDialog)
-{
-    QObject* plugin;
-    QDir pluginsDir;
-
-    if (useDialog) {
-        // Set file extension filters
-        QStringList filters;
-        filters << "Shared libraries (*.so)";
-
-        QFileDialog dialog(this);
-        dialog.setNameFilters(filters);
-        dialog.setAcceptMode(QFileDialog::AcceptOpen);
-        dialog.setFileMode(QFileDialog::Directory);
-        if (dialog.exec()) {
-            pluginsDir = dialog.directory();
-            slotSetStatusBarMessage(tr("plugin Dir: " + pluginsDir.path()));
-        } else {
-            slotSetStatusBarMessage(tr("Didn't find plugin directory"));
-        }
-    } else {
-
-        pluginsDir = QDir(qApp->applicationDirPath());
-
-    #if defined(Q_OS_WIN)
-        if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-            pluginsDir.cdUp();
-    #elif defined(Q_OS_MAC)
-        if (pluginsDir.dirName() == "MacOS") {
-            pluginsDir.cdUp();
-            pluginsDir.cdUp();
-            pluginsDir.cdUp();
-        }
-    #endif
-        pluginsDir.cdUp();
-        pluginsDir.cd("plugin");
-    }
-
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    foreach (QString fileName, pluginsDirName.entryList(QDir::Files)) {
+        std::cerr << "Entry: " << fileName.toStdString() << std::endl;
         QFileInfo fileInfo(fileName);
         if (fileInfo.suffix() != "so") {
             slotSetStatusBarMessage(tr("Incorrect file extension on plug: " + fileInfo.path() + " >>> " + fileInfo.suffix()));
             continue;
         }
-        if (_debug) std::cerr << "Attempting to load plugin: " << fileName.toStdString() << std::endl;
-        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-        plugin = loader.instance();
-        if (plugin) {
-            if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
-            GripTab* gt = qobject_cast<GripTab*>(plugin);
-            pluginList->append(gt);
-            if (gt)
-            {
-                gt->Load(activeItem, viewWidget);
+        if (_debug) std::cerr << "Attempting to load plugin: " << fileInfo.absoluteFilePath().toStdString() << std::endl;
+        this->loadPluginFile(pluginsDirName.absolutePath() + "/" + fileName);
+    }
+}
 
-                QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
-                if (pluginWidget == NULL)
-                    if (_debug) std::cerr << "is NULL" << std::endl;
-                else
-                    tabs->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+void GripMainWindow::loadPluginFile(QString pluginFileName)
+{
+    std::cerr << "FileFile: " << pluginFileName.toStdString() << std::endl;
+    QPluginLoader loader(pluginFileName);
+    QObject* plugin = loader.instance();
+    if (plugin) {
+        if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
+        GripTab* gt = qobject_cast<GripTab*>(plugin);
+        pluginList->append(gt);
+        if (gt)
+        {
+            gt->Load(activeItem, viewWidget);
 
-                tabs->tabifyDockWidget(visualizationtab, pluginWidget);
-            }
+            QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
+            if (pluginWidget == NULL)
+                if (_debug) std::cerr << "is NULL" << std::endl;
+            else
+                this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+
+            this->tabifyDockWidget(visualizationtab, pluginWidget);
         }
-        else {
-            if (_debug) {
-                std::cerr << "Plugin could not be loaded" << std::endl;
-                std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
-            }
+    }
+    else {
+        slotSetStatusBarMessage(tr("Couldn't load plugin. " + loader.errorString()));
+        if (_debug) {
+            std::cerr << "Plugin could not be loaded" << std::endl;
+            std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
         }
     }
 }
@@ -683,62 +647,106 @@ void GripMainWindow::manageLayout()
 //    policy.setHorizontalPolicy(QSizePolicy::Expanding);
 //    policy.setVerticalPolicy(QSizePolicy::MinimumExpanding);
 //    viewWidget->setSizePolicy(policy);
-
+    viewWidget->setMinimumWidth(500);
+    viewWidget->setMinimumHeight(250);
     viewWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
+    treeviewer->setMinimumWidth(200);
+    treeviewer->setMaximumWidth(210);
+    treeviewer->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     QMainWindow *dummyTreeViewer = new QMainWindow;
     dummyTreeViewer->setCentralWidget(new QWidget());
-    dummyTreeViewer->setMaximumWidth(250);
+    dummyTreeViewer->setMaximumWidth(210);
+    //dummyTreeViewer->setMinimumWidth(200);
     dummyTreeViewer->addDockWidget(Qt::LeftDockWidgetArea, treeviewer);
     dummyTreeViewer->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(viewWidget);
     topLayout->addWidget(dummyTreeViewer);
+    topLayout->setSpacing(0);
+    topLayout->setMargin(0);
+    topLayout->setContentsMargins(0,0,0,0);
 
 
     playbackSlider->setTitleBarWidget(new QWidget());
     playbackSlider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     simulation_time_display->setTitleBarWidget(new QWidget());
+    simulation_time_display->setStyleSheet("font: 11pt \"Ubuntu\";color:rgb(0,0,0);");
     simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
     QHBoxLayout *midLayout = new QHBoxLayout;
     midLayout->addWidget(playbackSlider);
     midLayout->addWidget(simulation_time_display);
+    midLayout->addWidget(viewWidget);
+    midLayout->setSpacing(0);
+    midLayout->setMargin(0);
+    midLayout->setContentsMargins(0,0,0,0);
 
-    QDockWidget *slider_timerCombo = new QDockWidget;
+    QDockWidget *Combo = new QDockWidget;
     QWidget *dummyWidgetForCombo = new QWidget;
     dummyWidgetForCombo->setLayout(midLayout);
 
-    slider_timerCombo->setWidget(dummyWidgetForCombo);
-    slider_timerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    Combo->setWidget(dummyWidgetForCombo);
+    Combo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    Combo->setWindowTitle(QString("Slider Timer Combo"));
+    Combo->setStyleSheet("font: 0.5pt \"Ubuntu\";color:rgb(255, 255, 255);");
 
     QMainWindow *dummySliderTimerCombo = new QMainWindow;
     dummySliderTimerCombo->setCentralWidget(new QWidget());
-    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, slider_timerCombo);
+    dummySliderTimerCombo->addDockWidget(Qt::BottomDockWidgetArea, Combo);
     dummySliderTimerCombo->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
-    tabs = new QMainWindow;
-    tabs->setCentralWidget(new QWidget());
-    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    tabs->tabifyDockWidget(inspectortab, visualizationtab);
-    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+//    QMainWindow *tabs = new QMainWindow;
+//    tabs->setCentralWidget(new QWidget());
+//    tabs->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+//    tabs->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+//    tabs->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+//    tabs->tabifyDockWidget(inspectortab, visualizationtab);
+//    tabs->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
 
-    visualizationtab->show();
-    visualizationtab->raise();
+//    visualizationtab->show();
+//    visualizationtab->raise();
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topLayout);
     //mainLayout->addWidget(slider_timerCombo);
     mainLayout->addWidget(dummySliderTimerCombo);
-    mainLayout->addWidget(tabs);
+    mainLayout->setSpacing(0);
+    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0,0,0,0);
+    //mainLayout->addWidget(tabs);
 
     QWidget *layoutManager = new QWidget;
     layoutManager->setLayout(mainLayout);
 
     this->setCentralWidget(layoutManager);
+    this->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
+    tabifyDockWidget(inspectortab, visualizationtab);
+    visualizationtab->show();
+    visualizationtab->raise();
+
+
+    QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
+
+    QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
+     if (dockwidgets.size()) {
+         //menu1 = new QMenu(this);
+         for (int i = 0; i < dockwidgets.size(); ++i) {
+             if ( QString(dockwidgets.at(i)->name()) == QString("PlaybackSlider")
+                 || QString(dockwidgets.at(i)->name()) == QString("Time_Display")) {
+
+                 // skip //
+             }
+             else {
+                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+             }
+
+         }
+     }
+
 
 }
