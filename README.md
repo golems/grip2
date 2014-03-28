@@ -4,8 +4,8 @@ grip2
 Qt and OpenSceneGraph user interface for grip, currently being centered around DART (Dynamic Animation Robotics Toolkit), but being designed with modularity in mind in order to be useful to external kinematics and dynamics libraries.
 
 
-Directory Overview
-==================
+Overview
+========
 
   1. grip
 
