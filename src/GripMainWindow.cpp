@@ -575,7 +575,6 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
 void GripMainWindow::createTimeDisplays()
 {
     simulation_time_display = new TimeDisplay(this);
-    std::cout<<"Time display created"<<std::endl;
 }
 
 void GripMainWindow::createPlaybackSliders()
