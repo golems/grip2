@@ -85,6 +85,7 @@ GripMainWindow::GripMainWindow(bool debug) :
     _playbackSpeed(1),
     _simulationDirty(false)
 {
+    world->setTime(0);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
     createRenderingWindow();
