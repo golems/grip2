@@ -225,5 +225,4 @@ virtual void GRIPEventPlaybackStop() = 0;
 virtual void GRIPEventTreeViewSelectionChanged() = 0;
 </code></pre>
 
-
-11. The plugin needs to be compiled into a library and placed in the plugin folder inside grip. If the plugin conforms to the GripTab structure, it will be loaded at runtime.
+Once complete the plugin needs to be compiled into a library. If the plugin conforms to the GripTab structure, it will be loaded whenever the user selects the library file to be loaded from the grip menu.
