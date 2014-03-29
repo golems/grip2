@@ -596,13 +596,14 @@ void GripMainWindow::manageLayout()
 
     gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-   // QWidget* combo = new QWidget(this);
-
-
-    playbackSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    //playbackSlider->setMinimumWidth(450);
+    //playbackSlider->setMinimumHeight(45);
+    //playbackSlider->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     gridLayout->addWidget(playbackSlider, 1, 0);
 
-    /// simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    //simulation_time_display->setMinimumWidth(130);
+    //simulation_time_display->setMinimumHeight(45);
+    //simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     gridLayout->addWidget(simulation_time_display, 1, 1);
 
     widget->setLayout(gridLayout);
@@ -623,17 +624,21 @@ void GripMainWindow::manageLayout()
     QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
 
     QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
-    if (dockwidgets.size()) {
-        for (int i = 0; i < dockwidgets.size(); ++i) {
-           dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
-        }
-    }
+     if (dockwidgets.size()) {
+
+         for (int i = 0; i < dockwidgets.size(); ++i) {
+
+                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+
+         }
+     }
 }
 
-void GripMainWindow::resizeEvent(QResizeEvent *event)
-{
-    QMainWindow::resizeEvent(event);
-    int viewerWidth = viewWidget->width();
-    gridLayout->setColumnMinimumWidth(0, viewerWidth - 130);
-    playbackSlider->setMinimumWidth(viewerWidth - 130);
-}
+/// Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.
+//void GripMainWindow::resizeEvent(QResizeEvent *event)
+//{
+//    QMainWindow::resizeEvent(event);
+//    int viewerWidth = viewWidget->width();
+//    gridLayout->setColumnMinimumWidth(0, viewerWidth - 130);
+//    playbackSlider->setMinimumWidth(viewerWidth - 130);
+//}

@@ -60,5 +60,5 @@ TimeDisplay::~TimeDisplay()
 void TimeDisplay::Update_Time(double sim_time, double rel_time)
 {
     time_display_ui->time_edit_sim->setText(QString("%1").arg(sim_time));
-    time_display_ui->time_edit_rel->setText(QString("%1").arg(ceil(rel_time*100)/100));
+    time_display_ui->time_edit_rel->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
 }

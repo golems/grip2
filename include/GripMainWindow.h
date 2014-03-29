@@ -131,8 +131,8 @@ public:
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
 
-    /// called when the window gets resized
-    void resizeEvent(QResizeEvent* event);
+    /// called when the window gets resized --> Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.
+    //void resizeEvent(QResizeEvent* event);
 
     bool _playingBack;
     int _curPlaybackTick;
