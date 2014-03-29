@@ -596,7 +596,7 @@ void GripMainWindow::manageLayout()
 
     gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-    playbackSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    playbackSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     gridLayout->addWidget(playbackSlider, 1, 0);
 
     /// simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
