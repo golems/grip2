@@ -620,20 +620,11 @@ void GripMainWindow::manageLayout()
     QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
 
     QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
-     if (dockwidgets.size()) {
-         //menu1 = new QMenu(this);
-         for (int i = 0; i < dockwidgets.size(); ++i) {
-             if ( QString(dockwidgets.at(i)->name()) == QString("PlaybackSlider")
-                 || QString(dockwidgets.at(i)->name()) == QString("Time_Display")) {
-
-                 // skip //
-             }
-             else {
-                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
-             }
-
-         }
-     }
+    if (dockwidgets.size()) {
+        for (int i = 0; i < dockwidgets.size(); ++i) {
+           dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+        }
+    }
 }
 
 void GripMainWindow::resizeEvent(QResizeEvent *event)
