@@ -79,6 +79,7 @@ GripMainWindow::GripMainWindow(bool debug) :
     world(new dart::simulation::World()),
     worldNode(new osgDart::DartNode(debug)),
     pluginList(new QList<GripTab*>),
+    pluginMenu(new QMenu),
     _simulating(false),
     _playingBack(false),
     _curPlaybackTick(0),
@@ -93,8 +94,10 @@ GripMainWindow::GripMainWindow(bool debug) :
     createTimeDisplays();
     createPlaybackSliders();
     createTabs();
-    pluginList = new QList<GripTab*>;
     manageLayout();
+    managePlugin();
+
+
 
     this->setStatusBar(this->statusBar());
 
@@ -535,6 +538,12 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
 
             this->tabifyDockWidget(visualizationtab, pluginWidget);
+
+            /// temporary plugin menu
+            if (pluginList->size()>0) {
+               pluginMenu->addAction(pluginList->at(pluginList->size()-1)->toggleViewAction()); //keep adding, need to implement unloading
+            }
+
         }
     }
     else {
@@ -623,15 +632,20 @@ void GripMainWindow::manageLayout()
 
     QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
 
-    QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
-     if (dockwidgets.size()) {
+    QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+     if (dockwidgetList.size()) {
 
-         for (int i = 0; i < dockwidgets.size(); ++i) {
+         for (int i = 0; i < dockwidgetList.size(); ++i) {
 
-                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+                 dockwidgetMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
 
          }
      }
+}
+
+void GripMainWindow::managePlugin()
+{
+    pluginMenu = menuBar()->addMenu(tr("&Plugins"));
 }
 
 /// Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.

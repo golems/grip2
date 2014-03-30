@@ -240,6 +240,7 @@ protected:
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
     QList<GripTab*>* pluginList;
+    QMenu *pluginMenu;
 
     /**
      * \brief Creates the rendering window
@@ -276,6 +277,12 @@ protected:
      * \return void
      */
     void manageLayout();
+
+     /**
+     * \brief Manage plugins
+     * \return void
+     */
+    void managePlugin();
 
 
     /**
