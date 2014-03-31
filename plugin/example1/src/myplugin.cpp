@@ -46,12 +46,40 @@
 #include <iostream>
 #include <qplugin.h>
 #include <QtGui>
+#include <dart/dynamics/Skeleton.h>
+#include <dart/dynamics/Joint.h>
 
 MyPlugin::MyPlugin(QWidget *parent) : ui(new Ui::MyPluginTab){
     ui->setupUi(this);
 }
 
 MyPlugin::~MyPlugin(){}
+
+void MyPlugin::GRIPEventSceneLoaded()
+{
+    std::cerr << "Going to move LSP" << std::endl;
+
+    dart::dynamics::Skeleton* skel = _world->getSkeleton("GolemHubo");
+
+    if (skel) {
+        // Get index of LSP (left shoulder pitch
+        std::vector<int> index(1);
+        index[0] = skel->getJoint("LSP")->getGenCoord(0)->getSkeletonIndex();
+
+        // Initialize joint value for LSP
+        Eigen::VectorXd jointValue(1);
+
+        // Move joint around
+        for (size_t i = 0; i < 200; ++i) {
+            // Set joint value
+            jointValue[0] = float(i) * 2 * M_PI / 200;
+            skel->setConfig(index, jointValue);
+
+            // Save world to timeline
+            _timeline->push_back(GripTimeslice(*_world));
+        }
+    }
+}
 
 void MyPlugin::GRIPEventSimulationBeforeTimestep()
 {
@@ -61,11 +89,6 @@ void MyPlugin::GRIPEventSimulationAfterTimestep(){}
 void MyPlugin::GRIPEventSimulationStart(){}
 void MyPlugin::GRIPEventSimulationStop(){}
 void MyPlugin::GRIPEventTreeViewSelectionChanged(){}
-void MyPlugin::Load(TreeViewReturn* ret, ViewerWidget *viewer)
-{
-    activeNode = ret;
-    viewWidget = viewer;
-}
 
 void MyPlugin::GRIPEventPlaybackBeforeFrame() {}
 

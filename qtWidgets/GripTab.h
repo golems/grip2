@@ -74,18 +74,18 @@ class GripTab : public QDockWidget
 protected:
     /// used to manipulate the objects in the main window
     /// pointer to the object selected in the Tree View
-    TreeViewReturn *activeNode;
+    TreeViewReturn *_activeNode;
 
     /// pointer to the osg viewer
-    ViewerWidget *viewWidget;
+    ViewerWidget *_viewWidget;
 
     /// pointer to simulation world object that is being rendered and simulated
-    dart::simulation::World *world;
+    dart::simulation::World *_world;
 
     /// pointer to the timeline, which holds a GripTimeslice objects.
     /// These contain the state and time of the world. To use just call
     /// timeline->push_back(GripTimeslice(*world));
-    std::vector<GripTimeslice> *timeline;
+    std::vector<GripTimeslice> *_timeline;
 
 public:
     /**
@@ -104,61 +104,69 @@ public:
     virtual void Load(TreeViewReturn *ret,
                       ViewerWidget *viewer,
                       dart::simulation::World *world,
-                      std::vector<GripTimeslice> *timeline) = 0;
+                      std::vector<GripTimeslice> *timeline)
+    {
+        _activeNode = ret;
+        _viewWidget = viewer;
+        _world = world;
+        _timeline = timeline;
+    }
+
+    virtual void GRIPEventSceneLoaded(){}
 
     /**
      * \brief called from the main window whenever the simulation is executing
      * This method is executed before every simulation time step
      */
-    virtual void GRIPEventSimulationBeforeTimestep() = 0;
+    virtual void GRIPEventSimulationBeforeTimestep(){}
 
     /**
      * \brief called from the main window whenever the simulation is executing
      * This method is executed after every simulation time step
      */
-    virtual void GRIPEventSimulationAfterTimestep() = 0;
+    virtual void GRIPEventSimulationAfterTimestep(){}
 
     /**
      * \brief called from the main window whenever the simulation is executing
      * This method is executed at the start of the simulation
      */
-    virtual void GRIPEventSimulationStart() = 0;
+    virtual void GRIPEventSimulationStart(){}
 
     /**
      * \brief called from the main window whenever the simulation is executing
      * This method is executed at the end of the simulation
      */
-    virtual void GRIPEventSimulationStop() = 0;
+    virtual void GRIPEventSimulationStop(){}
 
 
     /**
      * \brief called from the main window whenever the simulation history slider is being played
      * This method is executed before every playback time step
      */
-    virtual void GRIPEventPlaybackBeforeFrame() = 0;
+    virtual void GRIPEventPlaybackBeforeFrame(){}
 
     /**
      * \brief called from the main window whenever the simulation history slider is being played
      * This method is executed after every playback time step
      */
-    virtual void GRIPEventPlaybackAfterFrame() = 0;
+    virtual void GRIPEventPlaybackAfterFrame(){}
 
     /**
      * \brief called from the main window whenever the simulation history slider is being played
      * This method is executed at the start of the playback
      */
-    virtual void GRIPEventPlaybackStart() = 0;
+    virtual void GRIPEventPlaybackStart(){}
 
     /**
      * \brief called from the main window whenever the simulation history slider is being played
      * This method is executed at the end of the playback
      */
-    virtual void GRIPEventPlaybackStop() = 0;
+    virtual void GRIPEventPlaybackStop(){}
 
     /**
      * \brief called from the main window when a new object is selected in the treeview
      */
-    virtual void GRIPEventTreeViewSelectionChanged() = 0;
+    virtual void GRIPEventTreeViewSelectionChanged(){}
 };
 
 Q_DECLARE_INTERFACE(GripTab,

@@ -114,6 +114,8 @@ GripMainWindow::~GripMainWindow()
 
 void GripMainWindow::doLoad(std::string sceneFileName)
 {
+    sceneFilePath->fromStdString(sceneFileName);
+
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
             if (_debug) std::cerr << "Not loading a new world" << std::endl;
@@ -143,6 +145,11 @@ void GripMainWindow::doLoad(std::string sceneFileName)
     saveText(sceneFileName, LAST_LOAD_FILE);
     inspectorTab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(sceneFileName));
+
+    // Tell all the tabs that a new scene has been loaded
+    for (size_t i = 0; i < pluginList->size(); ++i) {
+        pluginList->at(i)->GRIPEventSceneLoaded();
+    }
 }
 
 void GripMainWindow::close()
@@ -223,6 +230,7 @@ void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
     world->setTime(timeline->at(_curPlaybackTick).getTime());
     this->setWorldState_Issue122(timeline->at(sliderTick).getState());
     playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
+    playbackWidget->slotUpdateSliderMinMax(0, timeline->size() - 1);
 }
 
 void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
@@ -342,14 +350,19 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
         playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 
-        if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
-                || ((_curPlaybackTick + _playbackSpeed) >= timeline->size() && playForward)) {
-            _curPlaybackTick = (playForward ? timeline->size() - 1 : 0);
+        std::cerr << "cur: " << _curPlaybackTick << ", " << _curPlaybackTick + _playbackSpeed << ", " << timeline->size()-1 << std::endl;
+        if ((_curPlaybackTick == 0 && !playForward)
+                || (_curPlaybackTick == (timeline->size() - 1) && playForward)) {
             _playingBack = false;
+            std::cerr << "Done playing back" << std::endl;
+        } else if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
+                || ((_curPlaybackTick + _playbackSpeed) > (timeline->size() - 1) && playForward)) {
+            _curPlaybackTick = (playForward ? timeline->size() - 1 : 0); 
         } else {
             playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
                     : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
         }
+
         playbackWidget->setSliderValue(_curPlaybackTick);
 
         // Call user tab functions after time step
@@ -632,11 +645,11 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
     QDomElement plugins = config->createElement("plugins");
     root.appendChild(plugins);
 
-    if(pluginPathList != NULL)
+    if (pluginPathList != NULL)
     {
         std::cerr << "adding plugins" << std::endl;
-        for(int i = 0; i < pluginPathList->count(); i++) {
-            std::cerr<<(*(pluginPathList->at(i))).toStdString()<<std::endl;
+        for (int i = 0; i < pluginPathList->count(); ++i) {
+            std::cerr << (*(pluginPathList->at(i))).toStdString() << std::endl;
             QDomElement plugin = config->createElement("plugin");
             plugin.setAttribute("ppath", *(pluginPathList->at(i)));
             plugins.appendChild(plugin);
@@ -648,10 +661,10 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
     root.appendChild(dockWidgetStatus);
 
     QList<QAction*> actionList;
-    if(pluginMenu != NULL)
+    if (pluginMenu != NULL)
     {
         actionList = pluginMenu->actions();
-        if(!actionList.isEmpty()) {
+        if (!actionList.isEmpty()) {
             for(int i = 0; i < actionList.count(); i++) {
                 QAction* act = actionList.at(i);
                 QDomElement dockWidget = config->createElement("dockWidget");
@@ -664,8 +677,11 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
 
     // add scene file information
     QDomElement scene = config->createElement("scene");
-    if(!sceneFilePath->isNull()) {
+    if (!sceneFilePath->isNull()) {
         scene.setAttribute("spath", *sceneFilePath);
+        std::cerr << "spath: " << sceneFilePath->toStdString() << std::endl;
+    } else {
+        if (_debug) std::cerr << "SceneFilePath is NULL" << std::endl;
     }
     root.appendChild(scene);
 
@@ -680,7 +696,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
 {
     /// parse and load plugins
     QDomNodeList pluginList = config.elementsByTagName("plugin");
-    for(int i = 0; i < pluginList.count(); i++) {
+    for (int i = 0; i < pluginList.count(); i++) {
         QDomElement plugin = pluginList.at(i).toElement();
         QString pluginPath = plugin.attribute("ppath");
         loadPluginFile(pluginPath);
@@ -691,7 +707,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
     actionList = pluginMenu->actions();
     QDomNodeList dockWidgetList = config.elementsByTagName("dockWidget");
     if (!actionList.isEmpty()) {
-        for(int i = 0; i < dockWidgetList.count(); i++) {
+        for (int i = 0; i < dockWidgetList.count(); i++) {
             QDomElement dockWidget = dockWidgetList.at(i).toElement();
             QString dockWidgetName = dockWidget.attribute("name");
             bool isChecked = dockWidget.attribute("isChecked").toInt();
@@ -705,8 +721,8 @@ void GripMainWindow::parseConfig(QDomDocument config)
                 }
             }
 
-            for(int j = 0; j < actionList.count(); j++){
-                if(actionList.at(i)->text().compare(dockWidgetName) == 0)
+            for (int j = 0; j < actionList.count(); j++){
+                if (actionList.at(i)->text().compare(dockWidgetName) == 0)
                     actionList.at(i)->setChecked(isChecked);
             }
         }
@@ -714,7 +730,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
 
     /// parse and load scene
     QDomNodeList sceneList = config.elementsByTagName("scene");
-    for(int i = 0; i < sceneList.count(); i++) {
+    for (int i = 0; i < sceneList.count(); i++) {
         QDomElement scene = sceneList.at(i).toElement();
         QString scenePath = scene.attribute("spath");
         doLoad(scenePath.toStdString());

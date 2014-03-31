@@ -60,8 +60,7 @@ public:
      MyPlugin(QWidget *parent = 0);
     ~MyPlugin();
 
-    void Load(TreeViewReturn* ret, ViewerWidget* viewer);
-
+    void GRIPEventSceneLoaded();
     void GRIPEventSimulationBeforeTimestep();
     void GRIPEventSimulationAfterTimestep();
     void GRIPEventSimulationStart();
@@ -72,7 +71,6 @@ public:
     void GRIPEventPlaybackStop();
     void GRIPEventTreeViewSelectionChanged();
     void Refresh();
-
 
 private:
     Ui::MyPluginTab *ui;

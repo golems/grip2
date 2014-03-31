@@ -397,17 +397,16 @@ void MainWindow::exit()
 
 void MainWindow::saveWorkspace()
 {
-    if(!configFilePath->isNull()) {
+    if (!configFilePath->isNull()) {
         QDomDocument* config = generateWorkspaceXML();
         saveConfigFile(config, configFilePath);
-    }
-    else
+    } else {
         saveNewWorkspace();
+    }
 }
 
 void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
 {
-    std::cerr << "Attempting to save the following configuration file: " << filename->toStdString() << std::endl;
     try {
         QFile file(*filename);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -420,7 +419,7 @@ void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
         file.close();
         std::cerr << "Success!" << std::endl;
         configFilePath = new QString(*filename);
-        std::cerr<<configFilePath->toStdString()<<std::endl;
+        std::cerr << configFilePath->toStdString() << std::endl;
     }
 
     catch (const std::exception& e) {
