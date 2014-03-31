@@ -281,11 +281,10 @@ protected:
     void manageLayout();
 
     /**
-     * \brief Manage plugins
+     * \brief creates the Plugin Menu
      * \return void
      */
-    void managePlugin();
-
+    void createPluginMenu();
 
     /**
      * \brief Clears the world, simulation and widgets

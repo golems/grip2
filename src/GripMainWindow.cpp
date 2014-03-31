@@ -100,7 +100,7 @@ GripMainWindow::GripMainWindow(bool debug) :
 
     /// load widgets in the user interface and manages the layout
     manageLayout();
-    managePlugin();
+    createPluginMenu();
 
     /// set the status bar for the Grip Window
     this->setStatusBar(this->statusBar());
@@ -530,11 +530,11 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             }
             else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
-                this->tabifyDockWidget(visualizationtab, pluginWidget);
+                this->tabifyDockWidget(visualizationTab, pluginWidget);
                 pluginList->append(gt);
                 pluginPathList->append(new QString(pluginFileName));
                 if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
-                dockWidgetMenu->addAction(pluginWidget->toggleViewAction());
+                pluginMenu->addAction(pluginWidget->toggleViewAction());
             }
         }
     }
@@ -608,26 +608,19 @@ void GripMainWindow::manageLayout()
     tabifyDockWidget(inspectorTab, visualizationTab);
     visualizationTab->show();
     visualizationTab->raise();
+}
 
 
-void GripMainWindow::createDockWidgetMenu()
+void GripMainWindow::createPluginMenu()
 {
-    dockWidgetMenu = menuBar()->addMenu(tr("&Widgets"));
+    pluginMenu = menuBar()->addMenu(tr("&Plugins"));
 
     QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
      if (dockwidgetList.size()) {
          for (int i = 0; i < dockwidgetList.size(); ++i) {
-                 dockwidgetMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
+                 pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
          }
      }
-}
-
-void GripMainWindow::managePlugin()
-{
-    /// adding a plugin menu that will show a list of plugins loaded
-    pluginMenu = menuBar()->addMenu(tr("&Plugins"));
-
-    /// When the user loads a plugin, its name is appended to the menu list at loadPluginFile()
 }
 
 QDomDocument* GripMainWindow::generateWorkspaceXML()
@@ -658,9 +651,9 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
     root.appendChild(dockWidgetStatus);
 
     QList<QAction*> actionList;
-    if(dockWidgetMenu != NULL)
+    if(pluginMenu != NULL)
     {
-        actionList = dockWidgetMenu->actions();
+        actionList = pluginMenu->actions();
         if(!actionList.isEmpty()) {
             for(int i = 0; i < actionList.count(); i++) {
                 QAction* act = actionList.at(i);
@@ -698,7 +691,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
 
     /// parse and set qDockWidget states
     QList<QAction*> actionList;
-    actionList = dockWidgetMenu->actions();
+    actionList = pluginMenu->actions();
     QDomNodeList dockWidgetList = config.elementsByTagName("dockWidget");
     if (!actionList.isEmpty()) {
         for(int i = 0; i < dockWidgetList.count(); i++) {
