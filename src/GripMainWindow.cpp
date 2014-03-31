@@ -525,7 +525,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
 
             this->tabifyDockWidget(visualizationTab, pluginWidget);
 
-            /// temporary plugin menu
+            /// plugin menu: when a plugin is loaded, its name is appended to the menu
             if (pluginList->size()>0) {
                pluginMenu->addAction(pluginList->at(pluginList->size()-1)->toggleViewAction()); //keep adding, need to implement unloading
             }
@@ -582,17 +582,12 @@ void GripMainWindow::manageLayout()
     QWidget* widget = new QWidget(this);
     gridLayout = new QGridLayout;
 
+    /// viewWidget initial size: 800 x 600
     gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-    //playbackSlider->setMinimumWidth(450);
-    //playbackSlider->setMinimumHeight(45);
-    //playbackSlider->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    /// playbackWidget minimum width 450, fixed height 45
+    /// playbackWidget size policy:(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed)
     gridLayout->addWidget(playbackWidget, 1, 0);
-
-    //simulation_time_display->setMinimumWidth(130);
-    //simulation_time_display->setMinimumHeight(45);
-    //simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-//    gridLayout->addWidget(simulation_time_display, 1, 1);
 
     widget->setLayout(gridLayout);
     this->setCentralWidget(widget);
@@ -613,18 +608,18 @@ void GripMainWindow::manageLayout()
 
     QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
      if (dockwidgetList.size()) {
-
          for (int i = 0; i < dockwidgetList.size(); ++i) {
-
                  dockwidgetMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
-
          }
      }
 }
 
 void GripMainWindow::managePlugin()
 {
+    /// adding a plugin menu that will show a list of plugins loaded
     pluginMenu = menuBar()->addMenu(tr("&Plugins"));
+
+    /// When the user loads a plugin, its name is appended to the menu list at loadPluginFile()
 }
 
 /// Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.
