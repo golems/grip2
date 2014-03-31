@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>47</height>
+    <height>45</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>450</width>
-    <height>47</height>
+    <height>45</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../qtWidgets.qrc">
        <normaloff>:/icons/button-beginning.png</normaloff>:/icons/button-beginning.png</iconset>
      </property>
      <property name="iconSize">
@@ -58,7 +58,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../qtWidgets.qrc">
        <normaloff>:/icons/button-reverse.png</normaloff>:/icons/button-reverse.png</iconset>
      </property>
      <property name="iconSize">
@@ -81,7 +81,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../qtWidgets.qrc">
        <normaloff>:/icons/button-pause.png</normaloff>:/icons/button-pause.png</iconset>
      </property>
      <property name="iconSize">
@@ -104,7 +104,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../qtWidgets.qrc">
        <normaloff>:/icons/button-play.png</normaloff>:/icons/button-play.png</iconset>
      </property>
      <property name="iconSize">
@@ -127,6 +127,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../qtWidgets.qrc"/>
+ </resources>
  <connections/>
 </ui>

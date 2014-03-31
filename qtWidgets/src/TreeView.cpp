@@ -25,8 +25,9 @@
 using namespace dart;
 using namespace std;
 
-TreeView::TreeView(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(parent), ui(new Ui::TreeView)
+TreeView::TreeView(QWidget* parent, TreeViewReturn* active_item) :QDockWidget(parent), ui(new Ui::TreeView)
 {
+    this->setParent(parent);
     activeItem = 0;
     ui->setupUi(this);
     ui_treeWidget = ui->treeWidget;

@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>122</width>
-    <height>47</height>
+    <width>130</width>
+    <height>45</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>130</width>
+    <height>45</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string/>
@@ -16,11 +28,23 @@
   <widget class="QLineEdit" name="time_edit_sim">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>8</x>
      <y>10</y>
-     <width>60</width>
+     <width>65</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>65</width>
+     <height>27</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation time&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -35,11 +59,23 @@
   <widget class="QLineEdit" name="time_edit_rel">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>78</x>
      <y>10</y>
-     <width>50</width>
+     <width>45</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>45</width>
+     <height>27</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulation time relative to real time (ie. 0.5 is two times slower than real time. 2.0 is twice as fast as real time)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

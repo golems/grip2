@@ -69,6 +69,7 @@
 #include "GripSimulation.h"
 
 #include <QDir>
+#include <QtXml>
 
 
 /**
@@ -94,6 +95,18 @@ public:
      * \return Ground object
      */
     dart::dynamics::Skeleton* createGround();
+
+    /**
+     * \brief called when the window gets resized
+     * \return void
+     */
+    void resizeEvent(QResizeEvent* event);
+
+    /**
+     * \brief adjust the playback slider size to the size of the viewer widget
+     * \return void
+     */
+    void adjustSliderSize();
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget* viewWidget;
@@ -130,9 +143,6 @@ public:
 
     /// Simulation thread doing the actually simluation loop
     GripSimulation* simulation;
-
-    /// called when the window gets resized
-    void resizeEvent(QResizeEvent* event);
 
     bool _playingBack;
     int _curPlaybackTick;
@@ -216,6 +226,10 @@ protected slots:
      */
     void black();
 
+    /**
+     * \brief Resets the camera position to a position so that you can see the front view of the rendered objects
+     * \return void
+     */
     void resetCamera();
 
     void xga1024x768();
@@ -231,7 +245,7 @@ protected slots:
     void simulationStopped();
 
 protected:
-    /** Private Members */
+    /** Protected Members */
     /// Any plugin that is loaded successfully into the Grip will get stored in this QList
     /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
     /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
@@ -239,6 +253,25 @@ protected:
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
     QList<GripTab*>* pluginList;
+
+    /// Stores the path to all the plugins that are loaded
+    QList<QString*>* pluginPathList;
+
+    /// Stores the path to the scene file
+    QString* sceneFilePath;
+
+    /**
+     * \brief Create an XML file for the workspace
+     * contains the list of plugins, status of DockWidgets and the loaded scene
+     * \return QDomDocument
+     */
+    QDomDocument* generateWorkspaceXML();
+
+    /**
+     * \brief Parses the configuration file and manipulates the workspace to match the settings in the configuration file
+     * \return void
+     */
+    void parseConfig(QDomDocument config);
 
     /**
      * \brief Creates the rendering window
@@ -304,6 +337,11 @@ protected:
      */
     void doLoad(string fileName);
 
+    /**
+     * \brief Creates a menu of all the dockable widgets in Grip and allows users to toggle the views
+     * \return void
+     */
+    void createDockWidgetMenu();
 
     /**
      * \brief Saves the loaded scene to file for quick load functionality
@@ -326,8 +364,15 @@ protected:
 
     bool _debug;
 
-    /// used to maintain the layout of the widgets that are not QDockWidgets
-    QGridLayout *gridLayout;
+    /**
+     * \brief used to maintain the layout of the widgets that are not QDockWidgets
+     */
+    QGridLayout* gridLayout;
+
+    /**
+     * \brief menu item that maintains a list of all dockwidgets in the interface
+     */
+    QMenu* dockWidgetMenu;
 };
 
 

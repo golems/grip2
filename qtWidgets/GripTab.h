@@ -3,6 +3,7 @@
 
 #include "TreeViewReturn.h"
 #include "../osgGolems/ViewerWidget.h"
+#include <dart/simulation/World.h>
 #include <QDockWidget>
 #include <QtPlugin>
 
@@ -22,6 +23,9 @@ protected:
     /// pointer to the osg viewer
     ViewerWidget* viewWidget;
 
+    /// pointer to the world object that is being rendered and simulated
+    dart::simulation::World* world;
+
 public:
     /**
      * \brief called from the main window whenever the model changes
@@ -32,7 +36,7 @@ public:
      * \brief called from the main window whenever the plugin is added to grip
      * This is initalize the members of the class
      */
-    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
+    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer, dart::simulation::World* world) = 0;
 
     /**
      * \brief called from the main window whenever the simulation is executing

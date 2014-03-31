@@ -85,17 +85,26 @@ GripMainWindow::GripMainWindow(bool debug) :
     _playbackSpeed(1),
     _simulationDirty(false)
 {
+    /// object initialization
     world->setTime(0);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
-    createRenderingWindow();
+    pluginList = new QList<GripTab*>;
+    pluginPathList = new QList<QString*>;
+    sceneFilePath = new QString();
+
+    /// create objects for widget classes
     createTreeView();
     createTimeDisplays();
     createPlaybackSliders();
+    createRenderingWindow();
     createTabs();
-    pluginList = new QList<GripTab*>;
+    createDockWidgetMenu();
+
+    /// load widgets in the user interface and manages the layout
     manageLayout();
 
+    /// set the status bar for the Grip Window
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
@@ -109,13 +118,13 @@ void GripMainWindow::doLoad(string fileName)
 {
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
-            if (_debug) std::cerr << "Not loading a new world" << std::endl;
+            if (_debug) std::cerr << "Simulation in  progress. Not loading a new world" << std::endl;
             return;
         }
     }
 
     if (world->getTime() || world->getNumSkeletons()) {
-        if (_debug) std::cerr << "Deleting world" << std::endl;
+        if (_debug) std::cerr << "Deleting existing world." << std::endl;
         this->clear();
     }
 
@@ -131,6 +140,8 @@ void GripMainWindow::doLoad(string fileName)
 
     treeviewer->populateTreeView(world);
     visualizationtab->update();
+
+    sceneFilePath = new QString(QString::fromStdString(fileName));
 
     if (_debug) cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
     saveText(fileName,".lastload");
@@ -184,6 +195,7 @@ void GripMainWindow::clear()
         treeviewer->clear();
         simulation->reset();
         timeline->clear();
+        sceneFilePath = NULL;
     }
 }
 
@@ -483,19 +495,16 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-//    this->setCentralWidget(viewWidget);
-
 }
 
 void GripMainWindow::createTreeView()
 {
     treeviewer = new TreeView(this, activeItem);
-//    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
 }
 
 void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 {
-    std::cerr << "PPath: " << pluginsDirName.absolutePath().toStdString() << std::endl;
+    std::cerr << "Plugin Path: " << pluginsDirName.absolutePath().toStdString() << std::endl;
 
     foreach (QString fileName, pluginsDirName.entryList(QDir::Files)) {
         std::cerr << "Entry: " << fileName.toStdString() << std::endl;
@@ -511,24 +520,29 @@ void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 
 void GripMainWindow::loadPluginFile(QString pluginFileName)
 {
-    std::cerr << "FileFile: " << pluginFileName.toStdString() << std::endl;
+    std::cerr << "File: " << pluginFileName.toStdString() << std::endl;
     QPluginLoader loader(pluginFileName);
     QObject* plugin = loader.instance();
     if (plugin) {
-        if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
         GripTab* gt = qobject_cast<GripTab*>(plugin);
-        pluginList->append(gt);
         if (gt)
         {
-            gt->Load(activeItem, viewWidget);
+            gt->Load(activeItem, viewWidget, world);
 
+            if (_debug) std::cerr << "Attempting to load plugin: " << (plugin->objectName()).toStdString() << std::endl;
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
-            if (pluginWidget == NULL)
-                if (_debug) std::cerr << "is NULL" << std::endl;
-            else
+            if (pluginWidget == NULL) {
+                if (_debug)
+                    std::cerr << "is NULL" << std::endl;
+            }
+            else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
-
-            this->tabifyDockWidget(visualizationtab, pluginWidget);
+                this->tabifyDockWidget(visualizationtab, pluginWidget);
+                pluginList->append(gt);
+                pluginPathList->append(new QString(pluginFileName));
+                if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
+                dockWidgetMenu->addAction(pluginWidget->toggleViewAction());
+            }
         }
     }
     else {
@@ -548,7 +562,7 @@ void GripMainWindow::createTabs()
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()
 {
-    // Add floor
+    /// Add floor
     dart::dynamics::Skeleton* ground = new dart::dynamics::Skeleton();
     ground->setName("ground");
 
@@ -590,10 +604,7 @@ void GripMainWindow::manageLayout()
 
     gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-    playbackSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     gridLayout->addWidget(playbackSlider, 1, 0);
-
-    /// simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     gridLayout->addWidget(simulation_time_display, 1, 1);
 
     widget->setLayout(gridLayout);
@@ -609,31 +620,133 @@ void GripMainWindow::manageLayout()
     tabifyDockWidget(inspectortab, visualizationtab);
     visualizationtab->show();
     visualizationtab->raise();
+}
 
+void GripMainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    playbackSlider->setMinimumWidth(100);
+}
 
-    QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
+void GripMainWindow::createDockWidgetMenu()
+{
+    dockWidgetMenu = menuBar()->addMenu(tr("&Widgets"));
 
-    QList<QDockWidget *> dockwidgets = qFindChildren<QDockWidget *>(this);
-     if (dockwidgets.size()) {
-         //menu1 = new QMenu(this);
-         for (int i = 0; i < dockwidgets.size(); ++i) {
-             if ( QString(dockwidgets.at(i)->name()) == QString("PlaybackSlider")
-                 || QString(dockwidgets.at(i)->name()) == QString("Time_Display")) {
-
-                 // skip //
+    QList<QDockWidget *> dockWidgets = qFindChildren<QDockWidget *>(this);
+     if (dockWidgets.size()) {
+         for (int i = 0; i < dockWidgets.size(); ++i) {
+             if ( QString(dockWidgets.at(i)->name()) == QString("PlaybackSlider")
+                 || QString(dockWidgets.at(i)->name()) == QString("Time_Display")) {
              }
              else {
-                 dockwidgetMenu->addAction(dockwidgets.at(i)->toggleViewAction());
+                 QAction* act = dockWidgets.at(i)->toggleViewAction();
+                 dockWidgetMenu->addAction(act);
              }
 
          }
      }
 }
 
-void GripMainWindow::resizeEvent(QResizeEvent *event)
+QDomDocument* GripMainWindow::generateWorkspaceXML()
 {
-    QMainWindow::resizeEvent(event);
-    int viewerWidth = viewWidget->width();
-    gridLayout->setColumnMinimumWidth(0, viewerWidth - 130);
-    playbackSlider->setMinimumWidth(viewerWidth - 130);
+    QDomDocument* config = new QDomDocument();
+    QDomProcessingInstruction xmlDeclaration = config->createProcessingInstruction("xml", "version=\"1.0\"");
+    config->appendChild(xmlDeclaration);
+
+    QDomElement root = config->createElement("configuration");
+
+    // add plugins
+    QDomElement plugins = config->createElement("plugins");
+    root.appendChild(plugins);
+
+    if(pluginPathList != NULL)
+    {
+        std::cerr << "adding plugins" << std::endl;
+        for(int i = 0; i < pluginPathList->count(); i++) {
+            std::cerr<<(*(pluginPathList->at(i))).toStdString()<<std::endl;
+            QDomElement plugin = config->createElement("plugin");
+            plugin.setAttribute("ppath", *(pluginPathList->at(i)));
+            plugins.appendChild(plugin);
+        }
+    }
+
+    // add dockwidget status
+    QDomElement dockWidgetStatus = config->createElement("dockWidgetStatus");
+    root.appendChild(dockWidgetStatus);
+
+    QList<QAction*> actionList;
+    if(dockWidgetMenu != NULL)
+    {
+        actionList = dockWidgetMenu->actions();
+        if(!actionList.isEmpty()) {
+            for(int i = 0; i < actionList.count(); i++) {
+                QAction* act = actionList.at(i);
+                QDomElement dockWidget = config->createElement("dockWidget");
+                dockWidget.setAttribute("name", act->text());
+                dockWidget.setAttribute("isChecked", QString::number(act->isChecked()));
+                dockWidgetStatus.appendChild(dockWidget);
+            }
+        }
+    }
+
+    // add scene file information
+    QDomElement scene = config->createElement("scene");
+    if(!sceneFilePath->isNull()) {
+        scene.setAttribute("spath", *sceneFilePath);
+    }
+    root.appendChild(scene);
+
+    // to be added when necessary implementations are completed
+    // add camera information
+    // add light sources
+    config->appendChild(root);
+    return config;
+}
+
+void GripMainWindow::parseConfig(QDomDocument config)
+{
+    /// parse and load plugins
+    QDomNodeList pluginList = config.elementsByTagName("plugin");
+    for(int i = 0; i < pluginList.count(); i++) {
+        QDomElement plugin = pluginList.at(i).toElement();
+        QString pluginPath = plugin.attribute("ppath");
+        loadPluginFile(pluginPath);
+    }
+
+    /// parse and set qDockWidget states
+    QList<QAction*> actionList;
+    actionList = dockWidgetMenu->actions();
+    QDomNodeList dockWidgetList = config.elementsByTagName("dockWidget");
+    if (!actionList.isEmpty()) {
+        for(int i = 0; i < dockWidgetList.count(); i++) {
+            QDomElement dockWidget = dockWidgetList.at(i).toElement();
+            QString dockWidgetName = dockWidget.attribute("name");
+            bool isChecked = dockWidget.attribute("isChecked").toInt();
+
+            QList<QDockWidget *> dockWidgets = qFindChildren<QDockWidget *>(this);
+            if (dockWidgets.size()) {
+                for (int i = 0; i < dockWidgets.size(); ++i) {
+                    if ( QString(dockWidgets.at(i)->windowTitle()).compare(dockWidgetName) == 0) {
+                        dockWidgets.at(i)->setHidden(!isChecked);
+                    }
+                }
+            }
+
+            for(int j = 0; j < actionList.count(); j++){
+                if(actionList.at(i)->text().compare(dockWidgetName) == 0)
+                    actionList.at(i)->setChecked(isChecked);
+            }
+        }
+    }
+
+    /// parse and load scene
+    QDomNodeList sceneList = config.elementsByTagName("scene");
+    for(int i = 0; i < sceneList.count(); i++) {
+        QDomElement scene = sceneList.at(i).toElement();
+        QString scenePath = scene.attribute("spath");
+        doLoad(scenePath.toStdString());
+    }
+
+    /// parse and load cameras
+    /// parse and load lightsources
 }
