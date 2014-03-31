@@ -53,6 +53,7 @@
 // Qt includes
 #include <QMainWindow>
 #include <QDir>
+#include <QtXml>
 
 // C++ Standard includes
 #include <iostream>
@@ -107,9 +108,27 @@ public slots:
     virtual void slotPlaybackBeginning() = 0;
 
 protected:
+    /**
+     * \brief Create an XML file for the workspace
+     * contains the list of plugins, status of DockWidgets and the loaded scene
+     * \return QDomDocument
+     */
+    virtual QDomDocument* generateWorkspaceXML() = 0;
+
+    /**
+     * \brief Parses the configuration file and manipulates the workspace to match the settings in the configuration file
+     * \return void
+     */
+    virtual void parseConfig(QDomDocument config) = 0;
+
     /// QToolBar object for showing/hiding buttons
     QToolBar* _getToolBar();
+
+    /// Path of the last loaded scene file
     const QString LAST_LOAD_FILE;
+
+    /// Stores the path to the workspace configuration file
+    QString* configFilePath;
 
 protected slots:
     /**
@@ -238,7 +257,32 @@ protected slots:
      */
     void about();
 
+    /**
+     * \brief Saves the workspace configuration to an existing configuration file
+     * \return void
+     */
+    void saveWorkspace();
+
+    /**
+     * \brief Saves the workspace configuration to a new configuration file
+     * \return void
+     */
+    void saveNewWorkspace();
+
+    /**
+     * \brief Loads workspace configuration from a configuration file
+     * \return void
+     */
+    void loadWorkspace();
+
+
 private:
+    /**
+     * \brief Saves the configuration file to the location passed
+     * \return void
+     */
+    void saveConfigFile(QDomDocument* config, QString* filename);
+
     /**
      * \brief Creates actions
      * \return void
@@ -283,6 +327,9 @@ private:
         QAction *saveSceneAct;
         QAction *loadPluginFileAct;
         QAction *loadPluginDirAct;
+        QAction *saveWorkspaceConfigurationAct;
+        QAction *saveNewWorkspaceConfigurationAct;
+        QAction *loadWorkspaceConfigurationAct;
         QAction *closeSceneAct;
         QAction *exitAct;
     QMenu *viewMenu;

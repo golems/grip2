@@ -2,7 +2,7 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
+ * Author: Shailesh Lohia <shailesh.lohia@gatech.edu>
  * Date: Jan 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
@@ -79,7 +79,7 @@ protected:
     /// pointer to the osg viewer
     ViewerWidget *viewWidget;
 
-    /// pointer to simulation world
+    /// pointer to simulation world object that is being rendered and simulated
     dart::simulation::World *world;
 
     /// pointer to the timeline, which holds a GripTimeslice objects.
@@ -98,6 +98,8 @@ public:
      * This is initalize the members of the class
      * \param ret Pointer to object returned by the TreeView
      * \param viewer Pointer to composite viewer object where things are rendered
+	 * \param world Pointer to the dart world simulation object
+	 * \param timeline Array of GripTimesclie object for simulation and kinematic playback
      */
     virtual void Load(TreeViewReturn *ret,
                       ViewerWidget *viewer,

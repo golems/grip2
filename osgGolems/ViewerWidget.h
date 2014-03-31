@@ -204,7 +204,6 @@ protected:
      * \return bool Whether or not the view number exists
      */
     bool viewNumIsValid(uint viewNum);
-
 }; // end class ViewerWidget
 
 #endif // VIEWER_WIDGET_H
