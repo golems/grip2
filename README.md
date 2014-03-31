@@ -198,62 +198,84 @@ Note: Remember that the plugin needs to compile into a library and not an execut
 </code></pre>
    You can use these data structures to know the selected item from the objet explorer (tree view) and mnipulate or add osg objects into the rendered simualtion
    
-10. GripTab has the following list of pure virtual functions that need to be implemented in your plugin.The plugin has to implement the following methods though the implementation could be blank.
+10. GripTab has the following list of pure virtual functions that need to be implemented in your plugin.The plugin can implement the following methods. Note that Refresh is a pure virtual function and has to be implemented in the plugin even if the implementation is blank.
 
 
 <pre><code>/**
- * \brief called from the main window whenever the model changes
+ * \brief called from the main window whenever a new scene is loaded
  */
 virtual void Refresh() = 0;
+
 /**
  * \brief called from the main window whenever the plugin is added to grip
  * This is initalize the members of the class
+ * \param ret Pointer to object returned by the TreeView
+ * \param viewer Pointer to composite viewer object where things are rendered
+ * \param world Pointer to the dart world simulation object
+ * \param timeline Array of GripTimeslice object for simulation and kinematic playback
  */
-virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
+virtual void Load(TreeViewReturn *ret,
+                  ViewerWidget *viewer,
+                  dart::simulation::World *world,
+                  std::vector<GripTimeslice> *timeline)
+
+/**
+ * \brief called from the main window whenever a new scene file is loaded
+ */
+virtual void GRIPEventSceneLoaded(){}
+
 /**
  * \brief called from the main window whenever the simulation is executing
  * This method is executed before every simulation time step
  */
-virtual void GRIPEventSimulationBeforeTimestep() = 0;
+virtual void GRIPEventSimulationBeforeTimestep(){}
+
 /**
  * \brief called from the main window whenever the simulation is executing
  * This method is executed after every simulation time step
  */
-virtual void GRIPEventSimulationAfterTimestep() = 0;
+virtual void GRIPEventSimulationAfterTimestep(){}
+
 /**
  * \brief called from the main window whenever the simulation is executing
  * This method is executed at the start of the simulation
  */
-virtual void GRIPEventSimulationStart() = 0;
+virtual void GRIPEventSimulationStart(){}
+
 /**
  * \brief called from the main window whenever the simulation is executing
  * This method is executed at the end of the simulation
  */
-virtual void GRIPEventSimulationStop() = 0;
+virtual void GRIPEventSimulationStop(){}
+
+
 /**
  * \brief called from the main window whenever the simulation history slider is being played
  * This method is executed before every playback time step
  */
-virtual void GRIPEventPlaybackBeforeFrame() = 0;
+virtual void GRIPEventPlaybackBeforeFrame(){}
+
 /**
  * \brief called from the main window whenever the simulation history slider is being played
  * This method is executed after every playback time step
  */
-virtual void GRIPEventPlaybackAfterFrame() = 0;
+virtual void GRIPEventPlaybackAfterFrame(){}
+
 /**
  * \brief called from the main window whenever the simulation history slider is being played
  * This method is executed at the start of the playback
  */
-virtual void GRIPEventPlaybackStart() = 0;
+virtual void GRIPEventPlaybackStart(){}
+
 /**
  * \brief called from the main window whenever the simulation history slider is being played
  * This method is executed at the end of the playback
  */
-virtual void GRIPEventPlaybackStop() = 0;
+virtual void GRIPEventPlaybackStop(){}
+
 /**
  * \brief called from the main window when a new object is selected in the treeview
  */
-virtual void GRIPEventTreeViewSelectionChanged() = 0;
-</code></pre>
+virtual void GRIPEventTreeViewSelectionChanged(){}</code></pre>
 
 Once complete the plugin needs to be compiled into a library. If the plugin conforms to the GripTab structure, it will be loaded whenever the user selects the library file to be loaded from the grip menu.
