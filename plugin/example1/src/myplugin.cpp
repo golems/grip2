@@ -48,6 +48,7 @@
 #include <QtGui>
 #include <dart/dynamics/Skeleton.h>
 #include <dart/dynamics/Joint.h>
+#include <dart/dynamics/BodyNode.h>
 
 MyPlugin::MyPlugin(QWidget *parent) : ui(new Ui::MyPluginTab){
     ui->setupUi(this);
@@ -91,7 +92,24 @@ void MyPlugin::GRIPEventSimulationBeforeTimestep()
 void MyPlugin::GRIPEventSimulationAfterTimestep(){}
 void MyPlugin::GRIPEventSimulationStart(){}
 void MyPlugin::GRIPEventSimulationStop(){}
-void MyPlugin::GRIPEventTreeViewSelectionChanged(){}
+void MyPlugin::GRIPEventTreeViewSelectionChanged()
+{
+    if(!_activeNode) {
+        std::cerr << "[MyPlugin] No item selected in TreeView" << std::endl;
+        return;
+    }
+
+    std::cerr << "[MyPlugin] ActiveNodeType: " << _activeNode->dType << std::endl;
+    if(Return_Type_Robot == _activeNode->dType) {
+        dart::dynamics::Skeleton* skel = (dart::dynamics::Skeleton*)_activeNode->object;
+        std::cerr << "[MyPlugin] Skeleton Selected: " << skel->getName() << std::endl;
+    } else if(Return_Type_Node == _activeNode->dType) {
+        dart::dynamics::BodyNode* node = (dart::dynamics::BodyNode*)_activeNode->object;
+        std::cerr << "[MyPlugin] BodyNode Selected: " << node->getName() << std::endl;
+    } else {
+        std::cerr << "[MyPlugin] Unknown type selected in TreeView" << std::endl;
+    }
+}
 
 void MyPlugin::GRIPEventPlaybackBeforeFrame() {}
 

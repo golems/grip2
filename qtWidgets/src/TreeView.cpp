@@ -73,7 +73,7 @@
 
 TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent), _ui(new Ui::TreeView)
 {
-    _activeItem = 0;
+    _activeItem = new TreeViewReturn;
     _tabs = tabs;
     _ui->setupUi(this);
     _ui_treeWidget = _ui->treeWidget;
@@ -94,7 +94,9 @@ TreeView::~TreeView()
 void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
 {
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
-    _activeItem = val;
+    _activeItem->dType = val->dType;
+    _activeItem->object = val->object;
+    _activeItem->skeletonId = val->skeletonId;
     emit itemSelected(_activeItem);
     for (size_t i = 0; i < _tabs->size(); ++i) {
         _tabs->at(i)->GRIPEventTreeViewSelectionChanged();
