@@ -36,68 +36,51 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @author T. Kunz
- * @author Saul Reynolds-Haertle
- */
-
-// general headers
+// C++ Standard includes
 #include <iostream>
 
-// DART, GRIP headers
-#include <dynamics/BodyNode.h>
-#include <dynamics/Skeleton.h>
-#include <planning/Trajectory.h>
-//#include <utils/UtilsMath.h>
+// DART includes
+#include <dart/dynamics/BodyNode.h>
+#include <dart/dynamics/Skeleton.h>
+#include <dart/planning/Trajectory.h>
 
-// HUBO headers
-// #include "hubo.h"
-
-// local headers
+// Local includes
 #include "HuboController.h"
 
-using namespace std;
-using namespace Eigen;
-using namespace dart;
-
-//###########################################################
-// constructors and destructors
-HuboController::HuboController(dynamics::Skeleton* skeleton,
+HuboController::HuboController(dart::dynamics::Skeleton *skeleton,
                                const Eigen::VectorXd p,
                                const Eigen::VectorXd i,
                                const Eigen::VectorXd d,
                                const Eigen::VectorXd mask,
-                               double t_init) {
+                               double tInit) {
     skel = skeleton;
     Kp = p.asDiagonal();
     Ki = i.asDiagonal();
     Kd = d.asDiagonal();
-    joint_mask = mask.asDiagonal();
-    t_last = t_init;
-    error_last = VectorXd::Zero(skel->getNumGenCoords());
-    error_deriv = VectorXd::Zero(skel->getNumGenCoords());
-    error_integ = VectorXd::Zero(skel->getNumGenCoords());
-    ref_vel = VectorXd::Zero(skel->getNumGenCoords());
-    ref_pos = VectorXd::Zero(skel->getNumGenCoords());
+    jointMask = mask.asDiagonal();
+    tLast = tInit;
+    errorLast = Eigen::VectorXd::Zero(skel->getNumGenCoords());
+    errorDeriv = Eigen::VectorXd::Zero(skel->getNumGenCoords());
+    errorInteg = Eigen::VectorXd::Zero(skel->getNumGenCoords());
+    refVel = Eigen::VectorXd::Zero(skel->getNumGenCoords());
+    refPos = Eigen::VectorXd::Zero(skel->getNumGenCoords());
 }
 
-//###########################################################
-// Functions
-Eigen::VectorXd HuboController::getTorques(const Eigen::VectorXd& cur_pos,
-                                           const Eigen::VectorXd& cur_vel,
+Eigen::VectorXd HuboController::getTorques(const Eigen::VectorXd &curPos,
+                                           const Eigen::VectorXd &curVel,
                                            double t) {
     // update time
-    double dt = t - t_last;
-    t_last = t;
+    double dt = t - tLast;
+    tLast = t;
 
     // SPD controller
     // J. Tan, K. Liu, G. Turk. Stable Proportional-Derivative Controllers. IEEE Computer Graphics and Applications, Vol. 31, No. 4, pp 34-44, 2011.
-    MatrixXd M = skel->getMassMatrix() + Kd * dt;
-    MatrixXd invM = M.inverse();
-    VectorXd p = -Kp * (cur_pos - ref_pos + cur_vel * dt);
-    VectorXd d = -Kd * (cur_vel - ref_vel);
-    VectorXd qddot = invM * (-skel->getCombinedVector() + p + d);
-    VectorXd torques = p + d - Kd * qddot * dt;
+    Eigen::MatrixXd M = skel->getMassMatrix() + Kd * dt;
+    Eigen::MatrixXd invM = M.inverse();
+    Eigen::VectorXd p = -Kp * (curPos - refPos + curVel * dt);
+    Eigen::VectorXd d = -Kd * (curVel - refVel);
+    Eigen::VectorXd qddot = invM * (-skel->getCombinedVector() + p + d);
+    Eigen::VectorXd torques = p + d - Kd * qddot * dt;
 
-    return joint_mask * torques;
+    return jointMask * torques;
 }

@@ -64,11 +64,11 @@ namespace osgGolems {
  * \enum lineType
  * \brief Enumeration for the different types of lines that this class can create
  */
-typedef enum lineType {
-    LINE = 0,
-    LINE_ENDING_WITH_ARROW,
-    LINE_WITH_ARROWS,
-    NUM_LINE_TYPES
+typedef enum {
+    LINE = 0,               ///< Normal line
+    LINE_ENDING_WITH_ARROW, ///< Line ending with an arrow
+    LINE_WITH_ARROWS,       ///< Line with arrow on each end
+    NUM_LINE_TYPES          ///< Number of line types
 } lineType_t;
 
 /**

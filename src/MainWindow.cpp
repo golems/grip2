@@ -184,9 +184,8 @@ void MainWindow::loadScene()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    if (!fileNames.isEmpty())
-    {
-        cout<<"Attempting to open the following world file: "<<fileNames.front().toStdString() <<endl;
+    if (!fileNames.isEmpty()) {
+        std::cout<< "Attempting to open the following world file: " << fileNames.front().toStdString() << endl;
         doLoad(fileNames.front().toStdString());
     }
 }

@@ -148,17 +148,22 @@ public:
      * \brief Add a dart::simulation::World to the DartNode using the name of
      * a world sdf file.
      * \param sdfFile The name of the sdf file
-     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     * \return Number of skeletons in the DartNode.
      */
     size_t addWorldFromSdf(std::string sdfFile);
 
+    /**
+     * \brief Add dart::simulation::World to the DartNode using the name of a world file
+     * \param file File name of a urdf or sdf
+     * \return Number of skeletons in the DartNode.
+     */
     size_t addWorld(std::string file);
 
     /**
      * \brief Add a dart::dynamics::Skeleton to the DartNode using the name of
      * a skeleton urdf file.
      * \param urdfFile The name of the urdf file
-     * \return A success/fail integer. 1 = Success. 0 = Fail.
+     * \return Index value of the added skeleton.
      */
     size_t addSkeleton(std::string urdfFile);
 
@@ -307,9 +312,6 @@ public:
      */
     void hideSkeleton(int i);
 
-    osg::MatrixTransform* createForceVector(float lineLength, const Eigen::Vector3d &contactForce);
-
-
 protected:
 
     //---------------------------------------------------------------
@@ -346,8 +348,10 @@ protected:
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;
+    /// Whether or not to show the contact forces in the visualization
     bool _showContactForces;
-};
+
+}; // end class DartNode
 
 } // end namespace osgDart
 

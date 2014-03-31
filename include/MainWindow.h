@@ -42,6 +42,10 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file MainWindow.h
+ * \brief Main QWindow base class for robot visualization software
+ */
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -53,8 +57,6 @@
 // C++ Standard includes
 #include <iostream>
 #include <cstdio>
-
-using namespace std;
 
 // Forward declarations
 class QAction;
@@ -273,7 +275,7 @@ private:
      * \param fileName Name of scene file to load
      * \return void
      */
-    virtual void doLoad(string fileName) = 0;
+    virtual void doLoad(std::string fileName) = 0;
 
     QMenu *fileMenu;
         QAction *loadSceneAct;

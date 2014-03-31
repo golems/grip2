@@ -54,6 +54,10 @@
 // Local includes
 #include "TreeViewReturn.h"
 #include "../osgGolems/ViewerWidget.h"
+#include "../include/GripTimeslice.h"
+
+// DART includes
+#include <dart/simulation/World.h>
 
 // Qt includes
 #include <QDockWidget>
@@ -70,10 +74,18 @@ class GripTab : public QDockWidget
 protected:
     /// used to manipulate the objects in the main window
     /// pointer to the object selected in the Tree View
-    TreeViewReturn* activeNode;
+    TreeViewReturn *activeNode;
 
     /// pointer to the osg viewer
-    ViewerWidget* viewWidget;
+    ViewerWidget *viewWidget;
+
+    /// pointer to simulation world
+    dart::simulation::World *world;
+
+    /// pointer to the timeline, which holds a GripTimeslice objects.
+    /// These contain the state and time of the world. To use just call
+    /// timeline->push_back(GripTimeslice(*world));
+    std::vector<GripTimeslice> *timeline;
 
 public:
     /**
@@ -87,7 +99,10 @@ public:
      * \param ret Pointer to object returned by the TreeView
      * \param viewer Pointer to composite viewer object where things are rendered
      */
-    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
+    virtual void Load(TreeViewReturn *ret,
+                      ViewerWidget *viewer,
+                      dart::simulation::World *world,
+                      std::vector<GripTimeslice> *timeline) = 0;
 
     /**
      * \brief called from the main window whenever the simulation is executing

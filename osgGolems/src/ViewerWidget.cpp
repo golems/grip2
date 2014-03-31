@@ -212,12 +212,6 @@ void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
     }
 }
 
-//void ViewerWidget::addCenterAxes()
-//{
-//    osg::Node* axes = osgUtils::createNode();
-//    addNodeToScene(axes);
-//}
-
 void ViewerWidget::setBackgroundColor(const osg::Vec4 &color, uint viewNum)
 {
     // If the view number is valid, set the background color the view's camera

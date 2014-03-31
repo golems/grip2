@@ -87,10 +87,10 @@ typedef std::map<const dart::dynamics::BodyNode*, osg::ref_ptr<osgDart::BodyNode
  * \brief Render options for the skeleton
  */
 typedef enum {
-    RENDER_VISUAL_MESH,
-    RENDER_COLLISION_MESH,
-    RENDER_WIREFRAME_ON,
-    RENDER_WIREFRAME_OFF
+    RENDER_VISUAL_MESH,    ///< Render the visual mesh
+    RENDER_COLLISION_MESH, ///< Render the collision mesh
+    RENDER_WIREFRAME_ON,   ///< Render in wireframe mode
+    RENDER_WIREFRAME_OFF   ///< Render in normal mode
 } renderMode_t;
 
 /**

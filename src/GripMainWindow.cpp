@@ -103,7 +103,7 @@ GripMainWindow::~GripMainWindow()
 {
 }
 
-void GripMainWindow::doLoad(string sceneFileName)
+void GripMainWindow::doLoad(std::string sceneFileName)
 {
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
@@ -130,7 +130,7 @@ void GripMainWindow::doLoad(string sceneFileName)
     treeviewer->populateTreeView(world);
     visualizationTab->update();
 
-    if (_debug) cout << "--(i) Saving " << sceneFileName << " to ~/.griplastload file (i)--" << endl;
+    if (_debug) std::cout << "--(i) Saving " << sceneFileName << " to ~/.griplastload file (i)--" << std::endl;
     saveText(sceneFileName, LAST_LOAD_FILE);
     inspectorTab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(sceneFileName));
@@ -355,7 +355,7 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
                               Qt::QueuedConnection, Q_ARG(bool, playForward));
 }
 
-int GripMainWindow::saveText(string scenepath, const QString &filename)
+int GripMainWindow::saveText(std::string scenepath, const QString &filename)
 {
     try {
         QFile file(filename);
@@ -366,7 +366,7 @@ int GripMainWindow::saveText(string scenepath, const QString &filename)
     }
 
     catch (const std::exception& e) {
-        cout <<  e.what() << endl;
+        std::cout <<  e.what() << std::endl;
         return 0;
     }
     return 1;
@@ -478,14 +478,11 @@ void GripMainWindow::createRenderingWindow()
     viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
-//    this->setCentralWidget(viewWidget);
-
 }
 
 void GripMainWindow::createTreeView()
 {
-    treeviewer = new TreeView(this, activeItem);
-//    this->addDockWidget(Qt::RightDockWidgetArea, treeviewer);
+    treeviewer = new TreeView(this, pluginList, activeItem);
 }
 
 void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
@@ -515,7 +512,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
         pluginList->append(gt);
         if (gt)
         {
-            gt->Load(activeItem, viewWidget);
+            gt->Load(activeItem, viewWidget, world, timeline);
 
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
             if (pluginWidget == NULL)

@@ -71,9 +71,10 @@
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/simulation/World.h>
 
-TreeView::TreeView(QWidget *parent, TreeViewReturn* active_item) :QDockWidget(parent), _ui(new Ui::TreeView)
+TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs, TreeViewReturn* active_item) :QDockWidget(parent), _ui(new Ui::TreeView)
 {
     _activeItem = 0;
+    _tabs = tabs;
     _ui->setupUi(this);
     _ui_treeWidget = _ui->treeWidget;
     _ui_treeWidget->header()->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -95,6 +96,9 @@ void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
     _activeItem = val;
     emit itemSelected(_activeItem);
+    for (size_t i = 0; i < _tabs->size(); ++i) {
+        _tabs->at(i)->GRIPEventTreeViewSelectionChanged();
+    }
 }
 
 TreeViewReturn* TreeView::getActiveItem()
