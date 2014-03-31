@@ -42,23 +42,48 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file DoubleSlider.h
+ * \brief Class that creates a double valued slider
+ */
 
-#include "TimeDisplay.h"
-#include <iostream>
-#include <cmath>
+#ifndef DOUBLESPINBOX_H
+#define DOUBLESPINBOX_H
 
-TimeDisplay::TimeDisplay (QWidget *parent)
- : QWidget(parent), time_display_ui(new Ui::TimeDisplay)
+#include <QSlider>
+
+/**
+ * \class DoubleSlider DoubleSlider.h
+ * \brief Class that creates a double valued slider
+ */
+class DoubleSlider : public QSlider
 {
-    time_display_ui->setupUi(this);
-}
+    /// MetaObject macro for using signals and slots
+    Q_OBJECT
 
-TimeDisplay::~TimeDisplay()
-{
-}
+public:
+         DoubleSlider(QWidget *parent = 0);
+         double changeTOdouble(int intvalue);
+         int changeTOinteger(double doublevalue);
+         double getdsValue(); //get doubleslider value
+         void setMinMaxDecimalValue(double minvalue, double maxvalue, int decimalvalue);
+         double getMinValue();
+         double getMaxValue();
+         int getDecimalPoint();
+private:
+         double dsvalue; //doubleslider value
+         double max_value; //max value of the doubeslider
+         double min_value; //min value of the doubleslider
+         int    decimal_point; //decimal poit of the doublevalue: ex. decimal point = 1 --> x.x
 
-void TimeDisplay::Update_Time(double sim_time, double rel_time)
-{
-    time_display_ui->time_edit_sim->setText(QString("%1").arg(sim_time));
-    time_display_ui->time_edit_rel->setText(QString("%1").arg(ceil(rel_time*100)/100));
-}
+public slots:
+         void setdsValue(double valueindouble); //set doubleslider value
+         void setValueAndEmit(int slidervalue);
+         void getValueAndEmit(double spinboxvalue);
+
+signals:
+         void dsvalueChanged(double newdsvalue); //emit signal "doubleslider value changed"
+
+}; // end DoubleSlider class
+
+#endif // DOUBLESPINBOX_H

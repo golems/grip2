@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Inspector_Tab</class>
- <widget class="QDockWidget" name="Inspector_Tab">
+ <class>InspectorTab</class>
+ <widget class="QDockWidget" name="InspectorTab">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -39,7 +39,7 @@ QDockWidget::float-button {
  }</string>
   </property>
   <property name="windowTitle">
-   <string>Inspector Tab</string>
+   <string>Inspector</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -473,7 +473,7 @@ QGroupBox::title {
   <customwidget>
    <class>DoubleSlider</class>
    <extends>QSlider</extends>
-   <header>doubleslider.h</header>
+   <header>DoubleSlider.h</header>
    <slots>
     <signal>dsvalueChanged(double)</signal>
     <slot>setValueAndEmit(int)</slot>

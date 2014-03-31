@@ -64,7 +64,15 @@ void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
-	std::cerr << "ThreadingModel: " << threadingModel << std::endl;
+    std::cerr << "Threading model: " << threadingModel << " -- ";
+    switch(threadingModel) {
+        case 0: std::cerr << "SingleThreaded" << std::endl; break;
+        case 1: std::cerr << "CullDrawThreadPerContext" << std::endl; break;
+        case 2: std::cerr << "ThreadPerContext" << std::endl; break;
+        case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
+        case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
+        case 5: std::cerr << "ThreadPerCamera" << std::endl; break;
+    }
     setThreadingModel(threadingModel);
 //    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 

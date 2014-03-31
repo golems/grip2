@@ -42,87 +42,91 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Local includes
+#include "VisualizationTab.h"
 
-#include "visualization_tab.h"
+// C++ Standard includes
 #include <iostream>
+
+// DART includes
 #include <dart/collision/CollisionDetector.h>
 #include <dart/constraint/ConstraintDynamics.h>
 #include <dart/constraint/Constraint.h>
 
-Visualization_Tab::Visualization_Tab(osgDart::DartNode *worldNode, TreeView* treeView, MainWindow *parent)
+VisualizationTab::VisualizationTab(osgDart::DartNode *worldNode, TreeView* treeView, MainWindow *parent)
     : QDockWidget(parent), _parent(parent)
 {
-    visualizer_ui = new Ui::Visualization_Tab;
+    _ui = new Ui::VisualizationTab;
     _worldNode = worldNode;
     _treeView = treeView;
     _selectedTreeViewItem = 0;
 
-    visualizer_ui->setupUi(this);
+    _ui->setupUi(this);
 
     // Signals from parent to my slots
     connect(this, SIGNAL(signalSendMessage(QString)), _parent, SLOT(slotSetStatusBarMessage(QString)));
 
     // Signals from my widgets to my slots
-    connect(visualizer_ui->checkBoxShowJointAxes, SIGNAL(toggled(bool)), this, SLOT(slotToggleJointAxesVisibility(bool)));
-    connect(visualizer_ui->checkBoxShowBodyNodeFrames, SIGNAL(toggled(bool)), this, SLOT(slotToggleBodyNodeAxesVisibility(bool)));
-    connect(visualizer_ui->checkBoxShowCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCoMVisibility(bool)));
-    connect(visualizer_ui->checkBoxShowProjCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonProjCoMVisibility(bool)));
-    connect(visualizer_ui->checkBoxRenderUsingCollsionMesh, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCollisionMeshMode(bool)));
-    connect(visualizer_ui->checkBoxRenderWireframe, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonWireFrameMode(bool)));
-    connect(visualizer_ui->sliderTransparency, SIGNAL(valueChanged(int)), this, SLOT(slotSetTransparencyValue(int)));
-    connect(visualizer_ui->checkBoxShowContactForces, SIGNAL(toggled(bool)), this, SLOT(slotToggleContactForcesVisibility(bool)));
+    connect(_ui->checkBoxShowJointAxes, SIGNAL(toggled(bool)), this, SLOT(slotToggleJointAxesVisibility(bool)));
+    connect(_ui->checkBoxShowBodyNodeFrames, SIGNAL(toggled(bool)), this, SLOT(slotToggleBodyNodeAxesVisibility(bool)));
+    connect(_ui->checkBoxShowCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCoMVisibility(bool)));
+    connect(_ui->checkBoxShowProjCoM, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonProjCoMVisibility(bool)));
+    connect(_ui->checkBoxRenderUsingCollsionMesh, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonCollisionMeshMode(bool)));
+    connect(_ui->checkBoxRenderWireframe, SIGNAL(toggled(bool)), this, SLOT(slotToggleSkeletonWireFrameMode(bool)));
+    connect(_ui->sliderTransparency, SIGNAL(valueChanged(int)), this, SLOT(slotSetTransparencyValue(int)));
+    connect(_ui->checkBoxShowContactForces, SIGNAL(toggled(bool)), this, SLOT(slotToggleContactForcesVisibility(bool)));
 
     // Signals from TreeView to my slots
     connect(_treeView, SIGNAL(itemSelected(TreeViewReturn*)), this, SLOT(slotSetTransparencySliderFromSelectedItem()));
     connect(_treeView, SIGNAL(itemSelected(TreeViewReturn*)), this, SLOT(slotSetSelectedTreeViewItem()));
 }
 
-Visualization_Tab::~Visualization_Tab()
+VisualizationTab::~VisualizationTab()
 {
 }
 
-void Visualization_Tab::update()
+void VisualizationTab::update()
 {
-    slotToggleJointAxesVisibility(visualizer_ui->checkBoxShowJointAxes->checkState());
-    slotToggleBodyNodeAxesVisibility(visualizer_ui->checkBoxShowBodyNodeFrames->checkState());
-    slotToggleSkeletonCoMVisibility(visualizer_ui->checkBoxShowCoM->checkState());
-    slotToggleSkeletonProjCoMVisibility(visualizer_ui->checkBoxShowProjCoM->checkState());
-    slotToggleSkeletonCollisionMeshMode(visualizer_ui->checkBoxRenderUsingCollsionMesh->checkState());
-    slotToggleSkeletonWireFrameMode(visualizer_ui->checkBoxRenderWireframe->checkState());
-    slotToggleContactForcesVisibility(visualizer_ui->checkBoxShowContactForces->checkState());
+    slotToggleJointAxesVisibility(_ui->checkBoxShowJointAxes->checkState());
+    slotToggleBodyNodeAxesVisibility(_ui->checkBoxShowBodyNodeFrames->checkState());
+    slotToggleSkeletonCoMVisibility(_ui->checkBoxShowCoM->checkState());
+    slotToggleSkeletonProjCoMVisibility(_ui->checkBoxShowProjCoM->checkState());
+    slotToggleSkeletonCollisionMeshMode(_ui->checkBoxRenderUsingCollsionMesh->checkState());
+    slotToggleSkeletonWireFrameMode(_ui->checkBoxRenderWireframe->checkState());
+    slotToggleContactForcesVisibility(_ui->checkBoxShowContactForces->checkState());
 }
 
-void Visualization_Tab::slotToggleJointAxesVisibility(bool checked)
+void VisualizationTab::slotToggleJointAxesVisibility(bool checked)
 {
     _worldNode->setJointAxesVisible(checked);
 }
 
-void Visualization_Tab::slotToggleBodyNodeAxesVisibility(bool checked)
+void VisualizationTab::slotToggleBodyNodeAxesVisibility(bool checked)
 {
     _worldNode->setBodyNodeAxesVisible(checked);
 }
 
-void Visualization_Tab::slotToggleSkeletonCoMVisibility(bool checked)
+void VisualizationTab::slotToggleSkeletonCoMVisibility(bool checked)
 {
     _worldNode->setSkeletonCoMVisible(checked);
 }
 
-void Visualization_Tab::slotToggleSkeletonProjCoMVisibility(bool checked)
+void VisualizationTab::slotToggleSkeletonProjCoMVisibility(bool checked)
 {
     _worldNode->setSkeletonCoMProjectedVisible(checked);
 }
 
-void Visualization_Tab::slotToggleSkeletonCollisionMeshMode(bool checked)
+void VisualizationTab::slotToggleSkeletonCollisionMeshMode(bool checked)
 {
     _worldNode->setSkeletonCollisionMeshOn(checked);
 }
 
-void Visualization_Tab::slotToggleSkeletonWireFrameMode(bool checked)
+void VisualizationTab::slotToggleSkeletonWireFrameMode(bool checked)
 {
     _worldNode->setSkeletonWireFrameOn(checked);
 }
 
-void Visualization_Tab::slotSetTransparencyValue(int transparencyValue)
+void VisualizationTab::slotSetTransparencyValue(int transparencyValue)
 {
     if(!_selectedTreeViewItem) {
         emit signalSendMessage("VisualizationTab] No item selected in TreeView");
@@ -140,17 +144,17 @@ void Visualization_Tab::slotSetTransparencyValue(int transparencyValue)
     }
 }
 
-void Visualization_Tab::slotSetTransparencySliderFromSelectedItem()
+void VisualizationTab::slotSetTransparencySliderFromSelectedItem()
 {
 
 }
 
-void Visualization_Tab::slotToggleContactForcesVisibility(bool checked)
+void VisualizationTab::slotToggleContactForcesVisibility(bool checked)
 {
     _worldNode->setContactForcesVisible(checked);
 }
 
-void Visualization_Tab::slotSetSelectedTreeViewItem()
+void VisualizationTab::slotSetSelectedTreeViewItem()
 {
     // Check if we have a world
     if(!_worldNode->getNumSkeletons()) {

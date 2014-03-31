@@ -42,38 +42,46 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOUBLESPINBOX_H
-#define DOUBLESPINBOX_H
+// Local includes
+#include "PlaybackWidget.h"
 
-#include <QSlider>
+// C++ Standard includes
+#include <cmath>
 
- class DoubleSlider : public QSlider
+PlaybackWidget::PlaybackWidget (MainWindow *parent)
+ : QWidget(parent), ui(new Ui::PlaybackWidget)
 {
-    Q_OBJECT
+    _parent = parent;
+    ui->setupUi(this);
+    connect(ui->sliderMain, SIGNAL(sliderMoved(int)), _parent, SLOT(slotSetWorldFromPlayback(int)));
+    connect(ui->buttonPlay, SIGNAL(released()), _parent, SLOT(slotPlaybackStart()));
+    connect(ui->buttonPause, SIGNAL(released()), _parent, SLOT(slotPlaybackPause()));
+    connect(ui->buttonReverse, SIGNAL(released()), _parent, SLOT(slotPlaybackReverse()));
+    connect(ui->buttonBeginning, SIGNAL(released()), _parent, SLOT(slotPlaybackBeginning()));
+}
 
-public:
-         DoubleSlider(QWidget *parent = 0);
-         double changeTOdouble(int intvalue);
-         int changeTOinteger(double doublevalue);
-         double getdsValue(); //get doubleslider value
-         void setMinMaxDecimalValue(double minvalue, double maxvalue, int decimalvalue);
-         double getMinValue();
-         double getMaxValue();
-         int getDecimalPoint();
-private:
-         double dsvalue; //doubleslider value
-         double max_value; //max value of the doubeslider
-         double min_value; //min value of the doubleslider
-         int    decimal_point; //decimal poit of the doublevalue: ex. decimal point = 1 --> x.x
+PlaybackWidget::~PlaybackWidget()
+{
+}
 
-public slots:
-         void setdsValue(double valueindouble); //set doubleslider value
-         void setValueAndEmit(int slidervalue);
-         void getValueAndEmit(double spinboxvalue);
+void PlaybackWidget::setSliderValue(int value)
+{
+    ui->sliderMain->setValue(value);
+}
 
-signals:
-         void dsvalueChanged(double newdsvalue); //emit signal "doubleslider value changed"
+int PlaybackWidget::getSliderValue()
+{
+    return ui->sliderMain->value();
+}
 
-};
+void PlaybackWidget::slotUpdateSliderMinMax(int min, int max)
+{
+    ui->sliderMain->setMinimum(min);
+    ui->sliderMain->setMaximum(max);
+}
 
-#endif // DOUBLESPINBOX_H
+void PlaybackWidget::slotSetTimeDisplays(double sim_time, double rel_time)
+{
+    ui->editSimTime->setText(QString("%1").arg(sim_time));
+    ui->editSimRelTime->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
+}

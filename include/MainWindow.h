@@ -107,7 +107,8 @@ public slots:
 
 protected:
     /// QToolBar object for showing/hiding buttons
-    QToolBar* getToolBar();
+    QToolBar* _getToolBar();
+    const QString LAST_LOAD_FILE;
 
     /**
      * \brief Create an XML file for the workspace
@@ -153,7 +154,7 @@ protected slots:
      * \brief Closes the Window
      * \return void
      */
-    void close();
+    virtual void close();
 
     /**
      * \brief Exits the program
@@ -349,7 +350,7 @@ private:
     QMenu *helpMenu;
         QAction *aboutAct;
 
-    QToolBar* toolbar;
+    QToolBar *toolbar;
 
 }; // end class MainWindow
 
