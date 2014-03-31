@@ -57,8 +57,9 @@ MyPlugin::~MyPlugin(){}
 
 void MyPlugin::GRIPEventSceneLoaded()
 {
-    std::cerr << "Going to move LSP" << std::endl;
+    std::cerr << "Rotate LSP (Left Shoulder Pitch) 360 degrees and add it to the timeline" << std::endl;
 
+    // Get GolemHubo skeleton
     dart::dynamics::Skeleton* skel = _world->getSkeleton("GolemHubo");
 
     if (skel) {
@@ -78,6 +79,8 @@ void MyPlugin::GRIPEventSceneLoaded()
             // Save world to timeline
             _timeline->push_back(GripTimeslice(*_world));
         }
+    } else {
+        std::cerr << "No skeleton named GolemHubo" << std::endl;
     }
 }
 
