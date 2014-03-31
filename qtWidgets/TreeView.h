@@ -85,7 +85,7 @@ class TreeView : public QDockWidget
     Q_OBJECT
     
 public:
-    explicit TreeView(QWidget *parent = 0, QList<GripTab*>* tabs = NULL, TreeViewReturn *active_item = NULL);
+    explicit TreeView(QWidget *parent = 0, QList<GripTab*>* tabs = NULL);
     void populateTreeView(dart::simulation::World *world = NULL);
     void clear();
     ~TreeView();

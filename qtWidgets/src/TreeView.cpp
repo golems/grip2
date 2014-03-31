@@ -71,7 +71,7 @@
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/simulation/World.h>
 
-TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs, TreeViewReturn* active_item) :QDockWidget(parent), _ui(new Ui::TreeView)
+TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent), _ui(new Ui::TreeView)
 {
     _activeItem = 0;
     _tabs = tabs;

@@ -505,7 +505,7 @@ void GripMainWindow::createRenderingWindow()
 
 void GripMainWindow::createTreeView()
 {
-    treeviewer = new TreeView(this, pluginList, activeItem);
+    treeviewer = new TreeView(this, pluginList);
 }
 
 void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
@@ -531,9 +531,8 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     QObject* plugin = loader.instance();
     if (plugin) {
         GripTab* gt = qobject_cast<GripTab*>(plugin);
-        if (gt)
-        {
-            gt->Load(activeItem, viewWidget, world, timeline);
+        if (gt) {
+            gt->Load(treeviewer->getActiveItem(), viewWidget, world, timeline);
 
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
             if (pluginWidget == NULL) {
