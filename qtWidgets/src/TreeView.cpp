@@ -215,7 +215,7 @@ void TreeView::populateTreeView(dart::simulation::World *world)
     }
 }
 
-void TreeView::clear()
+void TreeView::reset()
 {
     while(_ui_treeWidget->topLevelItemCount()) {
         delete _ui_treeWidget->takeTopLevelItem(0);

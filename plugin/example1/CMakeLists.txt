@@ -43,6 +43,12 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
+# Find DART
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/share/dart")
+find_package(DART REQUIRED)
+include_directories(${DART_INCLUDE_DIRS})
+link_directories(${DART_LIBRARY_DIRS})
+
 find_package(GRIP REQUIRED)
 include_directories(${GRIP_INCLUDE_DIRS})
 
@@ -75,7 +81,7 @@ file(GLOB SRCS include/*.h src/*.cpp)
 
 # Add Qt Widgets library
 add_library(myplugin SHARED ${SRCS} ${UI} ${MOC} ${RESOURCES})
-target_link_libraries(myplugin  ${QT_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${GRIP_LIBRARIES})
+target_link_libraries(myplugin  ${QT_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${DART_LIBRARIES} ${GRIP_LIBRARIES})
 
 # Set project libraries variable
 set(project_libs myplugin)

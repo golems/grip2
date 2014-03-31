@@ -430,7 +430,7 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
     }
 }
 
-void DartNode::clear()
+void DartNode::reset()
 {
     if (this->getNumChildren()) {
         this->removeChildren(0, this->getNumChildren());

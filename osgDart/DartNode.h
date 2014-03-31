@@ -212,7 +212,7 @@ public:
      * want to delete and create a new DartNode.
      * \return void
      */
-    void clear();
+    void reset();
 
     /**
      * \brief Get a pointer to the World object in the DartNode.

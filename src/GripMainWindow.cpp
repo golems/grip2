@@ -196,15 +196,19 @@ bool GripMainWindow::stopSimulationWithDialog()
 void GripMainWindow::clear()
 {
     if (world) {
-        worldNode->clear();
+        worldNode->reset();
         while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));
         }
         world->setTime(0);
-        treeviewer->clear();
+        treeviewer->reset();
         simulation->reset();
+        playbackWidget->reset();
         timeline->clear();
         sceneFilePath = NULL;
+        for (size_t i = 0; i < pluginList->size(); ++i) {
+            pluginList->at(i)->Refresh();
+        }
     }
 }
 

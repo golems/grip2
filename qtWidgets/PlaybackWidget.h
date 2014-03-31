@@ -76,6 +76,11 @@ public:
     ~PlaybackWidget();
 
     /**
+     * \brief Resets the widgets
+     */
+    void reset();
+
+    /**
      * \brief Sets the value of the slider object
      * \param value Value to set slider to
      * \return void
