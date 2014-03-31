@@ -42,13 +42,23 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file DoubleSlider.h
+ * \brief Class that creates a double valued slider
+ */
+
 #ifndef DOUBLESPINBOX_H
 #define DOUBLESPINBOX_H
 
 #include <QSlider>
 
- class DoubleSlider : public QSlider
+/**
+ * \class DoubleSlider DoubleSlider.h
+ * \brief Class that creates a double valued slider
+ */
+class DoubleSlider : public QSlider
 {
+    /// MetaObject macro for using signals and slots
     Q_OBJECT
 
 public:
@@ -74,6 +84,6 @@ public slots:
 signals:
          void dsvalueChanged(double newdsvalue); //emit signal "doubleslider value changed"
 
-};
+}; // end DoubleSlider class
 
 #endif // DOUBLESPINBOX_H

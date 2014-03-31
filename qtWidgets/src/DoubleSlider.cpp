@@ -50,7 +50,7 @@
 #include <iostream>
 
 // Local includes
-#include "doubleslider.h"
+#include "DoubleSlider.h"
 
 DoubleSlider::DoubleSlider (QWidget *parent)
   : QSlider(parent), dsvalue(0.0), min_value(-180.0), max_value(180.0), decimal_point(1)

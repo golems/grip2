@@ -51,7 +51,7 @@
 #include "ui_InspectorTab.h"
 #include "TreeView.h"
 #include "ui_TreeView.h"
-#include "doubleslider.h"
+#include "DoubleSlider.h"
 #include "Grid.h"
 #include "Line.h"
 #include "DartNode.h"
@@ -196,7 +196,7 @@ void GripMainWindow::simulationStopped()
     if(_debug) std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
     playbackWidget->ui->sliderMain->setEnabled(true);
-    playbackWidget->slotUpdateSliderMinMax(timeline->size() - 1);
+    playbackWidget->slotUpdateSliderMinMax(0, timeline->size() - 1);
     playbackWidget->setSliderValue(timeline->size() - 1);
 }
 
@@ -548,7 +548,7 @@ void GripMainWindow::setSimulationRelativeTime(double time)
 
 void GripMainWindow::createTabs()
 {
-    inspectorTab = new InspectorTab(this, world,treeviewer);
+    inspectorTab = new InspectorTab(this, world, treeviewer);
     visualizationTab = new VisualizationTab(worldNode, treeviewer, this);
 }
 

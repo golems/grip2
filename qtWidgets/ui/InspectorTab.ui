@@ -473,7 +473,7 @@ QGroupBox::title {
   <customwidget>
    <class>DoubleSlider</class>
    <extends>QSlider</extends>
-   <header>doubleslider.h</header>
+   <header>DoubleSlider.h</header>
    <slots>
     <signal>dsvalueChanged(double)</signal>
     <slot>setValueAndEmit(int)</slot>

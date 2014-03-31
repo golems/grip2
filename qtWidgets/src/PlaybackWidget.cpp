@@ -42,9 +42,12 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+// Local includes
 #include "PlaybackWidget.h"
+
+// C++ Standard includes
 #include <cmath>
+
 PlaybackWidget::PlaybackWidget (MainWindow *parent)
  : QWidget(parent), ui(new Ui::PlaybackWidget)
 {
@@ -71,9 +74,9 @@ int PlaybackWidget::getSliderValue()
     return ui->sliderMain->value();
 }
 
-void PlaybackWidget::slotUpdateSliderMinMax(int max)
+void PlaybackWidget::slotUpdateSliderMinMax(int min, int max)
 {
-    ui->sliderMain->setMinimum(0);
+    ui->sliderMain->setMinimum(min);
     ui->sliderMain->setMaximum(max);
 }
 

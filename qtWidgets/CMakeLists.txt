@@ -11,7 +11,7 @@ if(Qt4_NOT_FOUND)
 endif()
 
 # Add include directory to include_directories variable
-include_directories(./ "../osgDart/" "../osgNodes/")
+include_directories(./ "../osgDart/" "../osgGolems/")
 
 # Add include directory in order to find ui_*.h files
 include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
@@ -20,8 +20,9 @@ include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 FILE(GLOB UI_FILES ./ui/*.ui)
 QT4_WRAP_UI(UI ${UI_FILES})
 
-# Wrap .moc files
+# Wrap .moc files, but remove files with no implementation
 FILE(GLOB MOC_FILES ./*.h)
+LIST(REMOVE_ITEM MOC_FILES "${CMAKE_CURRENT_LIST_DIR}/./GripTab.h" "${CMAKE_CURRENT_LIST_DIR}/./TreeViewReturn.h")
 QT4_WRAP_CPP(MOC ${MOC_FILES})
 
 # Add .qrc files

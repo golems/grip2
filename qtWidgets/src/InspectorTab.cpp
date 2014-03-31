@@ -66,10 +66,6 @@
 inline double DEG2RAD(double angle_deg)  { return (angle_deg * 0.01745329251994329577); } //{ return (M_PI*angle_deg/180.0); }
 inline double RAD2DEG(double angle_rad)	 { return (angle_rad * 57.2957795130823208768); } //{ return (180.0/M_PI*angle_rad); }
 
-/**
- * \brief constructor of the class Inspector_Tab: setup the ui widget and connect signals and slots
- */
-
 InspectorTab::InspectorTab(QWidget *parent, dart::simulation::World *simWorld, TreeView *treeViewer)
  : QDockWidget(parent), _ui(new Ui::InspectorTab), _simWorld(simWorld), _treeview(treeViewer), _selectedTypeFromTree(Return_Type_Robot)
 {
@@ -175,7 +171,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
                        pose(4) = DEG2RAD(_ui->orientationSlider_2->getdsValue());
                        pose(5) = DEG2RAD(_ui->orientationSlider_3->getdsValue());
 
-                       setRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonID), pose);
+                       setRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId), pose);
                  }
 
             }
@@ -227,10 +223,10 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
                      if (item_selected->getSkeletonIndex() !=0) /// double check, if the node is not the root
                      {
                          std::vector<int> indx;
-                         indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonID)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
+                         indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                          Eigen::VectorXd config(1);
                          config[0] = DEG2RAD(_ui->positionSlider_0->getdsValue());
-                         _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonID)->setConfig(indx, config); //getSkeleton(i) - choose ith object
+                         _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->setConfig(indx, config); //getSkeleton(i) - choose ith object
 
                      }
                      else
@@ -347,7 +343,7 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
 
                 Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
                 //pose = getPoseFromTransform(item_selected->getWorldTransform());
-                pose = getRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonID));
+                pose = getRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId));
                 //std::cerr << "Pose: " << pose << std::endl;
                 _ui->positionSlider_1->setdsValue(pose(0));
                 _ui->positionSlider_2->setdsValue(pose(1));
