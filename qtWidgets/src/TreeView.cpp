@@ -198,17 +198,19 @@ QTreeWidgetItem* TreeView::_buildTree(dart::dynamics::BodyNode* node, QTreeWidge
 
 void TreeView::populateTreeView(dart::simulation::World *world)
 {
+    QTreeWidgetItem* parent;
     QPixmap robotIcon((const char**) robot_xpm);
     for (int i = 0; i<world->getNumSkeletons(); ++i)
     {
         dart::dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {
-            QTreeWidgetItem* parent = _addParent(skel,  QIcon(robotIcon), i);
+            parent = _addParent(skel,  QIcon(robotIcon), i);
             _buildTree(skel->getRootBodyNode(), parent, parent, false,i);
         } else {
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     }
+    _ui_treeWidget->setCurrentItem(parent, 0);
 }
 
 void TreeView::clear()
