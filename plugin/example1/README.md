@@ -13,6 +13,6 @@ Directory Overview
  
  3. ui: myplugin.ui
  
- 4. lib: libmyplugin.so (it is supposed to be empty, and will be loaded with libmyplugin.so the project is built)
+ 4. lib: libmyplugin.so (lib folder is supposed to be empty, and will be loaded with libmyplugin.so when the project is built)
 
 
