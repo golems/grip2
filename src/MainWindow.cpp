@@ -63,7 +63,7 @@
 
 MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
 {
-    configFilePath = new QString();
+    configFilePath = new QString(QDir::homePath() + "/default.gripconfig");
     createActions();
     createMenus();
     setWindowTitle(tr("Grip"));
@@ -185,9 +185,8 @@ void MainWindow::loadScene()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    if (!fileNames.isEmpty())
-    {
-        cout<<"Attempting to open the following world file: "<<fileNames.front().toStdString() <<endl;
+    if (!fileNames.isEmpty()) {
+        std::cout<< "Attempting to open the following world file: " << fileNames.front().toStdString() << endl;
         doLoad(fileNames.front().toStdString());
     }
 }
@@ -398,17 +397,16 @@ void MainWindow::exit()
 
 void MainWindow::saveWorkspace()
 {
-    if(!configFilePath->isNull()) {
+    if (!configFilePath->isNull()) {
         QDomDocument* config = generateWorkspaceXML();
         saveConfigFile(config, configFilePath);
-    }
-    else
+    } else {
         saveNewWorkspace();
+    }
 }
 
 void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
 {
-    std::cerr << "Attempting to save the following configuration file: " << filename->toStdString() << std::endl;
     try {
         QFile file(*filename);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -421,7 +419,7 @@ void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
         file.close();
         std::cerr << "Success!" << std::endl;
         configFilePath = new QString(*filename);
-        std::cerr<<configFilePath->toStdString()<<std::endl;
+        std::cerr << configFilePath->toStdString() << std::endl;
     }
 
     catch (const std::exception& e) {
@@ -475,7 +473,7 @@ void MainWindow::loadWorkspace()
         fileNames = dialog.selectedFiles();
 
     if (!fileNames.isEmpty()){
-        std::cerr << "Attempting to load the following configuration file: "<<fileNames.front().toStdString() << std::endl;
+        std::cerr << "Attempting to load the following configuration file: "<< fileNames.front().toStdString() << std::endl;
         try {
             QFile file(fileNames.front());
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -496,29 +494,3 @@ void MainWindow::loadWorkspace()
         }
     }
 }
-
-
-//void MainWindow::loadPlugins()
-//{
-//    QDir pluginsDir = QDir(qApp->applicationDirPath());
-
-//#if defined(Q_OS_WIN)
-//    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-//        pluginsDir.cdUp();
-//#elif defined(Q_OS_MAC)
-//    if (pluginsDir.dirName() == "MacOS") {
-//        pluginsDir.cdUp();
-//        pluginsDir.cdUp();
-//        pluginsDir.cdUp();
-//    }
-//#endif
-//    pluginsDir.cd("plugin");
-
-//    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-//        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-//        QObject *plugin = loader.instance();
-//        if (plugin) {
-//            std::cout<<"plugin loaded"<<std::endl;
-//        }
-//    }
-//}

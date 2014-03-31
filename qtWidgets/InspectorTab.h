@@ -2,7 +2,7 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
+ * Author: Sungmoon Joo <sungmoon.joo@gmail.com>
  * Date: Jan 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology

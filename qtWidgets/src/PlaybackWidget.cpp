@@ -53,7 +53,7 @@ PlaybackWidget::PlaybackWidget (MainWindow *parent)
 {
     _parent = parent;
     ui->setupUi(this);
-    connect(ui->sliderMain, SIGNAL(sliderMoved(int)), _parent, SLOT(slotSetWorldFromPlayback(int)));
+    connect(ui->sliderMain, SIGNAL(valueChanged(int)), _parent, SLOT(slotSetWorldFromPlayback(int)));
     connect(ui->buttonPlay, SIGNAL(released()), _parent, SLOT(slotPlaybackStart()));
     connect(ui->buttonPause, SIGNAL(released()), _parent, SLOT(slotPlaybackPause()));
     connect(ui->buttonReverse, SIGNAL(released()), _parent, SLOT(slotPlaybackReverse()));
@@ -62,6 +62,12 @@ PlaybackWidget::PlaybackWidget (MainWindow *parent)
 
 PlaybackWidget::~PlaybackWidget()
 {
+}
+
+void PlaybackWidget::reset()
+{
+    this->setSliderValue(0);
+    this->slotSetTimeDisplays(0, 0);
 }
 
 void PlaybackWidget::setSliderValue(int value)

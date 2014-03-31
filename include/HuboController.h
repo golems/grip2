@@ -37,59 +37,78 @@
  */
 
 /**
- * @author T. Kunz
- * @author Saul Reynolds-Haertle
+ * \file HuboController.h
+ * \brief Controller wrapper for Hubo position commands
+ * \author T. Kunz
+ * \author Saul Reynolds-Haertle
  */
 
-#pragma once
+#ifndef HUBO_CONTROLLER_H
+#define HUBO_CONTROLLER_H
 
-// general headers
+// C++ Stanadard includes
 #include <vector>
+
+// Eigen includes
 #include <Eigen/Core>
 
-// dart/grip headers
+// DART includes
 #include <dynamics/Skeleton.h>
 
-// local headers
-using namespace dart;
-
+/**
+ * \class HuboController HuboController.h
+ * \brief Controller wrapper for Hubo position commands
+ */
 class HuboController {
 public:
-    //###########################################################
-    // variables
-    Eigen::VectorXd ref_pos;
-    Eigen::VectorXd ref_vel;
-    Eigen::MatrixXd Kp;
-    Eigen::MatrixXd Kd;
-    Eigen::MatrixXd Ki;
-
-    Eigen::VectorXd error_last;
-    Eigen::VectorXd error_deriv;
-    Eigen::VectorXd error_integ;
-
-    Eigen::MatrixXd joint_mask;
-
-    double t_last;
-
-    dynamics::Skeleton* skel;
-
-    //###########################################################
-    // constructors and destructors
-    HuboController(dynamics::Skeleton* skeleton,
+    /**
+     * \brief Constructs a HuboController object
+     * \param skeleton Skeleton to control
+     * \param p Vector of proportional gains
+     * \param i Vector of integral gains
+     * \param d Vector of derivative gains
+     * \param mask Mask for skeleton
+     * \param tInit Initialization time
+     */
+    HuboController(dart::dynamics::Skeleton *skeleton,
                    const Eigen::VectorXd p,
                    const Eigen::VectorXd i,
                    const Eigen::VectorXd d,
                    const Eigen::VectorXd mask,
-                   double t_init);
+                   double tInit);
+
+    /**
+     * \brief Destructs a HuboController object. Virtual
+     */
     virtual ~HuboController() {};
 
-    //###########################################################
-    // Functions
-    Eigen::VectorXd getTorques(const Eigen::VectorXd& cur_pos,
-                               const Eigen::VectorXd& cur_vel,
+    /**
+     * \brief Gets the torques for the skeleton given desired
+     * positions and velocities for the joints
+     * \param curPos Current position of the joints
+     * \param curVel Current velocity of the joints
+     * \param t Time
+     * \return Eigen::VectorXd containing the joint torques
+     */
+    Eigen::VectorXd getTorques(const Eigen::VectorXd &curPos,
+                               const Eigen::VectorXd &curVel,
                                double t);
+
+    Eigen::VectorXd refPos;
+    Eigen::VectorXd refVel;
+    Eigen::MatrixXd Kp;
+    Eigen::MatrixXd Kd;
+    Eigen::MatrixXd Ki;
+
+    Eigen::VectorXd errorLast;
+    Eigen::VectorXd errorDeriv;
+    Eigen::VectorXd errorInteg;
+
+    Eigen::MatrixXd jointMask;
+
+    double tLast;
+
+    dart::dynamics::Skeleton* skel;
 };
 
-// Local Variables:
-// mode: c++
-// End:
+#endif // HUBO_CONTROLLER_H

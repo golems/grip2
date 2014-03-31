@@ -112,8 +112,10 @@ GripMainWindow::~GripMainWindow()
 {
 }
 
-void GripMainWindow::doLoad(string sceneFileName)
+void GripMainWindow::doLoad(std::string sceneFileName)
 {
+    sceneFilePath->fromStdString(sceneFileName);
+
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
             if (_debug) std::cerr << "Not loading a new world" << std::endl;
@@ -139,10 +141,15 @@ void GripMainWindow::doLoad(string sceneFileName)
     treeviewer->populateTreeView(world);
     visualizationTab->update();
 
-    if (_debug) cout << "--(i) Saving " << sceneFileName << " to ~/.griplastload file (i)--" << endl;
+    if (_debug) std::cout << "--(i) Saving " << sceneFileName << " to ~/.griplastload file (i)--" << std::endl;
     saveText(sceneFileName, LAST_LOAD_FILE);
     inspectorTab->initializeTab();
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(sceneFileName));
+
+    // Tell all the tabs that a new scene has been loaded
+    for (size_t i = 0; i < pluginList->size(); ++i) {
+        pluginList->at(i)->GRIPEventSceneLoaded();
+    }
 }
 
 void GripMainWindow::close()
@@ -189,15 +196,19 @@ bool GripMainWindow::stopSimulationWithDialog()
 void GripMainWindow::clear()
 {
     if (world) {
-        worldNode->clear();
+        worldNode->reset();
         while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));
         }
         world->setTime(0);
-        treeviewer->clear();
+        treeviewer->reset();
         simulation->reset();
+        playbackWidget->reset();
         timeline->clear();
         sceneFilePath = NULL;
+        for (size_t i = 0; i < pluginList->size(); ++i) {
+            pluginList->at(i)->Refresh();
+        }
     }
 }
 
@@ -223,6 +234,7 @@ void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
     world->setTime(timeline->at(_curPlaybackTick).getTime());
     this->setWorldState_Issue122(timeline->at(sliderTick).getState());
     playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
+    playbackWidget->slotUpdateSliderMinMax(0, timeline->size() - 1);
 }
 
 void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
@@ -342,14 +354,19 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
         playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 
-        if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
-                || ((_curPlaybackTick + _playbackSpeed) >= timeline->size() && playForward)) {
-            _curPlaybackTick = (playForward ? timeline->size() - 1 : 0);
+        std::cerr << "cur: " << _curPlaybackTick << ", " << _curPlaybackTick + _playbackSpeed << ", " << timeline->size()-1 << std::endl;
+        if ((_curPlaybackTick == 0 && !playForward)
+                || (_curPlaybackTick == (timeline->size() - 1) && playForward)) {
             _playingBack = false;
+            std::cerr << "Done playing back" << std::endl;
+        } else if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
+                || ((_curPlaybackTick + _playbackSpeed) > (timeline->size() - 1) && playForward)) {
+            _curPlaybackTick = (playForward ? timeline->size() - 1 : 0); 
         } else {
             playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
                     : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
         }
+
         playbackWidget->setSliderValue(_curPlaybackTick);
 
         // Call user tab functions after time step
@@ -365,7 +382,7 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
                               Qt::QueuedConnection, Q_ARG(bool, playForward));
 }
 
-int GripMainWindow::saveText(string scenepath, const QString &filename)
+int GripMainWindow::saveText(std::string scenepath, const QString &filename)
 {
     try {
         QFile file(filename);
@@ -376,7 +393,7 @@ int GripMainWindow::saveText(string scenepath, const QString &filename)
     }
 
     catch (const std::exception& e) {
-        cout <<  e.what() << endl;
+        std::cout <<  e.what() << std::endl;
         return 0;
     }
     return 1;
@@ -492,7 +509,7 @@ void GripMainWindow::createRenderingWindow()
 
 void GripMainWindow::createTreeView()
 {
-    treeviewer = new TreeView(this, activeItem);
+    treeviewer = new TreeView(this, pluginList);
 }
 
 void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
@@ -518,11 +535,9 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     QObject* plugin = loader.instance();
     if (plugin) {
         GripTab* gt = qobject_cast<GripTab*>(plugin);
-        if (gt)
-        {
-            gt->Load(activeItem, viewWidget, world);
+        if (gt) {
+            gt->Load(treeviewer->getActiveItem(), viewWidget, world, timeline);
 
-            if (_debug) std::cerr << "Attempting to load plugin: " << (plugin->objectName()).toStdString() << std::endl;
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
             if (pluginWidget == NULL) {
                 if (_debug)
@@ -591,8 +606,6 @@ void GripMainWindow::manageLayout()
     /// viewWidget initial size: 800 x 600
     gridLayout->addWidget(viewWidget, 0, 0, 1, 2);
 
-    /// playbackWidget minimum width 450, fixed height 45
-    /// playbackWidget size policy:(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed)
     gridLayout->addWidget(playbackWidget, 1, 0);
 
     widget->setLayout(gridLayout);
@@ -635,11 +648,11 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
     QDomElement plugins = config->createElement("plugins");
     root.appendChild(plugins);
 
-    if(pluginPathList != NULL)
+    if (pluginPathList != NULL)
     {
         std::cerr << "adding plugins" << std::endl;
-        for(int i = 0; i < pluginPathList->count(); i++) {
-            std::cerr<<(*(pluginPathList->at(i))).toStdString()<<std::endl;
+        for (int i = 0; i < pluginPathList->count(); ++i) {
+            std::cerr << (*(pluginPathList->at(i))).toStdString() << std::endl;
             QDomElement plugin = config->createElement("plugin");
             plugin.setAttribute("ppath", *(pluginPathList->at(i)));
             plugins.appendChild(plugin);
@@ -651,10 +664,10 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
     root.appendChild(dockWidgetStatus);
 
     QList<QAction*> actionList;
-    if(pluginMenu != NULL)
+    if (pluginMenu != NULL)
     {
         actionList = pluginMenu->actions();
-        if(!actionList.isEmpty()) {
+        if (!actionList.isEmpty()) {
             for(int i = 0; i < actionList.count(); i++) {
                 QAction* act = actionList.at(i);
                 QDomElement dockWidget = config->createElement("dockWidget");
@@ -667,8 +680,11 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
 
     // add scene file information
     QDomElement scene = config->createElement("scene");
-    if(!sceneFilePath->isNull()) {
+    if (!sceneFilePath->isNull()) {
         scene.setAttribute("spath", *sceneFilePath);
+        std::cerr << "spath: " << sceneFilePath->toStdString() << std::endl;
+    } else {
+        if (_debug) std::cerr << "SceneFilePath is NULL" << std::endl;
     }
     root.appendChild(scene);
 
@@ -683,7 +699,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
 {
     /// parse and load plugins
     QDomNodeList pluginList = config.elementsByTagName("plugin");
-    for(int i = 0; i < pluginList.count(); i++) {
+    for (int i = 0; i < pluginList.count(); i++) {
         QDomElement plugin = pluginList.at(i).toElement();
         QString pluginPath = plugin.attribute("ppath");
         loadPluginFile(pluginPath);
@@ -694,7 +710,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
     actionList = pluginMenu->actions();
     QDomNodeList dockWidgetList = config.elementsByTagName("dockWidget");
     if (!actionList.isEmpty()) {
-        for(int i = 0; i < dockWidgetList.count(); i++) {
+        for (int i = 0; i < dockWidgetList.count(); i++) {
             QDomElement dockWidget = dockWidgetList.at(i).toElement();
             QString dockWidgetName = dockWidget.attribute("name");
             bool isChecked = dockWidget.attribute("isChecked").toInt();
@@ -708,8 +724,8 @@ void GripMainWindow::parseConfig(QDomDocument config)
                 }
             }
 
-            for(int j = 0; j < actionList.count(); j++){
-                if(actionList.at(i)->text().compare(dockWidgetName) == 0)
+            for (int j = 0; j < actionList.count(); j++){
+                if (actionList.at(i)->text().compare(dockWidgetName) == 0)
                     actionList.at(i)->setChecked(isChecked);
             }
         }
@@ -717,7 +733,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
 
     /// parse and load scene
     QDomNodeList sceneList = config.elementsByTagName("scene");
-    for(int i = 0; i < sceneList.count(); i++) {
+    for (int i = 0; i < sceneList.count(); i++) {
         QDomElement scene = sceneList.at(i).toElement();
         QString scenePath = scene.attribute("spath");
         doLoad(scenePath.toStdString());

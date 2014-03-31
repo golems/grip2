@@ -2,8 +2,8 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
- * Date: Jan 2014
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
@@ -64,11 +64,11 @@ namespace osgGolems {
  * \enum lineType
  * \brief Enumeration for the different types of lines that this class can create
  */
-typedef enum lineType {
-    LINE = 0,
-    LINE_ENDING_WITH_ARROW,
-    LINE_WITH_ARROWS,
-    NUM_LINE_TYPES
+typedef enum {
+    LINE = 0,               ///< Normal line
+    LINE_ENDING_WITH_ARROW, ///< Line ending with an arrow
+    LINE_WITH_ARROWS,       ///< Line with arrow on each end
+    NUM_LINE_TYPES          ///< Number of line types
 } lineType_t;
 
 /**

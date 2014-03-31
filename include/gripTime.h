@@ -43,7 +43,7 @@
  */
 
 /**
- * \file Timer.h
+ * \file gripTime.h
  * \brief Cross-platform clock class that get nanosecond precision on
  * Linux and Mac, and microsecond precision on Windows.
  */

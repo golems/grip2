@@ -2,10 +2,10 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
- * Date: Jan 2014
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
  *
- * Humanoid Robotics Lab      Georgia Institute of Technology
+ * Humanoid skeletonics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
  *
  *
@@ -42,29 +42,69 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file GripTimeslice.h
+ * \brief Class for the objects in the timeline
+ */
 
-#ifndef HEXSPINBOX_H
-#define HEXSPINBOX_H
+#ifndef GRIP_TIMESLICE_H
+#define GRIP_TIMESLICE_H
 
-#include <QSpinBox>
-#include <QtGui/QDockWidget>
+#include <dart/simulation/World.h>
+#include <Eigen/Geometry>
 
-class HexSpinBox : public QSpinBox
+/**
+ * \class GripTimeslice GripTimeslice.h
+ * \brief Class for storing a slice of the timeline. This contains a
+ * time parameter and a world state parameter.
+ */
+class GripTimeslice
 {
-    Q_OBJECT
-
 public:
-          HexSpinBox(QWidget *parent = 0);
-         // HexSpinBox(QDockWidget *parent = 0);
+    /**
+     * \brief Default constructor for GripTimeslice object
+     */
+    GripTimeslice();
+
+    /**
+     * \brief Convenience constructor for GripTimeslice object
+     * \param world World object from whic to create a GripTimeslice object
+     */
+    GripTimeslice(const dart::simulation::World &world);
+
+    /**
+     * \brief Destructs a GripTimeslice object
+     */
+    ~GripTimeslice();
+
+    /**
+     * \brief Sets the protected time variable of the GripTimeslice
+     * \param time Time value
+     */
+    void setTime(double time);
+
+    /**
+     * \brief Sets the protected world state variable of the GripTimeslice
+     * \param state State of the World
+     */
+    void setState(const Eigen::VectorXd &state);
+
+    /**
+     * \brief Gets the time stored in the GripTimeslice
+     * \return Double value of the time
+     */
+    double getTime();
+
+    /**
+     * \brief Gets the state stored in the GripTimeslice
+     * \return Eigen::VectorXd representing the world state
+     */
+    const Eigen::VectorXd& getState();
 
 protected:
-          QValidator::State validate(QString &text, int &pos) const;
-          int valueFromText (const QString &text) const;
-          QString textFromValue(int value) const;
-private:
-          QRegExpValidator *validator;
-};
+    double _time; ///< Timestamp for the world state
+    Eigen::VectorXd _state; ///< State of the world at this time
 
-class QRegExpValidator;
+}; // end class GripTimeslice
 
-#endif // HEXSPINBOX_H
+#endif // GRIP_TIMESLICE_H

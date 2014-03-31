@@ -142,6 +142,10 @@ FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
 INSTALL(FILES ${qtWidgetsHeaders}
         DESTINATION /usr/local/include/grip/qtWidgets)
 
+FILE(GLOB mainHeaders "include/*.h")
+INSTALL(FILES ${mainHeaders}
+        DESTINATION /usr/local/include/grip/include)
+
 # Install cmake find file for grip
 INSTALL(FILES cmake/FindGRIP.cmake
         DESTINATION ${CMAKE_ROOT}/Modules)
@@ -149,3 +153,6 @@ INSTALL(FILES cmake/FindGRIP.cmake
 # Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
         DESTINATION /usr/share/applications)
+
+INSTALL(FILES "src/icons/grip-icon.png"
+        DESTINATION /usr/share/icons/)

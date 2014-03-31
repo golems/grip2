@@ -2,10 +2,10 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
- * Date: Jan 2014
+ * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Date: Feb 2014
  *
- * Humanoid Robotics Lab      Georgia Institute of Technology
+ * Humanoid skeletonics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
  *
  *
@@ -42,38 +42,35 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GripTimeslice.h"
 
-#include <QtGui>
+GripTimeslice::GripTimeslice() : _time(0) {}
 
-#include "hexspinbox.h"
-
-HexSpinBox::HexSpinBox (QWidget *parent)
-  : QSpinBox(parent)
+GripTimeslice::GripTimeslice(const dart::simulation::World &world)
 {
-    setRange(0,255);
-    validator  = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,8}"),this);
-}
-/*
-HexSpinBox::HexSpinBox (QDockWidget *parent)
-  : QSpinBox(parent)
-{
-    setRange(0,255);
-    validator  = new QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,8}"),this);
+    _time = world.getTime();
+    _state = world.getState();
 }
 
-*/
-QValidator::State HexSpinBox::validate (QString &text, int &pos) const
+GripTimeslice::~GripTimeslice()
 {
-    return validator->validate(text, pos);
+
 }
 
-QString HexSpinBox::textFromValue(int value) const
+void GripTimeslice::setTime(double time)
 {
-    return QString::number(value, 16).toUpper();
+    _time = time;
 }
 
-int HexSpinBox::valueFromText(const QString &text) const
+void GripTimeslice::setState(const Eigen::VectorXd &state)
 {
-    bool ok;
-    return text.toInt(&ok, 16);
+    _state = state;
+}
+
+double GripTimeslice::getTime() {
+    return _time;
+}
+
+const Eigen::VectorXd& GripTimeslice::getState() {
+    return _state;
 }

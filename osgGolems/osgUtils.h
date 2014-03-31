@@ -84,10 +84,6 @@ namespace osgGolems {
  */
 osgViewer::View* createView(int x, int y, int w, int h, osg::Node* scene = NULL);
 
-osg::Node* createNode();
-
-void addNodeToScene(osg::Group* scene);
-
 /**
  * \brief Convert Eigen::Isometry3d matrix to an osg::Matrix.
  * osg::Matrix is transposed.

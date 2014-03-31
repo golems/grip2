@@ -57,24 +57,37 @@
 // Local includes
 #include "ui_TreeView.h"
 #include "TreeViewReturn.h"
+#include "GripTab.h"
 
 // DART includes
 #include <dart/simulation/World.h>
 #include <dart/dynamics/BodyNode.h>
 
+/**
+ * \namespace User Interface namespace for all the widgets
+ */
 namespace Ui {
+    /**
+     * \class TreeView TreeView.h
+     * \brief Class containing the widgets
+     */
     class TreeView;
 }
 
+/**
+ * \class TreeView TreeView.h
+ * \brief Class for the tree view which displays and manages the object in the
+ * simulation world
+ */
 class TreeView : public QDockWidget
 {
     /// MetaObject macro for using signals and slots
     Q_OBJECT
     
 public:
-    explicit TreeView(QWidget *parent = 0, TreeViewReturn *active_item = NULL);
+    explicit TreeView(QWidget *parent = 0, QList<GripTab*>* tabs = NULL);
     void populateTreeView(dart::simulation::World *world = NULL);
-    void clear();
+    void reset();
     ~TreeView();
     TreeViewReturn* getActiveItem();
 
@@ -90,6 +103,7 @@ private:
     QTreeWidget *_ui_treeWidget;
     QCheckBox *_ui_checkBox;
     TreeViewReturn *_activeItem;
+    QList<GripTab*> *_tabs;
 
     QTreeWidgetItem* _addParent(dart::dynamics::Skeleton *skel, QIcon icon, int skeletonId);
     QTreeWidgetItem* _addChildItem(dart::dynamics::BodyNode* node, QTreeWidgetItem *parent, QIcon icon, int skeletonId);

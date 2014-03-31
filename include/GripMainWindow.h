@@ -41,9 +41,14 @@
  *   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *   POSSIBILITY OF SUCH DAMAGE.
  */
+
+/**
+ * \file GripMainWindow.h
+ * \brief Main window for Grip
+ */
+
 #ifndef GRIPMAINWINDOW_H
 #define GRIPMAINWINDOW_H
-
 
 // C++ Standard includes
 #include <iostream>
@@ -65,10 +70,11 @@
 #include "DartNode.h"
 #include "GripSimulation.h"
 #include "GripTab.h"
+#include "GripTimeslice.h"
 
+// Qt includes
 #include <QDir>
 #include <QtXml>
-
 
 /**
  * \class GripMainWindow GripMainWindow.h
@@ -234,7 +240,9 @@ protected:
     /// you first need to perform a qobject_cast. An example for the same is
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
-    QList<GripTab*>* pluginList;
+    QList<GripTab*> *pluginList;
+
+    /// Plugin menu pointer for showing/hiding plugins
 	QMenu *pluginMenu;
 
     /// Stores the path to all the plugins that are loaded
@@ -311,13 +319,13 @@ protected:
      * \param fileName Name of scene file to load
      * \return void
      */
-    void doLoad(string sceneFileName);
+    void doLoad(std::string sceneFileName);
 
     /**
      * \brief Saves the loaded scene to file for quick load functionality
      * \return void
      */
-    int saveText(string scenepath, const QString &filename);
+    int saveText(std::string scenepath, const QString &filename);
 
 
     /// This function reads a folder by the name of 'plugin' in source directory

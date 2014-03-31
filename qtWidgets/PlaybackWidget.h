@@ -55,7 +55,7 @@
 #include "MainWindow.h"
 
 /**
- * \class PlaybackSlider PlaybackSlider.h
+ * \class PlaybackWidget PlaybackWidget.h
  * \brief Class for simulation and kinematic playback
  */
 class PlaybackWidget : public QWidget {
@@ -74,6 +74,11 @@ public:
      * \brief Destructs this PlaybackWidget object
      */
     ~PlaybackWidget();
+
+    /**
+     * \brief Resets the widgets
+     */
+    void reset();
 
     /**
      * \brief Sets the value of the slider object
