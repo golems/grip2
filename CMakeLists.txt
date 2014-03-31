@@ -75,8 +75,6 @@ include_directories(osgGolems)
 add_subdirectory(osgDart)
 include_directories(osgDart)
 
-add_subdirectory(plugin/example1)
-
 # Set project libraries variable
 set(project_libs qtWidgets osgGolems osgDart)
 
