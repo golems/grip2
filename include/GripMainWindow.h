@@ -67,6 +67,7 @@
 #include "GripTab.h"
 
 #include <QDir>
+#include <QtXml>
 
 
 /**
@@ -206,6 +207,10 @@ protected slots:
      */
     void black();
 
+    /**
+     * \brief Resets the camera position to a position so that you can see the front view of the rendered objects
+     * \return void
+     */
     void resetCamera();
 
     void xga1024x768();
@@ -222,15 +227,34 @@ protected slots:
     void simulationStopped();
 
 protected:
-    /** Private Members */
+    /** Protected Members */
     /// Any plugin that is loaded successfully into the Grip will get stored in this QList
     /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
     /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
     /// you first need to perform a qobject_cast. An example for the same is
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
-    QList<GripTab*> *pluginList;
-    QMenu *pluginMenu;
+    QList<GripTab*>* pluginList;
+	QMenu *pluginMenu;
+
+    /// Stores the path to all the plugins that are loaded
+    QList<QString*>* pluginPathList;
+
+    /// Stores the path to the scene file
+    QString* sceneFilePath;
+
+    /**
+     * \brief Create an XML file for the workspace
+     * contains the list of plugins, status of DockWidgets and the loaded scene
+     * \return QDomDocument
+     */
+    QDomDocument* generateWorkspaceXML();
+
+    /**
+     * \brief Parses the configuration file and manipulates the workspace to match the settings in the configuration file
+     * \return void
+     */
+    void parseConfig(QDomDocument config);
 
     /**
      * \brief Creates the rendering window
@@ -257,11 +281,10 @@ protected:
     void manageLayout();
 
     /**
-     * \brief Manage plugins
+     * \brief creates the Plugin Menu
      * \return void
      */
-    void managePlugin();
-
+    void createPluginMenu();
 
     /**
      * \brief Clears the world, simulation and widgets
@@ -290,13 +313,11 @@ protected:
      */
     void doLoad(string sceneFileName);
 
-
     /**
      * \brief Saves the loaded scene to file for quick load functionality
      * \return void
      */
     int saveText(string scenepath, const QString &filename);
-
 
 
     /// This function reads a folder by the name of 'plugin' in source directory
@@ -305,7 +326,6 @@ protected:
     void loadPluginFile(QString pluginFileName);
 
     void setWorldState_Issue122(const Eigen::VectorXd &_newState);
-
 
     /// used to maintain the layout of the widgets that are not QDockWidgets
     QGridLayout *gridLayout;

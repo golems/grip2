@@ -63,6 +63,7 @@
 
 MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
 {
+    configFilePath = new QString();
     createActions();
     createMenus();
     setWindowTitle(tr("Grip"));
@@ -237,6 +238,21 @@ void MainWindow::createActions()
     loadPluginDirAct->setStatusTip(tr("Load all plugins in directory"));
     connect(loadPluginDirAct, SIGNAL(triggered()), this, SLOT(loadPluginDirWithDialog()));
 
+    /// save workspace configuration action
+    saveWorkspaceConfigurationAct = new QAction(tr("Save Workspace"), this);
+    saveWorkspaceConfigurationAct->setStatusTip(tr("Save the configuration of the workspace"));
+    connect(saveWorkspaceConfigurationAct, SIGNAL(triggered()), this, SLOT(saveWorkspace()));
+
+    /// save new workspace configuration action
+    saveNewWorkspaceConfigurationAct = new QAction(tr("Save Workspace As..."), this);
+    saveNewWorkspaceConfigurationAct->setStatusTip(tr("Save a new workspace configuration"));
+    connect(saveNewWorkspaceConfigurationAct, SIGNAL(triggered()), this, SLOT(saveNewWorkspace()));
+
+    /// load workspace configuration action
+    loadWorkspaceConfigurationAct = new QAction(tr("Load Workspace"), this);
+    loadWorkspaceConfigurationAct->setStatusTip(tr("Load a workspace configuration"));
+    connect(loadWorkspaceConfigurationAct, SIGNAL(triggered()), this, SLOT(loadWorkspace()));
+
     //closeAct
     closeSceneAct = new QAction(tr("&Close"), this);
     closeSceneAct->setShortcut(Qt::CTRL + Qt::Key_W);
@@ -331,6 +347,10 @@ void MainWindow::createMenus()
     fileMenu->addAction(loadPluginFileAct);
     fileMenu->addAction(loadPluginDirAct);
     fileMenu->addSeparator();
+    fileMenu->addAction(saveWorkspaceConfigurationAct);
+    fileMenu->addAction(saveNewWorkspaceConfigurationAct);
+    fileMenu->addAction(loadWorkspaceConfigurationAct);
+    fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
     //viewMenu
@@ -375,6 +395,108 @@ void MainWindow::exit()
 {
     QApplication::exit();
 }
+
+void MainWindow::saveWorkspace()
+{
+    if(!configFilePath->isNull()) {
+        QDomDocument* config = generateWorkspaceXML();
+        saveConfigFile(config, configFilePath);
+    }
+    else
+        saveNewWorkspace();
+}
+
+void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
+{
+    std::cerr << "Attempting to save the following configuration file: " << filename->toStdString() << std::endl;
+    try {
+        QFile file(*filename);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+            std::cerr << "Unable to open file." << std::endl;
+            return;
+        }
+
+        QTextStream out(&file);
+        out << config->toString() << "\n";
+        file.close();
+        std::cerr << "Success!" << std::endl;
+        configFilePath = new QString(*filename);
+        std::cerr<<configFilePath->toStdString()<<std::endl;
+    }
+
+    catch (const std::exception& e) {
+        std::cerr <<  e.what() << std::endl;
+    }
+}
+
+void MainWindow::saveNewWorkspace()
+{
+    QDomDocument* config = generateWorkspaceXML();
+    QStringList fileNames; //stores the entire path of the file that it attempts to open
+
+    QStringList filters; //setting file filters
+    filters << "Grip configuration files (*.gripconfig)"
+            << "Any files (*)";
+
+    //initializing the File dialog box
+    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+    //as per the documentation it may work correctly with gnome
+    //the method used below should work correctly on all desktops and is supposedly more powerful
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if (!fileNames.isEmpty())
+        saveConfigFile(config, &fileNames.front());
+    else
+        std::cerr << "No file was selected" << std::endl;
+}
+
+void MainWindow::loadWorkspace()
+{
+    QStringList fileNames; //stores the entire path of the file that it attempts to open
+
+    QStringList filters; //setting file filters
+    filters << "Grip configuration files (*.gripconfig)"
+            << "Any files (*)";
+
+    //initializing the File dialog box
+    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+    //as per the documentation it may work correctly with gnome
+    //the method used below should work correctly on all desktops and is supposedly more powerful
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if (!fileNames.isEmpty()){
+        std::cerr << "Attempting to load the following configuration file: "<<fileNames.front().toStdString() << std::endl;
+        try {
+            QFile file(fileNames.front());
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                std::cerr << "Unable to open file." << std::endl;
+                return;
+            }
+
+            QDomDocument config;
+            QString errorMsg;
+            int errorLine, errorColumn;
+            if(config.setContent(&file, &errorMsg, &errorLine, &errorColumn)) {
+                parseConfig(config);
+                configFilePath = &fileNames.front();
+            }
+        }
+        catch(const std::exception& e){
+            std::cerr << e.what() << std::endl;
+        }
+    }
+}
+
 
 //void MainWindow::loadPlugins()
 //{

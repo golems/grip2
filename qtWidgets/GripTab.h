@@ -2,7 +2,7 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Michael X. Grey <mxgrey@gatech.edu>
+ * Author: Shailesh Lohia <shailesh.lohia@gatech.edu>
  * Date: Jan 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
@@ -55,6 +55,9 @@
 #include "TreeViewReturn.h"
 #include "../osgGolems/ViewerWidget.h"
 
+// Dart includes
+#include <dart/simulation/World.h>
+
 // Qt includes
 #include <QDockWidget>
 #include <QtPlugin>
@@ -75,6 +78,9 @@ protected:
     /// pointer to the osg viewer
     ViewerWidget* viewWidget;
 
+    /// pointer to the world object that is being rendered and simulated
+    dart::simulation::World* world;
+
 public:
     /**
      * \brief called from the main window whenever a new scene is loaded
@@ -86,8 +92,9 @@ public:
      * This is initalize the members of the class
      * \param ret Pointer to object returned by the TreeView
      * \param viewer Pointer to composite viewer object where things are rendered
+	 * \param world Pointer to the dart world simulation object
      */
-    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer) = 0;
+    virtual void Load(TreeViewReturn* ret, ViewerWidget* viewer, dart::simulation::World* world) = 0;
 
     /**
      * \brief called from the main window whenever the simulation is executing

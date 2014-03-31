@@ -2,7 +2,7 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Pete Vieira <pete.vieira@gatech.edu>
+ * Author: Shailesh Lohia <shailesh.lohia@gatech.edu>
  * Date: Feb 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
