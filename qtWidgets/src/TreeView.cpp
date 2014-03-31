@@ -94,9 +94,8 @@ TreeView::~TreeView()
 void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
 {
     TreeViewReturn* val = item->data(0, Qt::UserRole).value<TreeViewReturn*>();
-    _activeItem->dType = val->dType;
-    _activeItem->object = val->object;
-    _activeItem->skeletonId = val->skeletonId;
+    *_activeItem = *val;
+
     emit itemSelected(_activeItem);
     for (size_t i = 0; i < _tabs->size(); ++i) {
         _tabs->at(i)->GRIPEventTreeViewSelectionChanged();
