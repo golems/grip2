@@ -42,9 +42,13 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+// Local includes
 #include "VisualizationTab.h"
+
+// C++ Standard includes
 #include <iostream>
+
+// DART includes
 #include <dart/collision/CollisionDetector.h>
 #include <dart/constraint/ConstraintDynamics.h>
 #include <dart/constraint/Constraint.h>

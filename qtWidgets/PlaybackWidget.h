@@ -59,23 +59,58 @@
  * \brief Class for simulation and kinematic playback
  */
 class PlaybackWidget : public QWidget {
+
+    /// MetaObject macro for using signals and slots
     Q_OBJECT
+
 public:
+    /**
+     * \brief Constructs a PlaybackWidget object
+     * \param parent Object that creates the PlaybackWidget object
+     */
     PlaybackWidget(MainWindow *parent);
+
+    /**
+     * \brief Destructs this PlaybackWidget object
+     */
     ~PlaybackWidget();
 
-    void slotUpdateTime(double simTime, double simRelTime);
+    /**
+     * \brief Sets the value of the slider object
+     * \param value Value to set slider to
+     * \return void
+     */
     void setSliderValue(int value);
+
+    /**
+     * \brief Gets the current value of the slider
+     * \return Integer value of the slider
+     */
     int getSliderValue();
 
+    /// UI object which holds all the widgets
     Ui::PlaybackWidget *ui;
 
 public slots:
-    void slotUpdateSliderMinMax(int max);
+
+    /**
+     * \brief Updates the min and max of the slider widget
+     * \param min The new minimum value of the slider
+     * \param max The new maximum value of the slider
+     * \return void
+     */
+    void slotUpdateSliderMinMax(int min, int max);
+
+    /**
+     * \brief Updates the time displays of the playback widget
+     * \param sim_time Current simulation time for playback
+     * \param rel_time Simulation time relative to real time
+     * \return void
+     */
     void slotSetTimeDisplays(double sim_time, double rel_time);
 
 private:
-
+    /// Parent's base class to access its slots and signals
     MainWindow *_parent;
 
 }; // end class PlaybackWidget
