@@ -61,7 +61,7 @@
 #include "icons/topView.xpm"
 #include "icons/rightSideView.xpm"
 
-MainWindow::MainWindow()
+MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
 {
     createActions();
     createMenus();
@@ -111,7 +111,7 @@ void MainWindow::Toolbar()
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
 }
 
-QToolBar* MainWindow::getToolBar()
+QToolBar* MainWindow::_getToolBar()
 {
     return toolbar;
 }
@@ -193,7 +193,7 @@ void MainWindow::loadScene()
 
 void MainWindow::quickLoad()
 {
-    QFile file(".lastload");
+    QFile file(LAST_LOAD_FILE);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         slotSetStatusBarMessage("No saved load file");
         return;

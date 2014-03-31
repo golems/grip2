@@ -43,23 +43,59 @@
  */
 
 
-#ifndef TIMEDISPLAY_H
-#define TIMEDISPLAY_H
+#ifndef INSPECTOR_H
+#define INSPECTOR_H
 
-#include "ui_TimeDisplay.h"
+// Local includes
+#include "ui_InspectorTab.h"
+#include "TreeView.h"
 
-//class ..
+// DART includes
+#include <dart/simulation/World.h>
 
-class TimeDisplay : public QWidget {
+/**
+ * \class InspectorTab InspectorTab.h
+ * \brief Widget containing all the widgets that allow the user to manually manipulate
+ * a skeleton. Subclasses QDockWidget.
+ */
+class InspectorTab : public QDockWidget {
+
+    /// meta object macro for signals and slots usage
+    Q_OBJECT
 
 public:
-    TimeDisplay(QWidget *parent = 0);
-    ~TimeDisplay();
-    void Update_Time(double sim_time, double rel_time);
+    /**
+     * \brief Constructs an InspectorTab object
+     */
+    InspectorTab(QWidget *parent, dart::simulation::World *simWorld, TreeView *treeViewer);
+
+    /**
+     * \brief Destructs an InspectorTab object
+     */
+    ~InspectorTab();
+
+    void initializeTab();
+
+
+private slots:
+    void changeSelectedJoint(int sliderValue); //, simulation::World* mWorld, Tree_View* treeviewer);
+    void receiveSeletedItem(TreeViewReturn *active_item);
+    void changePositionAndOrientation(int sliderValue);
+
 
 private:
-    Ui::TimeDisplay *time_display_ui;
+    Ui::InspectorTab *_ui;
+    simulation::World *_simWorld;
+    TreeView *_treeview;
+    QSlider *_positionSlider_0;
+    QDoubleSpinBox *_positionSpinBox_0;
+
+    Eigen::Matrix<double, 6, 1> getRootTransform(dart::dynamics::Skeleton *robot);
+    void setRootTransform(dart::dynamics::Skeleton *robot, const Eigen::Matrix<double, 6, 1> &pose);
+    Eigen::Matrix<double, 6, 1> getPoseFromTransform(const Eigen::Isometry3d &tf);
+    int _selectedTypeFromTree;
 
 };
 
 #endif
+

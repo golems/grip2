@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Visualization_Tab</class>
- <widget class="QDockWidget" name="Visualization_Tab">
+ <class>VisualizationTab</class>
+ <widget class="QDockWidget" name="VisualizationTab">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -42,7 +42,7 @@ QDockWidget::float-button {
  }</string>
   </property>
   <property name="windowTitle">
-   <string>Visualization Tab</string>
+   <string>Visualization</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout_8">

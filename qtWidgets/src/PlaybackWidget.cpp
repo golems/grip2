@@ -42,40 +42,43 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * \file PlaybackSlider.h
- * \brief Class for simulation and kinematic playback
- */
 
-#ifndef PLAYBACK_SLIDER_H
-#define PLAYBACK_SLIDER_H
+#include "PlaybackWidget.h"
+#include <cmath>
+PlaybackWidget::PlaybackWidget (MainWindow *parent)
+ : QWidget(parent), ui(new Ui::PlaybackWidget)
+{
+    _parent = parent;
+    ui->setupUi(this);
+    connect(ui->sliderMain, SIGNAL(sliderMoved(int)), _parent, SLOT(slotSetWorldFromPlayback(int)));
+    connect(ui->buttonPlay, SIGNAL(released()), _parent, SLOT(slotPlaybackStart()));
+    connect(ui->buttonPause, SIGNAL(released()), _parent, SLOT(slotPlaybackPause()));
+    connect(ui->buttonReverse, SIGNAL(released()), _parent, SLOT(slotPlaybackReverse()));
+    connect(ui->buttonBeginning, SIGNAL(released()), _parent, SLOT(slotPlaybackBeginning()));
+}
 
-// Local includes
-#include "ui_PlaybackSlider.h"
-#include "MainWindow.h"
+PlaybackWidget::~PlaybackWidget()
+{
+}
 
-/**
- * \class PlaybackSlider PlaybackSlider.h
- * \brief Class for simulation and kinematic playback
- */
-class PlaybackSlider : public QWidget {
-    Q_OBJECT
-public:
-    PlaybackSlider(MainWindow *parent);
-    ~PlaybackSlider();
-    Ui::PlaybackSlider *playbackSliderUi;
+void PlaybackWidget::setSliderValue(int value)
+{
+    ui->sliderMain->setValue(value);
+}
 
-    void slotUpdateTime(double simTime, double simRelTime);
-    void setSliderValue(int value);
-    int getSliderValue();
+int PlaybackWidget::getSliderValue()
+{
+    return ui->sliderMain->value();
+}
 
-public slots:
-    void slotUpdateSliderMinMax(int max);
+void PlaybackWidget::slotUpdateSliderMinMax(int max)
+{
+    ui->sliderMain->setMinimum(0);
+    ui->sliderMain->setMaximum(max);
+}
 
-private:
-
-    MainWindow* _parent;
-
-}; // end class PlaybackSlider
-
-#endif // PLAYBACK_SLIDER_H
+void PlaybackWidget::slotSetTimeDisplays(double sim_time, double rel_time)
+{
+    ui->editSimTime->setText(QString("%1").arg(sim_time));
+    ui->editSimRelTime->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
+}

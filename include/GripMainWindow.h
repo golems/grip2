@@ -55,18 +55,16 @@
 // Local includes
 #include "ViewerWidget.h"
 #include "TreeView.h"
-#include "inspector_tab.h"
-#include "visualization_tab.h"
-#include "TimeDisplay.h"
-#include "PlaybackSlider.h"
-#include "ui_visualization_tab.h"
-#include "ui_inspector_tab.h"
+#include "InspectorTab.h"
+#include "VisualizationTab.h"
+#include "PlaybackWidget.h"
+#include "ui_VisualizationTab.h"
+#include "ui_InspectorTab.h"
 #include "ui_TreeView.h"
-#include "GripTab.h"
-#include "ui_TimeDisplay.h"
-#include "ui_PlaybackSlider.h"
+#include "ui_PlaybackWidget.h"
 #include "DartNode.h"
 #include "GripSimulation.h"
+#include "GripTab.h"
 
 #include <QDir>
 
@@ -93,51 +91,43 @@ public:
      * \brief Convenience function for creating a ground skeleton
      * \return Ground object
      */
-    dart::dynamics::Skeleton* createGround();
+    dart::dynamics::Skeleton *createGround();
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
-    ViewerWidget* viewWidget;
+    ViewerWidget *viewWidget;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
-    TreeView* treeviewer;
+    TreeView *treeviewer;
 
     /// Tab for manually manipulating objects in the world
-    Inspector_Tab* inspectortab;
+    InspectorTab *inspectorTab;
 
     /// Tab for changing visualization settings of the render window
-    Visualization_Tab* visualizationtab;
-
-    /// Display for the simluation time and its time relative to real time
-    TimeDisplay* simulation_time_display;
+    VisualizationTab *visualizationTab;
 
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
-    std::vector<GripTimeslice>* timeline;
+    std::vector<GripTimeslice> *timeline;
     
-    PlaybackSlider* playbackSlider;
+    PlaybackWidget *playbackWidget;
 
     /// TreeViewReturn class is defined in tree_view.h
     /// It contains two members: void* object and DataType dataType
     /// void* object can store a dart Skeleton object or BodyNode object
     /// DataType is an enumaration defined in tree_view.h which can take
     /// the values Return_Type_Robot and Return_Type_Node
-    TreeViewReturn* activeItem;
+    TreeViewReturn *activeItem;
 
     /// Main OpenSceneGraph node for the main view of the composite viewer
-    osgDart::DartNode* worldNode;
+    osgDart::DartNode *worldNode;
 
     /// The world object that is being rendered and simulated
-    dart::simulation::World* world;
+    dart::simulation::World *world;
 
     /// Simulation thread doing the actually simluation loop
-    GripSimulation* simulation;
+    GripSimulation *simulation;
 
     /// called when the window gets resized --> Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.
     //void resizeEvent(QResizeEvent* event);
-
-    bool _playingBack;
-    int _curPlaybackTick;
-    int _playbackSpeed;
-    bool _simulationDirty;
 
 public slots:
     void slotSetWorldFromPlayback(int sliderTick);
@@ -239,7 +229,7 @@ protected:
     /// you first need to perform a qobject_cast. An example for the same is
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
-    QList<GripTab*>* pluginList;
+    QList<GripTab*> *pluginList;
     QMenu *pluginMenu;
 
     /**
@@ -261,24 +251,12 @@ protected:
     void createTabs();
 
     /**
-     * \brief Creates the playback slider
-     * \return void
-     */
-    void createPlaybackSliders();
-
-    /**
-     * \brief Creates the time display boxes
-     * \return void
-     */
-    void createTimeDisplays();
-
-     /**
      * \brief Manage layout of the main window
      * \return void
      */
     void manageLayout();
 
-     /**
+    /**
      * \brief Manage plugins
      * \return void
      */
@@ -310,20 +288,16 @@ protected:
      * \param fileName Name of scene file to load
      * \return void
      */
-    void doLoad(string fileName);
+    void doLoad(string sceneFileName);
 
 
     /**
      * \brief Saves the loaded scene to file for quick load functionality
      * \return void
      */
-    int saveText(string scenepath, const char* llfile);
+    int saveText(string scenepath, const QString &filename);
 
-    /**
-     * \brief Bool for whether or not we are currently simulating
-     * \return bool
-     */
-    bool _simulating;
+
 
     /// This function reads a folder by the name of 'plugin' in source directory
     /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
@@ -332,10 +306,16 @@ protected:
 
     void setWorldState_Issue122(const Eigen::VectorXd &_newState);
 
-    bool _debug;
 
     /// used to maintain the layout of the widgets that are not QDockWidgets
     QGridLayout *gridLayout;
+
+    bool _playingBack;
+    int _curPlaybackTick;
+    int _playbackSpeed;
+    bool _simulationDirty;
+    bool _simulating;
+    bool _debug;
 };
 
 

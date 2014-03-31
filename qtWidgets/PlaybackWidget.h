@@ -42,23 +42,42 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file PlaybackWidget.h
+ * \brief Class for simulation and kinematic playback
+ */
 
-#include "TimeDisplay.h"
-#include <iostream>
-#include <cmath>
+#ifndef PLAYBACK_WIDGET_H
+#define PLAYBACK_WIDGET_H
 
-TimeDisplay::TimeDisplay (QWidget *parent)
- : QWidget(parent), time_display_ui(new Ui::TimeDisplay)
-{
-    time_display_ui->setupUi(this);
-}
+// Local includes
+#include "ui_PlaybackWidget.h"
+#include "MainWindow.h"
 
-TimeDisplay::~TimeDisplay()
-{
-}
+/**
+ * \class PlaybackSlider PlaybackSlider.h
+ * \brief Class for simulation and kinematic playback
+ */
+class PlaybackWidget : public QWidget {
+    Q_OBJECT
+public:
+    PlaybackWidget(MainWindow *parent);
+    ~PlaybackWidget();
 
-void TimeDisplay::Update_Time(double sim_time, double rel_time)
-{
-    time_display_ui->time_edit_sim->setText(QString("%1").arg(sim_time));
-    time_display_ui->time_edit_rel->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
-}
+    void slotUpdateTime(double simTime, double simRelTime);
+    void setSliderValue(int value);
+    int getSliderValue();
+
+    Ui::PlaybackWidget *ui;
+
+public slots:
+    void slotUpdateSliderMinMax(int max);
+    void slotSetTimeDisplays(double sim_time, double rel_time);
+
+private:
+
+    MainWindow *_parent;
+
+}; // end class PlaybackWidget
+
+#endif // PLAYBACK_WIDGET_H

@@ -43,7 +43,7 @@
  */
 
 /**
- * \file Visualization_Tab.h
+ * \file VisualizationTab.h
  * \brief Widget containing all the visualization settings widgets all
  * contained in a DockableWidget
  */
@@ -52,17 +52,17 @@
 #define VISUALIZATION_TAB_H
 
 // Local includes
-#include "ui_visualization_tab.h"
+#include "ui_VisualizationTab.h"
 #include "DartNode.h"
 #include "TreeView.h"
-#include <MainWindow.h>
+#include "MainWindow.h"
 
 /**
- * \class Visualization_Tab Visualization_Tab.h
+ * \class VisualizationTab VisualizationTab.h
  * \brief Widget containing all the visualization settings widgets all
  * contained in a DockableWidget
  */
-class Visualization_Tab : public QDockWidget {
+class VisualizationTab : public QDockWidget {
 
     /// Q_Object macro for using signals and slots
     Q_OBJECT
@@ -71,12 +71,12 @@ public:
     /**
      * \brief Constructs a Visualization_Tab object
      */
-    Visualization_Tab(osgDart::DartNode* worldNode, TreeView* treeView, MainWindow *parent);
+    VisualizationTab(osgDart::DartNode* worldNode, TreeView* treeView, MainWindow *parent);
 
     /**
      * \brief Destructs a Visualization_Tab object
      */
-    ~Visualization_Tab();
+    ~VisualizationTab();
 
     /**
      * \brief Updates the world based on the current visualization settings.
@@ -154,18 +154,18 @@ protected slots:
 
 protected:
     /// Ui object that contains all the widgets of the tab
-    Ui::Visualization_Tab *visualizer_ui;
+    Ui::VisualizationTab *_ui;
 
     /// Parent
-    MainWindow* _parent;
+    MainWindow *_parent;
 
     /// osgDart::DartNode pointer in order to change visualization options of the the world
-    osgDart::DartNode* _worldNode;
+    osgDart::DartNode *_worldNode;
 
     /// Tree_View pointer for getting the current object
-    TreeView* _treeView;
+    TreeView *_treeView;
 
-    TreeViewReturn* _selectedTreeViewItem;
+    TreeViewReturn *_selectedTreeViewItem;
 
 }; // end class Visualization_Tab
 

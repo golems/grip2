@@ -106,7 +106,8 @@ public slots:
 
 protected:
     /// QToolBar object for showing/hiding buttons
-    QToolBar* getToolBar();
+    QToolBar* _getToolBar();
+    const QString LAST_LOAD_FILE;
 
 protected slots:
     /**
@@ -304,7 +305,7 @@ private:
     QMenu *helpMenu;
         QAction *aboutAct;
 
-    QToolBar* toolbar;
+    QToolBar *toolbar;
 
 }; // end class MainWindow
 

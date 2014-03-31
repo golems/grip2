@@ -45,14 +45,12 @@
 // Local includes
 #include "GripMainWindow.h"
 #include "ViewerWidget.h"
-#include "visualization_tab.h"
-#include "ui_visualization_tab.h"
-#include "inspector_tab.h"
-#include "ui_inspector_tab.h"
+#include "VisualizationTab.h"
+#include "ui_VisualizationTab.h"
+#include "InspectorTab.h"
+#include "ui_InspectorTab.h"
 #include "TreeView.h"
 #include "ui_TreeView.h"
-#include "TimeDisplay.h"
-#include "ui_TimeDisplay.h"
 #include "doubleslider.h"
 #include "Grid.h"
 #include "Line.h"
@@ -87,17 +85,14 @@ GripMainWindow::GripMainWindow(bool debug) :
     _simulationDirty(false)
 {
     world->setTime(0);
+    playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
     createRenderingWindow();
     createTreeView();
-    createTimeDisplays();
-    createPlaybackSliders();
     createTabs();
     manageLayout();
     managePlugin();
-
-
 
     this->setStatusBar(this->statusBar());
 
@@ -108,7 +103,7 @@ GripMainWindow::~GripMainWindow()
 {
 }
 
-void GripMainWindow::doLoad(string fileName)
+void GripMainWindow::doLoad(string sceneFileName)
 {
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
@@ -126,19 +121,19 @@ void GripMainWindow::doLoad(string fileName)
 
     world->addSkeleton(createGround());
     worldNode->addWorld(world);
-    worldNode->addWorld(fileName);
+    worldNode->addWorld(sceneFileName);
 
     viewWidget->addNodeToScene(worldNode);
 
     worldNode->printInfo();
 
     treeviewer->populateTreeView(world);
-    visualizationtab->update();
+    visualizationTab->update();
 
-    if (_debug) cout << "--(i) Saving " << fileName << " to .lastload file (i)--" << endl;
-    saveText(fileName,".lastload");
-    inspectortab->initializeTab();
-    this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(fileName));
+    if (_debug) cout << "--(i) Saving " << sceneFileName << " to ~/.griplastload file (i)--" << endl;
+    saveText(sceneFileName, LAST_LOAD_FILE);
+    inspectorTab->initializeTab();
+    this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(sceneFileName));
 }
 
 void GripMainWindow::close()
@@ -200,22 +195,24 @@ void GripMainWindow::simulationStopped()
 {
     if(_debug) std::cerr << "Got simulationStopped signal" << std::endl;
     _simulating = false;
-    playbackSlider->setEnabled(true);
-    playbackSlider->slotUpdateSliderMinMax(timeline->size() - 1);
-    playbackSlider->setSliderValue(timeline->size() - 1);
+    playbackWidget->ui->sliderMain->setEnabled(true);
+    playbackWidget->slotUpdateSliderMinMax(timeline->size() - 1);
+    playbackWidget->setSliderValue(timeline->size() - 1);
 }
 
 void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
 {
     if (_simulating || timeline->size() <= 0) {
-        playbackSlider->setSliderValue(0);
+        playbackWidget->setSliderValue(0);
         return;
     }
 
     assert(sliderTick < timeline->size() && sliderTick >= 0);
 
+    _curPlaybackTick = sliderTick;
     world->setTime(timeline->at(_curPlaybackTick).getTime());
     this->setWorldState_Issue122(timeline->at(sliderTick).getState());
+    playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 }
 
 void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
@@ -238,7 +235,7 @@ void GripMainWindow::slotPlaybackStart()
         return;
     }
 
-    if (playbackSlider->getSliderValue() == (timeline->size() - 1)) {
+    if (playbackWidget->getSliderValue() == (timeline->size() - 1)) {
         this->slotPlaybackBeginning();
     }
 
@@ -248,7 +245,7 @@ void GripMainWindow::slotPlaybackStart()
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->getSliderValue();
+    _curPlaybackTick = playbackWidget->getSliderValue();
     _simulationDirty = true;
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
@@ -280,12 +277,12 @@ void GripMainWindow::slotPlaybackReverse()
         return;
     }
 
-    if (playbackSlider->getSliderValue() == 0) {
+    if (playbackWidget->getSliderValue() == 0) {
         _curPlaybackTick = timeline->size() - 1;
-        playbackSlider->setSliderValue(_curPlaybackTick);
+        playbackWidget->setSliderValue(_curPlaybackTick);
         world->setTime(timeline->back().getTime());
         this->setWorldState_Issue122(timeline->back().getState());
-        simulation_time_display->Update_Time(world->getTime(), 0);
+        playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
     }
 
     this->slotSetStatusBarMessage(tr("Reversing playback"));
@@ -294,7 +291,7 @@ void GripMainWindow::slotPlaybackReverse()
         slotPlaybackPause();
     }
 
-    _curPlaybackTick = playbackSlider->getSliderValue();
+    _curPlaybackTick = playbackWidget->getSliderValue();
 
     for (size_t i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
@@ -313,12 +310,12 @@ void GripMainWindow::slotPlaybackBeginning()
     this->slotSetStatusBarMessage(tr("Setting playback to beginning"));
 
     _curPlaybackTick = 0;
-    playbackSlider->setSliderValue(_curPlaybackTick);
+    playbackWidget->setSliderValue(_curPlaybackTick);
     if (timeline->size() > 0) {
         world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->front().getState());
     }
-    simulation_time_display->Update_Time(world->getTime(), 0);
+    playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 }
 
 void GripMainWindow::slotPlaybackTimeStep(bool playForward)
@@ -333,17 +330,17 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         // Play time step
         world->setTime(timeline->at(_curPlaybackTick).getTime());
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
-        playbackSlider->setSliderValue(_curPlaybackTick);
-        this->setSimulationRelativeTime(0);
+        playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 
         if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
                 || ((_curPlaybackTick + _playbackSpeed) >= timeline->size() && playForward)) {
-            _curPlaybackTick = (playForward ? 0 : timeline->size() - 1);
+            _curPlaybackTick = (playForward ? timeline->size() - 1 : 0);
             _playingBack = false;
         } else {
             playForward ? _curPlaybackTick = _curPlaybackTick + _playbackSpeed
                     : _curPlaybackTick = _curPlaybackTick - _playbackSpeed;
         }
+        playbackWidget->setSliderValue(_curPlaybackTick);
 
         // Call user tab functions after time step
         for (size_t i = 0; i < pluginList->size(); ++i) {
@@ -358,21 +355,10 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
                               Qt::QueuedConnection, Q_ARG(bool, playForward));
 }
 
-void GripMainWindow::setSimulationRelativeTime(double time)
-{
-    //FIXME Attach to the time info widgets
-    // use input parameter time for the relative time box
-    // use world->getTime() for the simulation time box
-    // emit GripMainWindow::testemit(time);
-    //qDebug() << time;
-    //emit sim_time_changed(world->getTime());
-    simulation_time_display->Update_Time(world->getTime(),time);
-}
-
-int GripMainWindow::saveText(string scenepath, const char* llfile)
+int GripMainWindow::saveText(string scenepath, const QString &filename)
 {
     try {
-        QFile file(llfile);
+        QFile file(filename);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return 0;
         QTextStream out(&file);
@@ -429,7 +415,7 @@ void GripMainWindow::startSimulation()
             _simulationDirty = false;
         }
 
-        playbackSlider->setDisabled(true);
+        playbackWidget->ui->sliderMain->setDisabled(true);
 
         _simulating = true;
         simulation->startSimulation();
@@ -451,12 +437,12 @@ void GripMainWindow::stopSimulation()
 
 void GripMainWindow::swapStartStopButtons()
 {
-    if (this->getToolBar()->actions().at(3)->isVisible()) {
-        this->getToolBar()->actions().at(3)->setVisible(false);
-        this->getToolBar()->actions().at(4)->setVisible(true);
+    if (this->_getToolBar()->actions().at(3)->isVisible()) {
+        this->_getToolBar()->actions().at(3)->setVisible(false);
+        this->_getToolBar()->actions().at(4)->setVisible(true);
     } else {
-        this->getToolBar()->actions().at(3)->setVisible(true);
-        this->getToolBar()->actions().at(4)->setVisible(false);
+        this->_getToolBar()->actions().at(3)->setVisible(true);
+        this->_getToolBar()->actions().at(4)->setVisible(false);
     }
 }
 
@@ -537,7 +523,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             else
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
 
-            this->tabifyDockWidget(visualizationtab, pluginWidget);
+            this->tabifyDockWidget(visualizationTab, pluginWidget);
 
             /// temporary plugin menu
             if (pluginList->size()>0) {
@@ -555,10 +541,15 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     }
 }
 
+void GripMainWindow::setSimulationRelativeTime(double time)
+{
+    playbackWidget->slotSetTimeDisplays(world->getTime(), time);
+}
+
 void GripMainWindow::createTabs()
 {
-    inspectortab = new Inspector_Tab(this, world,treeviewer);
-    visualizationtab = new Visualization_Tab(worldNode, treeviewer, this);
+    inspectorTab = new InspectorTab(this, world,treeviewer);
+    visualizationTab = new VisualizationTab(worldNode, treeviewer, this);
 }
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()
@@ -586,18 +577,6 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
     return ground;
 }
 
-
-void GripMainWindow::createTimeDisplays()
-{
-    simulation_time_display = new TimeDisplay(this);
-}
-
-void GripMainWindow::createPlaybackSliders()
-{
-    playbackSlider = new PlaybackSlider(this);
-}
-
-
 void GripMainWindow::manageLayout()
 {
     QWidget* widget = new QWidget(this);
@@ -608,12 +587,12 @@ void GripMainWindow::manageLayout()
     //playbackSlider->setMinimumWidth(450);
     //playbackSlider->setMinimumHeight(45);
     //playbackSlider->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    gridLayout->addWidget(playbackSlider, 1, 0);
+    gridLayout->addWidget(playbackWidget, 1, 0);
 
     //simulation_time_display->setMinimumWidth(130);
     //simulation_time_display->setMinimumHeight(45);
     //simulation_time_display->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    gridLayout->addWidget(simulation_time_display, 1, 1);
+//    gridLayout->addWidget(simulation_time_display, 1, 1);
 
     widget->setLayout(gridLayout);
     this->setCentralWidget(widget);
@@ -623,11 +602,11 @@ void GripMainWindow::manageLayout()
 
     /// adding the inspector and visualization tabs
     this->setTabPosition(Qt::BottomDockWidgetArea, QTabWidget::North);
-    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationtab);
-    this->addDockWidget(Qt::BottomDockWidgetArea, inspectortab);
-    tabifyDockWidget(inspectortab, visualizationtab);
-    visualizationtab->show();
-    visualizationtab->raise();
+    this->addDockWidget(Qt::BottomDockWidgetArea, visualizationTab);
+    this->addDockWidget(Qt::BottomDockWidgetArea, inspectorTab);
+    tabifyDockWidget(inspectorTab, visualizationTab);
+    visualizationTab->show();
+    visualizationTab->raise();
 
 
     QMenu *dockwidgetMenu = menuBar()->addMenu(tr("&Dockwidgets"));
