@@ -153,3 +153,6 @@ INSTALL(FILES cmake/FindGRIP.cmake
 # Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
         DESTINATION /usr/share/applications)
+
+INSTALL(FILES "src/icons/grip-icon.png"
+        DESTINATION /usr/share/icons/)
