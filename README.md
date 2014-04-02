@@ -76,6 +76,8 @@ Debugging
 Documentation
 =============
 
+  Documentation is located at http://golems.github.io/grip2/
+
   1. Generating Documentation
 
     HTML documentation can be generated using Doxygen (http://www.stack.nl/~dimitri/doxygen/).
