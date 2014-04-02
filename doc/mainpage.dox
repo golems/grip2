@@ -1,0 +1,12 @@
+/**
+ * \mainpage Grip-Reloaded Documentation
+ * \image html grip2-mainpage-image.png
+ */
+
+/**
+ * \page osgDartDiagramPage osgDart Diagram
+ * \subsection osgDart OpenSceneGraph - DART Diagram
+ * This diagram shows how DART data structures and visualization elements of created
+ * in OpenSceneGraph and what the hierarchy looks like.
+ * \image html osgDart-Diagram.png
+ */

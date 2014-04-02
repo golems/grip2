@@ -59,11 +59,6 @@
 #include "../osgGolems/Axes.h"
 #include "../osgGolems/Line.h"
 
-/**
- * \namespace osgDart
- * \brief Namespace containing all the classes and functionality relating to the
- * intersection of DART and OpenSceneGraph.
- */
 namespace osgDart {
 
 /**

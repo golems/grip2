@@ -530,6 +530,8 @@ void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 
 void GripMainWindow::loadPluginFile(QString pluginFileName)
 {
+    if (pluginList->size() == 0)
+        pluginMenu->addSeparator();
     std::cerr << "File: " << pluginFileName.toStdString() << std::endl;
     QPluginLoader loader(pluginFileName);
     QObject* plugin = loader.instance();
@@ -626,14 +628,14 @@ void GripMainWindow::manageLayout()
 
 void GripMainWindow::createPluginMenu()
 {
-    pluginMenu = menuBar()->addMenu(tr("&Plugins"));
+    pluginMenu = menuBar()->addMenu(tr("&Widgets"));
 
     QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
-     if (dockwidgetList.size()) {
-         for (int i = 0; i < dockwidgetList.size(); ++i) {
-                 pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
-         }
-     }
+    if (dockwidgetList.size()) {
+        for (int i = 0; i < dockwidgetList.size(); ++i) {
+                pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
+        }
+    }
 }
 
 QDomDocument* GripMainWindow::generateWorkspaceXML()
