@@ -89,7 +89,6 @@ GripMainWindow::GripMainWindow(bool debug) :
     playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
-    pluginList = new QList<GripTab*>;
     pluginPathList = new QList<QString*>;
     sceneFilePath = new QString();
 
@@ -544,18 +543,17 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             if (pluginWidget == NULL) {
                 if (_debug)
                     std::cerr << "is NULL" << std::endl;
-            }
-            else {
+            } else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
                 this->tabifyDockWidget(visualizationTab, pluginWidget);
                 pluginList->append(gt);
+                std::cerr << "Plugins: " << pluginList->size() << std::endl;
                 pluginPathList->append(new QString(pluginFileName));
                 if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
                 pluginMenu->addAction(pluginWidget->toggleViewAction());
             }
         }
-    }
-    else {
+    } else {
         slotSetStatusBarMessage(tr("Couldn't load plugin. " + loader.errorString()));
         if (_debug) {
             std::cerr << "Plugin could not be loaded" << std::endl;
