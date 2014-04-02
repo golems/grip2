@@ -71,7 +71,7 @@
 #include <dart/utils/urdf/DartLoader.h>
 
 
-GripMainWindow::GripMainWindow(bool debug) :
+GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
     MainWindow(),
     _debug(debug),
     world(new dart::simulation::World()),
@@ -105,6 +105,14 @@ GripMainWindow::GripMainWindow(bool debug) :
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
+
+    // Load config file passed in by user, if specified
+    if (!configFile.empty())
+        this->loadWorkspace(configFile);
+
+    // Load scene passed in by user, if specified
+    if (!sceneFile.empty())
+        this->doLoad(sceneFile);
 }
 
 GripMainWindow::~GripMainWindow()

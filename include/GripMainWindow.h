@@ -86,8 +86,14 @@ class GripMainWindow : public MainWindow
 public:
     /**
      * \brief Constructs a GripMainWindow object
+     * \param debug Whether or not to print debug statements. This gets passed to
+     * local class objects
+     * \param sceneFile String representing the scene file to load on startup. If empty or
+     * unspecified, a scene will not be loaded.
+     * \param configFile String representing the workspace file to load on startup. If empty or
+     * unspecified, a workspace will not be loaded.
      */
-    GripMainWindow(bool debug=false);
+    GripMainWindow(bool debug=false, std::string sceneFile="", std::string configFile="");
 
     /**
      * \brief Destructs a GripMainWindow object
@@ -115,6 +121,7 @@ public:
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
     std::vector<GripTimeslice> *timeline;
     
+    /// Widget for playing back the simulation or kinematic states in the timeline
     PlaybackWidget *playbackWidget;
 
     /// TreeViewReturn class is defined in tree_view.h
@@ -137,11 +144,38 @@ public:
     //void resizeEvent(QResizeEvent* event);
 
 public slots:
+    /**
+     * \brief Slot for setting the state and time of the world based on
+     * the playback widget's slider position and the contents of the timeline
+     * \param sliderTick Position of the playback widget's slider
+     */
     void slotSetWorldFromPlayback(int sliderTick);
+
+    /**
+     * \brief Slot for starting the playback
+     */
     void slotPlaybackStart();
+
+    /**
+     * \brief Slot for pausing the playback
+     */
     void slotPlaybackPause();
+
+    /**
+     * \brief Slot for reversing the playback
+     */
     void slotPlaybackReverse();
+
+    /**
+     * \brief Slot for going to the beginning of the playback timeline
+     */
     void slotPlaybackBeginning();
+
+    /**
+     * \brief Slot that recursively calls it self to run the playback loop.
+     * The recursive call allows the event loop to process other events, (eg. Stop Playback)
+     * \param playForward Whether or not to play back in forward or reverse
+     */
     void slotPlaybackTimeStep(bool playForward);
 
 protected slots:
@@ -219,13 +253,26 @@ protected slots:
      */
     void resetCamera();
 
+    /**
+     * \brief Change movie export mode to 1024x768
+     */
     void xga1024x768();
 
+    /**
+     * \brief Change movie export mode to 640x480
+     */
     void vga640x480();
 
+    /**
+     * \brief Change movie export mode to 1280x720
+     */
     void hd1280x720();
 
+    /**
+     * \brief Close current scene
+     */
     void close();
+
     /**
      * \brief Notifies thread that simulation has stopped
      * \return void
@@ -328,22 +375,36 @@ protected:
     int saveText(std::string scenepath, const QString &filename);
 
 
-    /// This function reads a folder by the name of 'plugin' in source directory
-    /// The plugin directory needs to contain the library for the plugins to be loaded (.so files on Linux, .dll files on Windows)
+    /**
+     * \brief Reads a QDir directory and loads all the plugins inside it
+     * \param pluginsDirName Name of the QDir containing the plugins
+     */
     void loadPluginDirectory(QDir pluginsDirName);
+
+    /**
+     * \brief Loads a plugin file (.so) by name. When loaded, the plugin will be
+     * added to the bottom tabs area.
+     * \param pluginFileName String representing the path of the plugin
+     */
     void loadPluginFile(QString pluginFileName);
 
-    void setWorldState_Issue122(const Eigen::VectorXd &_newState);
+    /**
+     * \brief Set state of world from an Eigen::VectorXd.
+     * Because DART has a major bug with the integration of free and ball
+     * joints, some extra work arounds have to been performed.
+     * \param newState New state for the world
+     */
+    void setWorldState_Issue122(const Eigen::VectorXd &newState);
 
     /// used to maintain the layout of the widgets that are not QDockWidgets
     QGridLayout *gridLayout;
 
-    bool _playingBack;
-    int _curPlaybackTick;
-    int _playbackSpeed;
-    bool _simulationDirty;
-    bool _simulating;
-    bool _debug;
+    bool _playingBack;      ///< Whether or not playback is happening
+    int _curPlaybackTick;   ///< Current tick in playback
+    int _playbackSpeed;     ///< Additive value corresponding to playback speed
+    bool _simulationDirty;  ///< Whether or not the timeline has been messed with
+    bool _simulating;       ///< Whether or not simulation is happening
+    bool _debug;            ///< Whether or not to print debug statements
 };
 
 

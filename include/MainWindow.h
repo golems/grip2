@@ -100,11 +100,38 @@ public slots:
      */
     void slotSetStatusBarMessage(QString msg);
 
+    /**
+     * \brief Slot for setting the state and time of the world based on
+     * the playback widget's slider position and the contents of the timeline
+     * \param sliderTick Position of the playback widget's slider
+     */
     virtual void slotSetWorldFromPlayback(int sliderTick) = 0;
+
+    /**
+     * \brief Slot for starting the playback
+     */
     virtual void slotPlaybackStart() = 0;
+
+    /**
+     * \brief Slot for pausing the playback
+     */
     virtual void slotPlaybackPause() = 0;
+
+    /**
+     * \brief Slot for reversing the playback
+     */
     virtual void slotPlaybackReverse() = 0;
+
+    /**
+     * \brief Slot for going to the beginning of the playback timeline
+     */
     virtual void slotPlaybackTimeStep(bool playForward) = 0;
+
+    /**
+     * \brief Slot that recursively calls it self to run the playback loop.
+     * The recursive call allows the event loop to process other events, (eg. Stop Playback)
+     * \param playForward Whether or not to play back in forward or reverse
+     */
     virtual void slotPlaybackBeginning() = 0;
 
 protected:
@@ -149,9 +176,29 @@ protected slots:
      */
     void saveScene();
 
+    /**
+     * \brief Loads a plugin file using a file dialog for the user to manually
+     * find the plugin file
+     */
     void loadPluginFileWithDialog();
+
+    /**
+     * \brief Loads all plugin files inside a directory with a dialog for the user
+     * to manually find the plugin directory
+     */
     void loadPluginDirWithDialog();
+
+    /**
+     * \brief Reads a QDir directory and loads all the plugins inside it
+     * \param pluginsDirName Name of the QDir containing the plugins
+     */
     virtual void loadPluginDirectory(QDir pluginsDirName) = 0;
+
+    /**
+     * \brief Loads a plugin file (.so) by name. When loaded, the plugin will be
+     * added to the bottom tabs area.
+     * \param pluginFileName String representing the path of the plugin
+     */
     virtual void loadPluginFile(QString pluginFilename) = 0;
 
     /**
@@ -273,7 +320,7 @@ protected slots:
      * \brief Loads workspace configuration from a configuration file
      * \return void
      */
-    void loadWorkspace();
+    void loadWorkspace(std::string workspaceFile="");
 
 
 private:

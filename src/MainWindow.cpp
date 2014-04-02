@@ -453,24 +453,28 @@ void MainWindow::saveNewWorkspace()
         std::cerr << "No file was selected" << std::endl;
 }
 
-void MainWindow::loadWorkspace()
+void MainWindow::loadWorkspace(std::string workspaceFile)
 {
     QStringList fileNames; //stores the entire path of the file that it attempts to open
 
-    QStringList filters; //setting file filters
-    filters << "Grip configuration files (*.gripconfig)"
-            << "Any files (*)";
+    if (workspaceFile.empty()) {
+        QStringList filters; //setting file filters
+        filters << "Grip configuration files (*.gripconfig)"
+                << "Any files (*)";
 
-    //initializing the File dialog box
-    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
-    //as per the documentation it may work correctly with gnome
-    //the method used below should work correctly on all desktops and is supposedly more powerful
-    QFileDialog dialog(this);
-    dialog.setNameFilters(filters);
-    dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    if (dialog.exec())
-        fileNames = dialog.selectedFiles();
+        //initializing the File dialog box
+        //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+        //as per the documentation it may work correctly with gnome
+        //the method used below should work correctly on all desktops and is supposedly more powerful
+        QFileDialog dialog(this);
+        dialog.setNameFilters(filters);
+        dialog.setAcceptMode(QFileDialog::AcceptOpen);
+        dialog.setFileMode(QFileDialog::ExistingFile);
+        if (dialog.exec())
+            fileNames = dialog.selectedFiles();
+    } else {
+        fileNames.append(QString::fromStdString(workspaceFile));
+    }
 
     if (!fileNames.isEmpty()){
         std::cerr << "Attempting to load the following configuration file: "<< fileNames.front().toStdString() << std::endl;
