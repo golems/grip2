@@ -112,6 +112,11 @@ public:
         _timeline = timeline;
     }
 
+    /**
+     * \brief called when a new scene file (urdf, sdf) is loaded into Grip.
+     * This signifies that there are skeletons in the world, the viewer is displaying
+     * the objects in the world and the TreeView is populated
+     */
     virtual void GRIPEventSceneLoaded(){}
 
     /**

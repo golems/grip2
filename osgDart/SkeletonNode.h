@@ -66,11 +66,6 @@
 #include <osg/MatrixTransform>
 #include <osg/CullFace>
 
-/**
- * \namespace osgDart
- * \brief Namespace containing all the classes and functionality relating to the
- * intersection of DART and OpenSceneGraph.
- */
 namespace osgDart {
 
 /// Definition of type JointMatrixMap, which maps dart::dynamics::Joint* to osg::MatrixTransform*

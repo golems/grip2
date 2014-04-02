@@ -71,7 +71,7 @@
 #include <dart/utils/urdf/DartLoader.h>
 
 
-GripMainWindow::GripMainWindow(bool debug) :
+GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
     MainWindow(),
     _debug(debug),
     world(new dart::simulation::World()),
@@ -89,7 +89,6 @@ GripMainWindow::GripMainWindow(bool debug) :
     playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
-    pluginList = new QList<GripTab*>;
     pluginPathList = new QList<QString*>;
     sceneFilePath = new QString();
 
@@ -106,6 +105,14 @@ GripMainWindow::GripMainWindow(bool debug) :
     this->setStatusBar(this->statusBar());
 
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
+
+    // Load config file passed in by user, if specified
+    if (!configFile.empty())
+        this->loadWorkspace(configFile);
+
+    // Load scene passed in by user, if specified
+    if (!sceneFile.empty())
+        this->doLoad(sceneFile);
 }
 
 GripMainWindow::~GripMainWindow()
@@ -530,6 +537,8 @@ void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 
 void GripMainWindow::loadPluginFile(QString pluginFileName)
 {
+    if (pluginList->size() == 0)
+        pluginMenu->addSeparator();
     std::cerr << "File: " << pluginFileName.toStdString() << std::endl;
     QPluginLoader loader(pluginFileName);
     QObject* plugin = loader.instance();
@@ -542,18 +551,17 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             if (pluginWidget == NULL) {
                 if (_debug)
                     std::cerr << "is NULL" << std::endl;
-            }
-            else {
+            } else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
                 this->tabifyDockWidget(visualizationTab, pluginWidget);
                 pluginList->append(gt);
+                std::cerr << "Plugins: " << pluginList->size() << std::endl;
                 pluginPathList->append(new QString(pluginFileName));
                 if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
                 pluginMenu->addAction(pluginWidget->toggleViewAction());
             }
         }
-    }
-    else {
+    } else {
         slotSetStatusBarMessage(tr("Couldn't load plugin. " + loader.errorString()));
         if (_debug) {
             std::cerr << "Plugin could not be loaded" << std::endl;
@@ -626,14 +634,14 @@ void GripMainWindow::manageLayout()
 
 void GripMainWindow::createPluginMenu()
 {
-    pluginMenu = menuBar()->addMenu(tr("&Plugins"));
+    pluginMenu = menuBar()->addMenu(tr("&Widgets"));
 
     QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
-     if (dockwidgetList.size()) {
-         for (int i = 0; i < dockwidgetList.size(); ++i) {
-                 pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
-         }
-     }
+    if (dockwidgetList.size()) {
+        for (int i = 0; i < dockwidgetList.size(); ++i) {
+                pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
+        }
+    }
 }
 
 QDomDocument* GripMainWindow::generateWorkspaceXML()

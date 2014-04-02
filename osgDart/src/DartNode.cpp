@@ -260,7 +260,7 @@ dart::dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
     // Load robot model from urdf and check if valid
     dart::utils::DartLoader loader;
     dart::dynamics::Skeleton* skeleton = loader.parseSkeleton(urdfFile);
-    if (!skeleton) {
+    if (!skeleton && _debug) {
         std::cerr << "[DartNode] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
@@ -276,7 +276,7 @@ dart::simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
 {
     dart::utils::SdfParser loader;
     dart::simulation::World* world = loader.readSdfFile(sdfFile);
-    if (!world) {
+    if (!world && _debug) {
         std::cerr << "[[DartNode] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
@@ -292,7 +292,7 @@ dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     // Load world model from urdf and check if valid
     dart::utils::DartLoader loader;
     dart::simulation::World* world = loader.parseWorld(urdfFile);
-    if (!world) {
+    if (!world && _debug) {
         std::cerr << "[DartNode] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
@@ -320,8 +320,6 @@ size_t DartNode::addWorld(std::string file)
         dart::simulation::World* world = parseWorldSdf(file);
         if (world) {
             this->addWorld(world);
-        } else {
-            std::cerr << "[DartNode] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     } else {
         dart::simulation::World* world = parseWorldSdf(file);
@@ -331,10 +329,12 @@ size_t DartNode::addWorld(std::string file)
             world = parseWorldUrdf(file);
             if (world) {
                 this->addWorld(world);
-            } else {
-                std::cerr << "[DartNode] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
             }
         }
+    }
+    if (!_world->getNumSkeletons()) {
+        std::cerr << "[DartNode] Error parsing scene file. Line "
+                  << __LINE__ << " of " << __FILE__ << std::endl;
     }
     return _skeletons.size();
 }

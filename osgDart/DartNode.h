@@ -71,7 +71,7 @@
 /**
  * \namespace osgDart
  * \brief Namespace containing all the classes and functionality relating to the
- * intersection of DART and OpenSceneGraph.
+ * intersection of DART and OpenSceneGraph. \ref osgDartDiagramPage
  */
 namespace osgDart {
 
