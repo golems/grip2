@@ -90,6 +90,7 @@ public:
     void reset();
     ~TreeView();
     TreeViewReturn* getActiveItem();
+		QMenu* itemMenu;
 
 signals:
     void itemSelected(TreeViewReturn *active_item);
@@ -97,6 +98,9 @@ signals:
 private slots:
     void nameChangeBodyNodeJoint(int checkBoxState);
     void treeViewItemSelected(QTreeWidgetItem *item, int column);
+
+		void contextMenu(const QPoint &widgetXY);
+		void edit_item();
     
 private:
     Ui::TreeView *_ui;

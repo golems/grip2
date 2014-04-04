@@ -71,6 +71,8 @@
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/simulation/World.h>
 
+using namespace std;
+
 TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent), _ui(new Ui::TreeView)
 {
     _activeItem = new TreeViewReturn;
@@ -82,8 +84,48 @@ TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent),
     _ui_treeWidget->header()->setStretchLastSection(false);
     connect(_ui_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(treeViewItemSelected(QTreeWidgetItem*,int)));
 
+		//connect(_ui_treeWidget, SIGNAL(custom(QTreeWidgetItem*, int)), this, SLOT(treeViewItemSelected(QTreeWidgetItem*,int)));
+		//nodeMenu = new QMenu(_ui_treeWidget);
+		//QAction* insertNodeChild = new QAction("Insert Child",nodeMenu);
+		//QAction* insertNodeAfter = new QAction("Insert Node After",nodeMenu);
+		//QAction* insertNodeBefore = new QAction("Insert Node Before",nodeMenu);
+		//QAction* deleteNode = new QAction("Delete Node",nodeMenu);
+		//nodeMenu->addAction(insertNodeChild);
+		//nodeMenu->addAction(insertNodeAfter);
+		//nodeMenu->addAction(insertNodeBefore);
+		//nodeMenu->addAction(deleteNode);
+		//_ui_treeWidget->addAction(insertNodeChild);
+		//_ui_treeWidget->addAction(insertNodeAfter);
+		//_ui_treeWidget->addAction(insertNodeBefore);
+		//_ui_treeWidget->addAction(deleteNode);
+		//QAction* pOpenFile = new QAction(tr("Open A File"));
+
+		_ui_treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(_ui_treeWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(contextMenu(const QPoint &)));
+		itemMenu = new QMenu();
+//		itemMenu->addAction ("New" , this, SLOT(edit_item()));
+	
     _ui_checkBox = _ui->checkBox;
     connect(_ui_checkBox, SIGNAL(stateChanged(int)), this, SLOT(nameChangeBodyNodeJoint(int)));
+}
+
+void TreeView::contextMenu(const QPoint &widgetXY) {
+
+	// Make sure an item is selected
+	QTreeWidgetItem* item = _ui_treeWidget->itemAt(widgetXY);
+	if(item == NULL) return;
+
+	// Create the menu for this
+	// itemMenu->popup(QCursor::pos());
+	
+	QPoint temp (QCursor::pos());
+	QPoint temp2 (temp.x() + 2, temp.y() + 2);
+	itemMenu->popup(temp2);
+}
+
+void TreeView::edit_item () {
+
+	cout << "yeay" << endl;
 }
 
 TreeView::~TreeView()
