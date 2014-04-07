@@ -190,6 +190,12 @@ public:
     virtual void paintEvent( QPaintEvent* event )
     { frame(); }
 
+    /**
+     * \brief takes a screenshot of the view widget
+     * \return void
+     */
+    QImage takeScreenshot();
+
 protected:
 
     // Timer for update the interface

@@ -58,6 +58,7 @@
 // C++ Standard includes
 #include <iostream>
 #include <cstdio>
+#include "ViewerWidget.h"
 
 // Forward declarations
 class QAction;
@@ -134,6 +135,8 @@ public slots:
      */
     virtual void slotPlaybackBeginning() = 0;
 
+    virtual void saveVideo() = 0;
+
 protected:
     /**
      * \brief Create an XML file for the workspace
@@ -156,6 +159,86 @@ protected:
 
     /// Stores the path to the workspace configuration file
     QString* configFilePath;
+
+    /**
+     * \brief Saves the configuration file to the location passed
+     * \return void
+     */
+    void saveConfigFile(QDomDocument* config, QString* filename);
+
+    /**
+     * \brief Creates actions
+     * \return void
+     */
+    void createActions();
+
+    /**
+     * \brief Creates the menu at the top
+     * \return void
+     */
+    void createMenus();
+
+    /**
+     * \brief Creates the rendering window
+     * \return void
+     */
+    virtual void createRenderingWindow() = 0;
+
+    /**
+     * \brief Create the tree view
+     * \return void
+     */
+    virtual void createTreeView() = 0;
+
+    /**
+     * \brief Create the default tabs
+     * \return void
+     */
+    virtual void createTabs() = 0;
+
+    /**
+     * \brief Load the scene and renders it. This function resets everything
+     * on each load.
+     * \param fileName Name of scene file to load
+     * \return void
+     */
+    virtual void doLoad(std::string fileName) = 0;
+
+    QMenu *fileMenu;
+        QAction *loadSceneAct;
+        QAction *quickLoadAct;
+        QAction *saveSceneAct;
+        QAction *loadPluginFileAct;
+        QAction *loadPluginDirAct;
+        QAction *saveWorkspaceConfigurationAct;
+        QAction *saveNewWorkspaceConfigurationAct;
+        QAction *loadWorkspaceConfigurationAct;
+        QAction *closeSceneAct;
+        QAction *exitAct;
+    QMenu *viewMenu;
+        QAction *frontAct;
+        QAction *topAct;
+        QAction *sideAct;
+    QMenu *simulationMenu;
+        QAction *startSimulationAct;
+        QAction *stopSimulationAct;
+        QAction *simulateSingleStepAct;
+    QMenu *settingsMenu;
+        QAction *renderDuringSimulationAct;
+        QMenu *backgroundMenu;
+            QAction *whiteAct;
+            QAction *grayAct;
+            QAction *blackAct;
+        QAction *resetCameraAct;
+    QMenu *renderMenu;
+        QAction *xga1024x768Act;
+        QAction *vga640x480Act;
+        QAction *hd1280x720Act;
+    QMenu *helpMenu;
+        QAction *aboutAct;
+
+    QToolBar *toolbar;
+
 
 protected slots:
     /**
@@ -286,6 +369,18 @@ protected slots:
     virtual void hd1280x720() = 0;
 
     /**
+     * \brief Takes a screenshot of the rendering widget and saves it to a specific location
+     * \return void
+     */
+    virtual void camera() = 0;
+
+    /**
+     * \brief Takes multiple sceenshots of the rendering widget while it is playing back a simulation
+     * \return void
+     */
+    virtual void film() = 0;
+
+    /**
      * \brief Notifies thread that simulation has stopped
      * \return void
      */
@@ -321,88 +416,6 @@ protected slots:
      * \return void
      */
     void loadWorkspace(std::string workspaceFile="");
-
-
-private:
-    /**
-     * \brief Saves the configuration file to the location passed
-     * \return void
-     */
-    void saveConfigFile(QDomDocument* config, QString* filename);
-
-    /**
-     * \brief Creates actions
-     * \return void
-     */
-    void createActions();
-
-    /**
-     * \brief Creates the menu at the top
-     * \return void
-     */
-    void createMenus();
-
-    /**
-     * \brief Creates the rendering window
-     * \return void
-     */
-    virtual void createRenderingWindow() = 0;
-
-    /**
-     * \brief Create the tree view
-     * \return void
-     */
-    virtual void createTreeView() = 0;
-
-    /**
-     * \brief Create the default tabs
-     * \return void
-     */
-    virtual void createTabs() = 0;
-
-    /**
-     * \brief Load the scene and renders it. This function resets everything
-     * on each load.
-     * \param fileName Name of scene file to load
-     * \return void
-     */
-    virtual void doLoad(std::string fileName) = 0;
-
-    QMenu *fileMenu;
-        QAction *loadSceneAct;
-        QAction *quickLoadAct;
-        QAction *saveSceneAct;
-        QAction *loadPluginFileAct;
-        QAction *loadPluginDirAct;
-        QAction *saveWorkspaceConfigurationAct;
-        QAction *saveNewWorkspaceConfigurationAct;
-        QAction *loadWorkspaceConfigurationAct;
-        QAction *closeSceneAct;
-        QAction *exitAct;
-    QMenu *viewMenu;
-        QAction *frontAct;
-        QAction *topAct;
-        QAction *sideAct;
-    QMenu *simulationMenu;
-        QAction *startSimulationAct;
-        QAction *stopSimulationAct;
-        QAction *simulateSingleStepAct;
-    QMenu *settingsMenu;
-        QAction *renderDuringSimulationAct;
-        QMenu *backgroundMenu;
-            QAction *whiteAct;
-            QAction *grayAct;
-            QAction *blackAct;
-        QAction *resetCameraAct;
-    QMenu *renderMenu;
-        QAction *xga1024x768Act;
-        QAction *vga640x480Act;
-        QAction *hd1280x720Act;
-    QMenu *helpMenu;
-        QAction *aboutAct;
-
-    QToolBar *toolbar;
-
 }; // end class MainWindow
 
 #endif // MAINWINDOW_H

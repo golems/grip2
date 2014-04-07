@@ -54,6 +54,7 @@
 #include <osg/io_utils>
 #include <osg/ShapeDrawable>
 
+
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
     osg::Geode* gridGeode = new osg::Geode();
@@ -73,7 +74,7 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
         case 5: std::cerr << "ThreadPerCamera" << std::endl; break;
     }
-    setThreadingModel(threadingModel);
+    setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 //    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
     // Create scene data
@@ -249,4 +250,19 @@ bool ViewerWidget::viewNumIsValid(uint viewNum)
         fprintf(stderr, "Valid view #'s are 0 - %d\n", this->getNumViews() - 1);
         return false;
     }
+}
+
+QImage ViewerWidget::takeScreenshot()
+{
+    osgViewer::View* view = this->getView(0);
+    osg::Camera* camera = view->getCamera();
+    osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());
+    QGLWidget* glw = gw->getGLWidget();
+    //QSize cur_size = glw->size();
+    //glw->resize(1280, 712);
+    //glw->update();
+    //std::cerr<<glw->size().width()<<" "<<glw->size().height()<<std::endl;
+    QImage screenshot = glw->grabFrameBuffer();
+    //glw->resize(cur_size);
+    return screenshot;
 }

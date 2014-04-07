@@ -58,6 +58,7 @@
 
 // Qt includes
 #include <QtGui>
+#include <QPixmap>
 
 // OpenSceneGraph includes
 #include <osg/io_utils>
@@ -69,7 +70,6 @@
 #include <dart/dynamics/Joint.h>
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/utils/urdf/DartLoader.h>
-
 
 GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
     MainWindow(),
@@ -91,6 +91,7 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
     pluginPathList = new QList<QString*>;
     sceneFilePath = new QString();
+    std::cerr<<sceneFilePath->toStdString()<<std::endl;
 
     /// create objects for widget classes
     createTreeView();
@@ -113,15 +114,15 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     // Load scene passed in by user, if specified
     if (!sceneFile.empty())
         this->doLoad(sceneFile);
+
+    xga1024x768();
 }
 
-GripMainWindow::~GripMainWindow()
-{
-}
+GripMainWindow::~GripMainWindow() {}
 
 void GripMainWindow::doLoad(std::string sceneFileName)
 {
-    sceneFilePath->fromStdString(sceneFileName);
+    sceneFilePath = new QString(QString::fromStdString(sceneFileName));
 
     if (_simulating || _playingBack) {
         if (!stopSimulationWithDialog()) {
@@ -375,6 +376,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         }
 
         playbackWidget->setSliderValue(_curPlaybackTick);
+        if(_recordVideo){
+            recordImageList->append(recordViewWidget->takeScreenshot());
+        }
 
         // Call user tab functions after time step
         for (size_t i = 0; i < pluginList->size(); ++i) {
@@ -382,6 +386,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         }
 
     } else {
+        if(_recordVideo)
+            QMetaObject::invokeMethod(this, "saveVideo", Qt::QueuedConnection);
+            _recordVideo = false;
         return;
     }
 
@@ -421,11 +428,50 @@ void GripMainWindow::side()
     viewWidget->setToSideView();
 }
 
+void GripMainWindow::xga1024x768()
+{
+    if(!xga1024x768Act->isChecked())
+        recordSize = QSize(1024, 760);
+    else {
+        if(vga640x480Act->isChecked())
+            vga640x480Act->toggle();
 
-void GripMainWindow::xga1024x768(){}
-void GripMainWindow::vga640x480(){}
-void GripMainWindow::hd1280x720(){}
+        if(hd1280x720Act->isChecked())
+            hd1280x720Act->toggle();
 
+        recordSize = QSize(1024, 760);
+    }
+}
+
+void GripMainWindow::vga640x480()
+{
+    if(!vga640x480Act->isChecked())
+        recordSize = QSize(640, 472);
+    else {
+        if(xga1024x768Act->isChecked())
+            xga1024x768Act->toggle();
+
+        if(hd1280x720Act->isChecked())
+            hd1280x720Act->toggle();
+
+        recordSize = QSize(640, 472);
+    }
+}
+
+void GripMainWindow::hd1280x720()
+{
+    if(!hd1280x720Act->isChecked())
+        recordSize = QSize(1280, 712);
+    else {
+        if(vga640x480Act->isChecked())
+            vga640x480Act->toggle();
+
+        if(xga1024x768Act->isChecked())
+            xga1024x768Act->toggle();
+
+        recordSize = QSize(1280, 712);
+    }
+}
 
 void GripMainWindow::startSimulation()
 {
@@ -631,7 +677,6 @@ void GripMainWindow::manageLayout()
     visualizationTab->raise();
 }
 
-
 void GripMainWindow::createPluginMenu()
 {
     pluginMenu = menuBar()->addMenu(tr("&Widgets"));
@@ -692,6 +737,7 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
         scene.setAttribute("spath", *sceneFilePath);
         std::cerr << "spath: " << sceneFilePath->toStdString() << std::endl;
     } else {
+        std::cerr<<"blah"<<std::endl;
         if (_debug) std::cerr << "SceneFilePath is NULL" << std::endl;
     }
     root.appendChild(scene);
@@ -749,4 +795,98 @@ void GripMainWindow::parseConfig(QDomDocument config)
 
     /// parse and load cameras
     /// parse and load lightsources
+}
+
+void GripMainWindow::camera()
+{
+    QSize curSize = viewWidget->size();
+    QImage screenshot = viewWidget->takeScreenshot();
+
+    QStringList fileNames; //stores the entire path of the file that it attempts to open
+    QString format = "png";
+    QStringList filters; //setting file filters
+    filters << "PNG Image files (*.png)"
+            << "Any files (*)";
+
+    //initializing the File dialog box
+    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+    //as per the documentation it may work correctly with gnome
+    //the method used below should work correctly on all desktops and is supposedly more powerful
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    if (!fileNames.isEmpty())
+        screenshot.save(fileNames.front(), format.toAscii());
+    else
+        std::cerr << "No file was selected" << std::endl;
+}
+
+void GripMainWindow::film()
+{
+    recordImageList = new QList<QImage>;
+
+    recordWidget = new QWidget;
+    recordWidget->resize(recordSize);
+
+    recordViewWidget = new ViewerWidget();
+    recordViewWidget->setGeometry(100, 100, 800, 600);
+    recordViewWidget->addGrid(20, 20, 1);
+    recordViewWidget->addNodeToScene(worldNode);
+    recordViewWidget->setViewMatrix(0, viewWidget->getViewMatrix());
+
+    QHBoxLayout* hLayout = new QHBoxLayout;
+    hLayout->addWidget(recordViewWidget);
+
+    recordWidget->setLayout(hLayout);
+    recordWidget->setWindowTitle("Recording Window");
+    recordWidget->show();
+
+    _recordVideo = true;
+    slotPlaybackStart();
+    recordImageList->append(recordViewWidget->takeScreenshot());
+
+    slotPlaybackTimeStep(true);
+}
+
+void GripMainWindow::saveVideo()
+{
+    recordWidget->close();
+    delete recordViewWidget;
+    recordViewWidget = NULL;
+    delete recordWidget;
+    recordWidget = NULL;
+
+    QString fileName;
+    QStringList dirNames; //stores the entire path of the file that it attempts to open
+    QString format = "png";
+    QStringList filters; //setting file filters
+    filters << "PNG Image files (*.png)"
+            << "Any files (*)";
+
+    //initializing the File dialog box
+    //the static QFileDialog does not seem to be working correctly in Ubuntu 12.04 with unity.
+    //as per the documentation it may work correctly with gnome
+    //the method used below should work correctly on all desktops and is supposedly more powerful
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::Directory);
+    //dialog.setOption(QFileDialog::ShowDirsOnly, true);
+    if (dialog.exec())
+        dirNames = dialog.selectedFiles();
+
+    if (dirNames.isEmpty()) {
+        std::cerr << "No file was selected" << std::endl;
+        return;
+    } else {
+        for(int i = 0; i < recordImageList->count(); ++i) {
+            recordImageList->at(i).save(fileName.sprintf("%s/image%06d", dirNames.front().toStdString().c_str(), i), format.toAscii());
+        }
+    }
+    delete recordImageList;
+    recordImageList = NULL;
 }
