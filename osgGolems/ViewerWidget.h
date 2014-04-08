@@ -143,10 +143,18 @@ public:
     /**
      * \brief Adds an osg node to the scene in the view specified by the user
      * \param node osg::Node pointer to add to the scene
-     * \param viewNum View of which to add the node to
+     * \param viewNum View to which to add the node
      * \return void
      */
     void addNodeToScene(osg::Node *node, uint viewNum=0);
+
+    /**
+     * \brief Removes an osg node from the scene in the view specified by the user
+     * \param node osg::Node pointer to remove from the scene
+     * \param viewNum View from which to remove the node
+     * \return void
+     */
+    void removeNodeFromScene(osg::Node *node, uint viewNum=0);
 
     /**
      * \brief Sets background color of the view number "viewNum" with the

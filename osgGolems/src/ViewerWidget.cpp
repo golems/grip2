@@ -204,12 +204,34 @@ void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
 
 void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
 {
+    if (node != node || !(viewNumIsValid(viewNum))) {
+        std::cerr << "Error! Invalid node" << std::endl;
+        return;
+    }
+
     osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+
     if (scene != scene) {
         std::cerr << "Error! Can not convert from osg::Node to osg::Group."
                   << std::endl;
     } else {
         scene->addChild(node);
+    }
+}
+
+void ViewerWidget::removeNodeFromScene(osg::Node* node, uint viewNum)
+{
+    if (node != node || !(viewNumIsValid(viewNum))) {
+        std::cerr << "Error! Invalid node" << std::endl;
+        return;
+    }
+
+    osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+    if (scene != scene) {
+        std::cerr << "Error! Can not convert from osg::Node to osg::Group."
+                  << std::endl;
+    } else {
+        scene->removeChild(node);
     }
 }
 
