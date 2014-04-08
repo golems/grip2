@@ -737,10 +737,29 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
         scene.setAttribute("spath", *sceneFilePath);
         std::cerr << "spath: " << sceneFilePath->toStdString() << std::endl;
     } else {
-        std::cerr<<"blah"<<std::endl;
         if (_debug) std::cerr << "SceneFilePath is NULL" << std::endl;
     }
     root.appendChild(scene);
+
+    //add the window size information
+    QDomElement size = config->createElement("size");
+    size.setAttribute("width", this->size().width());
+    size.setAttribute("height", this->size().height());
+    root.appendChild(size);
+
+    //add the location of each DockWidget
+    QDomElement dockLocation = config->createElement("Location");
+    QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+    if (dockwidgetList.size()) {
+        for (int i = 0; i < dockwidgetList.size(); ++i) {
+            QDomElement dockWidget = config->createElement("dockWidgetLocation");
+            dockWidget.setAttribute("name", dockwidgetList.at(i)->windowTitle());
+            dockWidget.setAttribute("isFloating", dockwidgetList.at(i)->isFloating());
+            dockWidget.setAttribute("location", this->dockWidgetArea(dockwidgetList.at(i)));
+            dockLocation.appendChild(dockWidget);
+        }
+    }
+    root.appendChild(dockLocation);
 
     // to be added when necessary implementations are completed
     // add camera information
@@ -790,7 +809,36 @@ void GripMainWindow::parseConfig(QDomDocument config)
     for (int i = 0; i < sceneList.count(); i++) {
         QDomElement scene = sceneList.at(i).toElement();
         QString scenePath = scene.attribute("spath");
-        doLoad(scenePath.toStdString());
+        if(scenePath.isEmpty() || scenePath.isNull())
+            continue;
+        else
+            doLoad(scenePath.toStdString());
+    }
+
+    /// resize the window
+    QDomNodeList size = config.elementsByTagName("size");
+    this->resize(size.at(0).toElement().attribute("width").toInt(), size.at(0).toElement().attribute("height").toInt());
+
+    QList<QDockWidget *> dockWidgets = qFindChildren<QDockWidget *>(this);
+    QDomNodeList dockLocation = config.elementsByTagName("dockWidgetLocation");
+    for (int i = 0; i < dockLocation.count(); i++) {
+        QDomElement dockWidget = dockLocation.at(i).toElement();
+        if (dockWidgets.size()) {
+            for (int i = 0; i < dockWidgets.size(); ++i) {
+                if ( QString(dockWidgets.at(i)->windowTitle()).compare(dockWidget.attribute("name")) == 0) {
+                    if(dockWidget.attribute("isFloating").toInt())
+                        dockWidgets.at(i)->setFloating(true);
+                    else {
+                        switch(dockWidget.attribute("location").toInt()) {
+                            case 1: this->addDockWidget(Qt::LeftDockWidgetArea ,dockWidgets.at(i)); break;
+                            case 2: this->addDockWidget(Qt::RightDockWidgetArea ,dockWidgets.at(i)); break;
+                            case 4: this->addDockWidget(Qt::TopDockWidgetArea ,dockWidgets.at(i)); break;
+                            case 8: this->addDockWidget(Qt::BottomDockWidgetArea ,dockWidgets.at(i)); break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// parse and load cameras
