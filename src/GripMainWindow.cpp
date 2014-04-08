@@ -352,6 +352,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
 {
     if (_playingBack) {
 
+        if (_playbackSpeed != 5 * playbackWidget->getPlaybackSpeed())
+            _playbackSpeed = 5 * playbackWidget->getPlaybackSpeed();
+
         // Call user tab functions before time step
         for (size_t i = 0; i < pluginList->size(); ++i) {
             pluginList->at(i)->GRIPEventPlaybackBeforeFrame();
@@ -893,6 +896,9 @@ void GripMainWindow::film()
     recordWidget->setWindowTitle("Recording Window");
     recordWidget->show();
 
+    QTime dieTime = QTime::currentTime().addMSecs(1000);
+    while(QTime::currentTime() < dieTime);
+
     _recordVideo = true;
     slotPlaybackStart();
     recordImageList->append(recordViewWidget->takeScreenshot());
@@ -902,6 +908,8 @@ void GripMainWindow::film()
 
 void GripMainWindow::saveVideo()
 {
+    _recordVideo = false;
+
     recordWidget->close();
     delete recordViewWidget;
     recordViewWidget = NULL;

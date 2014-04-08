@@ -119,6 +119,19 @@
     </widget>
    </item>
    <item>
+    <widget class="QSpinBox" name="playSpeed">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QSlider" name="sliderMain">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

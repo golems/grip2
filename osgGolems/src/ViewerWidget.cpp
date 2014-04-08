@@ -239,7 +239,6 @@ void ViewerWidget::setCameraToHomePosition(uint viewNum)
     }
 }
 
-
 bool ViewerWidget::viewNumIsValid(uint viewNum)
 {
     // If viewNum exists, return true, otherwise report error and return false

@@ -58,6 +58,7 @@ PlaybackWidget::PlaybackWidget (MainWindow *parent)
     connect(ui->buttonPause, SIGNAL(released()), _parent, SLOT(slotPlaybackPause()));
     connect(ui->buttonReverse, SIGNAL(released()), _parent, SLOT(slotPlaybackReverse()));
     connect(ui->buttonBeginning, SIGNAL(released()), _parent, SLOT(slotPlaybackBeginning()));
+    //connect(ui->playSpeed, SIGNAL(valueChanged(int)))
 }
 
 PlaybackWidget::~PlaybackWidget()
@@ -90,4 +91,9 @@ void PlaybackWidget::slotSetTimeDisplays(double sim_time, double rel_time)
 {
     ui->editSimTime->setText(QString("%1").arg(sim_time));
     ui->editSimRelTime->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
+}
+
+int PlaybackWidget::getPlaybackSpeed()
+{
+    return ui->playSpeed->value();
 }
