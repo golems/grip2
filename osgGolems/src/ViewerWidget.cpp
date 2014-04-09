@@ -202,6 +202,13 @@ void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
     }
 }
 
+osg::Matrix ViewerWidget::getCameraMatrix(uint viewNum)
+{
+    if (viewNumIsValid(viewNum)) {
+        return this->getCameraManipulator(viewNum)->getMatrix();
+    }
+}
+
 void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
 {
     if (node != node || !(viewNumIsValid(viewNum))) {

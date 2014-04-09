@@ -139,6 +139,7 @@ public:
      * \return void
      */
     void setCameraMatrix(osg::Matrix& newMatrix, uint viewNum=0);
+    osg::Matrix getCameraMatrix(uint viewNum=0);
 
     /**
      * \brief Adds an osg node to the scene in the view specified by the user

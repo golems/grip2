@@ -114,7 +114,6 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     // Load scene passed in by user, if specified
     if (!sceneFile.empty())
         this->doLoad(sceneFile);
-
     xga1024x768();
 }
 
@@ -888,6 +887,7 @@ void GripMainWindow::film()
     recordViewWidget->addGrid(20, 20, 1);
     recordViewWidget->addNodeToScene(worldNode);
     recordViewWidget->setViewMatrix(0, viewWidget->getViewMatrix());
+    recordViewWidget->getCameraManipulator(0)->setByMatrix(viewWidget->getCameraMatrix(0));
 
     QHBoxLayout* hLayout = new QHBoxLayout;
     hLayout->addWidget(recordViewWidget);
