@@ -62,7 +62,7 @@ void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
     addNodeToScene(gridGeode);
 }
 
-ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
+ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget(), autoRender(true)
 {
     std::cerr << "Threading model: " << threadingModel << " -- ";
     switch(threadingModel) {
@@ -74,7 +74,7 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 5: std::cerr << "ThreadPerCamera" << std::endl; break;
     }
     setThreadingModel(threadingModel);
-//    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
+    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
     // Create scene data
 //    osg::Node* sceneData = getSceneData();
@@ -88,6 +88,9 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     layout->addWidget(widget1);
     setLayout(layout);
 
+    // Create callback from timer timeout to the update slot, which
+    // calls the paintEvent function, finally redraws the OSG scene.
+    // Timer times out every 1 millisecond
     connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
     _timer.start(1);
 }
@@ -203,12 +206,34 @@ void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)
 
 void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
 {
+    if (node != node) {
+        std::cerr << "Error! Invalid node" << std::endl;
+        return;
+    }
+
     osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+
     if (scene != scene) {
         std::cerr << "Error! Can not convert from osg::Node to osg::Group."
                   << std::endl;
     } else {
         scene->addChild(node);
+    }
+}
+
+void ViewerWidget::removeNodeFromScene(osg::Node* node, uint viewNum)
+{
+    if (node != node) {
+        std::cerr << "Error! Invalid node" << std::endl;
+        return;
+    }
+
+    osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+    if (scene != scene) {
+        std::cerr << "Error! Can not convert from osg::Node to osg::Group."
+                  << std::endl;
+    } else {
+        scene->removeChild(node);
     }
 }
 

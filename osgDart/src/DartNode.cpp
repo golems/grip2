@@ -69,7 +69,6 @@ DartNode::DartNode(bool debug)
     this->setUpdateCallback(new DartNodeCallback);
 }
 
-int xx = 0;
 void DartNode::update()
 {
     for (size_t i=0; i<_skeletonNodes.size(); ++i) {
@@ -78,11 +77,7 @@ void DartNode::update()
 
     // Update contact forces
     if (_showContactForces) {
-        ++xx;
-        if (xx == 5) {
-            _updateContactForces();
-            xx = 0;
-        }
+        _updateContactForces();
     }
 }
 
@@ -101,18 +96,19 @@ void DartNode::_updateContactForces()
         std::vector<bool> nodeIsSelected(numContacts);
         float maxForceVectorLength = 0;
 
+        std::cerr << "NumContacts: " << numContacts << std::endl;
         // Extract contact force from world
         for (size_t i = 0; i < numContacts; ++i) {
             dart::collision::Contact contact = _world->getConstraintHandler()->getCollisionDetector()->getContact(i);
 
             contactPoints[i] = contact.point;
-            contactForces[i] = contact.force/*.normalized() * .1 * log(contact.force.norm()*//*)*/;
-            forceVectorLengths[i] = (contactForces[i] - contactPoints[i]).norm();
+            contactForces[i] = /*contact.force*/contact.force.normalized() * .1 * log(contact.force.norm());
+            forceVectorLengths[i] = contactForces[i].norm();
             if (forceVectorLengths[i] != forceVectorLengths[i]) {
                 forceVectorLengths[i] = 0;
             }
 
-            // Update max force vector length variable if current force vector length is larger than max
+            // Update max force vector len gth variable if current force vector length is larger than max
             if (forceVectorLengths[i] > maxForceVectorLength) {
                 maxForceVectorLength = forceVectorLengths[i];
             }
@@ -124,32 +120,33 @@ void DartNode::_updateContactForces()
 //            }
         }
 
+//        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
+//            this->removeChild(_contactForceArrows.at(i));
+//        }
         // Create force arrows to render
         for (size_t i = 0; i < numContacts; ++i) {
-            ContactForceVisual* contactForceLine;
-            // If we have some, use existing contactForceArrows and update them to the
-            // current contact force values
-            if (_contactForceArrows.size() > i) {
-                contactForceLine = _contactForceArrows[i];
-                contactForceLine->update(forceVectorLengths[i]/maxForceVectorLength, contactPoints[i], contactForces[i]);
-            // Otherwise create a new one and add it to the existing ones
-            } else {
-                contactForceLine = new ContactForceVisual(_debug);
-                float forceMagnitude = 0;
-                if (fabs(maxForceVectorLength) < 1e-3 || fabs(forceVectorLengths[i]) < 1e-3) {
-                    forceMagnitude = 0;
+            if (forceVectorLengths[i] > 0.01) {
+                osg::ref_ptr<ContactForceVisual> contactForceLine;
+                // If we have some, use existing contactForceArrows and update them to the
+                // current contact force values
+                if (_contactForceArrows.size() > i) {
+                    contactForceLine = _contactForceArrows[i];
+                    contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength, contactPoints[i], -contactForces[i]);
+                // Otherwise create a new one and add it to the existing ones
                 } else {
-                    forceMagnitude = forceVectorLengths[i] / maxForceVectorLength;
+                    contactForceLine = new ContactForceVisual(_debug);
+                    contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength, contactPoints[i], -contactForces[i]);
+                    _contactForceArrows.push_back(contactForceLine);
                 }
-                contactForceLine->createForceVector(forceMagnitude, contactPoints[i], contactForces[i]);
-                _contactForceArrows.push_back(contactForceLine);
+                this->addChild(contactForceLine);
             }
-            this->addChild(contactForceLine);
         }
 
         // Hide unused contact force arrows
-        for (size_t i = numContacts; i < _contactForceArrows.size(); ++i) {
-            _contactForceArrows[i]->setNodeMask(0x0);
+        if (numContacts > 0) {
+            for (size_t i = numContacts; i < _contactForceArrows.size(); ++i) {
+                _contactForceArrows[i]->setNodeMask(0x0);
+            }
         }
     } else {
 //        delete selectedNode;
@@ -163,6 +160,9 @@ void DartNode::setContactForcesVisible(bool makeVisible)
     if(_debug) {
         std::cerr << "[DartNode] " << (makeVisible ? "Showing " : "Hiding ") << "contact forces" << std::endl;
     }
+
+    // If there's a world and constraint handler, show/hide contact force arrows from 0 to number of contact forces
+    // and hide the remaining unused ones
     if (_world && _world->getConstraintHandler()) {
         int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         if(_debug) {
@@ -170,6 +170,9 @@ void DartNode::setContactForcesVisible(bool makeVisible)
         }
         for(size_t i = 0; i < numContacts && i < _contactForceArrows.size(); ++i) {
             _contactForceArrows[i]->setNodeMask(makeVisible ? 0xffffffff : 0x0);
+        }
+        for(size_t i = numContacts-1; i < _contactForceArrows.size(); ++i) {
+            _contactForceArrows[i]->setNodeMask(0x0);
         }
     }
     _showContactForces = makeVisible;

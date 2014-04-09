@@ -76,6 +76,7 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     _debug(debug),
     world(new dart::simulation::World()),
     worldNode(new osgDart::DartNode(debug)),
+    viewWidget(new ViewerWidget()),
     pluginList(new QList<GripTab*>),
     pluginMenu(new QMenu),
     _simulating(false),
@@ -88,7 +89,7 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     world->setTime(0);
     playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
-    simulation = new GripSimulation(world, timeline, pluginList, this, debug);
+    simulation = new GripSimulation(world, timeline, pluginList, viewWidget, this, debug);
     pluginPathList = new QList<QString*>;
     sceneFilePath = new QString();
 
@@ -226,6 +227,7 @@ void GripMainWindow::simulationStopped()
     playbackWidget->ui->sliderMain->setEnabled(true);
     playbackWidget->slotUpdateSliderMinMax(0, timeline->size() - 1);
     playbackWidget->setSliderValue(timeline->size() - 1);
+    viewWidget->setAutoRender(true);
 }
 
 void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
@@ -361,7 +363,6 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
         playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 
-        std::cerr << "cur: " << _curPlaybackTick << ", " << _curPlaybackTick + _playbackSpeed << ", " << timeline->size()-1 << std::endl;
         if ((_curPlaybackTick == 0 && !playForward)
                 || (_curPlaybackTick == (timeline->size() - 1) && playForward)) {
             _playingBack = false;
@@ -451,6 +452,7 @@ void GripMainWindow::startSimulation()
 
         playbackWidget->ui->sliderMain->setDisabled(true);
 
+        viewWidget->setAutoRender(false);
         _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
@@ -509,7 +511,6 @@ void GripMainWindow::resetCamera()
 
 void GripMainWindow::createRenderingWindow()
 {
-    viewWidget = new ViewerWidget();
     viewWidget->setGeometry(100, 100, 800, 600);
     viewWidget->addGrid(20, 20, 1);
 }

@@ -87,6 +87,7 @@ public:
     inline Line(lineType_t lineType, float length = 0.5f, float width = 3) :
         _lineType(lineType)
     {
+        this->setDataVariance(osg::Object::DYNAMIC);
         switch (lineType) {
             case LINE_ENDING_WITH_ARROW: _verts = new osg::Vec3Array(5); break;
             case LINE_WITH_ARROWS: _verts = new osg::Vec3Array(8); break;

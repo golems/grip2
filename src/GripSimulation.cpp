@@ -56,9 +56,9 @@
 
 // QT includes
 #include <QThread>
-
+double frameTime =0;
 GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripTimeslice>* timeline,
-                               QList<GripTab*>* pluginList, MainWindow* parent, bool debug)
+                               QList<GripTab*>* pluginList, ViewerWidget* viewer, MainWindow* parent, bool debug)
     : QObject(),
       _world(world),
       _timeline(timeline),
@@ -66,7 +66,8 @@ GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripT
       _debug(debug),
       _thread(new QThread),
       _simulating(false),
-      _simulateOneFrame(false)
+      _simulateOneFrame(false),
+      _viewer(viewer)
 {
     // Signals and slots for the worker object and thread
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
@@ -126,6 +127,8 @@ void GripSimulation::startSimulation()
             addWorldToTimeline(*_world);
         }
 
+        frameTime = _prevTime;
+
         simulateTimeStep();
     } else {
         emit signalSendMessage(tr("Not simulating b/c there's no world"));
@@ -133,8 +136,8 @@ void GripSimulation::startSimulation()
                   << __LINE__ << " of " << __FILE__
                   << std::endl;
     }
-
 }
+
 void GripSimulation::simulateTimeStep()
 {
     if (_simulating) {
@@ -159,6 +162,12 @@ void GripSimulation::simulateTimeStep()
         _simTimeRelToRealTimeInstantaneous = _world->getTimeStep() / timeStepDuration;
         _prevTime = curTime;
         emit signalRelTimeChanged(_simTimeRelToRealTimeInstantaneous);
+
+        // Render the scene serially
+        if (grip::getTime() - frameTime > 0.015) {
+            _viewer->frame();
+            frameTime = grip::getTime();
+        }
 
 //        std::cerr << "Sim2 | Real | RelInst | RelOverall: "
 //                  << _world->getTime() << " | "

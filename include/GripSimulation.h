@@ -61,6 +61,7 @@
 #include "MainWindow.h"
 #include "GripTab.h"
 #include "GripTimeslice.h"
+#include "ViewerWidget.h"
 
 class GripMainWindow;
 
@@ -84,7 +85,7 @@ public:
      * \param debug Flag for whether or not to output debug statements
      */
     GripSimulation(dart::simulation::World* world, std::vector<GripTimeslice>* timeline,
-                   QList<GripTab*>* pluginLinst, MainWindow *parent=0, bool debug=false);
+                   QList<GripTab*>* pluginLinst, ViewerWidget* viewer, MainWindow *parent=0, bool debug=false);
 
     /**
      * \brief Destroys the GripSimulation object
@@ -165,6 +166,7 @@ protected:
 
     /// World object received from creator that we need to simulate
     dart::simulation::World* _world;
+    ViewerWidget* _viewer;
 
     /// Array of GripTimeSlice objects for simulation/kinematic playback
     std::vector<GripTimeslice>* _timeline;

@@ -78,7 +78,7 @@ public:
     /**
      * \brief Constructor for ViewerWidget class
      */
-    ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::AutomaticSelection);
+    ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::SingleThreaded);
 
     /**
      * \brief Add a osgQt::GraphicsWindowQt widget to the ViewerWidget
@@ -148,6 +148,8 @@ public:
      */
     void addNodeToScene(osg::Node *node, uint viewNum=0);
 
+    void removeNodeFromScene(osg::Node* node, uint viewNum=0);
+
     /**
      * \brief Sets background color of the view number "viewNum" with the
      * "color". If an invalid view number is provided an error message is printed
@@ -188,12 +190,22 @@ public:
      * \return void
      */
     virtual void paintEvent( QPaintEvent* event )
-    { frame(); }
+    {
+        if (autoRender) {
+            frame();
+        }
+    }
+
+    void setAutoRender(bool enable)
+    {
+        autoRender = enable;
+    }
 
 protected:
 
     // Timer for update the interface
     QTimer _timer;
+    bool autoRender;
 
     /**
      * \brief Determines if the input view number is valid,
