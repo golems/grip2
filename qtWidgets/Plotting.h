@@ -54,23 +54,44 @@
 #include <vector>
 #include <string>
 #include <pthread.h>
+#include <Eigen/Dense>
 
 #define NUM_PLOTTING_POINTS 101
 
+/// Type of markers
+enum PlotMarkerType {
+	marker_point = 0,
+	marker_circle,
+	marker_xmark,
+	marker_plus,
+	marker_star
+};
+
 /// The structure that a plugin uses to represent its data
 struct PluginStream {
+	PluginStream(const std::string& l, double mi, double ma, Eigen::Vector3i* c = NULL, 
+			PlotMarkerType* mark = NULL) : label(l), index(0), minVal(mi), maxVal(ma), color(c), 
+			marker(mark) {
+		for(size_t i = 0; i < NUM_PLOTTING_POINTS; i++) vals.push_back(0.0);
+	}
 	std::vector <double> vals;				///< The circular buffer for that 
 	size_t index;											///< Points to the latestdata point
 	std::string label;								///< Label for the graph
+	Eigen::Vector3i* color;
+	PlotMarkerType* marker;
 	double maxVal, minVal;						///< The range for the plot
-	PluginStream(const std::string& l, double mi, double ma) 
-			: label(l), index(0), minVal(mi), maxVal(ma) {
-		for(size_t i = 0; i < NUM_PLOTTING_POINTS; i++) vals.push_back(0.0);
-	}
 };
 
-extern pthread_mutex_t plottingMutex;
-extern std::map <void*, PluginStream*> pluginStreams;		///< The map from plots to streams
+/// Represents a drawing plugin
+struct Plotter {
+	Plotter () {};
+	pthread_mutex_t plottingMutex;							///< To regulate the data access
+	std::vector <PluginStream*> streams;	///< The map from plots to streams
+	virtual void update () = 0;
+};
+
+/// Sets of plotters available to the pluggins
+extern std::vector <Plotter*> plotters;		
 
 #endif // PLOTTING_H 
 

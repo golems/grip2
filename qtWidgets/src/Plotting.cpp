@@ -51,6 +51,5 @@
 
 #include "Plotting.h"
 
-pthread_mutex_t plottingMutex = PTHREAD_MUTEX_INITIALIZER;
-std::map <void*, PluginStream*> pluginStreams;		
+std::vector <Plotter*> plotters;		
 
