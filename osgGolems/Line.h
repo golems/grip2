@@ -156,6 +156,11 @@ public:
                 (*_verts)[7].set(0,-arrowWidth, 0);
                 break;
             }
+            case LINE:
+            case NUM_LINE_TYPES:
+            default: {
+                break;
+            }
         }
 
         // Move vertices to VertexBuffer
@@ -216,6 +221,9 @@ protected:
                         new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES, 0);
                 startArrow->push_back(5); startArrow->push_back(6); startArrow->push_back(7);
                 this->addPrimitiveSet(startArrow);
+                break;
+            }
+            default: {
                 break;
             }
         }

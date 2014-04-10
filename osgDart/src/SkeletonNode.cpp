@@ -68,8 +68,8 @@ using namespace osgDart;
 
 SkeletonNode::SkeletonNode(const dart::dynamics::Skeleton &skeleton, bool debug) :
     _rootBodyNode(*skeleton.getRootBodyNode()),
-    _debug(debug),
-    _skeletonVisuals(new osgDart::SkeletonVisuals)
+    _skeletonVisuals(new osgDart::SkeletonVisuals),
+    _debug(debug)
 {
     this->setName(_rootBodyNode.getSkeleton()->getName());
     _createSkeleton();
