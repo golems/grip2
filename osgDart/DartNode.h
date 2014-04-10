@@ -95,9 +95,14 @@ public:
     //---------------------------------------------------------------
 
     /**
-     * \brief Constructor for DartNode
+     * \brief Constructs a DartNode
      */
     DartNode(bool debug=false);
+
+    /**
+     * \brief Destructs the DartNode
+     */
+    ~DartNode();
 
     /**
      * \brief Creates arrows for contact forces in the world during simulation

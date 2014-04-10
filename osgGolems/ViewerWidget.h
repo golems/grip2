@@ -77,6 +77,7 @@ class ViewerWidget : public QWidget, public osgViewer::CompositeViewer
 public:
     /**
      * \brief Constructor for ViewerWidget class
+     * \param threadingModel Threading model used for the viewer
      */
     ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::SingleThreaded);
 
@@ -133,7 +134,7 @@ public:
     void setToSideView();
 
     /**
-     * \brief Sets the matrix of the specified camera
+     * \brief Sets the matrix of the specified view's camera manipulator
      * \param newMatrix osg::Matrix reference to set the camera to
      * \param viewNum The view of which to set the camera matrix
      * \return void
@@ -141,14 +142,27 @@ public:
     void setCameraMatrix(osg::Matrix& newMatrix, uint viewNum=0);
 
     /**
+     * \brief Gets the matrix of the specified view's camera manipulator
+     * \param viewNum The view of which to get the camera matrix
+     * \return void
+     */
+    osg::Matrix getCameraMatrix(uint viewNum=0);
+
+    /**
      * \brief Adds an osg node to the scene in the view specified by the user
      * \param node osg::Node pointer to add to the scene
-     * \param viewNum View of which to add the node to
+     * \param viewNum View to which to add the node
      * \return void
      */
     void addNodeToScene(osg::Node *node, uint viewNum=0);
 
-    void removeNodeFromScene(osg::Node* node, uint viewNum=0);
+    /**
+     * \brief Removes an osg node from the scene in the view specified by the user
+     * \param node osg::Node pointer to remove from the scene
+     * \param viewNum View from which to remove the node
+     * \return void
+     */
+    void removeNodeFromScene(osg::Node *node, uint viewNum=0);
 
     /**
      * \brief Sets background color of the view number "viewNum" with the
@@ -200,6 +214,12 @@ public:
     {
         autoRender = enable;
     }
+
+    /**
+     * \brief takes a screenshot of the view widget
+     * \return void
+     */
+    QImage takeScreenshot();
 
 protected:
 

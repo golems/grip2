@@ -163,7 +163,8 @@ void GripSimulation::simulateTimeStep()
         _prevTime = curTime;
         emit signalRelTimeChanged(_simTimeRelToRealTimeInstantaneous);
 
-        // Render the scene serially
+        // Render the scene serially during simulation every 15ms
+        // Any slower and the user with notice lag
         if (grip::getTime() - frameTime > 0.015) {
             _viewer->frame();
             frameTime = grip::getTime();
@@ -173,7 +174,6 @@ void GripSimulation::simulateTimeStep()
 //                  << _world->getTime() << " | "
 //                  << _simulationDuration << " | "
 //                  << _simTimeRelToRealTimeInstantaneous << " | "
-//                  << _simTimeRelToRealTimeOverall
 //                  << std::endl;
 
         if (_simulateOneFrame) {

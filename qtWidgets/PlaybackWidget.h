@@ -93,6 +93,12 @@ public:
      */
     int getSliderValue();
 
+    /**
+     * \brief returns the playback speed from the spinbox
+     * \return int
+     */
+    int getPlaybackSpeed();
+
     /// UI object which holds all the widgets
     Ui::PlaybackWidget *ui;
 

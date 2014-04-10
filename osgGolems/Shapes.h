@@ -130,6 +130,20 @@ protected:
 class Cylinder : public osg::Geode
 {
 public:
+
+    /**
+     * \brief Default constructor. Constructs a cylinder with radius 0.5m
+     * and height of 0.5m.
+     */
+    inline Cylinder()
+    {
+        _cylinder = new osg::Cylinder;
+        _cylinder->setRadius(0.5);
+        _cylinder->setHeight(0.5);
+        _shapeDrawable = new osg::ShapeDrawable(_cylinder);
+        this->addDrawable(_shapeDrawable);
+    }
+
     /**
      * \brief Creates a cylinder node
      * \param center osg::Vec3 reference specifying the center of the cylinder in meters
@@ -137,7 +151,7 @@ public:
      * \param height The height of the cylinder in meters
      * \param color The color of the cylinder in rgba format in range (0,1)
      */
-    inline Cylinder(const osg::Vec3& center, float radius, float height, const osg::Vec4& color=osg::Vec4(0,0,0,1))
+    inline Cylinder(const osg::Vec3& center, float radius, float height, const osg::Vec4& color=osg::Vec4(0.5,0.5,0.5,1))
     {
         _cylinder = new osg::Cylinder(center, radius, height);
         _shapeDrawable = new osg::ShapeDrawable(_cylinder);

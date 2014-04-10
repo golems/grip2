@@ -108,6 +108,7 @@ public:
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget *viewWidget;
+    ViewerWidget *recordViewWidget;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
     TreeView *treeviewer;
@@ -140,8 +141,8 @@ public:
     /// Simulation thread doing the actually simluation loop
     GripSimulation *simulation;
 
-    /// called when the window gets resized --> Avoid mixing resizing with layout manager. Unless you make a delicate resizing policy, it will mess up your window.
-    //void resizeEvent(QResizeEvent* event);
+    /// stores a list of images to be saved as videos
+    QList<QImage>* recordImageList;
 
 public slots:
     /**
@@ -269,6 +270,16 @@ protected slots:
     void hd1280x720();
 
     /**
+     * \brief Takes a screenshot of the rendering window
+     */
+    void camera();
+
+    /**
+     * \brief Takes a series of screenshots of the rendering window while it is playing back a simulation
+     */
+    void film();
+
+    /**
      * \brief Close current scene
      */
     void close();
@@ -297,6 +308,12 @@ protected:
 
     /// Stores the path to the scene file
     QString* sceneFilePath;
+
+    /// Stores the height width resolution for the recording
+    QSize recordSize;
+
+    /// Pointer to the widget that run the simulation playback for recording
+    QWidget* recordWidget;
 
     /**
      * \brief Create an XML file for the workspace
@@ -396,6 +413,21 @@ protected:
      */
     void setWorldState_Issue122(const Eigen::VectorXd &newState);
 
+    /**
+     * \brief Records playback images
+     * \param QList<QImage>* to list of QImages where the images are stored
+     * \param ViewerWidget* pointer to osg viewer object whose images are stored
+     * \return void
+     */
+    void recordPlayback(QList<QImage>* imageList, ViewerWidget* vWidget);
+
+    /**
+     * \brief saves video
+     * \param QList<QImage>*
+     * \return void
+     */
+    void saveVideo();
+
     /// used to maintain the layout of the widgets that are not QDockWidgets
     QGridLayout *gridLayout;
 
@@ -405,6 +437,7 @@ protected:
     bool _simulationDirty;  ///< Whether or not the timeline has been messed with
     bool _simulating;       ///< Whether or not simulation is happening
     bool _debug;            ///< Whether or not to print debug statements
+    bool _recordVideo;      ///< Whether or not to store viewWidget images>
 };
 
 

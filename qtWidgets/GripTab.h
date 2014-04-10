@@ -99,7 +99,7 @@ public:
      * \param ret Pointer to object returned by the TreeView
      * \param viewer Pointer to composite viewer object where things are rendered
 	 * \param world Pointer to the dart world simulation object
-	 * \param timeline Array of GripTimesclie object for simulation and kinematic playback
+	 * \param timeline Array of GripTimeslice object for simulation and kinematic playback
      */
     virtual void Load(TreeViewReturn *ret,
                       ViewerWidget *viewer,

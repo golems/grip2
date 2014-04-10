@@ -69,6 +69,11 @@ DartNode::DartNode(bool debug)
     this->setUpdateCallback(new DartNodeCallback);
 }
 
+DartNode::~DartNode()
+{
+
+}
+
 void DartNode::update()
 {
     for (size_t i=0; i<_skeletonNodes.size(); ++i) {
@@ -92,17 +97,16 @@ void DartNode::_updateContactForces()
         int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         std::vector<Eigen::Vector3d> contactPoints(numContacts);
         std::vector<Eigen::Vector3d> contactForces(numContacts);
-        std::vector<float> forceVectorLengths(numContacts);
-        std::vector<bool> nodeIsSelected(numContacts);
+        float forceVectorLengths[numContacts];
+        bool nodeIsSelected[numContacts];
         float maxForceVectorLength = 0;
 
-        std::cerr << "NumContacts: " << numContacts << std::endl;
         // Extract contact force from world
         for (size_t i = 0; i < numContacts; ++i) {
             dart::collision::Contact contact = _world->getConstraintHandler()->getCollisionDetector()->getContact(i);
 
             contactPoints[i] = contact.point;
-            contactForces[i] = /*contact.force*/contact.force.normalized() * .1 * log(contact.force.norm());
+            contactForces[i] = contact.force;
             forceVectorLengths[i] = contactForces[i].norm();
             if (forceVectorLengths[i] != forceVectorLengths[i]) {
                 forceVectorLengths[i] = 0;
@@ -118,12 +122,15 @@ void DartNode::_updateContactForces()
 //                    || contact.collisionNode2->getBodyNode() == selectedNode) {
 //                nodeIsSelected[i] = true;
 //            }
+//            if (contact.collisionNode1->getBodyNode()->getName() == "ground"
+//                    && contact.collisionNode2->getBodyNode()->getName() == "link_0") {
+//                std::cerr << "Force[" << i << "]: " << forceVectorLengths[i] /*contactForces[i].transpose()*/ << std::endl;
+//            }
         }
 
-//        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
-//            this->removeChild(_contactForceArrows.at(i));
-//        }
         // Create force arrows to render
+        float maxLength = 0.3;
+        if (numContacts > 1) numContacts = 1;
         for (size_t i = 0; i < numContacts; ++i) {
             if (forceVectorLengths[i] > 0.01) {
                 osg::ref_ptr<ContactForceVisual> contactForceLine;
@@ -131,13 +138,15 @@ void DartNode::_updateContactForces()
                 // current contact force values
                 if (_contactForceArrows.size() > i) {
                     contactForceLine = _contactForceArrows[i];
-                    contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength, contactPoints[i], -contactForces[i]);
+                    contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
                 // Otherwise create a new one and add it to the existing ones
                 } else {
                     contactForceLine = new ContactForceVisual(_debug);
-                    contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength, contactPoints[i], -contactForces[i]);
+                    contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
                     _contactForceArrows.push_back(contactForceLine);
                 }
+                // Show the node and add it to the dart node
+                contactForceLine->setNodeMask(0xffffffff);
                 this->addChild(contactForceLine);
             }
         }
@@ -436,6 +445,8 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
 void DartNode::reset()
 {
     if (this->getNumChildren()) {
+        std::cerr << "# Arrows: " << _contactForceArrows.size() << std::endl;
+        std::cerr << "Removing " << this->getNumChildren() << " nodes" << std::endl;
         this->removeChildren(0, this->getNumChildren());
         _skeletons.clear();
         _skeletonNodes.clear();

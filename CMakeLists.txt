@@ -38,7 +38,7 @@ include(${QT_USE_FILE})
 
 # Find OpenSceneGraph
 find_package(OpenSceneGraph 2.8 REQUIRED
-    COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+    COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgFX)
 include_directories(${OpenSceneGraph_INCLUDE_DIRS})
 add_definitions(${OpenSourceGraph_DEFINITIONS})
 set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
@@ -54,7 +54,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/shar
 find_package(DART REQUIRED)
 include_directories(${DART_INCLUDE_DIRS})
 link_directories(${DART_LIBRARY_DIRS})
-
 
 #-----------------------------------------------
 #      INCLUDES & SUBDIRECTORY LIBRARIRES

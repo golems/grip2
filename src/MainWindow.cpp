@@ -105,8 +105,8 @@ void MainWindow::Toolbar()
     connect(redo, SIGNAL(triggered()), this, SLOT(quickLoad()));
     connect(simulate, SIGNAL(triggered()), this, SLOT(startSimulation()));
     connect(stop, SIGNAL(triggered()), this, SLOT(stopSimulation()));
-//    connect(camera, SIGNAL(triggered()), this, SLOT(camera()));
-//    connect(film, SIGNAL(triggered()), this, SLOT(film()));
+    connect(camera, SIGNAL(triggered()), this, SLOT(camera()));
+    connect(film, SIGNAL(triggered()), this, SLOT(film()));
     connect(front, SIGNAL(triggered()), this, SLOT(front()));
     connect(top, SIGNAL(triggered()), this, SLOT(top()));
     connect(rightSide, SIGNAL(triggered()), this, SLOT(side()));
@@ -318,14 +318,18 @@ void MainWindow::createActions()
 
     //xga1024x768Act
     xga1024x768Act = new QAction(tr("XGA 1024 x 768"), this);
+    xga1024x768Act->setCheckable(true);
+    xga1024x768Act->setChecked(true);
     connect(xga1024x768Act, SIGNAL(triggered()), this, SLOT(xga1024x768()));
 
     //vga640x480Act
     vga640x480Act = new QAction(tr("VGA 640 x 768"), this);
+    vga640x480Act->setCheckable(true);
     connect(vga640x480Act, SIGNAL(triggered()), this, SLOT(vga640x480()));
 
     //hd1280x720Act
     hd1280x720Act = new QAction(tr("HD 1280 x 720"), this);
+    hd1280x720Act->setCheckable(true);
     connect(hd1280x720Act, SIGNAL(triggered()), this, SLOT(hd1280x720()));
 
     //aboutAct
@@ -379,7 +383,7 @@ void MainWindow::createMenus()
 
     //renderMenu
     renderMenu = menuBar()->addMenu(tr("&Render"));
-    //renderMenu->addAction(xga1024x768Act);
+    renderMenu->addAction(xga1024x768Act);
     renderMenu->addAction(vga640x480Act);
     renderMenu->addAction(hd1280x720Act);
 
