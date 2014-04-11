@@ -134,11 +134,11 @@ protected:
     /// osg::MatrixTransform pointer for the TF that hold the center of mass node
     osg::MatrixTransform* _centerOfMassTF;
 
-    /// osg::MatrixTransform pointer for the TF that holds the projected center of mass node
-    osg::MatrixTransform* _projectedCenterOfMassTF;
-
     /// Center of mass node represented by an osgGolems::Sphere pointer
     osgGolems::Sphere* _centerOfMass;
+
+    /// osg::MatrixTransform pointer for the TF that holds the projected center of mass node
+    osg::MatrixTransform* _projectedCenterOfMassTF;
 
     /// Projected center of mass node represent by an osgGolems::Cylinder pointer
     osgGolems::Cylinder* _projectedCenterOfMass;

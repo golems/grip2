@@ -72,7 +72,6 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 2: std::cerr << "ThreadPerContext" << std::endl; break;
         case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
         case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
-        case 5: std::cerr << "ThreadPerCamera" << std::endl; break;
     }
     setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 //    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
@@ -206,6 +205,10 @@ osg::Matrix ViewerWidget::getCameraMatrix(uint viewNum)
 {
     if (viewNumIsValid(viewNum)) {
         return this->getCameraManipulator(viewNum)->getMatrix();
+    } else {
+        osg::Matrix m;
+        m.identity();
+        return m;
     }
 }
 

@@ -97,7 +97,7 @@ void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
     *_activeItem = *val;
 
     emit itemSelected(_activeItem);
-    for (size_t i = 0; i < _tabs->size(); ++i) {
+    for (int i = 0; i < _tabs->size(); ++i) {
         _tabs->at(i)->GRIPEventTreeViewSelectionChanged();
     }
 }
@@ -128,8 +128,7 @@ QTreeWidgetItem* TreeView::_addParent(dart::dynamics::Skeleton* skel, QIcon icon
 
 QTreeWidgetItem* TreeView::_addChildItem(dart::dynamics::BodyNode* node, QTreeWidgetItem* parent, QIcon icon, int skeletonId)
 {
-    if(parent != NULL)
-    {
+    if(parent != NULL) {
         QTreeWidgetItem *childitm = new QTreeWidgetItem();
         childitm->setText(0, QString::fromStdString(node->getName()));
         childitm->setIcon(0,icon);
@@ -145,10 +144,9 @@ QTreeWidgetItem* TreeView::_addChildItem(dart::dynamics::BodyNode* node, QTreeWi
 
         parent->addChild(childitm);
         return childitm;
-    }
-    else
-    {
-        std::cerr << "Parent is NULL" << endl;
+    } else {
+        std::cerr << "Parent is NULL" << std::endl;
+        return NULL;
     }
 }
 
@@ -162,19 +160,20 @@ QTreeWidgetItem* TreeView::_buildTree(dart::dynamics::BodyNode* node, QTreeWidge
     QIcon icon;
 
     // Prismatic Joint: 1 DOF
-    if(dart::dynamics::PrismaticJoint* joint = dynamic_cast<dart::dynamics::PrismaticJoint*>(node->getParentJoint()))
+    dart::dynamics::Joint::JointType jointType = node->getParentJoint()->getJointType();
+    if (dart::dynamics::Joint::PRISMATIC == jointType)
         icon = QIcon(prismIcon);
 
     // Revolute Joint: 1 DOF
-    else if(dart::dynamics::RevoluteJoint* joint = dynamic_cast<dart::dynamics::RevoluteJoint*>(node->getParentJoint()))
+    else if (dart::dynamics::Joint::REVOLUTE == jointType)
         icon = QIcon(revolIcon);
 
     // Floating Joint: 6 DOF
-    else if(dart::dynamics::FreeJoint* joint = dynamic_cast<dart::dynamics::FreeJoint*>(node->getParentJoint()))
+    else if (dart::dynamics::Joint::FREE == jointType)
         icon = QIcon(freeIcon);
 
     //Fixed Joint: 0 DOF
-    else if(dart::dynamics::WeldJoint* joint = dynamic_cast<dart::dynamics::WeldJoint*>(node->getParentJoint()))
+    else if (dart::dynamics::Joint::WELD == jointType)
         icon = QIcon(fixedIcon);
 
     else
