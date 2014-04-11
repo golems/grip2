@@ -93,7 +93,7 @@ void PlaybackWidget::slotSetTimeDisplays(double sim_time, double rel_time)
     ui->editSimRelTime->setText(QString("%1").arg(round(rel_time*100)/100)); // decimal point 2
 }
 
-int PlaybackWidget::getPlaybackSpeed()
+size_t PlaybackWidget::getPlaybackSpeed()
 {
     return ui->playSpeed->value();
 }

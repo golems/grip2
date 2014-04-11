@@ -69,20 +69,25 @@ DartNode::DartNode(bool debug)
     this->setUpdateCallback(new DartNodeCallback);
 }
 
-int xx = 0;
 void DartNode::update()
 {
-    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
-        _skeletonNodes[i]->update();
+    SkeletonNodeMap::const_iterator it;
+    for (int i=0; i<_world->getNumSkeletons(); ++i) {
+        it = _skelNodeMap.find(_world->getSkeleton(i));
+        if (it != _skelNodeMap.end()) {
+            _skelNodeMap.at(_world->getSkeleton(i))->update();
+        } else {
+            _skeletons.push_back(_world->getSkeleton(i));
+            osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*_world->getSkeleton(i), _debug);
+            _skeletonNodes.push_back(skelNode);
+            _skelNodeMap.insert(std::make_pair(_world->getSkeleton(i), skelNode));
+            this->addChild(skelNode);
+        }
     }
 
     // Update contact forces
     if (_showContactForces) {
-        ++xx;
-        if (xx == 5) {
-            _updateContactForces();
-            xx = 0;
-        }
+        _updateContactForces();
     }
 }
 
@@ -94,7 +99,7 @@ void DartNode::_updateContactForces()
     // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
     // vector to represent them
     if (_world && _world->getConstraintHandler()) {
-        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         std::vector<Eigen::Vector3d> contactPoints(numContacts);
         std::vector<Eigen::Vector3d> contactForces(numContacts);
         std::vector<float> forceVectorLengths(numContacts);
@@ -164,7 +169,7 @@ void DartNode::setContactForcesVisible(bool makeVisible)
         std::cerr << "[DartNode] " << (makeVisible ? "Showing " : "Hiding ") << "contact forces" << std::endl;
     }
     if (_world && _world->getConstraintHandler()) {
-        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         if(_debug) {
             std::cerr << "Number of contact forces: " << numContacts << std::endl;
         }
@@ -475,7 +480,7 @@ int DartNode::skeletonIndexIsValid(size_t skeletonIndex)
 void DartNode::printInfo()
 {
     std::cout << "DartNode Robots:";
-    for (int i=0; i<_skeletons.size(); ++i) {
+    for (size_t i=0; i<_skeletons.size(); ++i) {
         std::cout << "\n    " << _skeletons[i]->getName()
                   << ": " << _skeletons[i]->getNumBodyNodes() << " BodyNodes";
     }

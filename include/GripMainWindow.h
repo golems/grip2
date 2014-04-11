@@ -132,11 +132,11 @@ public:
     /// the values Return_Type_Robot and Return_Type_Node
     TreeViewReturn *activeItem;
 
-    /// Main OpenSceneGraph node for the main view of the composite viewer
-    osgDart::DartNode *worldNode;
-
     /// The world object that is being rendered and simulated
     dart::simulation::World *world;
+
+    /// Main OpenSceneGraph node for the main view of the composite viewer
+    osgDart::DartNode *worldNode;
 
     /// Simulation thread doing the actually simluation loop
     GripSimulation *simulation;
@@ -431,12 +431,12 @@ protected:
     /// used to maintain the layout of the widgets that are not QDockWidgets
     QGridLayout *gridLayout;
 
-    bool _playingBack;      ///< Whether or not playback is happening
-    int _curPlaybackTick;   ///< Current tick in playback
-    int _playbackSpeed;     ///< Additive value corresponding to playback speed
-    bool _simulationDirty;  ///< Whether or not the timeline has been messed with
-    bool _simulating;       ///< Whether or not simulation is happening
     bool _debug;            ///< Whether or not to print debug statements
+    bool _simulating;       ///< Whether or not simulation is happening
+    bool _playingBack;      ///< Whether or not playback is happening
+    size_t _curPlaybackTick;   ///< Current tick in playback
+    size_t _playbackSpeed;     ///< Additive value corresponding to playback speed
+    bool _simulationDirty;  ///< Whether or not the timeline has been messed with
     bool _recordVideo;      ///< Whether or not to store viewWidget images>
 };
 

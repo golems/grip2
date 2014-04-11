@@ -275,7 +275,7 @@ void SkeletonNode::_updateRecursively(const dart::dynamics::BodyNode& bodyNode)
         _bodyNodeMatrixMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
         _bodyNodeVisualsMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
 
-        for (size_t i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+        for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
             _updateRecursively(*bodyNode.getChildBodyNode(i));
         }
     }
