@@ -109,13 +109,17 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 
     // Load config file passed in by user, if specified
-    if (!configFile.empty())
+    if (!configFile.empty()) {
         this->loadWorkspace(configFile);
+    } else {
+        this->loadWorkspace(configFilePath->toStdString());
+    }
 
     // Load scene passed in by user, if specified
     if (!sceneFile.empty())
         this->doLoad(sceneFile);
     xga1024x768();
+
 }
 
 GripMainWindow::~GripMainWindow() {}
@@ -797,9 +801,9 @@ void GripMainWindow::parseConfig(QDomDocument config)
                 }
             }
 
-            for (int j = 0; j < actionList.count(); j++){
-                if (actionList.at(i)->text().compare(dockWidgetName) == 0)
-                    actionList.at(i)->setChecked(isChecked);
+            for (int j = 0; j < actionList.count(); j++) {
+                if (actionList.at(j)->text().compare(dockWidgetName) == 0)
+                    actionList.at(j)->setChecked(isChecked);
             }
         }
     }
