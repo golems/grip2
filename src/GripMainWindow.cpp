@@ -267,7 +267,7 @@ void GripMainWindow::slotPlaybackStart()
         return;
     }
 
-    if (playbackWidget->getSliderValue() == (timeline->size() - 1)) {
+    if ((playbackWidget->getSliderValue() + 1) == timeline->size()) {
         this->slotPlaybackBeginning();
     }
 
