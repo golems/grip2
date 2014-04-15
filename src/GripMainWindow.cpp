@@ -604,7 +604,19 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
                     std::cerr << "is NULL" << std::endl;
             } else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
-                this->tabifyDockWidget(visualizationTab, pluginWidget);
+                QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+                QDockWidget* bottomWidget;
+                bool bottomWidgetPresent = false;
+                if (dockwidgetList.size())
+                    for (int i = 0; i < dockwidgetList.size(); ++i)
+                        if (this->dockWidgetArea(dockwidgetList.at(i)) == 8) {
+                            bottomWidgetPresent = true;
+                            bottomWidget = dockwidgetList.at(i);
+                            break;
+                        }
+                if (bottomWidgetPresent)
+                    this->tabifyDockWidget(bottomWidget, pluginWidget);
+
                 pluginList->append(gt);
                 std::cerr << "Plugins: " << pluginList->size() << std::endl;
                 pluginPathList->append(new QString(pluginFileName));
@@ -840,6 +852,24 @@ void GripMainWindow::parseConfig(QDomDocument config)
                             case 8: this->addDockWidget(Qt::BottomDockWidgetArea ,dockWidgets.at(i)); break;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /// tabify all those dock widgets that are at the bottom of the window
+    QList<QDockWidget *> widgetList = qFindChildren<QDockWidget *>(this);
+    QDockWidget* bottomWidget;
+    bool bottomWidgetPresent = false;
+    if (widgetList.size()) {
+        for (int i = 0; i < widgetList.size(); ++i) {
+            if (this->dockWidgetArea(widgetList.at(i)) == 8) {
+                if (!bottomWidgetPresent) {
+                    bottomWidgetPresent = true;
+                    bottomWidget = widgetList.at(i);
+                }
+                else {
+                    this->tabifyDockWidget(bottomWidget, widgetList.at(i));
                 }
             }
         }
