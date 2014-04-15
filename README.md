@@ -124,7 +124,7 @@ Coding Guidelines
   Class private and protected member variables and functions should have the prefix (_) (an underscore), like follows, to improve clarity when reading source code.
 
     <pre><code>int _classMember;
-    void _classFunction();</code></pre>
+  void _classFunction();</code></pre>
 
   Case statements should be indented from switch statements with optional braces and case keywords should all line up vertically.
     
@@ -140,7 +140,7 @@ Coding Guidelines
         default: {
             break;
         }
-    }</code></pre>
+  }</code></pre>
 
   3. If you can't find out the correct way to do something, refer to existing source code in the project.
 
