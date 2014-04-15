@@ -102,6 +102,12 @@ public:
     osg::Camera* createCamera(int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
 
     /**
+     */
+    void removeChildrenFromView(uint viewNum=0);
+
+    void removeChildrenFromAllViews();
+
+    /**
      * \brief Gets the view matrix
      * \return osg::Matrixd
      */
@@ -113,7 +119,7 @@ public:
      * \param m New view matrix
      * \return void
      */
-    void setViewMatrix(uint i, osg::Matrixd m);
+    void setViewMatrix(uint viewNum, osg::Matrixd newViewMatrix);
 
     /**
      * \brief Sets the matrix of the camera manipulator to front view

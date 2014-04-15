@@ -90,10 +90,6 @@ class DartNode : public osg::Group
 {
 public:
 
-    //---------------------------------------------------------------
-    //                       PUBLIC FUNCTIONS
-    //---------------------------------------------------------------
-
     /**
      * \brief Constructs a DartNode
      */
@@ -319,10 +315,6 @@ public:
 
 protected:
 
-    //---------------------------------------------------------------
-    //                       PROTECTED FUNCTIONS
-    //---------------------------------------------------------------
-
     /**
      * \brief Helper function to determine if the index the user passed in to
      * specify a skeleton is valid.
@@ -330,11 +322,6 @@ protected:
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
     int skeletonIndexIsValid(size_t skeletonIndex);
-
-
-    //---------------------------------------------------------------
-    //                       PROTECTED VARIABLES
-    //---------------------------------------------------------------
 
     /// Standard vector of pointers to Skeletons
     dart::simulation::World* _world;
@@ -353,6 +340,7 @@ protected:
 
     /// Debug variable for whether or not to print debug output
     const bool _debug;
+
     /// Whether or not to show the contact forces in the visualization
     bool _showContactForces;
 

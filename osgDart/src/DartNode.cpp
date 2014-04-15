@@ -129,8 +129,8 @@ void DartNode::_updateContactForces()
         }
 
         // Create force arrows to render
-        float maxLength = 0.3;
-        if (numContacts > 1) numContacts = 1;
+        float maxLength = 0.3; // Desired max length of force vectors (meters)
+
         for (size_t i = 0; i < numContacts; ++i) {
             if (forceVectorLengths[i] > 0.01) {
                 osg::ref_ptr<ContactForceVisual> contactForceLine;
@@ -139,15 +139,16 @@ void DartNode::_updateContactForces()
                 if (_contactForceArrows.size() > i) {
                     contactForceLine = _contactForceArrows[i];
                     contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
-                // Otherwise create a new one and add it to the existing ones
+                // Otherwise create a new one and add it to the existing ones.
+                // And then add it as child to the DartNode. Only add if we're creating new one
                 } else {
                     contactForceLine = new ContactForceVisual(_debug);
                     contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
                     _contactForceArrows.push_back(contactForceLine);
+                    this->addChild(contactForceLine);
                 }
-                // Show the node and add it to the dart node
+                // Show the node
                 contactForceLine->setNodeMask(0xffffffff);
-                this->addChild(contactForceLine);
             }
         }
 
@@ -180,7 +181,7 @@ void DartNode::setContactForcesVisible(bool makeVisible)
         for(size_t i = 0; i < numContacts && i < _contactForceArrows.size(); ++i) {
             _contactForceArrows[i]->setNodeMask(makeVisible ? 0xffffffff : 0x0);
         }
-        for(size_t i = numContacts-1; i < _contactForceArrows.size(); ++i) {
+        for(size_t i = numContacts; i < _contactForceArrows.size(); ++i) {
             _contactForceArrows[i]->setNodeMask(0x0);
         }
     }
@@ -445,13 +446,39 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
 void DartNode::reset()
 {
     if (this->getNumChildren()) {
-        std::cerr << "# Arrows: " << _contactForceArrows.size() << std::endl;
-        std::cerr << "Removing " << this->getNumChildren() << " nodes" << std::endl;
+        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
+            std::cerr << "Pre Ref count forces: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
+        }
+        for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
+            std::cerr << "Ref count skelnode: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+        }
         this->removeChildren(0, this->getNumChildren());
-        _skeletons.clear();
+        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
+            std::cerr << "Ref count: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
+            _contactForceArrows.at(i)->unref();
+            std::cerr << "Ref count now: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
+        }
+        _contactForceArrows.clear();
+
+        for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
+            std::cerr << "Ref count node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+            _skeletonNodes.at(i)->unref();
+            std::cerr << "Ref count now node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+        }
+
+        if (_skeletonNodes.at(0)) {
+            std::cerr << "Still valid" << std::endl;
+        } else {
+            std::cerr << "NULL  Pointer" << std::endl;
+        }
         _skeletonNodes.clear();
         _skelNodeMap.clear();
-        _contactForceArrows.clear();
+        _skeletons.clear();
+
+        std::cerr << "SkeletonNodes: " << _skeletonNodes.size() << std::endl;
+        std::cerr << "Skeletons: " << _skeletons.size() << std::endl;
+        std::cerr << "SkelMaps: " << _skelNodeMap.size() << std::endl;
+        std::cerr << "Forces: " << _contactForceArrows.size() << std::endl;
     }
     assert(this->getNumChildren() == 0);
 }
@@ -493,7 +520,7 @@ void DartNode::printInfo()
         std::cout << "\n    " << _skeletons[i]->getName()
                   << ": " << _skeletons[i]->getNumBodyNodes() << " BodyNodes";
     }
-    std::cout << std::endl;
+    std::cout << "\n# SkeletonNode: " << _skeletonNodes.size() << std::endl;
 }
 
 

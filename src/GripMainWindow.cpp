@@ -158,6 +158,7 @@ void GripMainWindow::doLoad(std::string sceneFileName)
     for (size_t i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventSceneLoaded();
     }
+    worldNode->printInfo();
 }
 
 void GripMainWindow::close()
@@ -204,6 +205,7 @@ bool GripMainWindow::stopSimulationWithDialog()
 void GripMainWindow::clear()
 {
     if (world) {
+        // Clear OSG nodes (includes DartNode's children, and ViewerWidget's children)
         worldNode->reset();
         while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));

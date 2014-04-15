@@ -140,18 +140,33 @@ osg::Camera* ViewerWidget::createCamera(int x, int y, int w, int h, const std::s
     return camera.release();
 }
 
+void ViewerWidget::removeChildrenFromView(uint viewNum)
+{
+    if (viewNumIsValid(viewNum)) {
+        osg::Group* viewScene = this->getView(viewNum)->getSceneData()->asGroup();
+        viewScene->removeChildren(0, viewScene->getNumChildren());
+    }
+}
+
+void ViewerWidget::removeChildrenFromAllViews()
+{
+    for (size_t i = 0; i < this->getNumViews(); ++i) {
+        this->removeChildrenFromView(i);
+    }
+}
+
 osg::Matrixd ViewerWidget::getViewMatrix()
 {
     osg::Matrixd m = getView(0)->getCameraManipulator()->getMatrix();
     return m;
 }
 
-void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
+void ViewerWidget::setViewMatrix(uint viewNum, osg::Matrixd newViewMatrix)
 {
-    if (viewNumIsValid(i)) {
-        this->getView(i)->getCameraManipulator()->setByMatrix(m);
+    if (viewNumIsValid(viewNum)) {
+        this->getView(viewNum)->getCameraManipulator()->setByMatrix(newViewMatrix);
         osg::ref_ptr<osgGA::OrbitManipulator> c =
-            dynamic_cast<osgGA::OrbitManipulator*>(this->getView(i)->getCameraManipulator());
+            dynamic_cast<osgGA::OrbitManipulator*>(this->getView(viewNum)->getCameraManipulator());
         c->setCenter(osg::Vec3f(0, 0, 0));
     }
 }
