@@ -73,6 +73,8 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
         case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
     }
+    /// regardless of the threadingModel passed, we are using SingleThreaded for now, which does not cause problems yet.
+    /// In some platforms, auto-selected threading model causes some problems
     setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 //    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
