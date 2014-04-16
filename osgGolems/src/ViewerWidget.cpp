@@ -53,6 +53,7 @@
 // OpenSceneGraph includes
 #include <osg/io_utils>
 #include <osg/ShapeDrawable>
+#include <osgGA/StateSetManipulator>
 
 
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
@@ -137,6 +138,33 @@ osg::Camera* ViewerWidget::createCamera(int x, int y, int w, int h, const std::s
     return camera.release();
 }
 
+osgViewer::View* ViewerWidget::addEmbeddedView(uint viewNum, viewPosition_t viewPosition, float width, float height)
+{
+    if (viewNumIsValid(viewNum)) {
+        osgViewer::View* view = new osgViewer::View;
+        osg::GraphicsContext* graphicsContext = this->getView(viewNum)->getCamera()->getGraphicsContext();
+        view->getCamera()->setViewport(0, 0, width, height);
+        view->getCamera()->setGraphicsContext(graphicsContext);
+//        view->setCameraManipulator(new osgGolems::CameraManipulator());
+        view->setSceneData(this->getView(0)->getSceneData());
+
+        // add the state manipulator
+//        osg::ref_ptr<osgGA::StateSetManipulator> statesetManipulator = new osgGA::StateSetManipulator;
+//        statesetManipulator->setStateSet(view->getCamera()->getOrCreateStateSet());
+
+//        view->addEventHandler(statesetManipulator.get());
+
+//        view->addEventHandler(new osgViewer::StatsHandler);
+//        view->addEventHandler(new osgViewer::HelpHandler);
+//        view->addEventHandler(new osgViewer::WindowSizeHandler);
+//        view->addEventHandler(new osgViewer::ThreadingHandler);
+//        view->addEventHandler(new osgViewer::RecordCameraPathHandler);
+
+        return view;
+    }
+    return NULL;
+}
+
 osg::Matrixd ViewerWidget::getViewMatrix()
 {
     osg::Matrixd m = getView(0)->getCameraManipulator()->getMatrix();
@@ -153,42 +181,48 @@ void ViewerWidget::setViewMatrix(uint i, osg::Matrixd m)
     }
 }
 
-void ViewerWidget::setToTopView()
+void ViewerWidget::setToTopView(uint viewNum)
 {
-    osg::Matrixd m;
-    m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
-    m.setTrans(0, 0, 1);
-    this->setCameraMatrix(m);
-    // 0  1  0  0
-    //-1  0  0  0
-    // 0  0  1  0
-    // 0  0  1  1
+    if (viewNumIsValid(viewNum)) {
+        osg::Matrixd m;
+        m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
+        m.setTrans(0, 0, 1);
+        this->setCameraMatrix(m, viewNum);
+        // 0  1  0  0
+        //-1  0  0  0
+        // 0  0  1  0
+        // 0  0  1  1
+    }
 }
 
-void ViewerWidget::setToFrontView()
+void ViewerWidget::setToFrontView(uint viewNum)
 {
-    osg::Matrixd m;
-    m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
-    m.postMultRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
-    m.setTrans(1, 0, 0);
-    this->setCameraMatrix(m);
-    // 0  1  0  0
-    // 0  0  1  0
-    // 1  0  0  0
-    // 1  0  0  1
+    if (viewNumIsValid(viewNum)) {
+        osg::Matrixd m;
+        m.makeRotate(M_PI/2, osg::Vec3(0, 0, 1));
+        m.postMultRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
+        m.setTrans(1, 0, 0);
+        this->setCameraMatrix(m, viewNum);
+        // 0  1  0  0
+        // 0  0  1  0
+        // 1  0  0  0
+        // 1  0  0  1
+    }
 }
 
-void ViewerWidget::setToSideView()
+void ViewerWidget::setToSideView(uint viewNum)
 {
-    osg::Matrixd m;
-    m.makeRotate(M_PI, osg::Vec3(0, 0, 1));
-    m.postMultRotate(osg::Quat(-M_PI/2, osg::Vec3(1, 0, 0)));
-    m.setTrans(0, 1, 0);
-    this->setCameraMatrix(m);
-    //-1  0  0  0
-    // 0  0  1  0
-    // 0  1  0  0
-    // 0  1  0  1
+    if (viewNumIsValid(viewNum)) {
+        osg::Matrixd m;
+        m.makeRotate(M_PI, osg::Vec3(0, 0, 1));
+        m.postMultRotate(osg::Quat(-M_PI/2, osg::Vec3(1, 0, 0)));
+        m.setTrans(0, 1, 0);
+        this->setCameraMatrix(m, viewNum);
+        //-1  0  0  0
+        // 0  0  1  0
+        // 0  1  0  0
+        // 0  1  0  1
+    }
 }
 
 void ViewerWidget::setCameraMatrix(osg::Matrix& newMatrix, uint viewNum)

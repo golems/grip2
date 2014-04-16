@@ -53,6 +53,8 @@
 
 // OpenSceneGraph includes
 #include <osgGA/OrbitManipulator>
+#include <osgGA/GUIEventAdapter>
+#include <osgGA/GUIActionAdapter>
 
 /**
  * \namespace osgGolems
@@ -85,6 +87,7 @@ public:
      * \return void
      */
     void setCenter(osg::Vec3 center);
+    bool handleMouseWheel(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &us);
 
 protected:
 

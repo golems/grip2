@@ -230,6 +230,7 @@ void SkeletonNode::_createSkeleton()
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
     osg::MatrixTransform* root =  new osg::MatrixTransform(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    root->setName(_rootBodyNode.getName() + "_TF");
     root->addChild(_makeBodyNodeGroup(_rootBodyNode));
     root->addChild(_makeBodyNodeCollisionMeshGroup(_rootBodyNode));
     this->addChild(root);
@@ -257,6 +258,7 @@ void SkeletonNode::_addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode
         // Get child BodyNode and add its parent Joint to the grandparent Joint
         dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
         osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getWorldTransform()));
+        childNodeTF->setName(childBodyNode->getName() + "_TF");
         childNodeTF->addChild(_makeBodyNodeGroup(*childBodyNode));
         childNodeTF->addChild(_makeBodyNodeCollisionMeshGroup(*childBodyNode));
         this->addChild(childNodeTF);
@@ -285,6 +287,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dart::dynamics::BodyNode& nod
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap.insert(std::make_pair(&node, new osg::Group));
+    _bodyNodeGroupMap.at(&node)->setName(node.getName() + "_Group");
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addVisualizationShapesFromBodyNode(node);
@@ -307,6 +310,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dart::dynamics::BodyNode& nod
 osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamics::BodyNode &node)
 {
     osgDart::BodyNodeVisuals* visuals = new osgDart::BodyNodeVisuals;
+    visuals->setName(node.getName() + "_Visuals");
 
     visuals->setMatrix(osgGolems::eigToOsgMatrix(node.getWorldTransform()));
     visuals->addBodyNodesAxes();
@@ -333,6 +337,7 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
 osg::Group* SkeletonNode::_makeBodyNodeCollisionMeshGroup(const dart::dynamics::BodyNode &node)
 {
     osg::ref_ptr<osg::Group> collisionGroup = new osg::Group;
+    collisionGroup->setName(node.getName() + "_CollisionShape_Group");
 
     _bodyNodeCollsionMeshGroupMap.insert(std::make_pair(&node, collisionGroup));
 
@@ -355,13 +360,15 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
             case dart::dynamics::Shape::BOX:
             case dart::dynamics::Shape::ELLIPSOID:
             case dart::dynamics::Shape::CYLINDER: {
-                _bodyNodeGroupMap.at(&node)->addChild(convertShapeToOsgNode(
-                                                          node.getVisualizationShape(i)));
+                osg::Node* osgNode = convertShapeToOsgNode(node.getVisualizationShape(i));
+                osgNode->setName(node.getName() + std::string("_VizShape_" + i));
+                _bodyNodeGroupMap.at(&node)->addChild(osgNode);
                 break;
             }
             case dart::dynamics::Shape::MESH: {
-                _bodyNodeGroupMap.at(&node)->addChild(convertMeshToOsgNode(
-                                                          node.getVisualizationShape(i)));
+                osg::Node* osgNode = convertMeshToOsgNode(node.getVisualizationShape(i));
+                osgNode->setName(node.getName() + std::string("_VizShape_" + i));
+                _bodyNodeGroupMap.at(&node)->addChild(osgNode);
                  break;
             }
         }
@@ -385,11 +392,15 @@ void SkeletonNode::_addCollisionShapesFromBodyNode(const dart::dynamics::BodyNod
             case dart::dynamics::Shape::BOX:
             case dart::dynamics::Shape::ELLIPSOID:
             case dart::dynamics::Shape::CYLINDER: {
-                _bodyNodeCollsionMeshGroupMap.at(&node)->addChild(convertShapeToOsgNode(node.getCollisionShape(i)));
+                osg::Node* osgNode = convertShapeToOsgNode(node.getCollisionShape(i));
+                osgNode->setName(node.getName() + std::string("_CollisionShape_" + i));
+                _bodyNodeCollsionMeshGroupMap.at(&node)->addChild(osgNode);
                 break;
             }
             case dart::dynamics::Shape::MESH: {
-                _bodyNodeCollsionMeshGroupMap.at(&node)->addChild(convertMeshToOsgNode(node.getCollisionShape(i)));
+                osg::Node* osgNode = convertMeshToOsgNode(node.getCollisionShape(i));
+                osgNode->setName(node.getName() + std::string("_CollisionShape_" + i));
+                _bodyNodeCollsionMeshGroupMap.at(&node)->addChild(osgNode);
                  break;
             }
         }

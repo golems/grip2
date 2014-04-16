@@ -87,6 +87,7 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
 {
     /// object initialization
     world->setTime(0);
+    worldNode->setName("WorldNode");
     playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
     simulation = new GripSimulation(world, timeline, pluginList, this, debug);
@@ -420,17 +421,42 @@ int GripMainWindow::saveText(std::string scenepath, const QString &filename)
 
 void GripMainWindow::front()
 {
-    viewWidget->setToFrontView();
+    viewWidget->setToFrontView(0);
 }
 
 void GripMainWindow::top()
 {
-    viewWidget->setToTopView();
+    viewWidget->setToTopView(0);
 }
+#include <osgGA/NodeTrackerManipulator>
 
 void GripMainWindow::side()
 {
-    viewWidget->setToSideView();
+    viewWidget->setToSideView(0);
+    osgViewer::View* view2 = viewWidget->addEmbeddedView(0, TOP_LEFT, 500, 500);
+    osgGA::NodeTrackerManipulator* tracker = new osgGA::NodeTrackerManipulator;
+    tracker->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
+    tracker->setRotationMode(osgGA::NodeTrackerManipulator::TRACKBALL);
+    std::cerr << "num childs: " << viewWidget->getView(0)->getSceneData()->asGroup()->getChild(1)->asGroup()->getChild(3)->asGroup()->getNumChildren() << std::endl;
+    osg::Node* n = viewWidget->getView(0)->getSceneData()->asGroup()->getChild(1)->asGroup()->getChild(3)->asGroup()->getChild(0);
+    if (n) {
+        std::cerr << "Tracking node: " << n->getName() << std::endl;
+        tracker->setTrackNode(n);
+        osg::Matrix m;
+        m.set(n->asTransform()->asMatrixTransform()->getMatrix());
+        std::cerr << "Matrix:\n " << n->asTransform()->asMatrixTransform()->getMatrix() << std::endl;
+        osg::Vec3 e, c, u;
+        m.getLookAt(e, c, u);
+        tracker->setByMatrix(m);
+        view2->setCameraManipulator(tracker);
+//        tracker->setByInverseMatrix(m);
+//        view2->getCamera()->setViewMatrixAsLookAt(e,c,u);
+        tracker->setTransformation(e,c,u);
+        tracker->setByMatrix(m);
+        std::cerr << "Tracker Matrix:\n" << view2->getCameraManipulator()->getMatrix() << std::endl;
+    }
+    viewWidget->addView(view2);
+    viewWidget->setBackgroundColor(osg::Vec4(.5,.5,.5,.5), 1);
 }
 
 void GripMainWindow::xga1024x768()

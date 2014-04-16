@@ -66,7 +66,7 @@ MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
     configFilePath = new QString(QDir::homePath() + QString("/default.gripconfig"));
     createActions();
     createMenus();
-    setWindowTitle(tr("Grip"));
+    setWindowTitle(tr("GRIP - Graphical Robot Interface for Planning"));
     resize(860, 700);
 }
 

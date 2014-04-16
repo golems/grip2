@@ -60,3 +60,52 @@ void CameraManipulator::setCenter(osg::Vec3 center)
 {
     osgGA::OrbitManipulator::setCenter(center);
 }
+
+
+bool CameraManipulator::handleMouseWheel(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+{
+    osgGA::GUIEventAdapter::ScrollingMotion scrollMotion = ea.getScrollingMotion();
+
+    // handle centering
+    if (_flags & SET_CENTER_ON_WHEEL_FORWARD_MOVEMENT)
+    {
+
+        if (((scrollMotion == osgGA::GUIEventAdapter::SCROLL_DOWN && _wheelZoomFactor > 0.))
+            || ((scrollMotion == osgGA::GUIEventAdapter::SCROLL_UP && _wheelZoomFactor < 0.)))
+        {
+            if (getAnimationTime() <= 0.) {
+                // center by mouse intersection (no animation)
+                setCenterByMousePointerIntersection(ea, us);
+            } else {
+                // start new animation only if there is no animation in progress
+                if (!isAnimating()) {
+                    startAnimationByMousePointerIntersection(ea, us);
+                }
+            }
+        }
+    }
+
+    switch (scrollMotion)
+    {
+        // mouse scroll up event
+        case osgGA::GUIEventAdapter::SCROLL_DOWN: {
+            // perform zoom
+            zoomModel(_wheelZoomFactor, true);
+            us.requestRedraw();
+            us.requestContinuousUpdate(isAnimating() || _thrown);
+            return true;
+        }
+
+        // mouse scroll down event
+        case osgGA::GUIEventAdapter::SCROLL_UP: {
+            // perform zoom
+            zoomModel(-_wheelZoomFactor, true);
+            us.requestRedraw();
+            us.requestContinuousUpdate(isAnimating() || _thrown);
+            return true;
+        }
+        // unhandled mouse scrolling motion
+        default:
+            return false;
+   }
+}

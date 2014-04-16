@@ -66,6 +66,14 @@
 // Standard Library includes
 #include <iostream>
 
+typedef enum {
+    TOP_LEFT = 0,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
+    NUM_VIEW_POSITIONS
+} viewPosition_t;
+
 /**
  * \class ViewerWidget ViewerWidget.h
  * \brief Class which inherits from QWidget and osgViewer::CompositeViewer.
@@ -100,6 +108,8 @@ public:
      */
     osg::Camera* createCamera(int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
 
+    osgViewer::View* addEmbeddedView(uint viewNum, viewPosition_t viewPosition, float width, float height);
+
     /**
      * \brief Gets the view matrix
      * \return osg::Matrixd
@@ -118,19 +128,19 @@ public:
      * \brief Sets the matrix of the camera manipulator to front view
      * \return void
      */
-    void setToFrontView();
+    void setToFrontView(uint viewNum=0);
 
     /**
      * \brief Sets the matrix of the camera manipulator to top view
      * \return void
      */
-    void setToTopView();
+    void setToTopView(uint viewNum=0);
 
     /**
      * \brief Sets the matrix of the camera manipulator to side view
      * \return void
      */
-    void setToSideView();
+    void setToSideView(uint viewNum=0);
 
     /**
      * \brief Sets the matrix of the specified camera
