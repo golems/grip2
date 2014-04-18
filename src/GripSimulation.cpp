@@ -61,13 +61,13 @@ GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripT
                                QList<GripTab*>* pluginList, ViewerWidget* viewer, MainWindow* parent, bool debug)
     : QObject(),
       _world(world),
+      _viewer(viewer),
       _timeline(timeline),
       _plugins(pluginList),
-      _debug(debug),
       _thread(new QThread),
       _simulating(false),
       _simulateOneFrame(false),
-      _viewer(viewer)
+      _debug(debug)
 {
     // Signals and slots for the worker object and thread
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
@@ -143,7 +143,7 @@ void GripSimulation::simulateTimeStep()
     if (_simulating) {
 
         // Run each tabs doBeforeSimulationTimeStep function
-        for (size_t i=0; i<_plugins->size(); ++i) {
+        for (int i=0; i<_plugins->size(); ++i) {
             _plugins->at(i)->GRIPEventSimulationBeforeTimestep();
         }
 
@@ -152,7 +152,7 @@ void GripSimulation::simulateTimeStep()
         addWorldToTimeline(*_world);
 
         // Run each tabs doBeforeSimulationTimeStep function
-        for (size_t i=0; i<_plugins->size(); ++i) {
+        for (int i=0; i<_plugins->size(); ++i) {
             _plugins->at(i)->GRIPEventSimulationAfterTimestep();
         }
 

@@ -66,6 +66,7 @@ DartNode::DartNode(bool debug)
       _debug(debug),
       _showContactForces(0)
 {
+    this->setName("DartNode");
     this->setUpdateCallback(new DartNodeCallback);
 }
 
@@ -76,8 +77,18 @@ DartNode::~DartNode()
 
 void DartNode::update()
 {
-    for (size_t i=0; i<_skeletonNodes.size(); ++i) {
-        _skeletonNodes[i]->update();
+    SkeletonNodeMap::const_iterator it;
+    for (int i=0; i<_world->getNumSkeletons(); ++i) {
+        it = _skelNodeMap.find(_world->getSkeleton(i));
+        if (it != _skelNodeMap.end()) {
+            _skelNodeMap.at(_world->getSkeleton(i))->update();
+        } else {
+            _skeletons.push_back(_world->getSkeleton(i));
+            osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*_world->getSkeleton(i), _debug);
+            _skeletonNodes.push_back(skelNode);
+            _skelNodeMap.insert(std::make_pair(_world->getSkeleton(i), skelNode));
+            this->addChild(skelNode);
+        }
     }
 
     // Update contact forces
@@ -94,11 +105,11 @@ void DartNode::_updateContactForces()
     // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
     // vector to represent them
     if (_world && _world->getConstraintHandler()) {
-        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         std::vector<Eigen::Vector3d> contactPoints(numContacts);
         std::vector<Eigen::Vector3d> contactForces(numContacts);
         float forceVectorLengths[numContacts];
-        bool nodeIsSelected[numContacts];
+//        bool nodeIsSelected[numContacts];
         float maxForceVectorLength = 0;
 
         // Extract contact force from world
@@ -112,7 +123,7 @@ void DartNode::_updateContactForces()
                 forceVectorLengths[i] = 0;
             }
 
-            // Update max force vector len gth variable if current force vector length is larger than max
+            // Update max force vector length variable if current force vector length is larger than max
             if (forceVectorLengths[i] > maxForceVectorLength) {
                 maxForceVectorLength = forceVectorLengths[i];
             }
@@ -174,7 +185,7 @@ void DartNode::setContactForcesVisible(bool makeVisible)
     // If there's a world and constraint handler, show/hide contact force arrows from 0 to number of contact forces
     // and hide the remaining unused ones
     if (_world && _world->getConstraintHandler()) {
-        int numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
         if(_debug) {
             std::cerr << "Number of contact forces: " << numContacts << std::endl;
         }
@@ -445,41 +456,46 @@ int DartNode::removeSkeleton(size_t skeletonIndex)
 
 void DartNode::reset()
 {
-    if (this->getNumChildren()) {
-        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
-            std::cerr << "Pre Ref count forces: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
-        }
-        for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
-            std::cerr << "Ref count skelnode: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
-        }
-        this->removeChildren(0, this->getNumChildren());
-        for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
-            std::cerr << "Ref count: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
-            _contactForceArrows.at(i)->unref();
-            std::cerr << "Ref count now: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
-        }
-        _contactForceArrows.clear();
-
-        for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
-            std::cerr << "Ref count node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
-            _skeletonNodes.at(i)->unref();
-            std::cerr << "Ref count now node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
-        }
-
-        if (_skeletonNodes.at(0)) {
-            std::cerr << "Still valid" << std::endl;
-        } else {
-            std::cerr << "NULL  Pointer" << std::endl;
-        }
-        _skeletonNodes.clear();
-        _skelNodeMap.clear();
-        _skeletons.clear();
-
-        std::cerr << "SkeletonNodes: " << _skeletonNodes.size() << std::endl;
-        std::cerr << "Skeletons: " << _skeletons.size() << std::endl;
-        std::cerr << "SkelMaps: " << _skelNodeMap.size() << std::endl;
-        std::cerr << "Forces: " << _contactForceArrows.size() << std::endl;
+//    if (this->getNumChildren()) {
+    // Remove all the children from the DartNode
+    this->removeChildren(0, this->getNumChildren());
+    for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
+        std::cerr << "Pre Ref count forces: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
     }
+
+    for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
+        std::cerr << "Ref count skelnode: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+    }
+
+    for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
+        std::cerr << "Ref count: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
+                _contactForceArrows.at(i)->unref();
+        std::cerr << "Ref count now: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
+    }
+
+    for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
+        std::cerr << "Ref count node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+        std::cerr << "Skel Parents: " << _skeletonNodes[i]->getNumParents() << std::endl;
+                _skeletonNodes.at(i)->unref();
+        std::cerr << "Ref count now node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
+    }
+
+    if (_skeletonNodes.at(0)) {
+        std::cerr << "Still valid" << std::endl;
+    } else {
+        std::cerr << "NULL  Pointer" << std::endl;
+    }
+
+    _contactForceArrows.clear();
+    _skeletonNodes.clear();
+    _skelNodeMap.clear();
+    _skeletons.clear();
+
+    std::cerr << "SkeletonNodes: " << _skeletonNodes.size() << std::endl;
+    std::cerr << "Skeletons: " << _skeletons.size() << std::endl;
+    std::cerr << "SkelMaps: " << _skelNodeMap.size() << std::endl;
+    std::cerr << "Forces: " << _contactForceArrows.size() << std::endl;
+//    }
     assert(this->getNumChildren() == 0);
 }
 
@@ -516,7 +532,7 @@ int DartNode::skeletonIndexIsValid(size_t skeletonIndex)
 void DartNode::printInfo()
 {
     std::cout << "DartNode Robots:";
-    for (int i=0; i<_skeletons.size(); ++i) {
+    for (size_t i=0; i<_skeletons.size(); ++i) {
         std::cout << "\n    " << _skeletons[i]->getName()
                   << ": " << _skeletons[i]->getNumBodyNodes() << " BodyNodes";
     }

@@ -158,6 +158,7 @@ int testDartNode()
 
 
     render(dartNode);
+    return 0;
 
 }
 

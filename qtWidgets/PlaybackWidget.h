@@ -97,7 +97,7 @@ public:
      * \brief returns the playback speed from the spinbox
      * \return int
      */
-    int getPlaybackSpeed();
+    size_t getPlaybackSpeed();
 
     /// UI object which holds all the widgets
     Ui::PlaybackWidget *ui;

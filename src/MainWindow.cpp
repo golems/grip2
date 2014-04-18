@@ -63,7 +63,7 @@
 
 MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
 {
-    configFilePath = new QString(QDir::homePath() + "/default.gripconfig");
+    configFilePath = new QString(QDir::homePath() + QString("/default.gripconfig"));
     createActions();
     createMenus();
     setWindowTitle(tr("Grip"));
@@ -186,7 +186,7 @@ void MainWindow::loadScene()
         fileNames = dialog.selectedFiles();
 
     if (!fileNames.isEmpty()) {
-        std::cout<< "Attempting to open the following world file: " << fileNames.front().toStdString() << endl;
+        std::cerr << "Attempting to open the following world file: " << fileNames.front().toStdString() << std::endl;
         doLoad(fileNames.front().toStdString());
     }
 }
@@ -409,11 +409,12 @@ void MainWindow::saveWorkspace()
     }
 }
 
-void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
+void MainWindow::saveConfigFile(QDomDocument *config, QString *filename)
 {
     try {
         QFile file(*filename);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            slotSetStatusBarMessage(QString("Unable to open file \"") + QString(QFileInfo(file).fileName()));
             std::cerr << "Unable to open file." << std::endl;
             return;
         }
@@ -422,8 +423,7 @@ void MainWindow::saveConfigFile(QDomDocument* config, QString* filename)
         out << config->toString() << "\n";
         file.close();
         std::cerr << "Success!" << std::endl;
-        configFilePath = new QString(*filename);
-        std::cerr << configFilePath->toStdString() << std::endl;
+        *configFilePath = *filename;
     }
 
     catch (const std::exception& e) {
@@ -485,6 +485,7 @@ void MainWindow::loadWorkspace(std::string workspaceFile)
         try {
             QFile file(fileNames.front());
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                slotSetStatusBarMessage(QString("Unable to open file \"") + QString(QFileInfo(file).fileName()));
                 std::cerr << "Unable to open file." << std::endl;
                 return;
             }
@@ -494,7 +495,7 @@ void MainWindow::loadWorkspace(std::string workspaceFile)
             int errorLine, errorColumn;
             if(config.setContent(&file, &errorMsg, &errorLine, &errorColumn)) {
                 parseConfig(config);
-                configFilePath = &fileNames.front();
+                *configFilePath = fileNames.front();
             }
         }
         catch(const std::exception& e){

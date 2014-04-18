@@ -153,11 +153,11 @@ protected:
     /// The osg::MatrixTransform pointer holding the joint axis node
     osg::MatrixTransform* _jointAxisTF;
 
-    /// The osg::MatrixTransform pointer holding the link frame node
-    osg::MatrixTransform* _bodyNodeAxesTF;
-
     /// The osgGolems::Line pointer representing the joint axis
     osgGolems::Line* _jointAxis;
+
+    /// The osg::MatrixTransform pointer holding the link frame node
+    osg::MatrixTransform* _bodyNodeAxesTF;
 
     /// The osgGolems::Axes pointer representing the link frame
     osgGolems::Axes* _bodyNodeAxes;

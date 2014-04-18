@@ -164,7 +164,7 @@ protected:
      * \brief Saves the configuration file to the location passed
      * \return void
      */
-    void saveConfigFile(QDomDocument* config, QString* filename);
+    void saveConfigFile(QDomDocument *config, QString *filename);
 
     /**
      * \brief Creates actions

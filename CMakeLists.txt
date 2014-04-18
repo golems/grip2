@@ -5,7 +5,7 @@ project(grip2)
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Debug")
-set(BUILD_FLAGS "-std=gnu++0x -Wreturn-type -Wno-enum-compare -Wall -O3")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_ROOT}/Modules)

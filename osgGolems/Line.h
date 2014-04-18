@@ -126,10 +126,11 @@ public:
      */
     inline void setLength(float length)
     {
-        // Arrow vertices layout
+        /* Arrow vertices layout
         //   / 5      2 \
         // 6---0------1---3
         //   \ 7      4 /
+        */
 
         // Set line vertices
         (*_verts)[0].set(0,0,0);
@@ -155,6 +156,11 @@ public:
                 (*_verts)[5].set(0,arrowWidth, 0);
                 (*_verts)[6].set(-arrowLength, 0, 0);
                 (*_verts)[7].set(0,-arrowWidth, 0);
+                break;
+            }
+            case LINE:
+            case NUM_LINE_TYPES:
+            default: {
                 break;
             }
         }
@@ -217,6 +223,9 @@ protected:
                         new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES, 0);
                 startArrow->push_back(5); startArrow->push_back(6); startArrow->push_back(7);
                 this->addPrimitiveSet(startArrow);
+                break;
+            }
+            default: {
                 break;
             }
         }

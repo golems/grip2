@@ -55,6 +55,7 @@
 #include "Grid.h"
 #include "Line.h"
 #include "DartNode.h"
+#include <dart/constraint/ConstraintDynamics.h>
 
 // Qt includes
 #include <QtGui>
@@ -73,17 +74,18 @@
 
 GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
     MainWindow(),
-    _debug(debug),
     world(new dart::simulation::World()),
     worldNode(new osgDart::DartNode(debug)),
     viewWidget(new ViewerWidget()),
     pluginList(new QList<GripTab*>),
     pluginMenu(new QMenu),
+    _debug(debug),
     _simulating(false),
     _playingBack(false),
     _curPlaybackTick(0),
     _playbackSpeed(5),
-    _simulationDirty(false)
+    _simulationDirty(false),
+    _recordVideo(false)
 {
     /// object initialization
     world->setTime(0);
@@ -109,13 +111,17 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     connect(this, SIGNAL(destroyed()), simulation, SLOT(deleteLater()));
 
     // Load config file passed in by user, if specified
-    if (!configFile.empty())
+    if (!configFile.empty()) {
         this->loadWorkspace(configFile);
+    } else {
+        this->loadWorkspace(configFilePath->toStdString());
+    }
 
     // Load scene passed in by user, if specified
     if (!sceneFile.empty())
         this->doLoad(sceneFile);
     xga1024x768();
+
 }
 
 GripMainWindow::~GripMainWindow() {}
@@ -155,7 +161,7 @@ void GripMainWindow::doLoad(std::string sceneFileName)
     this->slotSetStatusBarMessage("Successfully loaded scene " + QString::fromStdString(sceneFileName));
 
     // Tell all the tabs that a new scene has been loaded
-    for (size_t i = 0; i < pluginList->size(); ++i) {
+    for (int i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventSceneLoaded();
     }
     worldNode->printInfo();
@@ -204,9 +210,19 @@ bool GripMainWindow::stopSimulationWithDialog()
 
 void GripMainWindow::clear()
 {
+    if (world && world->getConstraintHandler()) {
+        size_t numContacts = world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        std::cerr << "NumContacts: " << numContacts << std::endl;
+    }
+
     if (world) {
         // Clear OSG nodes (includes DartNode's children, and ViewerWidget's children)
-        worldNode->reset();
+        worldNode->reset();;
+        std::cerr << "Removin " << world->getNumSkeletons() << " skels" << std::endl;
+
+        for (int i=0; i<world->getNumSkeletons(); ++i){
+            std::cerr << "\t" << world->getSkeleton(i)->getName() << ": " << i << std::endl;
+        }
         while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));
         }
@@ -216,10 +232,21 @@ void GripMainWindow::clear()
         playbackWidget->reset();
         timeline->clear();
         sceneFilePath = NULL;
-        for (size_t i = 0; i < pluginList->size(); ++i) {
+        for (int i = 0; i < pluginList->size(); ++i) {
             pluginList->at(i)->Refresh();
         }
     }
+    int num = viewWidget->getView(0)->getSceneData()->asGroup()->getNumChildren();
+    std::cerr << "OSG # Nodes: " << num << std::endl;
+    for(int i=0; i<num; ++i) {
+        std::cerr << "Node " << i << ": " << viewWidget->getView(0)->getSceneData()->asGroup()->getChild(i)->getName() << std::endl;
+        std::cerr << "Node Parents: " << viewWidget->getView(0)->getSceneData()->asGroup()->getChild(i)->getNumParents() << std::endl;
+    }
+    if (world && world->getConstraintHandler()) {
+        size_t numContacts = world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+        std::cerr << "NumContacts: " << numContacts << std::endl;
+    }
+
 }
 
 void GripMainWindow::simulationStopped()
@@ -238,8 +265,6 @@ void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
         playbackWidget->setSliderValue(0);
         return;
     }
-
-    assert(sliderTick < timeline->size() && sliderTick >= 0);
 
     _curPlaybackTick = sliderTick;
     world->setTime(timeline->at(_curPlaybackTick).getTime());
@@ -268,7 +293,7 @@ void GripMainWindow::slotPlaybackStart()
         return;
     }
 
-    if (playbackWidget->getSliderValue() == (timeline->size() - 1)) {
+    if ((playbackWidget->getSliderValue() + 1) == (int) timeline->size()) {
         this->slotPlaybackBeginning();
     }
 
@@ -281,7 +306,7 @@ void GripMainWindow::slotPlaybackStart()
     _curPlaybackTick = playbackWidget->getSliderValue();
     _simulationDirty = true;
 
-    for (size_t i = 0; i < pluginList->size(); ++i) {
+    for (int i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
     }
 
@@ -299,7 +324,7 @@ void GripMainWindow::slotPlaybackPause()
 
     _playingBack = false;
 
-    for (size_t i = 0; i < pluginList->size(); ++i) {
+    for (int i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStop();
     }
 }
@@ -326,7 +351,7 @@ void GripMainWindow::slotPlaybackReverse()
 
     _curPlaybackTick = playbackWidget->getSliderValue();
 
-    for (size_t i = 0; i < pluginList->size(); ++i) {
+    for (int i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventPlaybackStart();
     }
 
@@ -359,7 +384,7 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
             _playbackSpeed = 5 * playbackWidget->getPlaybackSpeed();
 
         // Call user tab functions before time step
-        for (size_t i = 0; i < pluginList->size(); ++i) {
+        for (int i = 0; i < pluginList->size(); ++i) {
             pluginList->at(i)->GRIPEventPlaybackBeforeFrame();
         }
 
@@ -386,7 +411,7 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         }
 
         // Call user tab functions after time step
-        for (size_t i = 0; i < pluginList->size(); ++i) {
+        for (int i = 0; i < pluginList->size(); ++i) {
             pluginList->at(i)->GRIPEventPlaybackAfterFrame();
         }
 
@@ -649,7 +674,6 @@ dart::dynamics::Skeleton* GripMainWindow::createGround()
     joint->setName("groundJoint");
     joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
     joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-    Eigen::Isometry3d m = Eigen::Isometry3d::Identity();
     node->setParentJoint(joint);
 
     ground->addBodyNode(node);
@@ -802,9 +826,9 @@ void GripMainWindow::parseConfig(QDomDocument config)
                 }
             }
 
-            for (int j = 0; j < actionList.count(); j++){
-                if (actionList.at(i)->text().compare(dockWidgetName) == 0)
-                    actionList.at(i)->setChecked(isChecked);
+            for (int j = 0; j < actionList.count(); j++) {
+                if (actionList.at(j)->text().compare(dockWidgetName) == 0)
+                    actionList.at(j)->setChecked(isChecked);
             }
         }
     }
@@ -852,7 +876,6 @@ void GripMainWindow::parseConfig(QDomDocument config)
 
 void GripMainWindow::camera()
 {
-    QSize curSize = viewWidget->size();
     QImage screenshot = viewWidget->takeScreenshot();
 
     QStringList fileNames; //stores the entire path of the file that it attempts to open

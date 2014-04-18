@@ -57,7 +57,9 @@
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
     osg::Geode* gridGeode = new osg::Geode();
+    gridGeode->setName("Grid Geode");
     osgGolems::Grid* grid = new osgGolems::Grid(width, depth, gridSize, osg::Vec4(1, 1, 1, 1));
+    grid->setName("Grid Geometry");
     gridGeode->addDrawable(grid);
     addNodeToScene(gridGeode);
 }
@@ -71,7 +73,6 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 2: std::cerr << "ThreadPerContext" << std::endl; break;
         case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
         case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
-        case 5: std::cerr << "ThreadPerCamera" << std::endl; break;
     }
 
     this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
@@ -79,6 +80,7 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     // Create scene data
 //    osg::Node* sceneData = getSceneData();
     osg::Group* sceneData = new osg::Group;
+    sceneData->setName("sceneDataRootGroup");
 
     // Create view widget with camera and scene data
     QWidget* widget1 = addViewWidget(createCamera(0,0,100,100), sceneData);
@@ -223,6 +225,10 @@ osg::Matrix ViewerWidget::getCameraMatrix(uint viewNum)
 {
     if (viewNumIsValid(viewNum)) {
         return this->getCameraManipulator(viewNum)->getMatrix();
+    } else {
+        osg::Matrix m;
+        m.identity();
+        return m;
     }
 }
 
