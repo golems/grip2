@@ -67,7 +67,8 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 {
    float dx = 0.03f * _distance;
    float dy = 0.03f * _distance;
-   float zoomScale = 0.1;
+   float drotate = 0.01f;
+   float zoomScale = 0.05;
 
    switch(ea.getEventType())
    {
@@ -86,7 +87,6 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 
          case (osgGA::GUIEventAdapter::KEY_Minus):
             //std::cout << "'-' key pressed: zoom out" << std::endl;
-            // zoom model
             zoomModel( zoomScale, true );
             //zoomModel( dy * getThrowScale( eventTimeDelta ), true );
              return true;
@@ -94,34 +94,55 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 
          case (osgGA::GUIEventAdapter::KEY_Right):
             //std::cout << "'->' key pressed: pan right" << std::endl;
-            // pan model
-            //float scale = -0.3f * _distance * getThrowScale( eventTimeDelta );
-            panModel(-dx,0.0);
-
-            return true;
-            break;
-
-         case (osgGA::GUIEventAdapter::KEY_Left):
-            //std::cout << "'<-' key pressed: pan right" << std::endl;
-            // pan model
             //float scale = -0.3f * _distance * getThrowScale( eventTimeDelta );
             panModel(dx,0.0);
 
             return true;
             break;
 
+         case (osgGA::GUIEventAdapter::KEY_Left):
+            //std::cout << "'<-' key pressed: pan right" << std::endl;
+            panModel(-dx,0.0);
+
+            return true;
+            break;
+
          case (osgGA::GUIEventAdapter::KEY_Up):
             //std::cout << "'Up' key pressed: pan up" << std::endl;
-            // pan model
-            panModel(0.0,-dy);
+            panModel(0.0,dy);
 
             return true;
             break;
 
          case (osgGA::GUIEventAdapter::KEY_Down):
             //std::cout << "'Down' key pressed: pan up" << std::endl;
-            // pan model
-            panModel(0.0,dy);
+            panModel(0.0,-dy);
+
+            return true;
+            break;
+
+         case osgGA::GUIEventAdapter::KEY_H:
+            //std::cout << "'H' key pressed. Rotate to left." << std::endl;
+            rotateWithFixedVertical( drotate, 0.0 );
+            return true;
+            break;
+
+         case osgGA::GUIEventAdapter::KEY_L:
+            //std::cout << "'L' key pressed. Rotate to right." << std::endl;
+            rotateWithFixedVertical( -drotate, 0.0 );
+            return true;
+            break;
+
+         case osgGA::GUIEventAdapter::KEY_J:
+            //std::cout << "'J' key pressed. Rotate up." << std::endl;
+            rotateWithFixedVertical( 0.0, -drotate );
+            return true;
+            break;
+
+         case osgGA::GUIEventAdapter::KEY_K:
+            //std::cout << "'K' key pressed. Rotate down." << std::endl;
+            // rotate camera
+            rotateWithFixedVertical( 0.0, drotate );
 
             return true;
             break;
