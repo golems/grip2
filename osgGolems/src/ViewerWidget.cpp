@@ -47,7 +47,7 @@
 #include "osgUtils.h"
 #include "Axes.h"
 #include "CameraCallback.h"
-#include "CameraManipulator.h"
+#include "GRIPCameraManipulator.h"
 #include "Grid.h"
 
 // OpenSceneGraph includes
@@ -104,8 +104,11 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     view->addEventHandler(new osgViewer::StatsHandler);
 
-    osgGolems::CameraManipulator* cameraManipulator = new osgGolems::CameraManipulator();
+    osgGolems::GRIPCameraManipulator* cameraManipulator = new osgGolems::GRIPCameraManipulator();
     view->setCameraManipulator(cameraManipulator);
+
+    // osgGolems::myKeyboardEventHandler* keyboardHandler = new osgGolems::myKeyboardEventHandler();
+    // view->getEventHandlers().push_front(keyboardHandler);
 
     osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());
     return gw ? gw->getGLWidget() : NULL;

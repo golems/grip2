@@ -48,8 +48,8 @@
  * It sets up desired behavior for robot simulator.
  */
 
-#ifndef CAMERA_MANIPULATOR_H
-#define CAMERA_MANIPULATOR_H
+#ifndef GRIP_CAMERA_MANIPULATOR_H
+#define GRIP_CAMERA_MANIPULATOR_H
 
 // OpenSceneGraph includes
 #include <osgGA/OrbitManipulator>
@@ -65,19 +65,19 @@ namespace osgGolems {
  * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
  * It sets up desired behavior for robot simulator.
  */
-class CameraManipulator : public osgGA::OrbitManipulator
+class GRIPCameraManipulator : public osgGA::OrbitManipulator
 {
 public:
 
     /**
-     * \brief Constructor for CameraManipulator class
+     * \brief Constructor for GRIPCameraManipulator class
      */
-    CameraManipulator();
+    GRIPCameraManipulator();
 
     /**
-     * \brief Destructor for CameraManipulator class
+     * \brief Destructor for GRIPCameraManipulator class
      */
-    ~CameraManipulator();
+    ~GRIPCameraManipulator();
 
     /**
      * \brief Set the camera manipulator's center of rotation
@@ -88,8 +88,19 @@ public:
 
 protected:
 
+    bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+
+
+
 }; // end class CameraManipulator
+
+//class myKeyboardEventHandler : public osgGA::GUIEventHandler
+//{
+//public:
+//   virtual bool handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter&);
+//   virtual void accept(osgGA::GUIEventHandlerVisitor& v)   { v.visit(*this); };
+//};
 
 } // end namespace osgGolems
 
-#endif // CAMERA_MANIPULATOR_H
+#endif // GRIP_CAMERA_MANIPULATOR_H
