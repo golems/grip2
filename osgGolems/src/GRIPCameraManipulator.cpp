@@ -48,7 +48,6 @@
 using namespace osgGolems;
 
 GRIPCameraManipulator::GRIPCameraManipulator()
-: _keyStrokeCount(0)
 {
     this->setAllowThrow(false);
 }
@@ -77,7 +76,7 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
          switch(ea.getKey())
          {
          case (osgGA::GUIEventAdapter::KEY_Equals):
-            std::cout << "'+' key pressed: zoom in" << std::endl;
+            //std::cout << "'+' key pressed: zoom in" << std::endl;
             // zoom model
             zoomModel( -zoomScale, true );
             //zoomModel( dy * getThrowScale( eventTimeDelta ), true );
@@ -114,7 +113,7 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
          case (osgGA::GUIEventAdapter::KEY_Up):
             //std::cout << "'Up' key pressed: pan up" << std::endl;
             // pan model
-            panModel(0.0,dy);
+            panModel(0.0,-dy);
 
             return true;
             break;
@@ -122,7 +121,7 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
          case (osgGA::GUIEventAdapter::KEY_Down):
             //std::cout << "'Down' key pressed: pan up" << std::endl;
             // pan model
-            panModel(0.0,-dy);
+            panModel(0.0,dy);
 
             return true;
             break;
@@ -133,6 +132,7 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
             home(ea,as);
              std::cerr << "Space key pressed" << std::endl;
             return true;
+            break;
 
          default:
             return false;
@@ -145,25 +145,3 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 
    return false;
 }
-
-//bool myKeyboardEventHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter& aa)
-// {
-//   switch(ea.getEventType())
-//   {
-//   case(osgGA::GUIEventAdapter::KEYDOWN):
-//      {
-//         switch(ea.getKey())
-//         {
-//         case 'w':
-//            std::cout << " w key pressed" << std::endl;
-
-//            return false;
-//            break;
-//         default:
-//            return false;
-//         }
-//      }
-//   default:
-//      return false;
-//   }
-//}
