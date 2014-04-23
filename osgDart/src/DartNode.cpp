@@ -149,12 +149,14 @@ void DartNode::_updateContactForces()
                 // current contact force values
                 if (_contactForceArrows.size() > i) {
                     contactForceLine = _contactForceArrows[i];
-                    contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
+                    contactForceLine->update(forceVectorLengths[i] / maxForceVectorLength * maxLength,
+											 contactPoints[i], -contactForces[i]);
                 // Otherwise create a new one and add it to the existing ones.
                 // And then add it as child to the DartNode. Only add if we're creating new one
                 } else {
                     contactForceLine = new ContactForceVisual(_debug);
-                    contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength * maxLength, contactPoints[i], -contactForces[i]);
+                    contactForceLine->createForceVector(forceVectorLengths[i] / maxForceVectorLength * maxLength,
+														contactPoints[i], -contactForces[i]);
                     _contactForceArrows.push_back(contactForceLine);
                     this->addChild(contactForceLine);
                 }
@@ -285,7 +287,8 @@ dart::dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
     dart::utils::DartLoader loader;
     dart::dynamics::Skeleton* skeleton = loader.parseSkeleton(urdfFile);
     if (!skeleton && _debug) {
-        std::cerr << "[DartNode] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "[DartNode] Error parsing robot urdf " << urdfFile
+				  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         if (_debug) {
@@ -301,7 +304,8 @@ dart::simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
     dart::utils::SdfParser loader;
     dart::simulation::World* world = loader.readSdfFile(sdfFile);
     if (!world && _debug) {
-        std::cerr << "[[DartNode] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "[[DartNode] Error parsing world sdf " << sdfFile
+				  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         if (_debug) {
@@ -317,7 +321,8 @@ dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
     dart::utils::DartLoader loader;
     dart::simulation::World* world = loader.parseWorld(urdfFile);
     if (!world && _debug) {
-        std::cerr << "[DartNode] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
+        std::cerr << "[DartNode] Error parsing world urdf " << urdfFile
+				  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
         if (_debug) {
@@ -469,14 +474,14 @@ void DartNode::reset()
 
     for (size_t i = 0; i < _contactForceArrows.size(); ++i) {
         std::cerr << "Ref count: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
-                _contactForceArrows.at(i)->unref();
+		//                _contactForceArrows.at(i)->unref();
         std::cerr << "Ref count now: " << _contactForceArrows.at(i)->referenceCount() << std::endl;
     }
 
     for (size_t i = 0; i < _skeletonNodes.size(); ++i) {
         std::cerr << "Ref count node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
         std::cerr << "Skel Parents: " << _skeletonNodes[i]->getNumParents() << std::endl;
-                _skeletonNodes.at(i)->unref();
+        //        _skeletonNodes.at(i)->unref();
         std::cerr << "Ref count now node: " << _skeletonNodes.at(i)->referenceCount() << std::endl;
     }
 

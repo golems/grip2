@@ -218,18 +218,24 @@ void GripMainWindow::clear()
     if (world) {
         // Clear OSG nodes (includes DartNode's children, and ViewerWidget's children)
         worldNode->reset();;
-        std::cerr << "Removin " << world->getNumSkeletons() << " skels" << std::endl;
 
         for (int i=0; i<world->getNumSkeletons(); ++i){
             std::cerr << "\t" << world->getSkeleton(i)->getName() << ": " << i << std::endl;
         }
+
+		// Remove all the skeletons from the DART simulation world and reset the time and contact forces
         while (world->getNumSkeletons()) {
             world->removeSkeleton(world->getSkeleton(0));
         }
         world->setTime(0);
+		world->getConstraintHandler()->getCollisionDetector()->clearAllContacts();
+
+		// Reset the GRIP widgets
         treeviewer->reset();
         simulation->reset();
         playbackWidget->reset();
+
+		// Clear the simulation/playback timeline, scene path and plugins
         timeline->clear();
         sceneFilePath = NULL;
         for (int i = 0; i < pluginList->size(); ++i) {
