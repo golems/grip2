@@ -2,8 +2,8 @@
  * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
- * Author: Pete Vieira <pete.vieira@gatech.edu>
- * Date: Feb 2014
+ * Author: Can Erdogan <cerdogan3@gatech.edu>
+ * Date: Apr 2014
  *
  * Humanoid Robotics Lab      Georgia Institute of Technology
  * Director: Mike Stilman     http://www.golems.org
@@ -43,53 +43,13 @@
  */
 
 /**
- * \file CameraManipulator.h
- * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
- * It sets up desired behavior for robot simulator.
+ * \file Plotting.cpp
+ * \brief Fields to share information among plugins and the plotting plugin
+ * Used to define the extern variables. The plugins cannot define these variables
+ * because we don't know which plugin would be used and when.
  */
 
-#ifndef CAMERA_MANIPULATOR_H
-#define CAMERA_MANIPULATOR_H
+#include "Plotting.h"
 
-// OpenSceneGraph includes
-#include <osgGA/OrbitManipulator>
+std::vector <Plotter*> plotters;		
 
-/**
- * \namespace osgGolems
- * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
- */
-namespace osgGolems {
-
-/**
- * \class CameraManipulator CameraManipulator.h
- * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
- * It sets up desired behavior for robot simulator.
- */
-class CameraManipulator : public osgGA::OrbitManipulator
-{
-public:
-
-    /**
-     * \brief Constructor for CameraManipulator class
-     */
-    CameraManipulator();
-
-    /**
-     * \brief Destructor for CameraManipulator class
-     */
-    ~CameraManipulator();
-
-    /**
-     * \brief Set the camera manipulator's center of rotation
-     * \param center osg::Vec3 specifying x,y,z coordinates of center of rotation
-     * \return void
-     */
-    void setCenter(osg::Vec3 center);
-
-protected:
-
-}; // end class CameraManipulator
-
-} // end namespace osgGolems
-
-#endif // CAMERA_MANIPULATOR_H

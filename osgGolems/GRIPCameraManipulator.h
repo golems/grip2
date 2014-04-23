@@ -42,21 +42,65 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CameraManipulator.h"
+/**
+ * \file CameraManipulator.h
+ * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
+ * It sets up desired behavior for robot simulator.
+ */
 
-using namespace osgGolems;
+#ifndef GRIP_CAMERA_MANIPULATOR_H
+#define GRIP_CAMERA_MANIPULATOR_H
 
-CameraManipulator::CameraManipulator()
+// OpenSceneGraph includes
+#include <osgGA/OrbitManipulator>
+
+/**
+ * \namespace osgGolems
+ * \brief Namespace for all the classes that are only dependent upon OpenSceneGraph
+ */
+namespace osgGolems {
+
+/**
+ * \class CameraManipulator CameraManipulator.h
+ * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
+ * It sets up desired behavior for robot simulator.
+ */
+class GRIPCameraManipulator : public osgGA::OrbitManipulator
 {
-    this->setAllowThrow(false);
-}
+public:
 
-CameraManipulator::~CameraManipulator()
-{
+    /**
+     * \brief Constructor for GRIPCameraManipulator class
+     */
+    GRIPCameraManipulator();
 
-}
+    /**
+     * \brief Destructor for GRIPCameraManipulator class
+     */
+    ~GRIPCameraManipulator();
 
-void CameraManipulator::setCenter(osg::Vec3 center)
-{
-    osgGA::OrbitManipulator::setCenter(center);
-}
+    /**
+     * \brief Set the camera manipulator's center of rotation
+     * \param center osg::Vec3 specifying x,y,z coordinates of center of rotation
+     * \return void
+     */
+    void setCenter(osg::Vec3 center);
+
+protected:
+
+    bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+
+
+
+}; // end class CameraManipulator
+
+//class myKeyboardEventHandler : public osgGA::GUIEventHandler
+//{
+//public:
+//   virtual bool handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter&);
+//   virtual void accept(osgGA::GUIEventHandlerVisitor& v)   { v.visit(*this); };
+//};
+
+} // end namespace osgGolems
+
+#endif // GRIP_CAMERA_MANIPULATOR_H

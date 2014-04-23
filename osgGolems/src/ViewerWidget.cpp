@@ -47,7 +47,7 @@
 #include "osgUtils.h"
 #include "Axes.h"
 #include "CameraCallback.h"
-#include "CameraManipulator.h"
+#include "GRIPCameraManipulator.h"
 #include "Grid.h"
 
 // OpenSceneGraph includes
@@ -74,7 +74,9 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
         case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
         case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
     }
-
+    /// regardless of the threadingModel passed, we are using SingleThreaded for now, which does not cause problems yet.
+    /// In some platforms, auto-selected threading model causes some problems
+    setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
     this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
     // Create scene data
@@ -107,8 +109,11 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     view->addEventHandler(new osgViewer::StatsHandler);
 
-    osgGolems::CameraManipulator* cameraManipulator = new osgGolems::CameraManipulator();
+    osgGolems::GRIPCameraManipulator* cameraManipulator = new osgGolems::GRIPCameraManipulator();
     view->setCameraManipulator(cameraManipulator);
+
+//    osgGolems::myKeyboardEventHandler* keyboardHandler = new osgGolems::myKeyboardEventHandler();
+//    view->getEventHandlers().push_front(keyboardHandler);
 
     osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>(camera->getGraphicsContext());
     return gw ? gw->getGLWidget() : NULL;
@@ -240,6 +245,7 @@ void ViewerWidget::addNodeToScene(osg::Node* node, uint viewNum)
     }
 
     osg::Group* scene = this->getView(viewNum)->getSceneData()->asGroup();
+
     if (scene != scene) {
         std::cerr << "Error! Can not convert from osg::Node to osg::Group."
                   << std::endl;
