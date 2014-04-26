@@ -88,18 +88,35 @@ public:
 
 protected:
 
-    bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+    /**
+     * \brief keyboard and mouse event handler
+     */
+    virtual bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+    /**
+     * \brief keyboard and mouse event handler
+     */
+    virtual bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+    /**
+     * \brief keyboard and mouse event handler
+     */
+    virtual bool handleMouseMove( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+    /**
+     * \brief a boolean member variable to trace whether a keyboard is pressed
+     */
+    bool _keyPressed; //true = pressed, false = released
+    /**
+     * \brief a member variable to trace the pressed key
+     */
+    int _pressedKey;
 
+    float _currentX;
+    float _previousX;
+    float _currentY;
+    float _previousY;
 
+    bool _keyboardMouseBinding; // true - when keyboard and mouse are used for camera control
 
 }; // end class CameraManipulator
-
-//class myKeyboardEventHandler : public osgGA::GUIEventHandler
-//{
-//public:
-//   virtual bool handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter&);
-//   virtual void accept(osgGA::GUIEventHandlerVisitor& v)   { v.visit(*this); };
-//};
 
 } // end namespace osgGolems
 
