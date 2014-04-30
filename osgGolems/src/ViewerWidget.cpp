@@ -58,25 +58,26 @@
 void ViewerWidget::addGrid(uint width, uint depth, uint gridSize)
 {
     osg::Geode* gridGeode = new osg::Geode();
-    osgGolems::Grid* grid = new osgGolems::Grid(width, depth, gridSize, osg::Vec4(1, 1, 1, 1));
+    osgGolems::Grid* grid = new osgGolems::Grid(width, depth, gridSize, osg::Vec4(.3, .3, .3, .5));
     gridGeode->addDrawable(grid);
+    gridGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF
+                                                   | osg::StateAttribute::PROTECTED);
     addNodeToScene(gridGeode);
 }
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget()
 {
-    std::cerr << "Threading model: " << threadingModel << " -- ";
-    switch(threadingModel) {
-        case 0: std::cerr << "SingleThreaded" << std::endl; break;
-        case 1: std::cerr << "CullDrawThreadPerContext" << std::endl; break;
-        case 2: std::cerr << "ThreadPerContext" << std::endl; break;
-        case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
-        case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
-    }
+//    switch(threadingModel) {
+//        case 0: std::cerr << "SingleThreaded" << std::endl; break;
+//        case 1: std::cerr << "CullDrawThreadPerContext" << std::endl; break;
+//        case 2: std::cerr << "ThreadPerContext" << std::endl; break;
+//        case 3: std::cerr << "DrawThreadPerContext" << std::endl; break;
+//        case 4: std::cerr << "CullThreadPerCameraDrawThreadPerContext" << std::endl; break;
+//    }
     /// regardless of the threadingModel passed, we are using SingleThreaded for now, which does not cause problems yet.
     /// In some platforms, auto-selected threading model causes some problems
     setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
-//    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
+    this->setRunFrameScheme(osgViewer::CompositeViewer::ON_DEMAND);
 
     // Create scene data
 //    osg::Node* sceneData = getSceneData();

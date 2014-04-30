@@ -32,7 +32,7 @@ add_custom_target(uninstall
 #                FIND PACKAGES
 #-----------------------------------------------
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui Qt3Support QtXml REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL Qt3Support QtXml REQUIRED)
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
@@ -80,7 +80,7 @@ set(project_libs qtWidgets osgGolems osgDart)
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
 add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES})
+target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} rt)
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
