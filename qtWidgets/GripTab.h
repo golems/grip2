@@ -55,6 +55,7 @@
 #include "TreeViewReturn.h"
 #include "../osgGolems/ViewerWidget.h"
 #include "../include/GripTimeslice.h"
+#include "../include/GripObjects.h"
 
 // DART includes
 #include <dart/simulation/World.h>
@@ -87,6 +88,8 @@ protected:
     /// timeline->push_back(GripTimeslice(*world));
     std::vector<GripTimeslice> *_timeline;
 
+    GripObjects *_grip;
+
 public:
     /**
      * \brief called from the main window whenever a new scene is loaded
@@ -101,15 +104,13 @@ public:
 	 * \param world Pointer to the dart world simulation object
 	 * \param timeline Array of GripTimeslice object for simulation and kinematic playback
      */
-    virtual void Load(TreeViewReturn *ret,
-                      ViewerWidget *viewer,
-                      dart::simulation::World *world,
-                      std::vector<GripTimeslice> *timeline)
+    virtual void Load(GripObjects *grip)
     {
-        _activeNode = ret;
-        _viewWidget = viewer;
-        _world = world;
-        _timeline = timeline;
+        _grip = grip;
+        _activeNode = grip->getTreeViewReturn();
+        _viewWidget = grip->getViewerWidget();
+        _world = grip->getWorld();
+        _timeline = grip->getTimeline();
     }
 
     /**
