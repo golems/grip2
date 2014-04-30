@@ -533,7 +533,7 @@ void GripMainWindow::startSimulation()
 
         playbackWidget->ui->sliderMain->setDisabled(true);
 
-        viewWidget->setAutoRender(false);
+//        viewWidget->setAutoRender(false);
         _simulating = true;
         simulation->startSimulation();
         // FIXME: Maybe use qsignalmapping or std::map for this
