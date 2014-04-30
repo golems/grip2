@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8.3)
 #-----------------------------------------------
 # Find Eigen3
 find_package(Eigen REQUIRED)
+include_directories(${Eigen_INCLUDE_DIR})
 
 # Find DART
 if(DART_NOT_FOUND)
