@@ -69,17 +69,17 @@ enum PlotMarkerType {
 
 /// The structure that a plugin uses to represent its data
 struct PluginStream {
-	PluginStream(const std::string& l, double mi, double ma, Eigen::Vector3i* c = NULL, 
-			PlotMarkerType* mark = NULL) : label(l), index(0), minVal(mi), maxVal(ma), color(c), 
-			marker(mark) {
+    PluginStream(const std::string& l, double mi, double ma, Eigen::Vector3i* c = NULL, PlotMarkerType* mark = NULL)
+        : label(l), index(0), minVal(mi), maxVal(ma), color(c), marker(mark)
+    {
 		for(size_t i = 0; i < NUM_PLOTTING_POINTS; i++) vals.push_back(0.0);
 	}
 	std::vector <double> vals;				///< The circular buffer for that 
-	size_t index;											///< Points to the latestdata point
-	std::string label;								///< Label for the graph
-	Eigen::Vector3i* color;
-	PlotMarkerType* marker;
-	double maxVal, minVal;						///< The range for the plot
+    std::string label;						///< Label for the graph
+    size_t index;							///< Points to the latestdata point
+    double minVal, maxVal;					///< The range for the plot
+    Eigen::Vector3i* color;                 ///< Color of the marker
+    PlotMarkerType* marker;                 ///< Marker type
 };
 
 /// Represents a drawing plugin

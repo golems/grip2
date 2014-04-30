@@ -62,5 +62,4 @@ int main( int argc, char** argv )
 //    viewWidget->getView(0)->getCameraManipulator()->getInverseMatrix();
     viewWidget->show();
     return app.exec();
-    osgViewer::Viewer* v = new osgViewer::Viewer();
 }

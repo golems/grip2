@@ -20,7 +20,9 @@ QT4_WRAP_UI(UI ${UI_FILES})
 
 # Wrap .moc files, but remove files with no implementation
 FILE(GLOB MOC_FILES ./*.h)
-LIST(REMOVE_ITEM MOC_FILES "${CMAKE_CURRENT_LIST_DIR}/./GripTab.h" "${CMAKE_CURRENT_LIST_DIR}/./TreeViewReturn.h")
+LIST(REMOVE_ITEM MOC_FILES "${CMAKE_CURRENT_LIST_DIR}/./GripTab.h"
+                           "${CMAKE_CURRENT_LIST_DIR}/./TreeViewReturn.h"
+                           "${CMAKE_CURRENT_LIST_DIR}/./Plotting.h")
 QT4_WRAP_CPP(MOC ${MOC_FILES})
 
 # Add .qrc files
