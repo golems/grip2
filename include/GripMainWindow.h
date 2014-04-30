@@ -71,6 +71,7 @@
 #include "GripSimulation.h"
 #include "GripTab.h"
 #include "GripTimeslice.h"
+#include "GripObjects.h"
 
 // Qt includes
 #include <QDir>
@@ -81,7 +82,7 @@
  * \brief Class that subclasses MainWindow in order to create the whole
  * Grip interface.
  */
-class GripMainWindow : public MainWindow
+class GripMainWindow : public MainWindow, public GripObjects
 {
 public:
     /**
@@ -106,10 +107,10 @@ public:
      */
     dart::dynamics::Skeleton *createGround();
 
-    /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
-    ViewerWidget *viewWidget;
+//    GripObjects *grip;
 
-    /// OpenSceneGraph Qt composite viewer widget for recording the playback in a separate window
+    /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
+//    ViewerWidget *viewWidget;
     ViewerWidget *recordViewWidget;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
@@ -122,7 +123,7 @@ public:
     VisualizationTab *visualizationTab;
 
     /// Array of GripTimeSlice objects stored for simulation/kinematic playback
-    std::vector<GripTimeslice> *timeline;
+//    std::vector<GripTimeslice> *timeline;
     
     /// Widget for playing back the simulation or kinematic states in the timeline
     PlaybackWidget *playbackWidget;
@@ -132,10 +133,10 @@ public:
     /// void* object can store a dart Skeleton object or BodyNode object
     /// DataType is an enumaration defined in tree_view.h which can take
     /// the values Return_Type_Robot and Return_Type_Node
-    TreeViewReturn *activeItem;
+//    TreeViewReturn *activeItem;
 
     /// The world object that is being rendered and simulated
-    dart::simulation::World *world;
+//    dart::simulation::World *world;
 
     /// Main OpenSceneGraph node for the main view of the composite viewer
     osgDart::DartNode *worldNode;
