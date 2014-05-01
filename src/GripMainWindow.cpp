@@ -146,7 +146,7 @@ GripMainWindow::~GripMainWindow()
     delete visualizationTab;
     delete playbackWidget;
     delete timeline;
-    delete worldNode;
+//    delete worldNode;
 }
 
 void GripMainWindow::doLoad(std::string sceneFileName)
