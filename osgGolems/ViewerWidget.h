@@ -79,7 +79,7 @@ public:
      * \brief Constructor for ViewerWidget class
      */
     ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::CompositeViewer::AutomaticSelection);
-
+    virtual ~ViewerWidget();
     /**
      * \brief Add a osgQt::GraphicsWindowQt widget to the ViewerWidget
      * \param camera An osg::Camera pointer
@@ -197,7 +197,9 @@ public:
      * \return void
      */
     virtual void paintEvent( QPaintEvent* event )
-    { frame(); }
+    {
+        frame();
+    }
 
     /**
      * \brief takes a screenshot of the view widget

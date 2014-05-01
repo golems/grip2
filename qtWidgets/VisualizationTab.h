@@ -76,7 +76,7 @@ public:
     /**
      * \brief Destructs a Visualization_Tab object
      */
-    ~VisualizationTab();
+    virtual ~VisualizationTab();
 
     /**
      * \brief Updates the world based on the current visualization settings.

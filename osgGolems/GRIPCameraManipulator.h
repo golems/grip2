@@ -77,7 +77,7 @@ public:
     /**
      * \brief Destructor for GRIPCameraManipulator class
      */
-    ~GRIPCameraManipulator();
+    virtual ~GRIPCameraManipulator();
 
     /**
      * \brief Set the camera manipulator's center of rotation

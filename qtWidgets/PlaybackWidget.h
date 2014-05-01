@@ -73,7 +73,7 @@ public:
     /**
      * \brief Destructs this PlaybackWidget object
      */
-    ~PlaybackWidget();
+    virtual ~PlaybackWidget();
 
     /**
      * \brief Resets the widgets

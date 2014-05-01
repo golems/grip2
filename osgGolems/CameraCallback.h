@@ -68,9 +68,9 @@ class CameraData : public osg::Referenced
 {
 public:
     /// TF of the camera
-    osg::MatrixTransform* tf;
+    osg::ref_ptr<osg::MatrixTransform> tf;
     /// View that the camera belongs to
-    osgViewer::View* view;
+    osg::ref_ptr<osgViewer::View> view;
 };
 
 /**

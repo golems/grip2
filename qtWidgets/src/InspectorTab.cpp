@@ -250,6 +250,7 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
 
 InspectorTab::~InspectorTab()
 {
+    delete _ui;
 }
 
 /**

@@ -76,7 +76,7 @@ public:
     /**
      * \brief Destructs a BodyNodeVisuals object
      */
-    ~BodyNodeVisuals();
+    virtual ~BodyNodeVisuals();
 
     /**
      * \brief Adds a joint axis node to the class
@@ -151,22 +151,22 @@ protected:
     void _setGeodeModes(osg::Geode* geode);
 
     /// The osg::MatrixTransform pointer holding the joint axis node
-    osg::MatrixTransform* _jointAxisTF;
+    osg::ref_ptr<osg::MatrixTransform> _jointAxisTF;
 
     /// The osgGolems::Line pointer representing the joint axis
-    osgGolems::Line* _jointAxis;
+    osg::ref_ptr<osgGolems::Line> _jointAxis;
 
     /// The osg::MatrixTransform pointer holding the link frame node
-    osg::MatrixTransform* _bodyNodeAxesTF;
+    osg::ref_ptr<osg::MatrixTransform> _bodyNodeAxesTF;
 
     /// The osgGolems::Axes pointer representing the link frame
-    osgGolems::Axes* _bodyNodeAxes;
+    osg::ref_ptr<osgGolems::Axes> _bodyNodeAxes;
 
     /// The osg::LineWidth pointer holding the line width parameter of the 2D objects in the class
-    osg::LineWidth* _lineWidth;
+    osg::ref_ptr<osg::LineWidth> _lineWidth;
 
     /// The osg::CullFace pointer holding the cull setting of the class
-    osg::CullFace* _cullFace;
+    osg::ref_ptr<osg::CullFace> _cullFace;
 };
 
 } // end namespace osgDart

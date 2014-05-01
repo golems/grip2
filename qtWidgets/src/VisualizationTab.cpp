@@ -83,6 +83,7 @@ VisualizationTab::VisualizationTab(osgDart::DartNode *worldNode, TreeView* treeV
 
 VisualizationTab::~VisualizationTab()
 {
+    delete _ui;
 }
 
 void VisualizationTab::update()

@@ -63,6 +63,7 @@ PlaybackWidget::PlaybackWidget (MainWindow *parent)
 
 PlaybackWidget::~PlaybackWidget()
 {
+    delete ui;
 }
 
 void PlaybackWidget::reset()

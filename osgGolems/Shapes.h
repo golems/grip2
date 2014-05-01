@@ -115,10 +115,10 @@ public:
 protected:
 
     /// osg::Sphere object so that we can change the dimensions of the sphere
-    osg::Sphere* _sphere;
+    osg::ref_ptr<osg::Sphere> _sphere;
 
     /// osg::ShapeDrawable object so that we can change the color of the sphere
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
 
 }; // end class Sphere
 
@@ -178,10 +178,10 @@ public:
 protected:
 
     /// osg::Cylinder object so that we can change its dimensions
-    osg::Cylinder* _cylinder;
+    osg::ref_ptr<osg::Cylinder> _cylinder;
 
     /// osg::ShapeDrawable object so that we can change its color
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
 
 }; // end class Cylinder
 
@@ -232,10 +232,10 @@ public:
 protected:
 
     /// osg::Box object so that we can change the dimensions of the box
-    osg::Box* _box;
+    osg::ref_ptr<osg::Box> _box;
 
     /// osg::ShapeDrawable so that we can change the color of the box
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
 
 }; // end class Box
 
@@ -293,10 +293,10 @@ public:
 protected:
 
     /// osg::Cone object so that we can change the dimensions of the cone
-    osg::Cone* _cone;
+    osg::ref_ptr<osg::Cone> _cone;
 
     /// osg::ShapeDrawable object so that we can change the color of the cone
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
 
 }; // end class Cone
 
@@ -354,10 +354,10 @@ public:
 
 protected:
     /// osg::Capsule object so the we can change the dimensions of the capsule
-    osg::Capsule* _capsule;
+    osg::ref_ptr<osg::Capsule> _capsule;
 
     /// osg::ShapeDrawable so that we can change the color of the capsule
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::ShapeDrawable> _shapeDrawable;
 
 }; // end class Capsule
 

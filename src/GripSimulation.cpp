@@ -63,11 +63,12 @@ GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripT
       _world(world),
       _timeline(timeline),
       _plugins(pluginList),
-      _thread(new QThread),
+//      _thread(new QThread),
       _simulating(false),
       _simulateOneFrame(false),
       _debug(debug)
 {
+    _thread = new QThread;
     // Signals and slots for the worker object and thread
     connect(this, SIGNAL(destroyed()), _thread, SLOT(quit()));
     connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
@@ -89,7 +90,9 @@ GripSimulation::GripSimulation(dart::simulation::World* world, std::vector<GripT
 
 GripSimulation::~GripSimulation()
 {
-    _thread->deleteLater();
+    _thread->quit();
+    _thread->wait();
+    delete _thread;
 }
 
 void GripSimulation::reset()

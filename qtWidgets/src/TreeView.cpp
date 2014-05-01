@@ -89,6 +89,7 @@ TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent),
 TreeView::~TreeView()
 {
     delete _ui;
+    delete _activeItem;
 }
 
 void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
@@ -120,6 +121,7 @@ QTreeWidgetItem* TreeView::_addParent(dart::dynamics::Skeleton* skel, QIcon icon
 
     QVariant var;
     var.setValue(ret);
+    delete ret;
     itm->setData(0, Qt::UserRole, var);
 
     _ui_treeWidget->addTopLevelItem(itm);
@@ -140,6 +142,7 @@ QTreeWidgetItem* TreeView::_addChildItem(dart::dynamics::BodyNode* node, QTreeWi
 
         QVariant var;
         var.setValue(ret);
+        delete ret;
         childitm->setData(0, Qt::UserRole, var);
 
         parent->addChild(childitm);

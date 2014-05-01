@@ -72,6 +72,33 @@ MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
 
 MainWindow::~MainWindow()
 {
+    delete configFilePath;
+    delete fileMenu;
+    delete loadSceneAct;
+    delete quickLoadAct;
+    delete saveSceneAct;
+    delete loadPluginFileAct;
+    delete loadPluginDirAct;
+    delete saveWorkspaceConfigurationAct;
+    delete saveNewWorkspaceConfigurationAct;
+    delete loadWorkspaceConfigurationAct;
+    delete closeSceneAct;
+    delete exitAct;
+    delete frontAct;
+    delete topAct;
+    delete sideAct;
+    delete startSimulationAct;
+    delete stopSimulationAct;
+    delete simulateSingleStepAct;
+    delete renderDuringSimulationAct;
+    delete whiteAct;
+    delete grayAct;
+    delete blackAct;
+    delete resetCameraAct;
+    delete xga1024x768Act;
+    delete vga640x480Act;
+    delete hd1280x720Act;
+    delete aboutAct;
 }
 
 void MainWindow::Toolbar()

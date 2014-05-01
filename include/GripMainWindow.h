@@ -98,7 +98,7 @@ public:
     /**
      * \brief Destructs a GripMainWindow object
      */
-    ~GripMainWindow();
+    virtual ~GripMainWindow();
 
     /**
      * \brief Convenience function for creating a ground skeleton
@@ -291,30 +291,6 @@ protected slots:
     void simulationStopped();
 
 protected:
-    /** Protected Members */
-    /// Any plugin that is loaded successfully into the Grip will get stored in this QList
-    /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
-    /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
-    /// you first need to perform a qobject_cast. An example for the same is
-    /// GripTab* gt = qobject_cast<GripTab*>(plugin);
-    /// Once a pointer of type GripTab is created you can then call the function directly.
-    QList<GripTab*> *pluginList;
-
-    /// Plugin menu pointer for showing/hiding plugins
-	QMenu *pluginMenu;
-
-    /// Stores the path to all the plugins that are loaded
-    QList<QString*>* pluginPathList;
-
-    /// Stores the path to the scene file
-    QString* sceneFilePath;
-
-    /// Stores the height width resolution for the recording
-    QSize recordSize;
-
-    /// Pointer to the widget that run the simulation playback for recording
-    QWidget* recordWidget;
-
     /**
      * \brief Create an XML file for the workspace
      * contains the list of plugins, status of DockWidgets and the loaded scene
@@ -438,6 +414,29 @@ protected:
     size_t _playbackSpeed;     ///< Additive value corresponding to playback speed
     bool _simulationDirty;  ///< Whether or not the timeline has been messed with
     bool _recordVideo;      ///< Whether or not to store viewWidget images>
+    /** Protected Members */
+    /// Any plugin that is loaded successfully into the Grip will get stored in this QList
+    /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
+    /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
+    /// you first need to perform a qobject_cast. An example for the same is
+    /// GripTab* gt = qobject_cast<GripTab*>(plugin);
+    /// Once a pointer of type GripTab is created you can then call the function directly.
+    QList<GripTab*> *pluginList;
+
+    /// Plugin menu pointer for showing/hiding plugins
+    QMenu *pluginMenu;
+
+    /// Stores the path to all the plugins that are loaded
+    QList<QString*>* pluginPathList;
+
+    /// Stores the path to the scene file
+    QString* sceneFilePath;
+
+    /// Stores the height width resolution for the recording
+    QSize recordSize;
+
+    /// Pointer to the widget that run the simulation playback for recording
+    QWidget* recordWidget;
 };
 
 

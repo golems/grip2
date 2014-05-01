@@ -82,7 +82,7 @@ public:
     /**
      * \brief Destructs a SkeletonVisuals object
      */
-    ~SkeletonVisuals();
+    virtual ~SkeletonVisuals();
 
     /**
      * \brief Adds a center of mass sphere to the class
@@ -132,19 +132,19 @@ protected:
     void _setGeodeModes(osg::Geode* geode);
 
     /// osg::MatrixTransform pointer for the TF that hold the center of mass node
-    osg::MatrixTransform* _centerOfMassTF;
+    osg::ref_ptr<osg::MatrixTransform> _centerOfMassTF;
 
     /// Center of mass node represented by an osgGolems::Sphere pointer
-    osgGolems::Sphere* _centerOfMass;
+    osg::ref_ptr<osgGolems::Sphere> _centerOfMass;
 
     /// osg::MatrixTransform pointer for the TF that holds the projected center of mass node
-    osg::MatrixTransform* _projectedCenterOfMassTF;
+    osg::ref_ptr<osg::MatrixTransform> _projectedCenterOfMassTF;
 
     /// Projected center of mass node represent by an osgGolems::Cylinder pointer
-    osgGolems::Cylinder* _projectedCenterOfMass;
+    osg::ref_ptr<osgGolems::Cylinder> _projectedCenterOfMass;
 
     /// Culling pointer to tell OpenSceneGraph how to render the geodes
-    osg::CullFace* _cullFace;
+    osg::ref_ptr<osg::CullFace> _cullFace;
 
 }; // end class SkeletonVisuals.h
 

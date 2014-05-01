@@ -161,13 +161,13 @@ protected:
     }
     
     /// Array of vertices defining the endpoints of the axes
-    osg::Vec3Array* _verts;
+    osg::ref_ptr<osg::Vec3Array> _verts;
 
     /// Array of colors defining the color the axes
-    osg::Vec4Array* _colors;
+    osg::ref_ptr<osg::Vec4Array> _colors;
 
     /// Line width pointer
-    osg::LineWidth* _lineWidth;
+    osg::ref_ptr<osg::LineWidth> _lineWidth;
     
 }; // end class Axes
 

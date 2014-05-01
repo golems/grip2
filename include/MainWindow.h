@@ -85,7 +85,7 @@ public:
     /**
      * \brief Destructs a MainWindow object
      */
-    ~MainWindow();
+    virtual ~MainWindow();
 
     /**
      * \brief Creates a toolbar

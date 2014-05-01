@@ -235,13 +235,13 @@ protected:
     }
 
     /// Array of vertices
-    osg::Vec3Array* _verts;
+    osg::ref_ptr<osg::Vec3Array> _verts;
 
     /// Array of colors. Only holds one color
-    osg::Vec4Array* _color;
+    osg::ref_ptr<osg::Vec4Array> _color;
 
     /// Line width object for specifying the width of the line
-    osg::LineWidth* _lineWidth;
+    osg::ref_ptr<osg::LineWidth> _lineWidth;
 
     /// Linetype enum constant which is set by the user upon construction
     const lineType_t _lineType;

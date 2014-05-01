@@ -73,26 +73,27 @@
 
 GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
     MainWindow(),
-    world(new dart::simulation::World()),
-    worldNode(new osgDart::DartNode(debug)),
-    pluginList(new QList<GripTab*>),
-    pluginMenu(new QMenu),
+//    world(new dart::simulation::World()),
+//    worldNode(new osgDart::DartNode(debug)),
+//    pluginList(new QList<GripTab*>),
+//    pluginMenu(new QMenu),
     _debug(debug),
     _simulating(false),
     _playingBack(false),
     _curPlaybackTick(0),
     _playbackSpeed(5),
     _simulationDirty(false),
-    _recordVideo(false)
+    _recordVideo(false),
+    sceneFilePath(0)
 {
     /// object initialization
+    world = new dart::simulation::World;
+    worldNode = new osgDart::DartNode;
+    pluginList = new QList<GripTab*>;
     world->setTime(0);
     playbackWidget = new PlaybackWidget(this);
     timeline = new std::vector<GripTimeslice>(0);
-    simulation = new GripSimulation(world, timeline, pluginList, this, debug);
-    pluginPathList = new QList<QString*>;
-    sceneFilePath = new QString();
-    std::cerr<<sceneFilePath->toStdString()<<std::endl;
+    simulation = new GripSimulation(world, timeline, pluginList, this, debug); pluginPathList = new QList<QString*>;
 
     /// create objects for widget classes
     createTreeView();
@@ -122,7 +123,31 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
 
 }
 
-GripMainWindow::~GripMainWindow() {}
+GripMainWindow::~GripMainWindow()
+{
+    for (int i = 0; i < pluginList->size(); ++i) {
+        delete pluginList->at(i);
+    }
+
+    for (int i = 0; i < pluginPathList->size(); ++i) {
+        delete pluginPathList->at(i);
+    }
+
+    delete pluginPathList;
+    delete pluginList;
+    delete pluginMenu;
+    delete sceneFilePath;
+    delete gridLayout;
+    delete world; world = 0;
+    delete simulation;
+    delete viewWidget;
+    delete treeviewer;
+    delete inspectorTab;
+    delete visualizationTab;
+    delete playbackWidget;
+    delete timeline;
+    delete worldNode;
+}
 
 void GripMainWindow::doLoad(std::string sceneFileName)
 {

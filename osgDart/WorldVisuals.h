@@ -81,7 +81,7 @@ public:
     /**
      * \brief Destructs the ContactForceVisual object
      */
-    ~ContactForceVisual();
+    virtual ~ContactForceVisual();
 
     /**
      * \brief Creates a force vector for the contact forces
@@ -115,7 +115,7 @@ protected:
     osg::Matrix _convertVectorToOsgTF(const Eigen::Vector3d &point, const Eigen::Vector3d &vector);
 
     /// Geometry creating the Line in OpenSceneGraph
-    osgGolems::Line* _contactForceLine;
+    osg::ref_ptr<osgGolems::Line> _contactForceLine;
 
     /// Whether or not to print out debug statements
     bool _debug;

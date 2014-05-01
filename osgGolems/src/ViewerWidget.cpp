@@ -95,6 +95,11 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     _timer.start(1);
 }
 
+ViewerWidget::~ViewerWidget()
+{
+
+}
+
 QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 {
     osgViewer::View* view = new osgViewer::View;

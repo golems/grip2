@@ -64,9 +64,18 @@ using namespace osgDart;
 DartNode::DartNode(bool debug)
     : _world(0),
       _debug(debug),
-      _showContactForces(0)
+      _showContactForces(0),
+      _worldIsDirty(false)
 {
     this->setUpdateCallback(new DartNodeCallback);
+}
+
+DartNode::~DartNode()
+{
+    std::cerr << "_world = " << _world << std::endl;
+    if (_worldIsDirty && _world) {
+        delete _world;
+    }
 }
 
 void DartNode::update()
@@ -78,7 +87,7 @@ void DartNode::update()
             _skelNodeMap.at(_world->getSkeleton(i))->update();
         } else {
             _skeletons.push_back(_world->getSkeleton(i));
-            osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*_world->getSkeleton(i), _debug);
+            osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(*_world->getSkeleton(i), _debug);
             _skeletonNodes.push_back(skelNode);
             _skelNodeMap.insert(std::make_pair(_world->getSkeleton(i), skelNode));
             this->addChild(skelNode);
@@ -131,7 +140,7 @@ void DartNode::_updateContactForces()
 
         // Create force arrows to render
         for (size_t i = 0; i < numContacts; ++i) {
-            ContactForceVisual* contactForceLine;
+            osg::ref_ptr<ContactForceVisual> contactForceLine;
             // If we have some, use existing contactForceArrows and update them to the
             // current contact force values
             if (_contactForceArrows.size() > i) {
@@ -374,6 +383,7 @@ size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
             std::cerr << "[DartNode] Creating world in DartNode" << std::endl;
         }
         _world = new dart::simulation::World();
+        _worldIsDirty = true;
     }
     _world->addSkeleton(&skeleton);
     _skeletons.push_back(&skeleton);
@@ -532,7 +542,7 @@ size_t DartNode::addWorld(dart::simulation::World* world)
         if (_debug) {
             std::cerr << "    " << world->getSkeleton(i)->getName() << std::endl;
         }
-        osgDart::SkeletonNode* skelNode = new osgDart::SkeletonNode(*world->getSkeleton(i), _debug);
+        osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(*world->getSkeleton(i), _debug);
         _skeletonNodes.push_back(skelNode);
         _skelNodeMap.insert(std::make_pair(world->getSkeleton(i), skelNode));
         this->addChild(skelNode);

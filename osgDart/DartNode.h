@@ -312,6 +312,8 @@ public:
      */
     void hideSkeleton(int i);
 
+    virtual ~DartNode();
+
 protected:
 
     //---------------------------------------------------------------
@@ -325,7 +327,6 @@ protected:
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
     int skeletonIndexIsValid(size_t skeletonIndex);
-
 
     //---------------------------------------------------------------
     //                       PROTECTED VARIABLES
@@ -350,6 +351,7 @@ protected:
     const bool _debug;
     /// Whether or not to show the contact forces in the visualization
     bool _showContactForces;
+    bool _worldIsDirty;
 
 }; // end class DartNode
 

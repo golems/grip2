@@ -82,7 +82,7 @@ public:
     /**
      * \brief Destructor for Grid classs
      */
-    ~Grid();
+    virtual ~Grid();
 
     void setGridColor(const osg::Vec4& color);
 
