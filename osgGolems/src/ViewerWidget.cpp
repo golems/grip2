@@ -105,7 +105,7 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 
     view->addEventHandler(new osgViewer::StatsHandler);
 
-    osgGolems::GRIPCameraManipulator* cameraManipulator = new osgGolems::GRIPCameraManipulator();
+    osgGolems::GripCameraManipulator* cameraManipulator = new osgGolems::GripCameraManipulator();
     view->setCameraManipulator(cameraManipulator);
 
 //    osgGolems::myKeyboardEventHandler* keyboardHandler = new osgGolems::myKeyboardEventHandler();

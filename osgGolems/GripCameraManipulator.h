@@ -65,19 +65,19 @@ namespace osgGolems {
  * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
  * It sets up desired behavior for robot simulator.
  */
-class GRIPCameraManipulator : public osgGA::OrbitManipulator
+class GripCameraManipulator : public osgGA::OrbitManipulator
 {
 public:
 
     /**
      * \brief Constructor for GRIPCameraManipulator class
      */
-    GRIPCameraManipulator();
+    GripCameraManipulator();
 
     /**
      * \brief Destructor for GRIPCameraManipulator class
      */
-    virtual ~GRIPCameraManipulator();
+    virtual ~GripCameraManipulator();
 
     /**
      * \brief Set the camera manipulator's center of rotation
