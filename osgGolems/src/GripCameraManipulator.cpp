@@ -42,12 +42,12 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 #include <osgGA/OrbitManipulator>
-#include "GRIPCameraManipulator.h"
+#include "GripCameraManipulator.h"
 #include <iostream>
 
 using namespace osgGolems;
 
-GRIPCameraManipulator::GRIPCameraManipulator()
+GripCameraManipulator::GripCameraManipulator()
 {
     this->setAllowThrow(false);
     /// initialize member variables
@@ -60,18 +60,18 @@ GRIPCameraManipulator::GRIPCameraManipulator()
     _keyboardMouseBinding = false;
 }
 
-GRIPCameraManipulator::~GRIPCameraManipulator()
+GripCameraManipulator::~GripCameraManipulator()
 {
 
 }
 
-void GRIPCameraManipulator::setCenter(osg::Vec3 center)
+void GripCameraManipulator::setCenter(osg::Vec3 center)
 {
     osgGA::OrbitManipulator::setCenter(center);
 }
 
 /// Handles keyboard and mouse event for camera manipulation
-bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
+bool GripCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
 {
     float dx = 0.03f * _distance;
     float dy = 0.03f * _distance;
@@ -210,7 +210,7 @@ bool GRIPCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 
 
 /// Handles keyboard and mouse event for camera manipulation
-bool GRIPCameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
+bool GripCameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
 {
     switch(ea.getEventType()) {
         case(osgGA::GUIEventAdapter::KEYUP): {
@@ -237,7 +237,7 @@ bool GRIPCameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA
 }
 
 
-bool GRIPCameraManipulator::handleMouseMove(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
+bool GripCameraManipulator::handleMouseMove(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& as )
 {
     switch(ea.getEventType()) {
         case(osgGA::GUIEventAdapter::MOVE): {
@@ -253,19 +253,19 @@ bool GRIPCameraManipulator::handleMouseMove(const osgGA::GUIEventAdapter& ea, os
             float dx = _currentX - _previousX;
             float dy = _currentY - _previousY;
 //            std::cerr << "Mouse movement is detected." << std::endl;
-            if (_keyPressed == true && _pressedKey ==osgGA::GUIEventAdapter::KEY_Control_L) {
+            if (_keyPressed == true && _pressedKey == osgGA::GUIEventAdapter::KEY_Control_L) {
 //                std::cout << "'Control_L + Mouse move'" << std::endl;
                 float scale = 0.001;
                 zoomModel( dy*scale , true );
 
             }
-            else if (_keyPressed == true && _pressedKey ==osgGA::GUIEventAdapter::KEY_Shift_L) {
+            else if (_keyPressed == true && _pressedKey == osgGA::GUIEventAdapter::KEY_Shift_L) {
 //                std::cout << "'Shift_L + Mouse move'" << std::endl;
                 float scale = -0.0005 * _distance ;
                 panModel( dx*scale, dy*scale );
 
             }
-            else if (_keyPressed == true && _pressedKey ==osgGA::GUIEventAdapter::KEY_Alt_L) {
+            else if (_keyPressed == true && _pressedKey == osgGA::GUIEventAdapter::KEY_Alt_L) {
 //                std::cout << "'Alt_L + Mouse move'" << std::endl;
                 float scale = 0.001;
                 rotateWithFixedVertical( dx*scale, dy*scale );

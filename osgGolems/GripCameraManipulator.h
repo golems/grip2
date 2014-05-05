@@ -43,7 +43,7 @@
  */
 
 /**
- * \file CameraManipulator.h
+ * \file GripCameraManipulator.h
  * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
  * It sets up desired behavior for robot simulator.
  */
@@ -61,7 +61,7 @@
 namespace osgGolems {
 
 /**
- * \class CameraManipulator CameraManipulator.h
+ * \class GripCameraManipulator GripCameraManipulator.h
  * \brief Camera manipulator class that subclasses osgGA::OrbitManipulator.
  * It sets up desired behavior for robot simulator.
  */
@@ -77,7 +77,7 @@ public:
     /**
      * \brief Destructor for GRIPCameraManipulator class
      */
-    ~GRIPCameraManipulator();
+    virtual ~GRIPCameraManipulator();
 
     /**
      * \brief Set the camera manipulator's center of rotation

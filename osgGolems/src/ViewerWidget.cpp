@@ -47,7 +47,7 @@
 #include "osgUtils.h"
 #include "Axes.h"
 #include "CameraCallback.h"
-#include "GRIPCameraManipulator.h"
+#include "GripCameraManipulator.h"
 #include "Grid.h"
 
 // OpenSceneGraph includes
