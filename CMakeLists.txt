@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(grip2)
 
+# Define some colors for fun output
+if(NOT WIN32)
+  string(ASCII 27 Esc)
+  set(ColorReset "${Esc}[m")
+  set(Red         "${Esc}[1;31m")
+  set(Yellow      "${Esc}[1;33m")
+endif()
+
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
@@ -37,11 +45,24 @@ add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
 # Find OpenSceneGraph
-find_package(OpenSceneGraph 2.8 REQUIRED
+find_package(OpenSceneGraph 3.0 REQUIRED
     COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
 include_directories(${OpenSceneGraph_INCLUDE_DIRS})
 add_definitions(${OpenSourceGraph_DEFINITIONS})
 set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
+# make sure the correct OpenSceneGraph is found. Only 3.0.* work.
+if(${OPENSCENEGRAPH_VERSION} GREATER 3.0)
+    message(STATUS "
+     ${Red}?!?!?!?!?!?!?!?!?!?!?!?
+             ERROR
+     ?!?!?!?!?!?!?!?!?!?!?!?${Yellow}
+     The version of OpenSceneGraph on your system is greater than 3.0.*.
+     It's version ${OPENSCENEGRAPH_VERSION}, but should be 3.0.*.
+     Either you installed from source or you should contact the repo owners.
+     You should use a package manager like apt-get or synaptic to install
+     libopenscenegraph-dev${ColorReset}
+    ")
+endif()
 
 # Find Eigen3
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
