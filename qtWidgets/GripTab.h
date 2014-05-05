@@ -72,7 +72,6 @@
 class GripTab : public QDockWidget
 {
 protected:
-    /// used to manipulate the objects in the main window
     /// pointer to the object selected in the Tree View
     TreeViewReturn *_activeNode;
 

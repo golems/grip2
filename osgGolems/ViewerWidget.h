@@ -133,12 +133,18 @@ public:
     void setToSideView();
 
     /**
-     * \brief Sets the matrix of the specified camera
+     * \brief Sets the matrix of the specified view
      * \param newMatrix osg::Matrix reference to set the camera to
      * \param viewNum The view of which to set the camera matrix
      * \return void
      */
     void setCameraMatrix(osg::Matrix& newMatrix, uint viewNum=0);
+
+    /**
+     * \brief Gets the camera matrix of the specified view
+     * \param viewNum View from which to get the camera matrix.
+     * \return osg::Matrix object representing the camera matrix
+     */
     osg::Matrix getCameraMatrix(uint viewNum=0);
 
     /**

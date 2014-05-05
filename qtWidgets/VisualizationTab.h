@@ -87,6 +87,11 @@ public:
     void update();
 
 signals:
+    /**
+     * \brief Sets the status bar of its parent
+     * \param msg QString to display in the status bar
+     * \return void
+     */
     void signalSendMessage(QString msg);
 
 protected slots:
@@ -148,8 +153,19 @@ protected slots:
       */
      void slotToggleContactForcesVisibility(bool checked);
 
+     /**
+      * \brief Updates the transparency slider position based
+      * on the currently selected node
+      * \return void
+      */
      void slotSetTransparencySliderFromSelectedItem();
 
+     /**
+      * \brief Slot to update the local treeview return item. This
+      * gets called by the signal that gets triggered when the treeview
+      * selection changes.
+      * \return void
+      */
      void slotSetSelectedTreeViewItem();
 
 protected:
@@ -165,6 +181,7 @@ protected:
     /// Tree_View pointer for getting the current object
     TreeView *_treeView;
 
+    /// A local copy of the currently selected item in the treeview
     TreeViewReturn *_selectedTreeViewItem;
 
 }; // end class Visualization_Tab

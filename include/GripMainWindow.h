@@ -108,6 +108,8 @@ public:
 
     /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
     ViewerWidget *viewWidget;
+
+    /// OpenSceneGraph Qt composite viewer widget for recording the playback in a separate window
     ViewerWidget *recordViewWidget;
 
     /// QDockWidget that contains a QTreeWidget. It is used as an object explorer for the loaded skeletons or robots
@@ -291,13 +293,14 @@ protected slots:
     void simulationStopped();
 
 protected:
-    /** Protected Members */
     /// Any plugin that is loaded successfully into the Grip will get stored in this QList
     /// The plugins are always going to be derived from the GripTab interface defined in qtWidgets/include/GripTab.h
     /// In order to execute one of the pure virtual functions defined in the GripTab declaration,
     /// you first need to perform a qobject_cast. An example for the same is
     /// GripTab* gt = qobject_cast<GripTab*>(plugin);
     /// Once a pointer of type GripTab is created you can then call the function directly.
+
+    /// List pointers to users' plugins
     QList<GripTab*> *pluginList;
 
     /// Plugin menu pointer for showing/hiding plugins

@@ -135,6 +135,9 @@ public slots:
      */
     virtual void slotPlaybackBeginning() = 0;
 
+    /**
+     * \brief Pure virtual slot that saves a video of the current playback timeline
+     */
     virtual void saveVideo() = 0;
 
 protected:

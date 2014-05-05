@@ -84,6 +84,11 @@ public:
      */
     ~Grid();
 
+    /**
+     * \brief Sets the color of the grid lines
+     * \param color Vector specifying the color using RGBA format
+     * \return void
+     */
     void setGridColor(const osg::Vec4& color);
 
 protected:

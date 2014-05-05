@@ -163,8 +163,4 @@ void VisualizationTab::slotSetSelectedTreeViewItem()
 
     // Get the selected treeview item and check if it's valid
     _selectedTreeViewItem = _treeView->getActiveItem();
-    if(!_selectedTreeViewItem) {
-        return;
-    }
-
 }
