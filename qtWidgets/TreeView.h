@@ -88,7 +88,7 @@ public:
     explicit TreeView(QWidget *parent = 0, QList<GripTab*>* tabs = NULL);
     void populateTreeView(dart::simulation::World *world = NULL);
     void reset();
-    ~TreeView();
+    virtual ~TreeView();
     TreeViewReturn* getActiveItem();
 
 signals:
@@ -110,6 +110,7 @@ private:
     QTreeWidgetItem* _buildTree(dart::dynamics::BodyNode* node, QTreeWidgetItem *prev, QTreeWidgetItem *parent, bool chain, int skeletonId);
     void _nameJoint(QTreeWidgetItem* node);
     void _nameBodyNode(QTreeWidgetItem* node);
+    void _removeChildren(QTreeWidgetItem *item);
 
 }; // end class TreeView
 
