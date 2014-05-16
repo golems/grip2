@@ -51,6 +51,8 @@
 #ifndef SHAPES_H
 #define SHAPES_H
 
+#include "osgUtils.h"
+
 // OpenSceneGraph includes
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
@@ -61,35 +63,67 @@
  */
 namespace osgGolems {
 
+
+class Shape : public osg::Geode
+{
+public:
+    inline Shape() : _defaultColor(osg::Vec4(0.5, 0.5, 0.5, 1.0))
+    {
+//        osgGolems::setMaterialOverrideValue(this, osg::StateAttribute::PROTECTED);
+    }
+
+    /**
+     * \brief Sets the color of the shape
+     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
+     * \return void
+     */
+    inline void setColor(const osg::Vec4& newColor)
+    {
+        osgGolems::setDiffuse(this, newColor);
+    }
+
+protected:
+
+    osg::Vec4 _defaultColor;
+};
+
 /**
  * \class Sphere
  * \brief Convenience class for creating a sphere node. Subclasses osg::Geode
  */
-class Sphere : public osg::Geode
+class Sphere : public osgGolems::Shape
 {
 public:
+    inline Sphere()
+    {
+        this->setName("Sphere");
+        _sphere = new osg::Sphere();
+        this->addDrawable(new osg::ShapeDrawable(_sphere));
+    }
+
     /**
      * \brief Creates a sphere node
      * \param center osg::Vec3 reference specifying the center of the sphere in meters
      * \param radius The radius of the shpere in meters
      * \param color The color of the sphere in rgba format in range (0,1)
      */
-    inline Sphere(const osg::Vec3& center, float radius, const osg::Vec4& color=osg::Vec4(0,0,0,1))
+    inline Sphere(const osg::Vec3 &center, float radius,
+                  const osg::Vec4 &color=osg::Vec4(0,0,0,1))
     {
+        this->setName("Sphere");
         _sphere = new osg::Sphere(center, radius);
-        _shapeDrawable = new osg::ShapeDrawable(_sphere);
-        _shapeDrawable->setColor(color);
-        this->addDrawable(_shapeDrawable);
+        this->addDrawable(new osg::ShapeDrawable(_sphere));
+        this->setColor(color);
     }
 
-    /**
-     * \brief Sets the color of the sphere
-     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
-     * \return void
-     */
-    inline void setColor(const osg::Vec4& newColor)
+    inline osg::Vec3 getCenter()
     {
-        _shapeDrawable->setColor(newColor);
+        return _sphere->getCenter();
+    }
+
+    inline float getRadius()
+    {
+        return _sphere->getRadius();
     }
 
     /**
@@ -115,10 +149,7 @@ public:
 protected:
 
     /// osg::Sphere object so that we can change the dimensions of the sphere
-    osg::Sphere* _sphere;
-
-    /// osg::ShapeDrawable object so that we can change the color of the sphere
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::Sphere> _sphere;
 
 }; // end class Sphere
 
@@ -127,9 +158,18 @@ protected:
  * \class Cylinder
  * \brief Convenience class for creating a cylinder node. Subclasses osg::Geode
  */
-class Cylinder : public osg::Geode
+class Cylinder : public osgGolems::Shape
 {
 public:
+
+    inline Cylinder()
+    {
+        this->setName("Cylinder");
+        _cylinder = new osg::Cylinder();
+        this->addDrawable(new osg::ShapeDrawable(_cylinder));
+        this->setColor(_defaultColor);
+    }
+
     /**
      * \brief Creates a cylinder node
      * \param center osg::Vec3 reference specifying the center of the cylinder in meters
@@ -137,27 +177,43 @@ public:
      * \param height The height of the cylinder in meters
      * \param color The color of the cylinder in rgba format in range (0,1)
      */
-    inline Cylinder(const osg::Vec3& center, float radius, float height, const osg::Vec4& color=osg::Vec4(0,0,0,1))
+    inline Cylinder(const osg::Vec3 &center, float radius, float height,
+                    const osg::Vec4 &color=osg::Vec4(0,0,0,1))
     {
+        this->setName("Cylinder");
         _cylinder = new osg::Cylinder(center, radius, height);
-        _shapeDrawable = new osg::ShapeDrawable(_cylinder);
-        _shapeDrawable->setColor(color);
-        this->addDrawable(_shapeDrawable);
+        this->addDrawable(new osg::ShapeDrawable(_cylinder));
+        this->setColor(color);
+    }
+
+    inline osg::Vec3 getCenter()
+    {
+        return _cylinder->getCenter();
+    }
+
+    inline float getRadius()
+    {
+        return _cylinder->getRadius();
+    }
+
+    inline float getHeight()
+    {
+        return _cylinder->getHeight();
     }
 
     /**
-     * \brief Sets the color of the cylinder
-     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
+     * \brief Sets the center of the the cylinder in meters
+     * \param newCenter osg::Vec3 reference for the center
      * \return void
      */
-    inline void setColor(const osg::Vec4& newColor)
+    inline void setCenter(float x, float y, float z)
     {
-        _shapeDrawable->setColor(newColor);
+        _cylinder->setCenter(osg::Vec3(x,y,z));
     }
 
     /**
      * \brief Sets the radius of the the cylinder in meters
-     * \param newRadius osg::Vec3 reference for the radius
+     * \param newRadius float value for the radius
      * \return void
      */
     inline void setRadius(float newRadius)
@@ -178,10 +234,7 @@ public:
 protected:
 
     /// osg::Cylinder object so that we can change its dimensions
-    osg::Cylinder* _cylinder;
-
-    /// osg::ShapeDrawable object so that we can change its color
-    osg::ShapeDrawable* _shapeDrawable;
+    osg::ref_ptr<osg::Cylinder> _cylinder;
 
 }; // end class Cylinder
 
@@ -190,31 +243,56 @@ protected:
  * \class Box
  * \brief Convenience class for creating a box node. Subclasses osg::Geode
  */
-class Box : public osg::Geode
+class Box : public osgGolems::Shape
 {
 public:
+
+    inline Box()
+    {
+        this->setName("Box");
+        _box = new osg::Box();
+        this->addDrawable(new osg::ShapeDrawable(_box));
+        this->setColor(_defaultColor);
+    }
+
     /**
      * \brief Creates a box node
      * \param center osg::Vec3 reference specifying the center of the box in meters
      * \param width The width of the box in meters
      * \param color The color of the box in rgba format in range (0,1)
      */
-    inline Box(const osg::Vec3& center, float width, const osg::Vec4& color=osg::Vec4(0,0,0,1))
+    inline Box(const osg::Vec3 &center, float width,
+               const osg::Vec4 &color=osg::Vec4(0,0,0,1))
     {
+        this->setName("Box");
         _box = new osg::Box(center, width);
-        _shapeDrawable = new osg::ShapeDrawable(_box);
-        _shapeDrawable->setColor(color);
-        this->addDrawable(_shapeDrawable);
+        this->addDrawable(new osg::ShapeDrawable(_box));
+        this->setColor(color);
     }
 
     /**
-     * \brief Sets the color of the box
-     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
-     * \return void
+     * \brief Creates a box node
+     * \param center osg::Vec3 reference specifying the center of the box in meters
+     * \param width The width of the box in meters
+     * \param color The color of the box in rgba format in range (0,1)
      */
-    inline void setColor(const osg::Vec4& newColor)
+    inline Box(const osg::Vec3 &center, const osg::Vec3 &sideLengths,
+               const osg::Vec4 &color=osg::Vec4(0,0,0,1))
     {
-        _shapeDrawable->setColor(newColor);
+        this->setName("Box");
+        _box = new osg::Box(center, sideLengths.x(), sideLengths.y(), sideLengths.z());
+        this->addDrawable(new osg::ShapeDrawable(_box));
+        this->setColor(color);
+    }
+
+    inline osg::Vec3 getCenter()
+    {
+        return _box->getCenter();
+    }
+
+    inline osg::Vec3 getSideLengths()
+    {
+        return _box->getHalfLengths() * 2;
     }
 
     /**
@@ -227,6 +305,16 @@ public:
         _box->setCenter(newCenter);
     }
 
+    inline void setWidth(float width)
+    {
+        _box->setHalfLengths(osg::Vec3(width/2, width/2, width/2));
+    }
+
+    inline void setSideLengths(const osg::Vec3 &lengths)
+    {
+        _box->setHalfLengths(lengths/2);
+    }
+
     //TODO add function for changing the size of the box. Hopefully the setHalfLengths function
 
 protected:
@@ -234,40 +322,55 @@ protected:
     /// osg::Box object so that we can change the dimensions of the box
     osg::Box* _box;
 
-    /// osg::ShapeDrawable so that we can change the color of the box
-    osg::ShapeDrawable* _shapeDrawable;
-
 }; // end class Box
 
 /**
  * \class Cone
  * \brief Convenience class for creating a cone node. Subclasses osg::Geode
  */
-class Cone : public osg::Geode
+class Cone : public osgGolems::Shape
 {
 public:
+    inline Cone()
+    {
+        this->setName("Cone");
+        _cone = new osg::Cone();
+        this->addDrawable(new osg::ShapeDrawable(_cone));
+        this->setColor(_defaultColor);
+    }
     /**
      * \brief Creates a cone node
      * \param center osg::Vec3 reference specifying the center of the cone in meters
      * \param height The height of the cone in meters
      * \param color The color of the cone in rgba format in range (0,1)
      */
-    inline Cone(const osg::Vec3& center, float radius, float height, const osg::Vec4& color=osg::Vec4(0,0,0,1))
+    inline Cone(const osg::Vec3 &center, float radius, float height,
+                const osg::Vec4 &color=osg::Vec4(0,0,0,1))
     {
+        this->setName("Cone");
         _cone = new osg::Cone(center, radius, height);
-        _shapeDrawable = new osg::ShapeDrawable(_cone);
-        _shapeDrawable->setColor(color);
-        this->addDrawable(_shapeDrawable);
+        this->addDrawable(new osg::ShapeDrawable(_cone));
+        this->setColor(color);
     }
 
-    /**
-     * \brief Sets the color of the cone
-     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
-     * \return void
-     */
-    inline void setColor(const osg::Vec4& newColor)
+    inline osg::Vec3 getCenter()
     {
-        _shapeDrawable->setColor(newColor);
+        return _cone->getCenter();
+    }
+
+    inline float getRadius()
+    {
+        return _cone->getRadius();
+    }
+
+    inline float getHeight()
+    {
+        return _cone->getHeight();
+    }
+
+    inline void setCenter(const osg::Vec3 &newCenter)
+    {
+        _cone->setCenter(newCenter);
     }
 
     /**
@@ -295,18 +398,23 @@ protected:
     /// osg::Cone object so that we can change the dimensions of the cone
     osg::Cone* _cone;
 
-    /// osg::ShapeDrawable object so that we can change the color of the cone
-    osg::ShapeDrawable* _shapeDrawable;
-
 }; // end class Cone
 
 /**
  * \class Capsule
  * \brief Convenience class for creating a capsule node. Subclasses osg::Geode
  */
-class Capsule : public osg::Geode
+class Capsule : public osgGolems::Shape
 {
 public:
+    inline Capsule()
+    {
+        this->setName("Capsule");
+        _capsule = new osg::Capsule();
+        this->addDrawable(new osg::ShapeDrawable(_capsule));
+        this->setColor(_defaultColor);
+    }
+
     /**
      * \brief Creates a capsule node
      * \param center osg::Vec3 reference specifying the center of the capsule in meters
@@ -316,20 +424,30 @@ public:
      */
     inline Capsule(const osg::Vec3& center, float radius, float height, const osg::Vec4& color=osg::Vec4(0,0,0,1))
     {
+        this->setName("Capsule");
         _capsule = new osg::Capsule(center, radius, height);
-        _shapeDrawable = new osg::ShapeDrawable(_capsule);
-        _shapeDrawable->setColor(color);
-        this->addDrawable(_shapeDrawable);
+        this->addDrawable(new osg::ShapeDrawable(_capsule));
+        this->setColor(color);
     }
 
-    /**
-     * \brief Sets the color of the capsule
-     * \param newColor osg::Vec4 reference for the color in rgba format in range (0,1)
-     * \return void
-     */
-    inline void setColor(const osg::Vec4& newColor)
+    inline osg::Vec3 getCenter()
     {
-        _shapeDrawable->setColor(newColor);
+        return _capsule->getCenter();
+    }
+
+    inline float getRadius()
+    {
+        return _capsule->getRadius();
+    }
+
+    inline float getHeight()
+    {
+        return _capsule->getHeight();
+    }
+
+    inline void setCenter(const osg::Vec3 &newCenter)
+    {
+        _capsule->setCenter(newCenter);
     }
 
     /**
@@ -355,9 +473,6 @@ public:
 protected:
     /// osg::Capsule object so the we can change the dimensions of the capsule
     osg::Capsule* _capsule;
-
-    /// osg::ShapeDrawable so that we can change the color of the capsule
-    osg::ShapeDrawable* _shapeDrawable;
 
 }; // end class Capsule
 

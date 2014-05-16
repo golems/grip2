@@ -77,7 +77,7 @@ public:
      * \param color Color of the grid lines
      * \return void
      */
-    Grid(uint width, uint depth, uint gridSize, const osg::Vec4& color);
+    Grid(uint totalWidth, uint totalDepth, uint individualGridSize, const osg::Vec4& color);
 
     /**
      * \brief Destructor for Grid classs

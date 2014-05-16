@@ -129,6 +129,20 @@ inline osg::Vec3 eigToOsgVec3(const Eigen::Vector3d& vec)
     return output;
 }
 
+inline void addMaterialAttribute(osg::Node *node)
+{
+    if (!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL)) {
+        node->getOrCreateStateSet()->setAttribute(new osg::Material);
+    }
+}
+
+inline void addBlendFuncAttribute(osg::Node *node)
+{
+    if (!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::BLENDFUNC)) {
+        node->getOrCreateStateSet()->setAttributeAndModes(new osg::BlendFunc);
+    }
+}
+
 /**
  * \brief Adds a wireframe mode to the node passed in
  * \param[out] node Node for which to add a wireframe mode
@@ -211,6 +225,28 @@ inline void setWireFrameOff(osg::Node* node)
     polyModeObj->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
 }
 
+inline void setStateAttribute(osg::Node *node,
+                              osg::StateAttribute::Type attribute,
+                              osg::StateAttribute::OverrideValue attributeValue)
+{
+    if (!node)
+        return;
+
+    node->getOrCreateStateSet()->setAttributeAndModes(
+                node->getOrCreateStateSet()->getAttribute(attribute),
+                 attributeValue);
+}
+
+inline void setStateMode(osg::Node *node,
+                         uint attribute,
+                         osg::StateAttribute::OverrideValue attributeValue)
+{
+    if (!node)
+        return;
+
+    node->getOrCreateStateSet()->setMode(attribute, attributeValue);
+}
+
 /**
  * \brief Set the transparency value of a node
  * Reference: OSG Cookbook p. 239
@@ -220,27 +256,121 @@ inline void setWireFrameOff(osg::Node* node)
  */
 inline void setTransparency(osg::Node* node, float transparencyValue)
 {
-    if(!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL)) {
-        node->getOrCreateStateSet()->setAttribute(new osg::Material);
-        std::cerr << "Created new material" << std::endl;
-    }
-    if(!node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::BLENDFUNC)) {
-        node->getOrCreateStateSet()->setAttributeAndModes(new osg::BlendFunc);
-        std::cerr << "Created new blendfunc" << std::endl;
-    }
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
 
     node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL);
-    osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
-    std::cerr << "Diffuse: " << diffuse << std::endl;
-    std::cerr << "Ambient: " << mat->getAmbient(osg::Material::FRONT_AND_BACK) << std::endl;
-    std::cerr << "Emissive:" << mat->getEmission(osg::Material::FRONT_AND_BACK) << std::endl;
-    std::cerr << "Specular:" << mat->getSpecular(osg::Material::FRONT_AND_BACK) << std::endl;
+//    osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
+//    std::cerr << "Diffuse: " << diffuse << std::endl;
+//    std::cerr << "Ambient: " << mat->getAmbient(osg::Material::FRONT_AND_BACK) << std::endl;
+//    std::cerr << "Emissive:" << mat->getEmission(osg::Material::FRONT_AND_BACK) << std::endl;
+//    std::cerr << "Specular:" << mat->getSpecular(osg::Material::FRONT_AND_BACK) << std::endl;
 
-    diffuse.set(diffuse.r(), diffuse.g(), diffuse.b(), transparencyValue);
-    mat->setDiffuse(osg::Material::FRONT_AND_BACK, diffuse);
-//    mat->setAlpha(osg::Material::FRONT_AND_BACK, transparencyValue);
-    node->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+//    diffuse.set(diffuse.r(), diffuse.g(), diffuse.b(), transparencyValue);
+//    mat->setDiffuse(osg::Material::FRONT_AND_BACK, diffuse);
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, transparencyValue);
+    node->getOrCreateStateSet()->setAttributeAndModes(
+                mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+}
+
+inline void setDiffuse(osg::Node *node, const osg::Vec4 &diffuse,
+                      osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setDiffuse(face, diffuse);
+}
+
+inline void setAmbient(osg::Node *node, const osg::Vec4 &ambient,
+                       osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setAmbient(face, ambient);
+}
+
+inline void setEmission(osg::Node *node, const osg::Vec4 &emission,
+                      osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setEmission(face, emission);
+}
+
+inline void setSpecular(osg::Node *node, const osg::Vec4 &specular,
+                        osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setSpecular(face, specular);
+}
+
+inline void setAlpha(osg::Node *node, float alpha,
+                        osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setAlpha(face, alpha);
+}
+
+inline void setColors(osg::Node *node, const osg::Vec4 &diffuse,
+                      const osg::Vec4 &ambient, const osg::Vec4 &emission,
+                      const osg::Vec4 &specular, float alpha,
+                      osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!node)
+        return;
+
+    addMaterialAttribute(node);
+    addBlendFuncAttribute(node);
+
+    node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    mat->setDiffuse(face, diffuse);
+    mat->setAmbient(face, ambient);
+    mat->setEmission(face, emission);
+    mat->setSpecular(face, specular);
+    mat->setAlpha(face, alpha);
 }
 
 } // end of osgGolems namespace

@@ -121,13 +121,15 @@ target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES
 #                BUILD TESTS
 #-----------------------------------------------
 # Get test files
-file(GLOB unit_tests_source "test/*.cpp")
-LIST(SORT unit_tests_source)
+file(GLOB unit_tests_sources "test/*.cpp")
+LIST(SORT unit_tests_sources)
+
+set(tests_source ${tests_source} ${unit_tests_sources})
 
 # Build test programs
 message(STATUS "\n-- UNIT TEST: ")
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-foreach(utest_src_file ${unit_tests_source})
+foreach(utest_src_file ${tests_source})
     get_filename_component(test_base ${utest_src_file} NAME_WE)
     message(STATUS "Adding test ${test_base}")
     add_executable(${test_base} ${utest_src_file})

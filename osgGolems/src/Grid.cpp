@@ -54,20 +54,20 @@ using namespace osgGolems;
 //            PUBLIC MEMBER FUNCTIONS
 //-----------------------------------------------
 
-Grid::Grid(uint width, uint depth, uint gridSize, const osg::Vec4& color)
+Grid::Grid(uint totalWidth, uint totalDepth, uint individualGridSize, const osg::Vec4& color)
 {
     // Initialize protected member variables
     _verts = new osg::Vec3Array;
     _colors = new osg::Vec4Array;
 
     // Ensure really large or negative numbers weren't passed in
-    if (width > maxLength)
-        width = maxLength;
-    if (depth > maxLength)
-        depth = maxLength;
+    if (totalWidth > maxLength)
+        totalWidth = maxLength;
+    if (totalDepth > maxLength)
+        totalDepth = maxLength;
 
     // Create the perimter vertices and connect them with lines
-    _createVertices(width, depth, _makeEven(gridSize));
+    _createVertices(totalWidth, totalDepth, _makeEven(individualGridSize));
     _drawGrid(color);
 }
 
@@ -95,15 +95,15 @@ void Grid::_createVertices(uint width, uint depth, uint gridSize)
     // Compute number of lines for width and depth directions
     if (gridSize >= width || gridSize >= depth) {
         gridSize = std::min(width, depth) / 2;
-        std::cerr << "[Grid] Error!. Request grid size is larger that either width or depth.\n"
+        std::cerr << "[Grid] Error!. Requested grid size is larger than either width or depth.\n"
                   << "Setting grid size to " << gridSize << std::endl;
     }
     uint numLinesWidth = (uint)(width / gridSize + 1);
     uint numLinesDepth = (uint)(depth / gridSize + 1);
 
     // Compute half width and depth to center grid in the middle
-    int halfwidth = numLinesWidth * gridSize;
-    int halfdepth = numLinesDepth * gridSize;
+    int halfwidth = numLinesWidth/2 * gridSize;
+    int halfdepth = numLinesDepth/2 * gridSize;
 
     // Resize vertex array
     _verts->resize(numLinesWidth*2 + numLinesDepth*2);
