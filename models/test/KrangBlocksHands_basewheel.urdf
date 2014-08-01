@@ -20,18 +20,18 @@
       <origin xyz="0 0 0"/>
     </inertial>
 		<visual> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </visual> 
-		<collision> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </collision> 
+		<!-- <collision> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </collision>  -->
 	</link>
 
-	<link name = "RWheel"> 
-    <inertial>
-      <mass value="4.66"/>
-      <inertia ixx="0.102019" ixy="2.45462e-05" ixz="0.00713022" iyy="0.0832724" iyz="-0.00131733" izz="0.086493"/>
-      <origin xyz="0 0 0"/>
-    </inertial>
-		<visual> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </visual> 
-		<collision> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </collision> 
-	</link>
+	<!-- <link name = "RWheel">  -->
+  <!--   <inertial> -->
+  <!--     <mass value="4.66"/> -->
+  <!--     <inertia ixx="0.102019" ixy="2.45462e-05" ixz="0.00713022" iyy="0.0832724" iyz="-0.00131733" izz="0.086493"/> -->
+  <!--     <origin xyz="0 0 0"/> -->
+  <!--   </inertial> -->
+	<!-- 	<visual> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </visual>  -->
+	<!-- 	<collision> <geometry> <mesh filename="Base/oldwheel.dae" /> </geometry> </collision>  -->
+	<!-- </link> -->
 
 	<link name = "Base"> 
     <inertial>
@@ -44,13 +44,16 @@
       <geometry>
         <box size="0.7165 0.71048 0.32860"/>
       </geometry>
+      <material name="orange">
+        <color rgba="1 1 0 1"/>
+      </material>
 		</visual> 
-		<collision> 
-			<origin xyz="0.00225 0.2097395 0.006300"/>
-      <geometry>
-        <box size="0.7165 0.71048 0.32860"/>
-      </geometry>
-		</collision> 
+		<!-- <collision>  -->
+		<!-- 	<origin xyz="0.00225 0.2097395 0.006300"/> -->
+    <!--   <geometry> -->
+    <!--     <box size="0.7165 0.71048 0.32860"/> -->
+    <!--   </geometry> -->
+		<!-- </collision>  -->
 	</link>
 <!--
 	<link name = "Spine"> 
@@ -253,10 +256,10 @@
 		<axis xyz="1 0 0" /> <limit effort="1000" lower="-3.1416" upper="3.1416" velocity="0.1" />
 	</joint>
 
-	<joint name="JRWheel" type="revolute"> <parent link="Base" /> <child link="RWheel" />
-		<origin xyz = "0.361 0.0 0" rpy="0 0 0" />
-		<axis xyz="1 0 0" /> <limit effort="1000" lower="-3.1416" upper="3.1416" velocity="0.1" />
-	</joint>
+	<!-- <joint name="JRWheel" type="revolute"> <parent link="Base" /> <child link="RWheel" /> -->
+	<!-- 	<origin xyz = "0.361 0.0 0" rpy="0 0 0" /> -->
+	<!-- 	<axis xyz="1 0 0" /> <limit effort="1000" lower="-3.1416" upper="3.1416" velocity="0.1" /> -->
+	<!-- </joint> -->
 <!--
 	<joint name="JWaist" type="revolute"> <parent link="Base" /> <child link="Spine" />
 		<origin xyz = "0.026 0.499 -0.091" rpy="0 0 0" />

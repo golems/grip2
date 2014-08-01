@@ -89,7 +89,7 @@ protected:
      * \param aiMtl Assimp Material to get material data from
      * \return void
      */
-    static void createMaterialData(osg::StateSet* ss, const aiMaterial* aiMtl);
+    static void createMaterialData(osg::Node *node, osg::StateSet *ss, const aiMaterial *aiMtl);
 
 }; // end class osgAssimpSceneReader
 

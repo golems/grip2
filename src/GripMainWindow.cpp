@@ -142,7 +142,7 @@ void GripMainWindow::doLoad(std::string sceneFileName)
 
     world->setTimeStep(0.001);
 
-    world->addSkeleton(createGround());
+//    world->addSkeleton(createGround());
     worldNode->addWorld(world);
     worldNode->addWorld(sceneFileName);
 

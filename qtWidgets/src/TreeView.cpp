@@ -214,6 +214,14 @@ void TreeView::populateTreeView(dart::simulation::World *world)
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     }
+    if (!parent) {
+        std::cerr << "Parent is a NULL pointer" << std::endl;
+        return;
+    }
+    if (!_ui_treeWidget) {
+        std::cerr << "_ui_treeWidget is a NULL pointer" << std::endl;
+        return;
+    }
     _ui_treeWidget->setCurrentItem(parent, 0);
 }
 

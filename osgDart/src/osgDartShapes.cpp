@@ -81,10 +81,6 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
             osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getDim());
             osg::ShapeDrawable* osgBox =
                     new osg::ShapeDrawable(new osg::Box(osg::Vec3(0,0,0), size.x(), size.y(), size.z()));
-            osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
-//            std::cerr << "box color: " << shape->getColor().transpose() << std::endl;
-//            std::cerr << "osgColor: " << color << std::endl;
-            osgBox->setColor(color);
             geode->addDrawable(osgBox);
             break;
         }
@@ -92,45 +88,38 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
             dart::dynamics::EllipsoidShape* shape = (dart::dynamics::EllipsoidShape*) inputShape;
             osg::ShapeDrawable* osgEllipsoid =
                     new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), shape->getDim()(0)));
-            osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
-//            std::cerr << "ellipsoid color: " << shape->getColor().transpose() << std::endl;
-//            std::cerr << "osgColor: " << color << std::endl;
-            osgEllipsoid->setColor(color);
             geode->addDrawable(osgEllipsoid);
             break;
         }
         case dart::dynamics::Shape::CYLINDER: {
             dart::dynamics::CylinderShape* shape = (dart::dynamics::CylinderShape*) inputShape;
-            osg::ShapeDrawable* osgCylinder =
-                    new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0,0,0), (float)shape->getRadius(), (float)shape->getHeight()));
-            osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
-//            std::cerr << "cylinder color: " << shape->getColor().transpose() << std::endl;
-//            std::cerr << "osgColor: " << color << std::endl;
-            osgCylinder->setColor(color);
+            osg::ShapeDrawable* osgCylinder = new osg::ShapeDrawable(
+                        new osg::Cylinder(osg::Vec3(0,0,0), (float)shape->getRadius(),
+                                          (float)shape->getHeight()));
             geode->addDrawable(osgCylinder);
             break;
         }
         default: {
-            std::cerr << "Error: Shape is not a valid shape type. Reported by " << __FILE__ << " on line " << __LINE__ << std::endl;
+            std::cerr << "Error: Shape is not a valid shape type. Reported by "
+                      << __FILE__ << " on line " << __LINE__ << std::endl;
         }
     }
 
-    // Add wireframe mode to the geode
-    osgGolems::addWireFrameMode(geode);
+//    // Add wireframe mode to the geode
+//    osgGolems::addWireFrameMode(geode);
 
     // Add shape to a Geode, add it to a MatrixTransform whose matrix is set to
     // the local TF of the shape and add the MatrixTransform to the node as a child
     osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
     shapeTF->setMatrix(shapeMatrix);
     shapeTF->addChild(geode);
+
     return shapeTF.release();
 }
 
 osg::Node* osgDart::convertMeshToOsgNode(dart::dynamics::Shape* mesh)
 {
     dart::dynamics::MeshShape* meshShape = (dart::dynamics::MeshShape*)mesh;
-//    std::cerr << "[osgDartShapes] Color of mesh: " << meshShape->getColor().transpose() << std::endl;
-//    std::cerr << "[osgDartShapes] Color of shap: " << mesh->getColor().transpose() << std::endl;
     const aiScene* aiscene = meshShape->getMesh();
     aiNode* ainode = NULL;
     if (aiscene) {

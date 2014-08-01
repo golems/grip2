@@ -143,25 +143,21 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
     pose << 0, 0, 0, 0, 0, 0;
 
     /// if world is defined
-    if(_simWorld)
-    {
+    if (_simWorld) {
         _selectedTypeFromTree = _treeview->getActiveItem()->dType;
 
-        if (_selectedTypeFromTree == Return_Type_Robot) //if robot, do nothing
-        {
+        if (_selectedTypeFromTree == Return_Type_Robot) { //if robot, do nothing
              //dart::dynamics::Skeleton* item_selected;
              //item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
              std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
 
         }
-        else if (_selectedTypeFromTree == Return_Type_Node) //if bodynode, change configuration using slider
-        {
+        else if (_selectedTypeFromTree == Return_Type_Node) { //if bodynode, change configuration using slider
              dart::dynamics::BodyNode* item_selected;
              item_selected = (dart::dynamics::BodyNode*)_treeview->getActiveItem()->object;
 
              /// check if the joint is a free joint (6DoF)
-             if(dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
-             {
+             if (dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint())) {
                  if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
                  {
                        pose(0) = _ui->positionSlider_1->getdsValue();
@@ -175,19 +171,16 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
                  }
 
             }
-            else
-            {
-                 std::cerr << "Selected joint is not a free joint" << std::endl;
+            else {
+//                 std::cerr << "Selected joint is not a free joint" << std::endl;
             }
         }
-        else
-        {
+        else {
             std::cerr << "changePositionAndOrientation: No return type identified" << _treeview->getActiveItem()->dType << std::endl;
         }
 
     }
-    else
-    {
+    else {
         std::cerr << "Change Position & Orientation: either simworld is empty" << __LINE__ << " of " << __FILE__ << std::endl;
     }
 }

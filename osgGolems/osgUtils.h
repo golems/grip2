@@ -259,22 +259,40 @@ inline void setTransparency(osg::Node* node, float transparencyValue)
     if (!node)
         return;
 
-    addMaterialAttribute(node);
-    addBlendFuncAttribute(node);
+    std::cerr << "TL: Group: " << node->getName() << std::endl;
+
+//    addMaterialAttribute(node);
+//    addBlendFuncAttribute(node);
 
     node->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL);
-//    osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
+    osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
+            getAttribute(osg::StateAttribute::MATERIAL);
+    if (!mat.valid()) {
+        return;
+    }
+    osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
 //    std::cerr << "Diffuse: " << diffuse << std::endl;
 //    std::cerr << "Ambient: " << mat->getAmbient(osg::Material::FRONT_AND_BACK) << std::endl;
 //    std::cerr << "Emissive:" << mat->getEmission(osg::Material::FRONT_AND_BACK) << std::endl;
 //    std::cerr << "Specular:" << mat->getSpecular(osg::Material::FRONT_AND_BACK) << std::endl;
 
-//    diffuse.set(diffuse.r(), diffuse.g(), diffuse.b(), transparencyValue);
-//    mat->setDiffuse(osg::Material::FRONT_AND_BACK, diffuse);
+    diffuse.set(diffuse.r(), diffuse.g(), diffuse.b(), transparencyValue);
+    mat->setDiffuse(osg::Material::FRONT_AND_BACK, diffuse);
     mat->setAlpha(osg::Material::FRONT_AND_BACK, transparencyValue);
-    node->getOrCreateStateSet()->setAttributeAndModes(
-                mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+//    node->getOrCreateStateSet()->setAttributeAndModes(
+//                mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+}
+
+inline void setTransparencyRecursive(osg::Group *group, float transparencyValue)
+{
+    if (!group)
+        return;
+
+    osgGolems::setTransparency(group, transparencyValue);
+    for (uint i = 0; i < group->getNumChildren(); ++i) {
+        osgGolems::setTransparencyRecursive(group->getChild(i)->asGroup(),
+                                            transparencyValue);
+    }
 }
 
 inline void setDiffuse(osg::Node *node, const osg::Vec4 &diffuse,

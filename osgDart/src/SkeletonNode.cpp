@@ -185,21 +185,24 @@ void SkeletonNode::setSkeletonRenderMode(renderMode_t renderMode)
     }
 }
 
-void SkeletonNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue)
+void SkeletonNode::setBodyNodeTransparency(const dart::dynamics::BodyNode &node,
+                                           float transparencyValue)
 {
     BodyNodeGroupMap::const_iterator it = _bodyNodeGroupMap.find(&node);
     if (it != _bodyNodeGroupMap.end()) {
-        osgGolems::setTransparency(_bodyNodeGroupMap.at(&node), transparencyValue);
+        osg::Group* osgGroup = _bodyNodeGroupMap.at(&node);
+        osgGolems::setTransparencyRecursive(osgGroup, transparencyValue);
     }
-
 }
-
 
 void SkeletonNode::update()
 {
-    // First update root joint transform, which places the skeleton relative to the world
-    _bodyNodeMatrixMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
-    _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    // First update root joint transform, which places
+    // the skeleton relative to the world
+    _bodyNodeMatrixMap.at(&_rootBodyNode)->setMatrix(
+                osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(
+                osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
 
     // Then recursively update all the children of the root body node
     for (int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
@@ -212,7 +215,8 @@ void SkeletonNode::update()
 void SkeletonNode::_updateSkeletonVisuals()
 {
     osg::Matrix comTF;
-    comTF.makeTranslate(osgGolems::eigToOsgVec3(_rootBodyNode.getSkeleton()->getWorldCOM()));
+    comTF.makeTranslate(osgGolems::eigToOsgVec3(
+                            _rootBodyNode.getSkeleton()->getWorldCOM()));
     if (_skeletonVisuals->getCenterOfMassTF()) {
         _skeletonVisuals->getCenterOfMassTF()->setMatrix(comTF);
     }
@@ -229,7 +233,8 @@ void SkeletonNode::_createSkeleton()
 {
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
-    osg::MatrixTransform* root =  new osg::MatrixTransform(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    osg::MatrixTransform* root =  new osg::MatrixTransform(
+                osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
     root->addChild(_makeBodyNodeGroup(_rootBodyNode));
     root->addChild(_makeBodyNodeCollisionMeshGroup(_rootBodyNode));
     this->addChild(root);
@@ -285,6 +290,7 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dart::dynamics::BodyNode& nod
 {
     // Create osg::Group in std::map b/t BodyNodes and osg::Groups
     _bodyNodeGroupMap.insert(std::make_pair(&node, new osg::Group));
+    _bodyNodeGroupMap.at(&node)->setName(node.getName());
 
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     _addVisualizationShapesFromBodyNode(node);
@@ -299,7 +305,6 @@ osg::Group* SkeletonNode::_makeBodyNodeGroup(const dart::dynamics::BodyNode& nod
     // Add BodyNode osg::Group to class array
     _bodyNodeGroups.push_back(_bodyNodeGroupMap.at(&node));
 
-
     // Return the osg::Group version of the BodyNode
     return _bodyNodeGroupMap.at(&node);
 }
@@ -308,10 +313,12 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
 {
     osgDart::BodyNodeVisuals* visuals = new osgDart::BodyNodeVisuals;
 
+    // Add body node axes
     visuals->setMatrix(osgGolems::eigToOsgMatrix(node.getWorldTransform()));
     visuals->addBodyNodesAxes();
     visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
+    // Add joint axis
     if (node.getParentBodyNode() && node.getParentJoint()) {
         if (node.getParentJoint()->getJointType() == dart::dynamics::Joint::REVOLUTE) {
             dart::dynamics::RevoluteJoint* parentJoint =
@@ -347,7 +354,11 @@ osg::Group* SkeletonNode::_makeBodyNodeCollisionMeshGroup(const dart::dynamics::
 
 void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::BodyNode& node)
 {
-//    std::cerr << node.getSkeleton()->getName() << ". numShapes: " << node.getNumVisualizationShapes() << std::endl;
+    if (node.getNumVisualizationShapes()) {
+        std::cerr << "\n" << node.getSkeleton()->getName() << " : " << node.getName() << " : color: "
+                  << node.getVisualizationShape(0)->getColor().transpose() << std::endl;
+    }
+
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
     for (int i=0; i<node.getNumVisualizationShapes(); ++i) {
         switch (node.getVisualizationShape(i)->getShapeType()) {
@@ -357,22 +368,27 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
             case dart::dynamics::Shape::CYLINDER: {
                 _bodyNodeGroupMap.at(&node)->addChild(convertShapeToOsgNode(
                                                           node.getVisualizationShape(i)));
+                // Set the diffuse color of the top-level osg::Node. It's set here
+                // because it's at this level in the node hierarchy that we change
+                // the transparency of the node is the setTransparency function
+                osgGolems::setDiffuse(_bodyNodeGroupMap.at(&node),
+                                      osg::Vec4f(osgGolems::eigToOsgVec3(
+                                                        node.getVisualizationShape(0)->getColor()), 1.0));
+                // Set the protection level to PROTECTED making it so that nothing
+                // above this node's level change this node's material properties
+                osgGolems::setStateAttribute(_bodyNodeGroupMap.at(&node),
+                                             osg::StateAttribute::MATERIAL,
+                                             osg::StateAttribute::PROTECTED);
+                // Add wireframe mode to the geode
+                osgGolems::addWireFrameMode(_bodyNodeGroupMap.at(&node));
                 break;
             }
             case dart::dynamics::Shape::MESH: {
                 _bodyNodeGroupMap.at(&node)->addChild(convertMeshToOsgNode(
                                                           node.getVisualizationShape(i)));
-                 break;
+                break;
             }
         }
-        _bodyNodeGroupMap.at(&node)->getOrCreateStateSet()->setAttribute(new osg::Material);
-        osg::Material* mat = (osg::Material*)_bodyNodeGroupMap.at(&node)->
-                getOrCreateStateSet()->getAttribute(osg::StateAttribute::MATERIAL);
-        mat->setDiffuse(osg::Material::FRONT_AND_BACK,
-                        osg::Vec4f(osgGolems::eigToOsgVec3(
-                                       node.getVisualizationShape(0)->getColor()), 1.0));
-        _bodyNodeGroupMap.at(&node)->getOrCreateStateSet()->setAttribute(mat);
-        _bodyNodeGroupMap.at(&node)->getOrCreateStateSet()->setAttributeAndModes(new osg::BlendFunc);
     }
 }
 
@@ -386,6 +402,19 @@ void SkeletonNode::_addCollisionShapesFromBodyNode(const dart::dynamics::BodyNod
             case dart::dynamics::Shape::ELLIPSOID:
             case dart::dynamics::Shape::CYLINDER: {
                 _bodyNodeCollsionMeshGroupMap.at(&node)->addChild(convertShapeToOsgNode(node.getCollisionShape(i)));
+                // Set the diffuse color of the top-level osg::Node. It's set here
+                // because it's at this level in the node hierarchy that we change
+                // the transparency of the node is the setTransparency function
+                osgGolems::setDiffuse(_bodyNodeGroupMap.at(&node),
+                                      osg::Vec4f(osgGolems::eigToOsgVec3(
+                                                        node.getVisualizationShape(0)->getColor()), 1.0));
+                // Set the protection level to PROTECTED making it so that nothing
+                // above this node's level change this node's material properties
+                osgGolems::setStateAttribute(_bodyNodeGroupMap.at(&node),
+                                             osg::StateAttribute::MATERIAL,
+                                             osg::StateAttribute::PROTECTED);
+                // Add wireframe mode to the geode
+                osgGolems::addWireFrameMode(_bodyNodeGroupMap.at(&node));
                 break;
             }
             case dart::dynamics::Shape::MESH: {
