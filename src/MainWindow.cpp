@@ -136,7 +136,7 @@ void MainWindow::loadPluginFileWithDialog()
         if (dialog.exec()) {
             QString pluginPath = dialog.selectedFiles().at(0);
             std::cerr << "pluginPath: " << pluginPath.toStdString() << std::endl;
-            slotSetStatusBarMessage(tr("plugin file: " + pluginPath));
+            slotSetStatusBarMessage(tr(qPrintable("plugin file: " + pluginPath)));
             loadPluginFile(pluginPath);
         } else {
             slotSetStatusBarMessage(tr("Didn't find plugin directory"));
@@ -158,7 +158,7 @@ void MainWindow::loadPluginDirWithDialog()
         if (dialog.exec()) {
             QDir pluginsDir = QDir(dialog.selectedFiles().at(0));
             std::cerr << "pluginDir: " << pluginsDir.path().toStdString() << std::endl;
-            slotSetStatusBarMessage(tr("plugin Dir: " + pluginsDir.path()));
+            slotSetStatusBarMessage(tr(qPrintable("plugin Dir: " + pluginsDir.path())));
             loadPluginDirectory(pluginsDir);
         } else {
             slotSetStatusBarMessage(tr("Didn't find plugin directory"));

@@ -1,0 +1,34 @@
+8/4/2014 -- Jon Scholz
+
+Notes on Building grip2 on osx
+    - cmake stuff
+      + removed Qt3Support
+      + added flag for the XInitThreads library (X11 on mac)
+
+    - code stuff
+      + updated the mac method for getting the abstime (include/gripTime.h)
+
+      + fixed an implicit cast issue in the tr(<strings>) calls throughout.  QT 4.8.6 is picky
+        about converting strings to const char*, so any call to tr without a string litteral
+        (e.g. tr("foo" + variable)) needs to be wrapped with a qPrintable
+        (e.g. tr(qPrintable("foo" + variable))).  
+
+    - build environment
+      + os x mavericks 10.9.4
+
+      + installing dart
+From https://github.com/dartsim/dart/wiki/Mac-installation-for-DART-3.0
+Installing DART on Mavericks
+
+Run everything as described above up until the install of FCL then: Open Finder, and find the “Go” menu at the top. Select “Go To Folder” and go to folder /usr/local From there, navigate to Cellar, and you’ll see a list of all directories installed by home-brew. Go online to https://github.com/dartsim , and scroll down to the FCL library. Download it as a zip and drag it into the list of directories that home-brew has installed. Navigate to the CMakeLists.txt file within fcl (full director should be /usr/local/Cellar/fcl/CMakeLists.txt Go to line 115, and delete the fatal error message, replacing it with:
+set(CCD_LIBRARIES "ccd") set(CCD_INCLUDE_DIRS "/usr/local/include/ccd") set(CCD_LIBRARY_DIRS "/usr/local/lib") create a folder within FCL called build inside Terminal, navigate to that folder (cd /usr/local/Cellar/fcl/build ) and enter the command: cmake .. (including the dots) once that finishes, enter the command: make and once that finishes, enter the command: make install After that, the process needs to be repeated (without the CMakeFile.txt edit) for a few more libraries. Return to https://github.com/dartsim , and download assimp, tinyxml, urdfdom_headers, console_bridge, and urdfdom. Drag them all into the /usr/local/Cellar folder, with all of your other libraries Add a “build” folder to each of them.
+
+For each (preserving the order above), navigate to the build folder (using the cd command in Terminal) and enter the commands “cmake ..” “make” and “make install”. The order of makes has to be maintained to ensure dependencies are correctly found out during the installation.
+
+Finally, use the cd command to navigate to the folder where you want to store DART, and enter the command: git clone -b CS4496 https://github.com/dartsim/dart.git Create a build folder within your new download of DART, navigate to that folder within terminal, and enter the commands: ‘cmake ..’ and ‘make’. Don’t do make install. Everything should now be in place. Within your build (build/bin) folder there will be the executables for apps, and after editing them just remake the ‘apps’ folder of your build to test out changes. (cd ~/dart/build/apps and make)
+Status API Training Shop Blog About
+
+      + installed depenencies using homebrew:
+	* open-scene-graph (version 3.2.0)
+	* boost (version 1.55.0)
+	* qt (version 4.8.6)
