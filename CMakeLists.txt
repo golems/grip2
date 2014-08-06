@@ -56,7 +56,8 @@ include(${QT_USE_FILE})
 
 # Find OpenSceneGraph
 find_package(OpenSceneGraph 3.0 REQUIRED
-    COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+    COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
 include_directories(${OpenSceneGraph_INCLUDE_DIRS})
 add_definitions(${OpenSourceGraph_DEFINITIONS})
 
