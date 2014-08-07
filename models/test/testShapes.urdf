@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<!-- @file Krang.urdf -->
+<!-- @author Can Erdogan -->
+<!-- @date May 19, 2013 -->
+<!-- @brief This file contains the .urdf definition for Krang with no dae files but only -->
+<!-- bounding boxes for the dae files except the wheels (for fast loading in 05-fr). -->
+<!-- TODO: Set the center of mass locations -->
+<!-- TODO: Set the correct masses. Note that the dae models have the brackets divided in two and -->
+<!-- connected to the middle motor for which we do not have measurements. -->
+<!-- NOTE: The bounding box values are taken by finding the min and max values of the dae files. -->
+
+<robot name="TestShapes">
+
+	<!-- ======================================================================================================== -->
+	<!-- ============================================ Links ===================================================== -->
+	<!-- ======================================================================================================== -->
+
+	<link name = "Sphere"> 
+    <inertial>
+      <mass value="4.66"/>
+      <inertia ixx="0.102019" ixy="2.45462e-05" ixz="0.00713022" iyy="0.0832724" iyz="-0.00131733" izz="0.086493"/>
+      <origin xyz="0 0 0"/>
+    </inertial>
+		<visual>
+      <geometry>
+        <sphere radius=".1"/>
+      </geometry>
+      <material name="yellow">
+        <color rgba="1 1 0 1"/>
+      </material>
+    </visual>
+	</link>
+
+
+	<link name = "Box"> 
+    <inertial>
+      <mass value="86.5"/>
+      <inertia ixx="0.102019" ixy="2.45462e-05" ixz="0.00713022" iyy="0.0832724" iyz="-0.00131733" izz="0.086493"/>
+      <origin xyz="0 0 0"/>
+    </inertial>
+		<visual> 
+			<origin xyz="0.00225 0.2097395 0.006300"/>
+      <geometry>
+        <box size="0.7165 0.71048 0.32860"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="1 .5 0 1"/>
+      </material>
+		</visual> 
+	</link>
+
+	<!-- ======================================================================================================== -->
+	<!-- ============================================ Joints ==================================================== -->
+	<!-- ======================================================================================================== -->
+
+	<joint name="sphereBox" type="revolute"> <parent link="Box" /> <child link="Sphere" />
+		<origin xyz = "-0.354 0.0 0" rpy="0 0 0" />
+		<axis xyz="1 0 0" /> <limit effort="1000" lower="-3.1416" upper="3.1416" velocity="0.1" />
+	</joint>
+
+</robot>

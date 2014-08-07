@@ -491,7 +491,7 @@ void DartNode::printInfo()
 void DartNode::setSkeletonTransparency(const dart::dynamics::Skeleton& skel, float transparencyValue)
 {
     if (_world && _world->getSkeleton(skel.getName())) {
-        osgGolems::setTransparency(_skelNodeMap.at(&skel), transparencyValue);
+        osgGolems::setTransparencyRecursive(_skelNodeMap.at(&skel), transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting Skeleton transparency" << std::endl;
     }
