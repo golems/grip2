@@ -54,11 +54,32 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
-# Find OpenSceneGraph
-find_package(OpenSceneGraph 3.0 REQUIRED
-    COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-include_directories(${OpenSceneGraph_INCLUDE_DIRS})
-add_definitions(${OpenSourceGraph_DEFINITIONS})
+
+set(OSG_LIBRARY_INSTALL "FALSE")
+if(${OSG_LIBRARY_INSTALL})
+    # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
+    # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
+    find_library(OpenSceneGraph REQUIRED
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+    set(OSG_LIBRARY_PATH "/usr/local/lib64") # may have to be customized
+    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libosgViewer.so
+        ${OSG_LIBRARY_PATH}/libosgManipulator.so
+        ${OSG_LIBRARY_PATH}/libosgGA.so
+        ${OSG_LIBRARY_PATH}/libosgDB.so
+        ${OSG_LIBRARY_PATH}/libOpenThreads.so
+        ${OSG_LIBRARY_PATH}/libosgQt.so
+        ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libOpenThreads.so) 
+else(${OSG_LIBRARY_INSTALL})
+    # Find OpenSceneGraph (cmake package)
+    find_package(OpenSceneGraph 3.0 REQUIRED
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
+    add_definitions(${OpenSourceGraph_DEFINITIONS})
+endif()
+
 
 # Find Eigen3
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
