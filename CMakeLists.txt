@@ -54,7 +54,6 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
-
 set(OSG_LIBRARY_INSTALL "FALSE")
 if(${OSG_LIBRARY_INSTALL})
     # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
@@ -75,11 +74,11 @@ if(${OSG_LIBRARY_INSTALL})
 else(${OSG_LIBRARY_INSTALL})
     # Find OpenSceneGraph (cmake package)
     find_package(OpenSceneGraph 3.0 REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+    find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
     include_directories(${OpenSceneGraph_INCLUDE_DIRS})
     add_definitions(${OpenSourceGraph_DEFINITIONS})
 endif()
-
 
 # Find Eigen3
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
