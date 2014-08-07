@@ -9,6 +9,17 @@ if(NOT WIN32)
   set(Yellow      "${Esc}[1;33m")
 endif()
 
+if(APPLE)
+    set(X11_THREADS_LIB "X11")
+
+    # set X11 include path for Mac OS X 
+    include_directories(/opt/X11/include)
+    link_directories(/opt/X11/lib)
+else(APPLE)
+    # linux uses rt for XInitThreads()
+    set(X11_THREADS_LIB "rt")
+endif()
+
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
@@ -16,7 +27,6 @@ set(CMAKE_BUILD_TYPE "Debug")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_ROOT}/Modules)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -40,28 +50,34 @@ add_custom_target(uninstall
 #                FIND PACKAGES
 #-----------------------------------------------
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL Qt3Support QtXml REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
-# Find OpenSceneGraph
-find_package(OpenSceneGraph 3.0 REQUIRED
-    COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
-include_directories(${OpenSceneGraph_INCLUDE_DIRS})
-add_definitions(${OpenSourceGraph_DEFINITIONS})
-set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
-# make sure the correct OpenSceneGraph is found. Only 3.0.* work.
-if(${OPENSCENEGRAPH_VERSION} GREATER 3.0)
-    message(STATUS "
-     ${Red}?!?!?!?!?!?!?!?!?!?!?!?
-             ERROR
-     ?!?!?!?!?!?!?!?!?!?!?!?${Yellow}
-     The version of OpenSceneGraph on your system is greater than 3.0.*.
-     It's version ${OPENSCENEGRAPH_VERSION}, but should be 3.0.*.
-     Either you installed from source or you should contact the repo owners.
-     You should use a package manager like apt-get or synaptic to install
-     libopenscenegraph-dev${ColorReset}
-    ")
+set(OSG_LIBRARY_INSTALL "FALSE")
+if(${OSG_LIBRARY_INSTALL})
+    # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
+    # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
+    find_library(OpenSceneGraph REQUIRED
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+    set(OSG_LIBRARY_PATH "/usr/local/lib64") # may have to be customized
+    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libosgViewer.so
+        ${OSG_LIBRARY_PATH}/libosgManipulator.so
+        ${OSG_LIBRARY_PATH}/libosgGA.so
+        ${OSG_LIBRARY_PATH}/libosgDB.so
+        ${OSG_LIBRARY_PATH}/libOpenThreads.so
+        ${OSG_LIBRARY_PATH}/libosgQt.so
+        ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libosg.so
+        ${OSG_LIBRARY_PATH}/libOpenThreads.so) 
+else(${OSG_LIBRARY_INSTALL})
+    # Find OpenSceneGraph (cmake package)
+    find_package(OpenSceneGraph 3.0 REQUIRED
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+    find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
+    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
+    add_definitions(${OpenSourceGraph_DEFINITIONS})
 endif()
 
 # Find Eigen3
@@ -70,7 +86,6 @@ find_package(Eigen REQUIRED)
 include_directories(${Eigen_INCLUDE_DIR})
 
 # Find DART
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_MODLUE_PATH} "${CMAKE_INSTALL_PREFIX}/share/dart")
 find_package(DART REQUIRED)
 include_directories(${DART_INCLUDE_DIRS})
 link_directories(${DART_LIBRARY_DIRS})
@@ -78,7 +93,6 @@ link_directories(${DART_LIBRARY_DIRS})
 #-----------------------------------------------
 #      INCLUDES & SUBDIRECTORY LIBRARIRES
 #-----------------------------------------------
-# Include top-level include directory
 include_directories(include)
 include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 
@@ -101,11 +115,10 @@ set(project_libs qtWidgets osgGolems osgDart)
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
 add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} rt)
+target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
-
 
 #-----------------------------------------------
 #                BUILD GRIP

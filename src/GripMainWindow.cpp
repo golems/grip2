@@ -176,8 +176,8 @@ bool GripMainWindow::stopSimulationWithDialog()
     QMessageBox msgBox;
 
     QString action = (_simulating ? "simulation" : "playback");
-    msgBox.setWindowTitle(tr("Stop " + action + " and Open Scene?"));
-    msgBox.setText(tr("Ending " + action + " and opening new scene!"));
+    msgBox.setWindowTitle(tr(qPrintable("Stop " + action + " and Open Scene?")));
+    msgBox.setText(tr(qPrintable("Ending " + action + " and opening new scene!")));
     msgBox.setInformativeText("Are you sure?");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Ok);
@@ -294,7 +294,7 @@ void GripMainWindow::slotPlaybackPause()
         return;
     }
 
-    this->slotSetStatusBarMessage(tr("Pausing playback"));
+    this->slotSetStatusBarMessage(tr(qPrintable("Pausing playback")));
 
     _playingBack = false;
 
@@ -578,7 +578,7 @@ void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
         std::cerr << "Entry: " << fileName.toStdString() << std::endl;
         QFileInfo fileInfo(fileName);
         if (fileInfo.suffix() != "so") {
-            slotSetStatusBarMessage(tr("Incorrect file extension on plug: " + fileInfo.path() + " >>> " + fileInfo.suffix()));
+            slotSetStatusBarMessage(tr(qPrintable("Incorrect file extension on plug: " + fileInfo.path() + " >>> " + fileInfo.suffix())));
             continue;
         }
         if (_debug) std::cerr << "Attempting to load plugin: " << fileInfo.absoluteFilePath().toStdString() << std::endl;
@@ -625,7 +625,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             }
         }
     } else {
-        slotSetStatusBarMessage(tr("Couldn't load plugin. " + loader.errorString()));
+        slotSetStatusBarMessage(tr(qPrintable("Couldn't load plugin. " + loader.errorString())));
         if (_debug) {
             std::cerr << "Plugin could not be loaded" << std::endl;
             std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;

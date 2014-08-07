@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.3)
 #                FIND PACKAGES
 #-----------------------------------------------
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui Qt3Support QtXml REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui QtXml REQUIRED) # Qt3Support 
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
@@ -34,4 +34,4 @@ file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.h
 
 # Add Qt Widgets library as SHARED library to dynamically load icons during runtime
 add_library(qtWidgets SHARED ${srcs} ${UI} ${MOC} ${RESOURCES})
-target_link_libraries(qtWidgets  ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
+target_link_libraries(qtWidgets  ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES} ${DART_LIBRARIES} osgDart)

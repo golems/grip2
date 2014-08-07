@@ -53,12 +53,13 @@
 
 /// Include platform-specific headers
 #ifdef WIN32             // Windows system specific
-#include <windows.h>
+    #include <windows.h>
 #elif defined(__APPLE__) // Machintosh
-#include <mach/mach.h>
-#include <mach/mach_time.h>
+    #include <mach/mach.h>
+    // #include <mach/mach_time.h>
+    #include <mach/clock.h>
 #else                    // Linux based system specific
-#include <time.h>
+    #include <time.h>
 #endif
 
 /**
@@ -79,8 +80,15 @@ namespace grip {
         QueryPerformanceFrequency(&freq);
         return (1000LL * time.QuadPart) / freq.QuadPart;
 #elif defined(__APPLE__)
-        uint64_t time;
-        return double(*(uint64_t*)AbsoluteToNanoseconds(*(AbsoluteTime*)(mach_absolute_time()))) * 1e-9;
+        struct timespec ts;
+        clock_serv_t cclock;
+        mach_timespec_t mts;
+        host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+        clock_get_time(cclock, &mts);
+        mach_port_deallocate(mach_task_self(), cclock);
+        ts.tv_sec = mts.tv_sec;
+        ts.tv_nsec = mts.tv_nsec;
+        return ts.tv_sec + (1e-9)*ts.tv_nsec;
 #else
         struct timespec time;
         clock_gettime(CLOCK_MONOTONIC, &time);
