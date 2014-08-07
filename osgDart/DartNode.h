@@ -347,7 +347,7 @@ protected:
     std::vector<osg::ref_ptr<osgDart::ContactForceVisual> > _contactForceArrows;
 
     /// Debug variable for whether or not to print debug output
-    const bool _debug;
+    bool _debug;
     /// Whether or not to show the contact forces in the visualization
     bool _showContactForces;
 

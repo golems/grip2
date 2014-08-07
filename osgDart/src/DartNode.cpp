@@ -310,7 +310,10 @@ dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
 
 size_t DartNode::addWorld(std::string file)
 {
+    bool debugTemp = _debug;
+    _debug = false;
     std::string extension = file.substr(file.find_last_of(".") + 1);
+    // If file is a URDF file, then try to parse its world, otherwise parse its skeleton
     if (extension == "urdf") {
         dart::simulation::World* world = parseWorldUrdf(file);
         if (world) {
@@ -319,13 +322,25 @@ size_t DartNode::addWorld(std::string file)
             dart::dynamics::Skeleton* skel = parseSkeletonUrdf(file);
             if (skel) {
                 this->addSkeleton(*skel);
+            } else {
+                if (debugTemp) {
+                std::cerr << "[DartNode] Failed to parse urdf file. Line "
+                          << __LINE__ << " of " << __FILE__ << std::endl;
+                }
             }
         }
+    // else if it's an SDF file, try to parse its world
     } else if (extension == "sdf") {
         dart::simulation::World* world = parseWorldSdf(file);
         if (world) {
             this->addWorld(world);
+        } else {
+            if (debugTemp) {
+            std::cerr << "[DartNode] Failed to parse sdf file. Line "
+                      << __LINE__ << " of " << __FILE__ << std::endl;
+            }
         }
+    // else if it's an SDF file, try to parse its world
     } else {
         dart::simulation::World* world = parseWorldSdf(file);
         if (world) {
@@ -334,13 +349,20 @@ size_t DartNode::addWorld(std::string file)
             world = parseWorldUrdf(file);
             if (world) {
                 this->addWorld(world);
+            } else {
+                if (debugTemp) {
+                std::cerr << "[DartNode] Failed to parse non-urdf-or-sdf file. Line "
+                          << __LINE__ << " of " << __FILE__ << std::endl;
+                }
             }
         }
     }
-    if (!_world->getNumSkeletons()) {
-        std::cerr << "[DartNode] Error parsing scene file. Line "
+    if (!_world->getNumSkeletons() && debugTemp) {
+        std::cerr << "[DartNode] Error, no skeletons in the world. Failed to parse scene file. Line "
                   << __LINE__ << " of " << __FILE__ << std::endl;
     }
+
+    _debug = debugTemp;
     return _skeletons.size();
 }
 
