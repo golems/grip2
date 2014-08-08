@@ -56,6 +56,7 @@ include(${QT_USE_FILE})
 
 set(OSG_LIBRARY_INSTALL "FALSE")
 if(${OSG_LIBRARY_INSTALL})
+    message(STATUS "TRUE")
     # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
     # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
     find_library(OpenSceneGraph REQUIRED
@@ -72,12 +73,14 @@ if(${OSG_LIBRARY_INSTALL})
         ${OSG_LIBRARY_PATH}/libosg.so
         ${OSG_LIBRARY_PATH}/libOpenThreads.so) 
 else(${OSG_LIBRARY_INSTALL})
+    message(STATUS "FALSE")
     # Find OpenSceneGraph (cmake package)
     find_package(OpenSceneGraph 3.0 REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
     find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
     include_directories(${OpenSceneGraph_INCLUDE_DIRS})
     add_definitions(${OpenSourceGraph_DEFINITIONS})
+    set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
 endif()
 
 # Find Eigen3
