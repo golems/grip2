@@ -99,6 +99,10 @@ QWidget* ViewerWidget::addViewWidget(osg::Camera* camera, osg::Node* scene)
 {
     osgViewer::View* view = new osgViewer::View;
     view->setCamera(camera);
+    // This needs to be added to set up the camera's stateset properly,
+    // in order to override OpenGL default settings to enable things like
+    // depth test, etc, otherwise it will use OpenGL defaults.
+    view->getCamera()->getOrCreateStateSet()->setGlobalDefaults();
     this->addView(view);
 
     view->setSceneData(scene);
