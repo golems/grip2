@@ -237,6 +237,19 @@ inline void setStateAttribute(osg::Node *node,
                  attributeValue);
 }
 
+inline void setStateAttributeRecursive(osg::Group *group,
+                              osg::StateAttribute::Type attribute,
+                              osg::StateAttribute::OverrideValue attributeValue)
+{
+    if (!group)
+        return;
+
+    osgGolems::setStateAttribute(group, attribute, attributeValue);
+    for (uint i = 0; i < group->getNumChildren(); ++i) {
+        osgGolems::setStateAttribute(group->getChild(i), attribute, attributeValue);
+    }
+}
+
 inline void setStateMode(osg::Node *node,
                          uint attribute,
                          osg::StateAttribute::OverrideValue attributeValue)
@@ -256,10 +269,12 @@ inline void setStateMode(osg::Node *node,
  */
 inline void setTransparency(osg::Node* node, float transparencyValue)
 {
-    if (!node)
+    if (!node) {
+        std::cerr << "[setTransparency] node is NULL" << std::endl;
         return;
+    }
 
-    std::cerr << "TL: Group: " << node->getName() << std::endl;
+    std::cerr << "TL: " << transparencyValue << ", Group: " << node->getName();
 
 //    addMaterialAttribute(node);
 //    addBlendFuncAttribute(node);
@@ -268,6 +283,7 @@ inline void setTransparency(osg::Node* node, float transparencyValue)
     osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
             getAttribute(osg::StateAttribute::MATERIAL);
     if (!mat.valid()) {
+        std::cerr << ", Material NULL" << std::endl;
         return;
     }
     osg::Vec4 diffuse = mat->getDiffuse(osg::Material::FRONT_AND_BACK);
@@ -281,6 +297,7 @@ inline void setTransparency(osg::Node* node, float transparencyValue)
     mat->setAlpha(osg::Material::FRONT_AND_BACK, transparencyValue);
 //    node->getOrCreateStateSet()->setAttributeAndModes(
 //                mat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+    std::cerr << std::endl;
 }
 
 inline void setTransparencyRecursive(osg::Group *group, float transparencyValue)
@@ -308,6 +325,19 @@ inline void setDiffuse(osg::Node *node, const osg::Vec4 &diffuse,
     osg::ref_ptr<osg::Material> mat = (osg::Material*)node->getOrCreateStateSet()->
             getAttribute(osg::StateAttribute::MATERIAL);
     mat->setDiffuse(face, diffuse);
+}
+
+inline void setDiffuseRecursive(osg::Group *group, const osg::Vec4 &diffuse,
+                                osg::Material::Face face=osg::Material::FRONT_AND_BACK)
+{
+    if (!group) {
+        return;
+    }
+
+    osgGolems::setDiffuse(group, diffuse, face);
+    for (uint i = 0; i < group->getNumChildren(); ++i) {
+        osgGolems::setDiffuse(group->getChild(i), diffuse);
+    }
 }
 
 inline void setAmbient(osg::Node *node, const osg::Vec4 &ambient,

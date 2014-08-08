@@ -371,12 +371,12 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
                 // Set the diffuse color of the top-level osg::Node. It's set here
                 // because it's at this level in the node hierarchy that we change
                 // the transparency of the node is the setTransparency function
-                osgGolems::setDiffuse(_bodyNodeGroupMap.at(&node),
+                osgGolems::setDiffuseRecursive(_bodyNodeGroupMap.at(&node),
                                       osg::Vec4f(osgGolems::eigToOsgVec3(
                                                         node.getVisualizationShape(0)->getColor()), 1.0));
                 // Set the protection level to PROTECTED making it so that nothing
                 // above this node's level change this node's material properties
-                osgGolems::setStateAttribute(_bodyNodeGroupMap.at(&node),
+                osgGolems::setStateAttributeRecursive(_bodyNodeGroupMap.at(&node),
                                              osg::StateAttribute::MATERIAL,
                                              osg::StateAttribute::PROTECTED);
                 // Add wireframe mode to the geode

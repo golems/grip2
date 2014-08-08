@@ -113,6 +113,8 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
     osg::ref_ptr<osg::MatrixTransform> shapeTF = new osg::MatrixTransform;
     shapeTF->setMatrix(shapeMatrix);
     shapeTF->addChild(geode);
+    shapeTF->setName("shapeTF");
+    geode->setName("shapeGeode");
 
     return shapeTF.release();
 }

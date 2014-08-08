@@ -71,6 +71,8 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
 {
     // Create main geode and loop through meshes
     osg::Geode* geode = new osg::Geode;
+    osgGolems::addMaterialAttribute(geode);
+    osgGolems::addBlendFuncAttribute(geode);
     for (uint n=0; n<aiNode->mNumMeshes; ++n) {
         std::cerr << "Node #" << n << std::endl;
         const struct aiMesh* mesh = aiScene->mMeshes[aiNode->mMeshes[n]];
@@ -188,13 +190,15 @@ osg::Node* osgAssimpSceneReader::traverseAIScene(const struct aiScene* aiScene, 
     for (uint n=0; n<aiNode->mNumChildren; ++n) {
         osg::Node* child = traverseAIScene(aiScene, aiNode->mChildren[n]);
         if (child) {
-            child->setName("Child");
+            std::stringstream childName;
+            childName << "Child " << n;
+            child->setName(childName.str());
             mt->addChild(child);
         }
     }
     geode->setName("Geode");
-    mt->setName("MT");
-    std::cerr << "MT num childs: " << mt->getNumChildren() << std::endl;
+    mt->setName("MatrixTF");
+    std::cerr << "MatrixTF num children: " << mt->getNumChildren() << std::endl;
     mt->addChild(geode);
     return mt.release();
 }
@@ -203,42 +207,50 @@ void osgAssimpSceneReader::createMaterialData(osg::Node *node, osg::StateSet* ss
 {
     aiColor4D c;
     osg::Material* material = new osg::Material;
+    osgGolems::addMaterialAttribute(node);
+    osgGolems::addBlendFuncAttribute(node);
     // These colors are set for 3D models
     if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_AMBIENT, &c)==AI_SUCCESS) {
         std::cerr << "Has ambient: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
-        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+//        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+        osgGolems::setAmbient(node, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_DIFFUSE, &c)==AI_SUCCESS) {
         std::cerr << "Has diffuse: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
-        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+//        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+        osgGolems::setDiffuse(node, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_SPECULAR, &c)==AI_SUCCESS) {
         std::cerr << "Has specular: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
-        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+//        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+        osgGolems::setSpecular(node, osg::Vec4(c.r, c.g, c.b, c.a));
     }
     if (aiGetMaterialColor(aiMtl, AI_MATKEY_COLOR_EMISSIVE, &c)==AI_SUCCESS) {
         std::cerr << "Has emissive: " << c.r << ", " << c.g << ", " << c.b << ", " << c.a << std::endl;
-        material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+//        material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(c.r, c.g, c.b, c.a));
+        osgGolems::setEmission(node, osg::Vec4(c.r, c.g, c.b, c.a));
     }
+    osgGolems::setStateAttributeRecursive(node->asGroup(),
+                                 osg::StateAttribute::MATERIAL,
+                                 osg::StateAttribute::PROTECTED);
+//    unsigned int maxValue = 1;
+//    float shininess = 0.0f, strength = 1.0f;
+//    if (aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS, &shininess, &maxValue)==AI_SUCCESS) {
+//        maxValue = 1;
+//        if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &maxValue)==AI_SUCCESS)
+//            shininess *= strength;
+//        material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+//    }
+//    else {
+//        material->setShininess(osg::Material::FRONT_AND_BACK, 0.0f);
+//        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4());
+//    }
 
-    unsigned int maxValue = 1;
-    float shininess = 0.0f, strength = 1.0f;
-    if (aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS, &shininess, &maxValue)==AI_SUCCESS) {
-        maxValue = 1;
-        if(aiGetMaterialFloatArray(aiMtl, AI_MATKEY_SHININESS_STRENGTH, &strength, &maxValue)==AI_SUCCESS)
-            shininess *= strength;
-        material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
-    }
-    else {
-        material->setShininess(osg::Material::FRONT_AND_BACK, 0.0f);
-        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4());
-    }
-
-    int wireframe = 0; maxValue = 1;
-    if (aiGetMaterialIntegerArray(aiMtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &maxValue)==AI_SUCCESS) {
-        ss->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK,
-                                                       wireframe ? osg::PolygonMode::LINE : osg::PolygonMode::FILL));
-    }
-    // Set the matrial attribute for the stateset. This is very important
-    ss->setAttributeAndModes(material, osg::StateAttribute::ON | osg::StateAttribute::PROTECTED);
+//    int wireframe = 0; maxValue = 1;
+//    if (aiGetMaterialIntegerArray(aiMtl, AI_MATKEY_ENABLE_WIREFRAME, &wireframe, &maxValue)==AI_SUCCESS) {
+//        ss->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK,
+//                                                       wireframe ? osg::PolygonMode::LINE : osg::PolygonMode::FILL));
+//    }
+//    // Set the matrial attribute for the stateset. This is very important
+//    ss->setAttributeAndModes(material, osg::StateAttribute::ON | osg::StateAttribute::PROTECTED);
 }

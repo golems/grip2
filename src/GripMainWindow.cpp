@@ -162,6 +162,8 @@ void GripMainWindow::doLoad(std::string sceneFileName)
     for (int i = 0; i < pluginList->size(); ++i) {
         pluginList->at(i)->GRIPEventSceneLoaded();
     }
+//    std::cerr << "Setting Transparency of LWheel node to 0.4" << std::endl;
+//    worldNode->setBodyNodeTransparency(*world->getSkeleton("Krang")->getBodyNode("LWheel"), 0.4);
 }
 
 void GripMainWindow::close()
