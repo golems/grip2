@@ -133,10 +133,10 @@ set(project_libs ${project_libs} mainWindow)
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
-QT4_WRAP_CPP(TEST_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/TestMainWindow.h)
-FILE(GLOB TEST_SRC src/TestMainWindow.cpp)
-add_library(grip-test SHARED ${TEST_MOC_HEADERS} ${TEST_SRC})
-target_link_libraries(grip-test ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+# QT4_WRAP_CPP(TEST_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/TestMainWindow.h)
+# FILE(GLOB TEST_SRC src/TestMainWindow.cpp)
+# add_library(grip-test SHARED ${TEST_MOC_HEADERS} ${TEST_SRC})
+# target_link_libraries(grip-test ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
@@ -145,7 +145,7 @@ FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.
 add_library(grip-core SHARED ${grip-srcs})
 target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-add_library(grip-interface SHARED src/gripInterface.cpp include/gripInterface.h)
+add_library(grip-interface SHARED src/GripInterface.cpp include/GripInterface.h)
 target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 

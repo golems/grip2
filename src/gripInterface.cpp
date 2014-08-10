@@ -1,17 +1,22 @@
 #include <QApplication>
 #include "GripMainWindow.h"
 #include <X11/Xlib.h>
-#include "../include/gripInterface.h"
+#include "../include/GripInterface.h"
 #include <iostream>
+
+GripInterface::GripInterface(){}
+
+GripInterface::~GripInterface(){}
 
 /**
  * \brief Shows the usgae message for grip, by display
  * the command line argument options the user can use
  * \param ostr An ostream operator like std::cout or std::cerr
  */
-void show_usage(std::ostream &ostr)
+void GripInterface::show_usage() //(std::ostream &ostr) don't know how to make a python interface to ostream (yet)
 {
-    ostr <<
+    // ostr <<
+    std::cerr <<
             "Usage: grip <COMMAND> [OPTION]\n"
             "Visualization tool for robotics simulators\n"
             "Commands\n"
@@ -26,10 +31,20 @@ void show_usage(std::ostream &ostr)
             "  grip --help\n";
 }
 
-
-int run(int argc, char **argv)
+void GripInterface::sayhello()
 {
-    std::cerr << "Hello Grip" << std::endl;
+    std::cerr << "Hello PyGrip!" << std::endl;
+}
+
+int GripInterface::step()
+{
+    std::cerr << "Called step!" << std::endl;
+    return 0;
+}
+
+int GripInterface::run(int argc, char **argv)
+{
+    std::cerr << "Running grip instance" << std::endl;
 
     // Variables for command line parsing
     bool debug = false;
@@ -47,7 +62,7 @@ int run(int argc, char **argv)
         } else if ("-c" == args[i] || "--config" == args[i]) {
             configFilePath = args[i+1];
         } else if ("-h" == args[i] || "--help" == args[i]) {
-            show_usage(std::cerr);
+            show_usage();
             exit(1);
         }
     }
