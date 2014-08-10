@@ -54,26 +54,31 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
-set(OSG_LIBRARY_INSTALL "FALSE")
+set(OSG_LIBRARY_INSTALL "TRUE")
 if(${OSG_LIBRARY_INSTALL})
-    message(STATUS "TRUE")
     # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
     # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
+    #       * to get OSG 3.0.1 to build you may need to disable ffmpeg:
+    #       * run "ccmake ..", and delete entry "FFMPEG_LIBAVUTIL_INCLUDE_DIRS" 
     find_library(OpenSceneGraph REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-    set(OSG_LIBRARY_PATH "/usr/local/lib64") # may have to be customized
-    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.so
-        ${OSG_LIBRARY_PATH}/libosgViewer.so
-        ${OSG_LIBRARY_PATH}/libosgManipulator.so
-        ${OSG_LIBRARY_PATH}/libosgGA.so
-        ${OSG_LIBRARY_PATH}/libosgDB.so
-        ${OSG_LIBRARY_PATH}/libOpenThreads.so
-        ${OSG_LIBRARY_PATH}/libosgQt.so
-        ${OSG_LIBRARY_PATH}/libosg.so
-        ${OSG_LIBRARY_PATH}/libosg.so
-        ${OSG_LIBRARY_PATH}/libOpenThreads.so) 
+    set(OSG_LIBRARY_PATH "/usr/local/lib") # may have to be customized
+    if(APPLE)
+        set(LIB_SUFFIX "dylib")
+    else(APPLE)
+        set(LIB_SUFFIX "so")
+    endif()
+    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosgViewer.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosgManipulator.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosgGA.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosgDB.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosgQt.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}) 
 else(${OSG_LIBRARY_INSTALL})
-    message(STATUS "FALSE")
     # Find OpenSceneGraph (cmake package)
     find_package(OpenSceneGraph 3.0 REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
