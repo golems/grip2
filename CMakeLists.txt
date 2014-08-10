@@ -56,7 +56,6 @@ include(${QT_USE_FILE})
 
 set(OSG_LIBRARY_INSTALL "FALSE")
 if(${OSG_LIBRARY_INSTALL})
-    message(STATUS "TRUE")
     # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
     # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
     find_library(OpenSceneGraph REQUIRED
@@ -73,7 +72,6 @@ if(${OSG_LIBRARY_INSTALL})
         ${OSG_LIBRARY_PATH}/libosg.so
         ${OSG_LIBRARY_PATH}/libOpenThreads.so) 
 else(${OSG_LIBRARY_INSTALL})
-    message(STATUS "FALSE")
     # Find OpenSceneGraph (cmake package)
     find_package(OpenSceneGraph 3.0 REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
@@ -117,8 +115,10 @@ set(project_libs qtWidgets osgGolems osgDart)
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp)
+LIST(REMOVE_ITEM GUI_SRC "${CMAKE_CURRENT_LIST_DIR}/include/TestMainWindow.h"
+                           "${CMAKE_CURRENT_LIST_DIR}/src/TestMainWindow.cpp")
 add_library(mainWindow SHARED ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
+target_link_libraries(mainWindow ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
@@ -126,6 +126,11 @@ set(project_libs ${project_libs} mainWindow)
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
+QT4_WRAP_CPP(TEST_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/TestMainWindow.h)
+FILE(GLOB TEST_SRC src/TestMainWindow.cpp)
+add_library(grip-test SHARED ${TEST_MOC_HEADERS} ${TEST_SRC})
+target_link_libraries(grip-test ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
@@ -135,6 +140,7 @@ target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES
 
 add_library(grip-interface SHARED src/gripInterface.cpp include/gripInterface.h)
 target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+
 
 #-----------------------------------------------
 #                BUILD TESTS

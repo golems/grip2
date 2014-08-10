@@ -1,6 +1,10 @@
 
 from libc.stdlib cimport malloc, free
 
+''' We need to either daemonize on the python side or
+    on the C++ side. For example, daemonize the grip app
+    so that we can continue to use the python shell
+'''
 cdef extern from "../include/gripInterface.h":
     int run(int argc, char **argv)
 
@@ -9,7 +13,7 @@ cpdef prun(args):
 
      # make *sure* that we have the exact string object for every argument
      #, and don't invoke __str__ on something else!!
-     args = [b'calling_from_cython'] + [bytes(x) for x in args]
+     args = [bytes(x) for x in args]
 
      # or, use str(x).encode(...) above, depending on what API you want and what encoding C program expect
      c_argv = <char**>malloc(sizeof(char*) * len(args)) # + try/finally and free!!
