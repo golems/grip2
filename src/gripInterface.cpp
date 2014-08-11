@@ -1,8 +1,9 @@
-#include <QApplication>
-#include "GripMainWindow.h"
-#include <X11/Xlib.h>
 #include "../include/GripInterface.h"
+
+#include <QApplication>
+#include <X11/Xlib.h>
 #include <iostream>
+#include <unistd.h>
 
 GripInterface::GripInterface(){}
 
@@ -31,21 +32,18 @@ void GripInterface::show_usage() //(std::ostream &ostr) don't know how to make a
             "  grip --help\n";
 }
 
-void GripInterface::sayhello()
-{
-    std::cerr << "Hello PyGrip!" << std::endl;
-}
-
 int GripInterface::step()
 {
-    std::cerr << "Called step!" << std::endl;
+    while(true) {
+        std::cerr << "Called step!" << std::endl;
+        usleep(10000);
+    }
+    
     return 0;
 }
 
-int GripInterface::run(int argc, char **argv)
+int GripInterface::create(int argc, char **argv)
 {
-    std::cerr << "Running grip instance" << std::endl;
-
     // Variables for command line parsing
     bool debug = false;
     std::string sceneFilePath;
@@ -71,10 +69,16 @@ int GripInterface::run(int argc, char **argv)
     XInitThreads();
 
     // Start grip
-    QApplication app(argc, argv);
-    GripMainWindow window(debug, sceneFilePath, configFilePath);
-    window.Toolbar();
-    window.show();
-    return app.exec();
+    _app = new QApplication(argc, argv);
+    _window = new GripMainWindow(debug, sceneFilePath, configFilePath);
+    _window->Toolbar();
+    _window->show();
+    _app->exec;
+
     return 0;
+}
+
+void GripInterface::load(std::string sceneFileName)
+{
+    _window->doLoad(sceneFileName);
 }

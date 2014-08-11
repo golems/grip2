@@ -7,11 +7,12 @@
 // C++ Standard includes
 #include <iostream>
 #include <cstdio>
+#include <string>
+#include "GripMainWindow.h"
 
 /**
- * \class MainWindow MainWindow.h
- * \brief Main window for robot simulation interface. A virtual base class
- * that subclasses QMainWindow
+ * \class GripInterface GripInterface.h
+ * \brief 
  */
 class GripInterface
 {
@@ -23,9 +24,17 @@ public:
     ~GripInterface();
 
     /** 
-     * Renders the current scene
+     * Creates a Grip instance
      */
-    int run(int argc, char **argv);
+    int create(int argc, char **argv);
+
+    /**
+     * \brief Load the scene and renders it. This function resets everything
+     * on each load.
+     * \param fileName Name of scene file to load
+     * \return void
+     */
+    void loadScene(std::string sceneFileName);
 
     /** 
      * Steps the world
@@ -39,12 +48,13 @@ public:
      */
     void render();
 
+    void load(std::string sceneFileName);
+
     static void show_usage(); //std::ostream &ostr);
 
-    static void sayhello();
-
-
 protected:
+	QApplication * _app;
+	GripMainWindow *_window;
 	// std::vector<void*> _render_queue();
 };
 
