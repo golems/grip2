@@ -5,7 +5,12 @@
 #include <iostream>
 #include <unistd.h>
 
-GripInterface::GripInterface(){}
+#include <dispatch/dispatch.h>
+
+GripInterface::GripInterface() : _app(NULL), _window(NULL)
+{
+
+}
 
 GripInterface::~GripInterface(){}
 
@@ -32,17 +37,17 @@ void GripInterface::show_usage() //(std::ostream &ostr) don't know how to make a
             "  grip --help\n";
 }
 
-int GripInterface::step()
-{
-    while(true) {
-        std::cerr << "Called step!" << std::endl;
-        usleep(10000);
-    }
+// int GripInterface::step()
+// {
+//     while(true) {
+//         std::cerr << "Called step!" << std::endl;
+//         usleep(10000);
+//     }
     
-    return 0;
-}
+//     return 0;
+// }
 
-int GripInterface::create(int argc, char **argv)
+int GripInterface::_create(int argc, char **argv)
 {
     // Variables for command line parsing
     bool debug = false;
@@ -78,7 +83,64 @@ int GripInterface::create(int argc, char **argv)
     return 0;
 }
 
-void GripInterface::load(std::string sceneFileName)
+/*
+attempt at running QT in a thread -- OSX version
+*/
+int GripInterface::run(int argc, char **argv)
 {
-    _window->doLoad(sceneFileName);
+    /*
+     * Get the main serial queue.
+     * It doesn't start processing until we call dispatch_main()
+     */
+    dispatch_queue_t main_q = dispatch_get_main_queue();
+    dispatch_async(main_q, ^{
+        std::cerr << "trying to create grip now" << std::endl;
+        _create(argc, argv); 
+        // exit(0);
+    });
+
+    /* Start the main queue */
+    dispatch_main();
+
+    // dispatch_async(dispatch_get_main_queue(), ^{ 
+    //     std::cerr << "trying to create grip now" << std::endl;
+    //     //_create(argc, argv); 
+    //     //step();
+    //     exit(0);
+    // });
+    return 0;
 }
+
+void GripInterface::loadScene(std::string sceneFileName)
+{
+    if (_window == NULL)
+        std::cerr << "Grip window pointer is NULL.  Call create()." << std::endl;
+    else
+        _window->doLoad(sceneFileName);
+}
+
+void GripInterface::loadPluginFile(std::string pluginFileName)
+{
+    _window->loadPluginFile(QString::fromStdString(pluginFileName));
+}
+
+void GripInterface::render()
+{
+    _window->viewWidget->update();
+}
+
+void GripInterface::startSimulation()
+{
+    _window->startSimulation();
+}
+
+void GripInterface::stopSimulation()
+{
+    _window->stopSimulation();
+}
+
+void GripInterface::simulateSingleStep()
+{
+    _window->simulateSingleStep();
+}
+

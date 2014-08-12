@@ -16,12 +16,6 @@ DART_INCLUDE_DIRS = ["/usr/local/include/dart/"]
 INCLUDE_DIRS = [QT_HEADER_DIR] + QT_INCLUDE_DIRS + GRIP_INCLUDE_DIRS + EIGEN_INCLUDE_DIRS + DART_INCLUDE_DIRS
 
 ext_modules=[
-    # Extension("demo",
-    #           ["demo.pyx"],
-    #           libraries=["../lib/grip-interface"],
-    #           language="c++",
-    #           extra_objects=["../lib/libgrip-interface.dylib"],
-    # ),
     # Extension("pygrip", ["pygrip.pyx"],
     #   libraries=["../lib/grip-test"],
     #   language="c++",

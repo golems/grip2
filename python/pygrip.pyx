@@ -7,10 +7,14 @@ cdef extern from "../include/GripInterface.h":
     cdef cppclass GripInterface:
         GripInterface() except +
         int some_var
-        int create(int argc, char **argv)
-        void load(string sceneFileName)
-        int step()
+        int _create(int argc, char **argv)
+        int run(int argc, char **argv)
+        void loadScene(string sceneFileName)
+        void loadPluginFile(string pluginFileName)
         void render()
+        void startSimulation()
+        void stopSimulation()
+        void simulateSingleStep()     
 
 # Place static interface declarations here
 cdef extern from "../include/GripInterface.h" namespace "GripInterface":
@@ -40,9 +44,6 @@ cdef class PyGrip:
         '''
         show_usage()
 
-    def step(self):
-        return self.thisptr.step()
-
     def create(self, args=None):
         if args is None:
             args = ''
@@ -59,9 +60,31 @@ cdef class PyGrip:
         for idx, s in enumerate(args):
             c_argv[idx] = s
 
-        int ret = self.thisptr.create(len(args), c_argv)
-        free c_argv
+        try:
+            ret = self.thisptr._create(len(args), c_argv)
+            # ret = self.thisptr.run(len(args), c_argv)
+        finally:
+            ret = -1
+            free(c_argv)
         return ret
 
-    def load(self, sceneFileName):
-        self.thisptr.load(sceneFileName)
+    # def run(self):
+    #     self.thisptr.run()
+
+    def loadScene(self, sceneFileName):
+        self.thisptr.loadScene(sceneFileName)
+
+    def loadPluginFile(self, pluginFileName):
+        self.thisptr.loadPluginFile(pluginFileName)
+
+    def render(self):
+        self.thisptr.render()
+
+    def startSimulation(self):
+        self.thisptr.startSimulation()
+
+    def stopSimulation(self):
+        self.thisptr.stopSimulation()
+
+    def simulateSingleStep(self):
+        self.thisptr.simulateSingleStep()
