@@ -62,14 +62,37 @@ cdef class PyGrip:
 
         try:
             ret = self.thisptr._create(len(args), c_argv)
-            # ret = self.thisptr.run(len(args), c_argv)
         finally:
             ret = -1
             free(c_argv)
         return ret
 
-    # def run(self):
-    #     self.thisptr.run()
+    def run(self, args=None):
+        '''
+        Calls run, which is same as create except attempts to do in a thread.
+        This is proving difficult on MAC OSX though
+        '''
+        if args is None:
+            args = ''
+
+        cdef char **c_argv
+
+        # make *sure* that we have the exact string object for every argument
+        #, and don't invoke __str__ on something else!!
+        args = [bytes(x) for x in args]
+
+        # or, use str(x).encode(...) above, depending on what API you want and what encoding C program expect
+        c_argv = <char**>malloc(sizeof(char*) * len(args)) # + try/finally and free!!
+
+        for idx, s in enumerate(args):
+            c_argv[idx] = s
+
+        try:
+            ret = self.thisptr.run(len(args), c_argv)
+        finally:
+            ret = -1
+            free(c_argv)
+        return ret
 
     def loadScene(self, sceneFileName):
         self.thisptr.loadScene(sceneFileName)

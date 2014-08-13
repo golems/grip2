@@ -78,7 +78,7 @@ int GripInterface::_create(int argc, char **argv)
     _window = new GripMainWindow(debug, sceneFilePath, configFilePath);
     _window->Toolbar();
     _window->show();
-    _app->exec;
+    // _app->exec(); // start main QT event thread
 
     return 0;
 }
