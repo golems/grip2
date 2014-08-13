@@ -62,7 +62,7 @@ if(${OSG_LIBRARY_INSTALL})
     #       * run "ccmake ..", and delete entry "FFMPEG_LIBAVUTIL_INCLUDE_DIRS" 
     find_library(OpenSceneGraph REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-    set(OSG_LIBRARY_PATH "/usr/local/lib") # may have to be customized
+    set(OSG_LIBRARY_PATH "/usr/local/lib64") # may have to be customized
     if(APPLE)
         set(LIB_SUFFIX "dylib")
     else(APPLE)
