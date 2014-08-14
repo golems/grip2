@@ -56,16 +56,13 @@ include(${QT_USE_FILE})
 
 set(OSG_LIBRARY_INSTALL "TRUE")
 if(${OSG_LIBRARY_INSTALL})
-    # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
-    # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
-    #       * to get OSG 3.0.1 to build you may need to disable ffmpeg:
-    #       * run "ccmake ..", and delete entry "FFMPEG_LIBAVUTIL_INCLUDE_DIRS" 
     find_library(OpenSceneGraph REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-    set(OSG_LIBRARY_PATH "/usr/local/lib64") # may have to be customized
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)   
     if(APPLE)
+        set(OSG_LIBRARY_PATH "/usr/local/lib") # works on OSX 10.9.4
         set(LIB_SUFFIX "dylib")
     else(APPLE)
+        set(OSG_LIBRARY_PATH "/usr/local/lib64") # works on ubuntu 14.04
         set(LIB_SUFFIX "so")
     endif()
     set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}

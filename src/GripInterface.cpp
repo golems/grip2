@@ -13,10 +13,20 @@
 
 GripInterface::GripInterface() : _app(NULL), _window(NULL)
 {
-
+    std::cerr << "got to contructor" << std::endl;
 }
 
-GripInterface::~GripInterface(){}
+GripInterface::~GripInterface()
+{
+    std::cerr << "got to destructor" << std::endl;
+
+    // kill grip somehow?
+    // _window->exit();
+    // _app->quit();
+    // std::cerr << "window should have exited" << std::endl;    
+    if (_gripthread != NULL)
+        _gripthread->join();
+}
 
 /**
  * \brief Shows the usgae message for grip, by display
@@ -73,7 +83,7 @@ int GripInterface::_create(int argc, char **argv)
     _window->Toolbar();
     _window->show();
     _app->exec();
-
+    
     return 0;
 }
 
@@ -83,11 +93,13 @@ attempt at running QT in a thread -- linux version
 */
 int GripInterface::run(int argc, char **argv)
 {
-    // std::cerr << "Not implemented" << std::endl;
+    // std::cerr << "trying to run grip in a thread" << "(this=" << this << ")" << std::endl;
+    _gripthread = new std::thread(&GripInterface::_create, this, argc, argv);
 
-    std::cerr << "trying to run grip in a thread" << std::endl;
-    _gripthread = new std::thread(&GripInterface::_create, *this, argc, argv);
-    std::cerr << "got here" << std::endl; 
+    // don't return until window is created
+    while (_window == NULL)
+        usleep(1000);
+
     return 0;
 }
 #elif defined(__APPLE__)
@@ -151,4 +163,3 @@ void GripInterface::simulateSingleStep()
 {
     _window->simulateSingleStep();
 }
-

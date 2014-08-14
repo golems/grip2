@@ -59,7 +59,7 @@
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
 #include <thread>
- #endif
+#endif
 
 /**
  * \class GripInterface GripInterface.h
@@ -75,10 +75,16 @@ public:
     ~GripInterface();
 
     /** 
-     * Creates a Grip instance
+     * Creates a Grip QT instance and starts its event loop.
      */
     int _create(int argc, char **argv);
 
+    /**
+     * Spins up a grip instance in a separate thread, allowing 
+     * the caller to proceed and interact with the running grip
+     * instance through the interface methods below.  This is 
+     * the standard use-case for this interface.
+     */
     int run(int argc, char **argv);
 
 	/**

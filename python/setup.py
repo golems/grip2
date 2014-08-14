@@ -1,13 +1,15 @@
+import sys
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
-MAC=False
-if MAC:
-  QT_HEADER_DIR = "/usr/local/include/" # source install on OSX (jon)
+if sys.platform == 'darwin':
+  # assumes source/brew install on OSX 
+  QT_HEADER_DIR = "/usr/local/include/"
   EIGEN_INCLUDE_DIRS = ["/usr/local/include/eigen3"]
   DART_INCLUDE_DIRS = ["/usr/local/include/dart/"]
 else:
+  # assumes apt install on ubuntu
   QT_HEADER_DIR = "/usr/include/qt4/"
   EIGEN_INCLUDE_DIRS = ["/usr/include/eigen3"]
   DART_INCLUDE_DIRS = ["/usr/include/dart/"]
@@ -33,6 +35,7 @@ ext_modules=[
       libraries=["../lib/grip-interface"],
       language="c++",
       include_dirs=INCLUDE_DIRS,
+      extra_compile_args = ["-std=c++11"]
      )
 ]
 
