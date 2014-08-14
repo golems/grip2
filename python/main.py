@@ -17,4 +17,4 @@ if __name__ == '__main__':
 	# pg.loadScene("/home/jscholz/vc/kore/etc/scenes/02-World-Collision.urdf")
 	# print 'loaded'
 
-	# import ipdb;ipdb.set_trace()
+	import ipdb;ipdb.set_trace()

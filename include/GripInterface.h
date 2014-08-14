@@ -55,11 +55,8 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+ #include <thread>
 #include "GripMainWindow.h"
-
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#include <thread>
-#endif
 
 /**
  * \class GripInterface GripInterface.h
@@ -132,8 +129,7 @@ public:
 protected:
 	QApplication * _app;
 	GripMainWindow *_window;
-    std::thread *_gripthread;
-	// std::vector<void*> _render_queue();
+    std::thread *_gripthread; // used for linux thread solution only
 };
 
 #endif // GRIP_INTERFACE_H

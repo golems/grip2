@@ -6,20 +6,17 @@
 #include <unistd.h>
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
-#include <thread>
+// anything?
 #elif defined(__APPLE__)
 #include <dispatch/dispatch.h>
 #endif
 
-GripInterface::GripInterface() : _app(NULL), _window(NULL)
+GripInterface::GripInterface() : _app(NULL), _window(NULL), _gripthread(NULL)
 {
-    std::cerr << "got to contructor" << std::endl;
 }
 
 GripInterface::~GripInterface()
 {
-    std::cerr << "got to destructor" << std::endl;
-
     // kill grip somehow?
     // _window->exit();
     // _app->quit();
@@ -88,9 +85,9 @@ int GripInterface::_create(int argc, char **argv)
 }
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
-/*
-attempt at running QT in a thread -- linux version
-*/
+/**
+ * Runs Grip QT application in a thread -- linux version
+ */
 int GripInterface::run(int argc, char **argv)
 {
     // std::cerr << "trying to run grip in a thread" << "(this=" << this << ")" << std::endl;
@@ -102,16 +99,19 @@ int GripInterface::run(int argc, char **argv)
 
     return 0;
 }
+
 #elif defined(__APPLE__)
-/*
-attempt at running QT in a thread -- OSX version
-*/
+/**
+ * Runs Grip QT application in a thread -- mac version
+ */
 int GripInterface::run(int argc, char **argv)
 {
     /*
      * Get the main serial queue.
      * It doesn't start processing until we call dispatch_main()
      */
+    // _create(argc, argv); // uncomment to just run in main thread (blocks)
+
     dispatch_queue_t main_q = dispatch_get_main_queue();
     dispatch_async(main_q, ^{
         std::cerr << "trying to create grip now" << std::endl;
@@ -119,16 +119,11 @@ int GripInterface::run(int argc, char **argv)
         // exit(0);
     });
 
-    /* Start the main queue */
+    // /* Start the main queue */
     dispatch_main();
 
-    // dispatch_async(dispatch_get_main_queue(), ^{ 
-    //     std::cerr << "trying to create grip now" << std::endl;
-    //     //_create(argc, argv); 
-    //     //step();
-    //     exit(0);
-    // });
     return 0;
+}
 #endif
 
 void GripInterface::loadScene(std::string sceneFileName)
