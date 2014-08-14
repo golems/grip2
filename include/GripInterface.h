@@ -125,6 +125,19 @@ public:
      */
     void simulateSingleStep();
 
+    /**
+     * \brief Returns the state of the world as std::vector, which can be
+     *        coerced to numpy array in cython bindings.
+     * \return An std (not Eigen) vector containing the current state
+     */
+    std::vector<double> getState();
+
+    /**
+     * \brief Sets the state of the world from an std::vector, which can be
+     *        coerced from a numpy array in cython bindings.
+     * \return 
+     */
+    void setState(const std::vector<double> &state);
 
 protected:
 	QApplication * _app;

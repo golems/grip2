@@ -2,6 +2,7 @@
 
 from libc.stdlib cimport malloc, free
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 cdef extern from "../include/GripInterface.h":
     cdef cppclass GripInterface:
@@ -14,7 +15,9 @@ cdef extern from "../include/GripInterface.h":
         void render()
         void startSimulation()
         void stopSimulation()
-        void simulateSingleStep()     
+        void simulateSingleStep()
+        vector[double] getState()
+        void setState(vector[double] state)
 
 # Place static interface declarations here
 cdef extern from "../include/GripInterface.h" namespace "GripInterface":
@@ -60,7 +63,7 @@ cdef class PyGrip:
 
         # or, use str(x).encode(...) above, depending on what API you want and what encoding C program expect
         c_argv = <char**>malloc(sizeof(char*) * len(args))
-        
+
         for idx, s in enumerate(args):
             c_argv[idx] = s
 
@@ -88,3 +91,9 @@ cdef class PyGrip:
 
     def simulateSingleStep(self):
         self.thisptr.simulateSingleStep()
+
+    def getState(self):
+        return self.thisptr.getState()
+
+    def setState(self, state):
+        self.thisptr.setState(state)

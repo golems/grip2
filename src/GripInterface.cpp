@@ -4,6 +4,7 @@
 #include <X11/Xlib.h>
 #include <iostream>
 #include <unistd.h>
+#include <Eigen/Geometry>
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
 // anything?
@@ -157,4 +158,25 @@ void GripInterface::stopSimulation()
 void GripInterface::simulateSingleStep()
 {
     _window->simulateSingleStep();
+}
+
+std::vector<double> GripInterface::getState()
+{
+    /* Note: would be nice to memory map this, but stl vector 
+       doesn't seem to support it.
+    */ 
+    // Eigen::Map<Eigen::VectorXd>(state.data(), _estate.rows(), _estate.cols()) = _estate;
+
+    Eigen::VectorXd _es = _window->world->getState();
+    std::vector<double> state(_es.rows());
+    for (int i=0; i<_es.rows(); i++)
+        state[i] = _es[i];
+    
+    return state;
+}
+
+void GripInterface::setState(const std::vector<double> &state)
+{
+    Eigen::Map<const Eigen::VectorXd> _es(state.data(), state.size());
+    _window->world->setState(_es);
 }
