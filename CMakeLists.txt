@@ -103,6 +103,7 @@ link_directories(${DART_LIBRARY_DIRS})
 #-----------------------------------------------
 include_directories(include)
 include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
+include_directories(${CMAKE_SOURCE_DIR})
 
 # Add QT Widgets library
 add_subdirectory(qtWidgets)
@@ -121,7 +122,7 @@ set(project_libs qtWidgets osgGolems osgDart)
 
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
-file(GLOB GUI_SRC include/*.h src/*.cpp)
+file(GLOB GUI_SRC include/*.h src/*.cpp )
 add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
 target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
@@ -134,7 +135,8 @@ set(project_libs ${project_libs} mainWindow)
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp)
+# Added GripObjects here to avoid linking errors
+FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
 add_library(grip-core SHARED ${grip-srcs})
 target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 

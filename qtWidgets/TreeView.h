@@ -53,9 +53,10 @@
 
 // Qt includes
 #include <QDockWidget>
+#include <QTreeWidgetItem>
+#include <QCheckBox>
 
 // Local includes
-#include "ui_TreeView.h"
 #include "TreeViewReturn.h"
 #include "GripTab.h"
 
@@ -87,6 +88,7 @@ class TreeView : public QDockWidget
 public:
     explicit TreeView(QWidget *parent = 0, QList<GripTab*>* tabs = NULL);
     void populateTreeView(dart::simulation::World *world = NULL);
+    void addSkeleton( dart::dynamics::Skeleton* _skel, dart::simulation::World* _world );
     void reset();
     ~TreeView();
     TreeViewReturn* getActiveItem();

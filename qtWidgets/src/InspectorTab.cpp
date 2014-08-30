@@ -61,6 +61,8 @@
 #include <QString>
 #include <QMetaMethod>
 
+#include "ui_InspectorTab.h"
+
 
 //change units
 inline double DEG2RAD(double angle_deg)  { return (angle_deg * 0.01745329251994329577); } //{ return (M_PI*angle_deg/180.0); }

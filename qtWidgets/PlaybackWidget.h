@@ -51,8 +51,9 @@
 #define PLAYBACK_WIDGET_H
 
 // Local includes
-#include "ui_PlaybackWidget.h"
-#include "MainWindow.h"
+namespace Ui { class PlaybackWidget; }
+
+#include "grip/include/MainWindow.h"
 
 /**
  * \class PlaybackWidget PlaybackWidget.h

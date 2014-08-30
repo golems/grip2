@@ -52,6 +52,8 @@
 // Local includes
 #include "TreeView.h"
 
+#include "ui_TreeView.h"
+
 //include icons
 #include "icons/fixed.xpm"
 #include "icons/free.xpm"
@@ -214,6 +216,27 @@ void TreeView::populateTreeView(dart::simulation::World *world)
             std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
         }
     }
+    _ui_treeWidget->setCurrentItem(parent, 0);
+}
+
+/**
+ * @function addSkeleton
+ * @brief Add last skeleton added to world. 
+ */
+void TreeView::addSkeleton( dart::dynamics::Skeleton* _skel, dart::simulation::World* _world ) {
+
+    QTreeWidgetItem* parent;
+    QPixmap robotIcon((const char**) robot_xpm);
+
+
+        int i = _world->getNumSkeletons() -1;
+        if(_skel) {
+            parent = _addParent(_skel,  QIcon(robotIcon), i);
+            _buildTree(_skel->getRootBodyNode(), parent, parent, false,i);
+        } else {
+            std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
+        }
+
     _ui_treeWidget->setCurrentItem(parent, 0);
 }
 

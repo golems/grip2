@@ -52,11 +52,17 @@
 #define INSPECTOR_TAB_H
 
 // Local includes
-#include "ui_InspectorTab.h"
 #include "TreeView.h"
+
+// QT includes
+#include <QDoubleSpinBox>
 
 // DART includes
 #include <dart/simulation/World.h>
+
+
+namespace Ui { class InspectorTab; }
+
 
 /**
  * \class InspectorTab InspectorTab.h

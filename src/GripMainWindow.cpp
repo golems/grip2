@@ -56,6 +56,12 @@
 #include "Line.h"
 #include "DartNode.h"
 
+#include "ui_VisualizationTab.h"
+#include "ui_InspectorTab.h"
+#include "ui_TreeView.h"
+#include "ui_PlaybackWidget.h"
+
+
 // Qt includes
 #include <QtGui>
 #include <QPixmap>
@@ -595,7 +601,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     if (plugin) {
         GripTab* gt = qobject_cast<GripTab*>(plugin);
         if (gt) {
-            gt->Load(this /*treeviewer->getActiveItem(), viewWidget, world, timeline*/);
+            gt->Load( this /*treeviewer->getActiveItem(), viewWidget, world, timeline*/);
 
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
             if (pluginWidget == NULL) {

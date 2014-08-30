@@ -1,8 +1,8 @@
 #ifndef GRIPOBJECTS_H
 #define GRIPOBJECTS_H
 
-#include "ViewerWidget.h"
-#include "TreeViewReturn.h"
+#include "../osgGolems/ViewerWidget.h"
+#include "../qtWidgets/TreeViewReturn.h"
 #include "../include/GripTimeslice.h"
 #include <dart/simulation/World.h>
 
@@ -12,6 +12,7 @@ public:
     ViewerWidget* getViewerWidget();
 
     TreeViewReturn* getTreeViewReturn();
+
 
     std::vector<GripTimeslice>* getTimeline();
 

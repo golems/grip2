@@ -58,20 +58,16 @@
 #include "MainWindow.h"
 
 // Local includes
-#include "ViewerWidget.h"
-#include "TreeView.h"
-#include "InspectorTab.h"
-#include "VisualizationTab.h"
-#include "PlaybackWidget.h"
-#include "ui_VisualizationTab.h"
-#include "ui_InspectorTab.h"
-#include "ui_TreeView.h"
-#include "ui_PlaybackWidget.h"
-#include "DartNode.h"
-#include "GripSimulation.h"
-#include "GripTab.h"
-#include "GripTimeslice.h"
-#include "GripObjects.h"
+#include "osgGolems/ViewerWidget.h"
+#include "qtWidgets/TreeView.h"
+#include "qtWidgets/InspectorTab.h"
+#include "qtWidgets/VisualizationTab.h"
+#include "qtWidgets/PlaybackWidget.h"
+#include "osgDart/DartNode.h"
+#include "grip/include/GripSimulation.h"
+#include "qtWidgets/GripTab.h"
+#include "grip/include/GripTimeslice.h"
+#include "grip/include/GripObjects.h"
 
 // Qt includes
 #include <QDir>

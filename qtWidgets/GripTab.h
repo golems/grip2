@@ -64,6 +64,7 @@
 #include <QDockWidget>
 #include <QtPlugin>
 
+class GripMainWindow;
 
 /**
  * \class GripTab GripTab.h
@@ -81,6 +82,7 @@ protected:
 
     /// pointer to simulation world object that is being rendered and simulated
     dart::simulation::World *_world;
+
 
     /// pointer to the timeline, which holds a GripTimeslice objects.
     /// These contain the state and time of the world. To use just call
@@ -103,13 +105,13 @@ public:
 	 * \param world Pointer to the dart world simulation object
 	 * \param timeline Array of GripTimeslice object for simulation and kinematic playback
      */
-    virtual void Load(GripObjects *grip)
+    virtual void Load(GripMainWindow *grip)
     {
-        _grip = grip;
-        _activeNode = grip->getTreeViewReturn();
-        _viewWidget = grip->getViewerWidget();
-        _world = grip->getWorld();
-        _timeline = grip->getTimeline();
+        _grip = (GripObjects*)grip;
+        _activeNode = _grip->getTreeViewReturn();
+        _viewWidget = _grip->getViewerWidget();
+        _world = _grip->getWorld();
+        _timeline = _grip->getTimeline();
     }
 
     /**
