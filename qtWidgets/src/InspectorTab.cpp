@@ -74,7 +74,7 @@ InspectorTab::InspectorTab(QWidget *parent, dart::simulation::World *simWorld, T
     _ui->setupUi(this);
     int position_precision_decimal = 2;
     int orientation_precision_decimal = 2;
-//    int joint_precision_decimal = 2;  /* moved to receiveSeletedItem */
+//    int joint_precision_decimal = 2;  /* moved to receiveSelectedItem */
     /// selected joint slider
     connect(_ui->positionSlider_0, SIGNAL(valueChanged(int)),this, SLOT(changeSelectedJoint(int)));
 
@@ -122,7 +122,7 @@ InspectorTab::InspectorTab(QWidget *parent, dart::simulation::World *simWorld, T
     _ui->orientationSpinBox_3->setDecimals(position_precision_decimal);
     _ui->orientationSpinBox_3->setSingleStep(pow(10,-orientation_precision_decimal));
 
-    connect(_treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSeletedItem(TreeViewReturn*)));
+    connect(_treeview, SIGNAL(itemSelected(TreeViewReturn*)),this, SLOT(receiveSelectedItem(TreeViewReturn*)));
     _ui->Joint_Slider_GroupBox->setDisabled(true);
     _ui->Position_Slider_GroupBox->setDisabled(true);
     _ui->Orientation_Slider_GroupBox->setDisabled(true);
@@ -179,7 +179,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
             }
             else
             {
-                 std::cerr << "Selected joint is not a free joint" << std::endl;
+               //std::cerr << "Selected joint is not a free joint" << std::endl;
             }
         }
         else
@@ -227,7 +227,11 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
                          std::vector<int> indx;
                          indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
                          Eigen::VectorXd config(1);
-                         config[0] = DEG2RAD(_ui->positionSlider_0->getdsValue());
+                         if( item_selected->getParentJoint()->getJointType() == dart::dynamics::Joint::PRISMATIC ) {
+                         	config[0] = (_ui->positionSlider_0->getdsValue());
+			 } else {				
+                         	config[0] = DEG2RAD(_ui->positionSlider_0->getdsValue());
+			 }
                          _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->setConfig(indx, config); //getSkeleton(i) - choose ith object
 
                      }
@@ -257,7 +261,7 @@ InspectorTab::~InspectorTab()
 /**
  * \brief identify type of selected item from treeview and set the sliders properly
  */
-void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
+void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
 {
 
     _selectedTypeFromTree = active_item->dType;
@@ -267,7 +271,7 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
         dart::dynamics::Skeleton* item_selected;
         item_selected = (dart::dynamics::Skeleton*)active_item->object;
 
-        std::cerr << "ReceiveSelectedItem: Robot is seleted" << std::endl;
+        std::cerr << "ReceiveSelectedItem: Robot is selected" << std::endl;
 
         _ui->parent_selected_display->setText(QString::fromStdString(item_selected->getName()));
         _ui->item_selected_display->setText(QString::fromStdString(item_selected->getName()));
@@ -297,13 +301,25 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
                 ///joint max,min and decimal point setting
                 int joint_precision_decimal  = 2;
                 //std::cerr << "Joint is selected" << std::endl;
-                _ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),
-                                                                      RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),joint_precision_decimal);
-                _ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
+		double qmin, qmax, q;
+		if( item_selected->getParentJoint()->getJointType() == dart::dynamics::Joint::PRISMATIC ) {
+		  qmin = item_selected->getParentJoint()->getGenCoord(0)->get_qMin();
+		  qmax = item_selected->getParentJoint()->getGenCoord(0)->get_qMax();
+		  q = item_selected->getParentJoint()->getGenCoord(0)->get_q(); 		  
+		} else {
+		  qmin = RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin());
+		  qmax = RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax());		  
+		  q = RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()); 		  
+		}
+
+                _ui->positionSlider_0->setMinMaxDecimalValue( qmin, qmax,
+							      joint_precision_decimal);
+                _ui->positionSpinBox_0->setRange(qmin, qmax);
                 _ui->positionSpinBox_0->setDecimals(joint_precision_decimal);
                 _ui->positionSpinBox_0->setSingleStep(pow(10,-joint_precision_decimal));
 
-                _ui->positionSlider_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+		
+                _ui->positionSlider_0->setdsValue(q);
                 //inspector_ui->positionSpinBox_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 ///enable joint slider only
                 _ui->Joint_Slider_GroupBox->setEnabled(true);
