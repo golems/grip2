@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(grip2)
+project(grip)
 
 # Define some colors for fun output
 if(NOT WIN32)
@@ -10,29 +10,29 @@ if(NOT WIN32)
 endif()
 
 if(APPLE)
-    set(X11_THREADS_LIB "X11")
-
-    # set X11 include path for Mac OS X 
-    include_directories(/opt/X11/include)
-    link_directories(/opt/X11/lib)
+  set(X11_THREADS_LIB "X11")
+  
+  # set X11 include path for Mac OS X 
+  include_directories(/opt/X11/include)
+  link_directories(/opt/X11/lib)
 else(APPLE)
-    # linux uses rt for XInitThreads()
-    set(X11_THREADS_LIB "rt")
+  # linux uses rt for XInitThreads()
+  set(X11_THREADS_LIB "rt")
 endif()
 
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "\nBuilding in \"Debug\" mode.\n-- CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
+  message(STATUS "\nBuilding in \"Debug\" mode.\n-- CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "\nBuilding in \"Release\" mode.\n-- CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+  message(STATUS "\nBuilding in \"Release\" mode.\n-- CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
 else()
 endif()
 
@@ -40,11 +40,11 @@ endif()
 #               UNINSTALL TARGET
 #-----------------------------------------------
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
 add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 #-----------------------------------------------
 #                FIND PACKAGES
@@ -56,36 +56,36 @@ include(${QT_USE_FILE})
 
 set(OSG_LIBRARY_INSTALL "FALSE")
 if(${OSG_LIBRARY_INSTALL})
-    # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
-    # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
-    #       * to get OSG 3.0.1 to build you may need to disable ffmpeg:
-    #       * run "ccmake ..", and delete entry "FFMPEG_LIBAVUTIL_INCLUDE_DIRS" 
-    find_library(OpenSceneGraph REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-    set(OSG_LIBRARY_PATH "/usr/local/lib") # may have to be customized
-    if(APPLE)
-        set(LIB_SUFFIX "dylib")
-    else(APPLE)
-        set(LIB_SUFFIX "so")
-    endif()
-    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgViewer.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgManipulator.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgGA.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgDB.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgQt.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}) 
+  # Find OpenSceneGraph (as installed library 3.0.1, for ubuntu 14.04)
+  # NOTE: The osg deb for 14.04 is v3.2.0, which is broken (renders weird) 
+  #       * to get OSG 3.0.1 to build you may need to disable ffmpeg:
+  #       * run "ccmake ..", and delete entry "FFMPEG_LIBAVUTIL_INCLUDE_DIRS" 
+  find_library(OpenSceneGraph REQUIRED
+    COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+  set(OSG_LIBRARY_PATH "/usr/local/lib") # may have to be customized
+  if(APPLE)
+    set(LIB_SUFFIX "dylib")
+  else(APPLE)
+    set(LIB_SUFFIX "so")
+  endif()
+  set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosgViewer.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosgManipulator.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosgGA.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosgDB.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosgQt.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
+    ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}) 
 else(${OSG_LIBRARY_INSTALL})
-    # Find OpenSceneGraph (cmake package)
-    find_package(OpenSceneGraph 3.0 REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
-    find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
-    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
-    add_definitions(${OpenSourceGraph_DEFINITIONS})
-    set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
+  # Find OpenSceneGraph (cmake package)
+  find_package(OpenSceneGraph 3.0 REQUIRED
+    COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+  find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
+  include_directories(${OpenSceneGraph_INCLUDE_DIRS})
+  add_definitions(${OpenSourceGraph_DEFINITIONS})
+  set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
 endif()
 
 # Find Eigen3
@@ -189,7 +189,7 @@ INSTALL(FILES ${qtWidgetsHeaders}
 
 FILE(GLOB mainHeaders "include/*.h")
 INSTALL(FILES ${mainHeaders}
-        DESTINATION /usr/local/include/grip/include)
+        DESTINATION /usr/local/include/grip)
 
 # Install cmake find file for grip
 INSTALL(FILES cmake/FindGRIP.cmake

@@ -64,10 +64,10 @@
 #include "qtWidgets/VisualizationTab.h"
 #include "qtWidgets/PlaybackWidget.h"
 #include "osgDart/DartNode.h"
-#include "grip/include/GripSimulation.h"
+#include "GripSimulation.h"
 #include "qtWidgets/GripTab.h"
-#include "grip/include/GripTimeslice.h"
-#include "grip/include/GripObjects.h"
+#include "GripTimeslice.h"
+#include "GripObjects.h"
 
 // Qt includes
 #include <QDir>
