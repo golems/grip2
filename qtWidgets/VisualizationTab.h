@@ -54,7 +54,7 @@
 // Local includes
 #include "osgDart/DartNode.h"
 #include "qtWidgets/TreeView.h"
-#include "grip/include/MainWindow.h"
+#include "grip/MainWindow.h"
 
 namespace Ui { class VisualizationTab; }
 

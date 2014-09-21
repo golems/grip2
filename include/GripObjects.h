@@ -1,9 +1,9 @@
 #ifndef GRIPOBJECTS_H
 #define GRIPOBJECTS_H
 
-#include "../osgGolems/ViewerWidget.h"
-#include "../qtWidgets/TreeViewReturn.h"
-#include "../include/GripTimeslice.h"
+#include "osgGolems/ViewerWidget.h"
+#include "qtWidgets/TreeViewReturn.h"
+#include "GripTimeslice.h"
 #include <dart/simulation/World.h>
 
 class GripObjects

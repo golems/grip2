@@ -53,7 +53,7 @@
 // Local includes
 namespace Ui { class PlaybackWidget; }
 
-#include "grip/include/MainWindow.h"
+#include "grip/MainWindow.h"
 
 /**
  * \class PlaybackWidget PlaybackWidget.h

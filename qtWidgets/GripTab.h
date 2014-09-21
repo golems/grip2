@@ -54,8 +54,8 @@
 // Local includes
 #include "TreeViewReturn.h"
 #include "../osgGolems/ViewerWidget.h"
-#include "../include/GripTimeslice.h"
-#include "../include/GripObjects.h"
+#include "GripTimeslice.h"
+#include "GripObjects.h"
 
 // DART includes
 #include <dart/simulation/World.h>

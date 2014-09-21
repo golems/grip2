@@ -21,6 +21,8 @@
 find_path(GRIP_INCLUDE_DIRS grip/qtWidgets/GripTab.h
           PATHS "${CMAKE_INSTALL_PREFIX}/include")
 
+set( GRIP_INCLUDE_DIRS ${GRIP_INCLUDE_DIRS} ${GRIP_INCLUDE_DIRS}/grip )
+
 find_library(GRIP_LIBRARIES grip-core
              NAMES grip-core
              PATH_SUFFIXES lib64 lib
