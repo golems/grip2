@@ -13,6 +13,7 @@ $ python setup.py build
 $ python setup.py install 
 
 # Running in-place:
-$ export LD_LIBRARY_PATH=`pwd`/../lib
-$ export PATH=$PWD/build/lib.linux-x86_64-2.7:$PATH
-$ python main.py
+export LD_LIBRARY_PATH=`pwd`/../lib
+export PATH=$PWD/build/lib.linux-x86_64-2.7:$PATH
+export PYTHONPATH=$PWD/build/lib.linux-x86_64-2.7:$PYTHONPATH
+python main.py
