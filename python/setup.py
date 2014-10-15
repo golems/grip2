@@ -12,7 +12,7 @@ else:
   # assumes apt install on ubuntu
   QT_HEADER_DIR = "/usr/include/qt4/"
   EIGEN_INCLUDE_DIRS = ["/usr/include/eigen3"]
-  DART_INCLUDE_DIRS = ["/usr/include/dart/"]
+  DART_INCLUDE_DIRS = ["/usr/local/include/dart/"]
 
 QT_INCLUDE_DIRS = [QT_HEADER_DIR + dir for dir in ["QtDesigner","QtDeclarative","QtScriptTools","QtDBus","QtDesigner","QtXml",
 	"QtSql","QtOpenGL","QtNetwork","QtXmlPatterns","QtWebKit","QtGui","QtCore"]]

@@ -71,7 +71,7 @@ cdef class PyGrip:
             ret = self.thisptr.run(len(args), c_argv)
         finally:
             ret = -1
-            free(c_argv)
+            # free(c_argv)
         return ret
 
     def loadScene(self, sceneFileName):
