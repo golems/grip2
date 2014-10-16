@@ -7,9 +7,9 @@
 #include <Eigen/Geometry>
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
-// anything?
+    // anything?
 #elif defined(__APPLE__)
-#include <dispatch/dispatch.h>
+    #include <dispatch/dispatch.h>
 #endif
 
 GripInterface::GripInterface() : _app(NULL), _window(NULL), _gripthread(NULL)
@@ -103,7 +103,13 @@ int GripInterface::run(int argc, char **argv)
 
 #elif defined(__APPLE__)
 /**
- * Runs Grip QT application in a thread -- mac version
+ * Runs Grip QT application in a thread -- mac version.
+ * This approach was supposed to work but sadly causes segfaults
+ * on my mac.  Haven't found a workaround yet, so for now only
+ * the linux version supports threaded execution.  
+ * The problem is with QTApp's exec call, which expects to be 
+ * top dog.  We can bring up the window without calling this, 
+ * but it won't be interactive.
  */
 int GripInterface::run(int argc, char **argv)
 {
@@ -111,17 +117,18 @@ int GripInterface::run(int argc, char **argv)
      * Get the main serial queue.
      * It doesn't start processing until we call dispatch_main()
      */
-    // _create(argc, argv); // uncomment to just run in main thread (blocks)
 
-    dispatch_queue_t main_q = dispatch_get_main_queue();
-    dispatch_async(main_q, ^{
-        std::cerr << "trying to create grip now" << std::endl;
-        _create(argc, argv); 
-        // exit(0);
-    });
-
+    /* Desired solution using OSX dispatch queue */
+    // dispatch_queue_t main_q = dispatch_get_main_queue();
+    // dispatch_async(main_q, ^{
+    //     std::cerr << "trying to create grip now" << std::endl;
+    //     _create(argc, argv); // Fails for some reason
+    // });
     // /* Start the main queue */
-    dispatch_main();
+    // dispatch_main();
+
+     /* Temporary solution */
+     _create(argc, argv); // uncomment to just run in main thread (blocks)
 
     return 0;
 }

@@ -25,8 +25,10 @@ endif()
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Debug")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+# set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
+# set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -54,8 +56,17 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
-set(OSG_LIBRARY_INSTALL "TRUE")
-if(${OSG_LIBRARY_INSTALL})
+# try to find the OpenSceneGraph cmake package 
+find_package(OpenSceneGraph 3.0 QUIET
+    COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
+find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
+if(${OpenSceneGraph_FOUND})
+    message("Found OpenSceneGraph cmake package.")
+    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
+    add_definitions(${OpenSourceGraph_DEFINITIONS})
+    set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
+else(${OpenSceneGraph_FOUND})
+    message("OpenSceneGraph cmake package not found.  Searching for library...")
     find_library(OpenSceneGraph REQUIRED
         COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)   
     if(APPLE)
@@ -74,15 +85,8 @@ if(${OSG_LIBRARY_INSTALL})
         ${OSG_LIBRARY_PATH}/libosgQt.${LIB_SUFFIX}
         ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
         ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}) 
-else(${OSG_LIBRARY_INSTALL})
-    # Find OpenSceneGraph (cmake package)
-    find_package(OpenSceneGraph 3.0 REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB)
-    find_package(OpenSceneGraph 3.0 QUIET COMPONENTS osgQt)
-    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
-    add_definitions(${OpenSourceGraph_DEFINITIONS})
-    set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
+        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX})
+    message("OpenSceneGraph library found.")
 endif()
 
 # Find Eigen3
@@ -170,7 +174,7 @@ endforeach(utest_src_file)
 #                 INSTALLATION
 #-----------------------------------------------
 # Install grip
-INSTALL(PROGRAMS build/grip
+INSTALL(PROGRAMS "${EXECUTABLE_OUTPUT_PATH}/grip"
         DESTINATION /usr/local/bin/)
 
 # Install library of grips libraries

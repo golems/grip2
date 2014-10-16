@@ -12,11 +12,14 @@ import numpy as np
 if __name__ == '__main__':
 	pg = PyGrip()
 	pg.run()
+	# pg.loadScene("/mnt/hgfs/jscholz/vc/my_robot_models/scenes/krang_techway.urdf")
 
 	## Test setting state:
-	pg.loadScene("/home/jscholz/vc/kore/etc/scenes/01-World-Robot.urdf")
+	# pg.loadScene("/Users/jscholz/vc/kore/etc/scenes/01-World-Robot.urdf")
+	pg.loadScene("/mnt/hgfs/jscholz/vc/kore/etc/scenes/01-World-Robot.urdf")
 	state = [-2.221441469079183, 2.221441469079183, -0.0, -0.2998945983256897, -0.2998945983256897, 0.0, 0.019547687622336492, 0.0, 1.8542377973187758, 0.0, -0.5658357434965616, 0.0, 0.0, -0.7674212721019067, 0.0, -0.6791076119509937, 0.0, -1.0014699247943464, 0.0, 0.0, 0.0, 0.0, 1.0752973521537064, 0.0, 0.7358308126408094, 0.0, 1.0752973521537064, 1.0534807365037773, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	pg.setState(state)
+	print pg.getState()
 
 	## Test getting state:
 	# pg.loadScene("/Users/jscholz/vc/my_robot_models/scenes/krang_techway.urdf")

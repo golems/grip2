@@ -22,17 +22,11 @@ GRIP_INCLUDE_DIRS = ["../include", "../osgDart/", "../osgGolems/", "../qtWidgets
 
 INCLUDE_DIRS = [QT_HEADER_DIR] + QT_INCLUDE_DIRS + GRIP_INCLUDE_DIRS + EIGEN_INCLUDE_DIRS + DART_INCLUDE_DIRS
 
+GRIP_LIBRARY_PATH_PREFIX = "../build/lib/"
+
 ext_modules=[
-    # Extension("pygrip", ["pygrip.pyx"],
-    #   libraries=["../lib/grip-test"],
-    #   language="c++",
-    #   include_dirs = ["/usr/include/qt4/QtDesigner","/usr/include/qt4/QtDeclarative","/usr/include/qt4/QtScriptTools","/usr/include/qt4/QtDBus","/usr/include/qt4/QtDesigner"
-    #   ,"/usr/include/qt4/QtXml","/usr/include/qt4/QtSql","/usr/include/qt4/QtOpenGL","/usr/include/qt4/QtNetwork","/usr/include/qt4/QtXmlPatterns","/usr/include/qt4/QtWebKit",
-    #   "/usr/include/qt4/QtHelp","/usr/include/qt4/QtUiTools","/usr/include/qt4/QtTest","/usr/include/qt4/QtScript","/usr/include/qt4/QtSvg","/usr/include/qt4/Qt3Support",
-    #   "/usr/include/qt4/QtGui","/usr/include/qt4/QtCore","/usr/share/qt4/mkspecs/default","/usr/include/qt4","/usr/include/qt4/QtCore"]
-    #  )
     Extension("pygrip", ["pygrip.pyx"],
-      libraries=["../lib/grip-interface"],
+      libraries=[GRIP_LIBRARY_PATH_PREFIX + "grip-interface"],
       language="c++",
       include_dirs=INCLUDE_DIRS,
       extra_compile_args = ["-std=c++11"]
