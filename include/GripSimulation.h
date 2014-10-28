@@ -58,9 +58,9 @@
 #include <QMetaType>
 
 //// Local includes
-#include "grip/MainWindow.h"
+#include "MainWindow.h"
 #include "qtWidgets/GripTab.h"
-#include "grip/GripTimeslice.h"
+#include "GripTimeslice.h"
 
 class GripMainWindow;
 

@@ -138,7 +138,7 @@ target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${O
 # Added GripObjects here to avoid linking errors
 FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
 add_library(grip-core SHARED ${grip-srcs})
-target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip-core  ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 # add_library(grip_wrap_test STATIC ${PROJECT_SOURCE_DIR}/src/grip_wrap_test.cpp)
 # target_link_libraries(grip_wrap_test ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
