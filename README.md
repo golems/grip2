@@ -152,8 +152,8 @@ Creating Grip2 Plugins
 <pre><code>find_package(GRIP REQUIRED)
 	include_directories(${GRIP_INCLUDE_DIRS})
 	
-	add_executable(foo foo.cc)
-	target_link_libraries(foo ${GRIP_LIBRARIES})
+	add_library(foo SHARED ${SRCS} ${UI} ${MOC} ${RESOURCES})
+	target_link_libraries(foo ${QT_LIBRARIES} ${DART_LIBRARIES}${GRIP_LIBRARIES})
 </code></pre>
 Note: Remember that the plugin needs to compile into a library and not an executable file. Hence include the cmake commands to generate a library from your code. While creating the library add the GripTab.h file to the library else when the library is being executed it will not understand the reference to GripTab.
 	
