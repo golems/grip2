@@ -166,36 +166,36 @@ endforeach(utest_src_file)
 #-----------------------------------------------
 # Install grip
 INSTALL(PROGRAMS build/grip
-        DESTINATION /usr/local/bin/)
+        DESTINATION bin/)
 
 # Install library of grips libraries
 INSTALL(TARGETS grip-core
-        DESTINATION /usr/local/lib/)
+        DESTINATION lib/)
 
 # Install header files by namespace and directory
 FILE(GLOB osgDartHeaders "osgDart/*.h")
 INSTALL(FILES ${osgDartHeaders}
-        DESTINATION /usr/local/include/grip/osgDart)
+        DESTINATION include/grip/osgDart/)
 
 FILE(GLOB osgGolemsHeaders "osgGolems/*.h")
 INSTALL(FILES ${osgGolemsHeaders}
-        DESTINATION /usr/local/include/grip/osgGolems)
+        DESTINATION include/grip/osgGolems/)
 
 FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
 INSTALL(FILES ${qtWidgetsHeaders}
-        DESTINATION /usr/local/include/grip/qtWidgets)
+        DESTINATION include/grip/qtWidgets/)
 
 FILE(GLOB mainHeaders "include/*.h")
 INSTALL(FILES ${mainHeaders}
-        DESTINATION /usr/local/include/grip/include)
+        DESTINATION include/grip/include/)
 
 # Install cmake find file for grip
 INSTALL(FILES cmake/FindGRIP.cmake
-        DESTINATION ${CMAKE_ROOT}/Modules)
+        DESTINATION share/cmake/)
 
 # Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
-        DESTINATION /usr/share/applications)
+        DESTINATION share/applications/)
 
 INSTALL(FILES "src/icons/grip-icon.png"
-        DESTINATION /usr/share/icons/)
+        DESTINATION share/icons/)
