@@ -146,6 +146,9 @@ public:
     /// stores a list of images to be saved as videos
     QList<QImage>* recordImageList;
 
+    /// grants the grip interface class access to protected members
+    friend class GripInterface;
+
 public slots:
     /**
      * \brief Slot for setting the state and time of the world based on
