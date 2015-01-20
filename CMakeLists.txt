@@ -51,6 +51,10 @@ add_custom_target(uninstall
 #-----------------------------------------------
 #                FIND PACKAGES
 #-----------------------------------------------
+
+# add local include to include path (for source installs; should be cmake default)
+include_directories(/usr/local/include)
+
 # Find QT
 find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
 add_definitions(${QT_DEFINITIONS})
@@ -68,12 +72,18 @@ if(${OpenSceneGraph_FOUND})
 else(${OpenSceneGraph_FOUND})
     message("OpenSceneGraph cmake package not found.  Searching for library...")
     find_library(OpenSceneGraph REQUIRED
-        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)   
+        COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
+    if(${OpenSceneGraph-NOTFOUND})
+        message("OpenSceneGraph library not found!")
+    else(${OpenSceneGraph-NOTFOUND})
+        message("Found installed OpenSceneGraph library.")
+    endif()
     if(APPLE)
         set(OSG_LIBRARY_PATH "/usr/local/lib") # works on OSX 10.9.4
         set(LIB_SUFFIX "dylib")
     else(APPLE)
-        set(OSG_LIBRARY_PATH "/usr/local/lib64") # works on ubuntu 14.04
+        # set(OSG_LIBRARY_PATH "/usr/local/lib64") # works on ubuntu 14.04, src install
+        set(OSG_LIBRARY_PATH "/usr/lib") # works on ubuntu 14.04, apt-get install
         set(LIB_SUFFIX "so")
     endif()
     set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
@@ -86,7 +96,6 @@ else(${OpenSceneGraph_FOUND})
         ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
         ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
         ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX})
-    message("OpenSceneGraph library found.")
 endif()
 
 # Find Eigen3
