@@ -39,6 +39,8 @@ These can all be installed using
 
     sudo apt-get install <package_name>
 
+or by building from source.  Note: if receiving errors about DART_ROOT not found, clear out all installed dart libraries from /usr/*/lib and /usr/*/include and reinstall from source or aptitude
+
 Compiling
 =========
 
