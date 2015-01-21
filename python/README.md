@@ -5,9 +5,19 @@ shared library that the python bindings depend on.  The python setup
 script currently points at the local build of this library (../lib/) rather
 than the system-wide version, in order to save time while developing grip2 and
 the bindings simultaneously.  Once this project stabilizes it's probably a
-good idea to switch the build to depend on system-wide grip2.
+good idea to switch the build to depend on system-wide grip2.  There is a
+hard-coded toggle for this in setup.py
 
 $ python setup.py build 
+
+NOTE: to build the python bindings, setup.py needs to know where to find any
+header file that's included by including GripInterface.h, which is pretty
+much everything in the grip project.  Now: annoyingly, qtWidgets builds 
+new header files during the compilation (the ui_*.h guys), which are in 
+whatever you called your "build" directory that you ran cmake in.  Therefore
+to build against the local grip build, either be sure to run cmake in a
+directory called "build", or create a symlink.  This is not a problem 
+when using the system version.
 
 # Installing the bidings:
 $ python setup.py install 
@@ -18,8 +28,8 @@ built in a directory called "build/lib".  If working with multiple build
 directories, just symlink the desired one to "build" before running setup.py.
 
 In the shell:
-export LD_LIBRARY_PATH=`pwd`/../build/lib
-export PATH=$PWD/`ls -d build/lib.*`:$PATH
+export LD_LIBRARY_PATH=`pwd`/../build/lib 		# <-- if using local build
+export PATH=$PWD/`ls -d build/lib.*`:$PATH 		# <-- if using local build
 export PYTHONPATH=$PWD/`ls -d build/lib.*`:$PYTHONPATH
 python main.py
 

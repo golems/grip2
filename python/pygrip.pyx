@@ -7,7 +7,6 @@ from libcpp.vector cimport vector
 cdef extern from "../include/GripInterface.h":
     cdef cppclass GripInterface:
         GripInterface() except +
-        int some_var
         int _create(int argc, char **argv)
         int run(int argc, char **argv)
         void loadScene(string sceneFileName)
@@ -31,10 +30,6 @@ cdef class PyGrip:
     libgrip-interface.
     '''
     cdef GripInterface *thisptr      # hold a C++ instance which we're wrapping
-
-    property some_var:
-        def __get__(self): return self.thisptr.some_var
-        def __set__(self, some_var): self.thisptr.some_var = some_var
 
     def __cinit__(self):
         self.thisptr = new GripInterface()

@@ -17,16 +17,24 @@ else:
 QT_INCLUDE_DIRS = [QT_HEADER_DIR + dir for dir in ["QtDesigner","QtDeclarative","QtScriptTools","QtDBus","QtDesigner","QtXml",
 	"QtSql","QtOpenGL","QtNetwork","QtXmlPatterns","QtWebKit","QtGui","QtCore"]]
 
-GRIP_INCLUDE_PATH_PREFIX = "../"
-GRIP_INCLUDE_DIRS = ["../include", "../osgDart/", "../osgGolems/", "../qtWidgets/", "../build/qtWidgets"]
+# GRIP_LOCAL_MODE = True
+GRIP_LOCAL_MODE = False
+if GRIP_LOCAL_MODE:
+  GRIP_INCLUDE_PATH_PREFIX = "../"
+  GRIP_LIBRARY_PATH_PREFIX = "../build/lib/"
+else:
+  GRIP_INCLUDE_PATH_PREFIX = "/usr/local/include/grip/"
+  GRIP_LIBRARY_PATH_PREFIX = "/usr/local/lib/"
+
+GRIP_INCLUDE_DIRS = [GRIP_INCLUDE_PATH_PREFIX + d for d in \
+  ["include", "osgDart/", "osgGolems/", "qtWidgets/", "build/qtWidgets"]]
 
 INCLUDE_DIRS = [QT_HEADER_DIR] + QT_INCLUDE_DIRS + GRIP_INCLUDE_DIRS + EIGEN_INCLUDE_DIRS + DART_INCLUDE_DIRS
-
-GRIP_LIBRARY_PATH_PREFIX = "../build/lib/"
+LIBRARIES = [GRIP_LIBRARY_PATH_PREFIX + "grip-core"]
 
 ext_modules=[
     Extension("pygrip", ["pygrip.pyx"],
-      libraries=[GRIP_LIBRARY_PATH_PREFIX + "grip-interface"],
+      libraries=LIBRARIES,
       language="c++",
       include_dirs=INCLUDE_DIRS,
       extra_compile_args = ["-std=c++11"]

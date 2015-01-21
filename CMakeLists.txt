@@ -137,7 +137,7 @@ LIST(REMOVE_ITEM GUI_SRC "${CMAKE_CURRENT_LIST_DIR}/include/TestMainWindow.h"
 add_library(mainWindow SHARED ${GUI_MOC_HEADERS} ${GUI_SRC})
 target_link_libraries(mainWindow ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
-# Set project libraries variable
+# Set project libraries variable to include the mainWindow after it's defined
 set(project_libs ${project_libs} mainWindow)
 
 #-----------------------------------------------
@@ -155,8 +155,8 @@ FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.
 add_library(grip-core SHARED ${grip-srcs})
 target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-add_library(grip-interface SHARED src/GripInterface.cpp include/GripInterface.h)
-target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+# add_library(grip-interface SHARED src/GripInterface.cpp include/GripInterface.h)
+# target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -190,6 +190,10 @@ INSTALL(PROGRAMS "${EXECUTABLE_OUTPUT_PATH}/grip"
 INSTALL(TARGETS grip-core
         DESTINATION lib/)
 
+# Install library of grip interface library
+# INSTALL(TARGETS grip-interface
+        # DESTINATION lib/)
+
 # Install header files by namespace and directory
 FILE(GLOB osgDartHeaders "osgDart/*.h")
 INSTALL(FILES ${osgDartHeaders}
@@ -205,6 +209,10 @@ INSTALL(FILES ${qtWidgetsHeaders}
 
 FILE(GLOB mainHeaders "include/*.h")
 INSTALL(FILES ${mainHeaders}
+        DESTINATION include/grip/include/)
+
+FILE(GLOB uiHeaders "${CMAKE_BINARY_DIR}/qtWidgets/*.h")
+INSTALL(FILES ${uiHeaders}
         DESTINATION include/grip/include/)
 
 # Install cmake find file for grip

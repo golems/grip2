@@ -127,8 +127,12 @@ void MainWindow::loadPluginFileWithDialog()
     if (true) {
         // Set file extension filters
         QStringList filters;
+#if defined(__linux) || defined(__linux__) || defined(linux)
         filters << "Shared library (*.so)";
-
+#elif defined(__APPLE__)
+        filters << "Shared library (*.dylib)";
+#endif
+        
         QFileDialog dialog(this);
         dialog.setNameFilters(filters);
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
