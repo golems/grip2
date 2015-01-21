@@ -187,3 +187,8 @@ void GripInterface::setState(const std::vector<double> &state)
     Eigen::Map<const Eigen::VectorXd> _es(state.data(), state.size());
     _window->world->setState(_es);
 }
+
+bool GripInterface::checkCollision()
+{
+    return _window->world->checkCollision();
+}

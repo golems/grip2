@@ -139,6 +139,12 @@ public:
      */
     void setState(const std::vector<double> &state);
 
+    /**
+     * \brief Pass-through call to world collision checker
+     * \return Boolean, true if a collision is detected, false otherwise
+     */
+    bool checkCollision();
+
 protected:
 	QApplication * _app;
 	GripMainWindow *_window;

@@ -18,6 +18,7 @@ cdef extern from "../include/GripInterface.h":
         void simulateSingleStep()
         vector[double] getState()
         void setState(vector[double] state)
+        bint checkCollision()
 
 # Place static interface declarations here
 cdef extern from "../include/GripInterface.h" namespace "GripInterface":
@@ -97,3 +98,6 @@ cdef class PyGrip:
 
     def setState(self, state):
         self.thisptr.setState(state)
+
+    def checkCollision(self):
+        return self.thisptr.checkCollision()
