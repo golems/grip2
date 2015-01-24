@@ -51,7 +51,7 @@
 // DART includes
 #include <dart/collision/CollisionDetector.h>
 #include <dart/constraint/ConstraintSolver.h>
-#include <dart/constraint/Constraint.h>
+#include <dart/constraint/ConstraintBase.h>
 
 VisualizationTab::VisualizationTab(osgDart::DartNode *worldNode, TreeView* treeView, MainWindow *parent)
     : QDockWidget(parent), _parent(parent)

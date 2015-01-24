@@ -214,7 +214,8 @@ void SkeletonNode::update()
 void SkeletonNode::_updateSkeletonVisuals()
 {
     osg::Matrix comTF;
-    comTF.makeTranslate(osgGolems::eigToOsgVec3(_rootBodyNode.getSkeleton()->getWorldCOM()));
+    dart::dynamics::Skeleton* skel = const_cast<dart::dynamics::Skeleton*>( _rootBodyNode.getSkeleton() );
+    comTF.makeTranslate(osgGolems::eigToOsgVec3(skel->getWorldCOM()));
     if (_skeletonVisuals->getCenterOfMassTF()) {
         _skeletonVisuals->getCenterOfMassTF()->setMatrix(comTF);
     }
@@ -257,7 +258,7 @@ void SkeletonNode::_addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode
     // Add child BodyNodes to parent Joint
     for( unsigned int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
         // Get child BodyNode and add its parent Joint to the grandparent Joint
-        dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
+        const dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
         osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getTransform()));
         childNodeTF->addChild(_makeBodyNodeGroup(*childBodyNode));
         childNodeTF->addChild(_makeBodyNodeCollisionMeshGroup(*childBodyNode));
@@ -315,12 +316,12 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
     visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
     if (node.getParentBodyNode() && node.getParentJoint()) {
-        if ( typeid(node.getParentJoint()) == typeid(dart::dynamics::RevoluteJoint) ) {
-            dart::dynamics::RevoluteJoint* parentJoint =
-                    dynamic_cast<dart::dynamics::RevoluteJoint*>(node.getParentJoint());
+        if ( typeid(*(node.getParentJoint())) == typeid(dart::dynamics::RevoluteJoint) ) {
+          //  const dart::dynamics::RevoluteJoint* parentJoint =
+            //        dynamic_cast<dart::dynamics::RevoluteJoint*>(node.getParentJoint());
 
             Eigen::Quaterniond axisQuat;
-            axisQuat.setFromTwoVectors(Eigen::Vector3d(1,0,0), parentJoint->getAxis());
+            axisQuat.setFromTwoVectors(Eigen::Vector3d(1,0,0), ((dart::dynamics::RevoluteJoint*) node.getParentJoint())->getAxis());
             Eigen::Isometry3d axisTF = Eigen::Isometry3d(axisQuat);
 
             visuals->addJointAxis();

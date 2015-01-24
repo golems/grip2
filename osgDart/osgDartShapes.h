@@ -63,7 +63,7 @@ namespace osgDart {
  * \param inputShape One of the dart::dynamics::Shape types
  * \return osg::MatrixTransform as an osg::Node pointer
  */
-osg::Node* convertShapeToOsgNode(dart::dynamics::Shape* inputShape);
+osg::Node* convertShapeToOsgNode(const dart::dynamics::Shape* inputShape);
 
 /**
  * \brief Convert dart::dynamics::MeshShape to an osgNode.
@@ -73,7 +73,7 @@ osg::Node* convertShapeToOsgNode(dart::dynamics::Shape* inputShape);
  * that is actually a MeshShape.
  * \return osg::MatrixTransform as an osg::Node pointer
  */
-osg::Node* convertMeshToOsgNode(dart::dynamics::Shape* mesh);
+osg::Node* convertMeshToOsgNode(const dart::dynamics::Shape* mesh);
 
 } // end namespace osgDart
 

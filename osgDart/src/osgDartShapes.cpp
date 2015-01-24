@@ -70,7 +70,7 @@
 
 // TODO: get colors working for sdf files
 // TODO: find out what ellipsoid shapes are possible in DART. currently only doing spheres
-osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
+osg::Node* osgDart::convertShapeToOsgNode(const dart::dynamics::Shape* inputShape)
 {
     osg::Geode* geode = new osg::Geode;
     osg::Matrix shapeMatrix = osgGolems::eigToOsgMatrix(inputShape->getLocalTransform());
@@ -126,7 +126,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
     return shapeTF.release();
 }
 
-osg::Node* osgDart::convertMeshToOsgNode(dart::dynamics::Shape* mesh)
+osg::Node* osgDart::convertMeshToOsgNode(const dart::dynamics::Shape* mesh)
 {
     dart::dynamics::MeshShape* meshShape = (dart::dynamics::MeshShape*)mesh;
 //    std::cerr << "[osgDartShapes] Color of mesh: " << meshShape->getColor().transpose() << std::endl;
