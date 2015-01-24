@@ -43,13 +43,14 @@
  */
 
 #include "GripTimeslice.h"
+#include "GripTools.h"
 
 GripTimeslice::GripTimeslice() : _time(0) {}
 
 GripTimeslice::GripTimeslice(const dart::simulation::World &world)
 {
     _time = world.getTime();
-    _state = world.getState();
+    _state = getWorldState( world );
 }
 
 GripTimeslice::~GripTimeslice()

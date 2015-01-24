@@ -178,7 +178,7 @@ std::vector<double> GripInterface::getState()
 
   std::vector<double> state;
   Eigen::VectorXd worldState;
-  worldState = getWorldState( _window->world );
+  worldState = getWorldState( *(_window->world) );
   
   for( unsigned int j = 0; j < worldState.size(); ++j ) {
     state.push_back( worldState(j) );
