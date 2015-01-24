@@ -103,8 +103,8 @@ void GripSimulation::reset()
 void GripSimulation::addWorldToTimeline(const dart::simulation::World& worldToAdd)
 {
     assert(worldToAdd.getTime() >= 0);
-    assert(worldToAdd.getState().rows() >= 0);
-
+    //assert(worldToAdd.getState().rows() >= 0);
+    // TODO POTENTIAL BUG !!
     GripTimeslice timeslice(worldToAdd);
     _timeline->push_back(timeslice);
 }

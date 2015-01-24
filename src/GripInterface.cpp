@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <Eigen/Geometry>
 
+#include "GripTools.h"
+
 #if defined(__linux) || defined(__linux__) || defined(linux)
     // anything?
 #elif defined(__APPLE__)
@@ -174,16 +176,18 @@ std::vector<double> GripInterface::getState()
     */ 
     // Eigen::Map<Eigen::VectorXd>(state.data(), _estate.rows(), _estate.cols()) = _estate;
 
-    Eigen::VectorXd _es = _window->world->getState();
-    std::vector<double> state(_es.rows());
-    for (int i=0; i<_es.rows(); i++)
-        state[i] = _es[i];
-    
-    return state;
+  std::vector<double> state;
+  Eigen::VectorXd worldState;
+  worldState = getWorldState( _window->world );
+  
+  for( unsigned int j = 0; j < worldState.size(); ++j ) {
+    state.push_back( worldState(j) );
+  }
+  return state;
 }
 
 void GripInterface::setState(const std::vector<double> &state)
 {
-    Eigen::Map<const Eigen::VectorXd> _es(state.data(), state.size());
-    _window->world->setState(_es);
+  Eigen::Map<const Eigen::VectorXd> _es(state.data(), state.size());
+  setWorldState( _window->world, _es );
 }
