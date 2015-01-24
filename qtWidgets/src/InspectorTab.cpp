@@ -222,11 +222,11 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
              {
                      if (item_selected->getParentBodyNode() !=NULL) /// double check, if the node is not the root
                      {
-                         std::vector<int> indx;
+                         std::vector<unsigned int> indx;
                          indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->getJoint(item_selected->getParentJoint()->getName())->getIndexInSkeleton(0) );
                          Eigen::VectorXd config(1);
                          config[0] = DEG2RAD(_ui->positionSlider_0->getdsValue());
-                         _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->setConfig(indx, config); //getSkeleton(i) - choose ith object
+                         _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->setPositionSegment(indx, config); //getSkeleton(i) - choose ith object
 
                      }
                      else
