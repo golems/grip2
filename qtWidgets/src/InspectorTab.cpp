@@ -447,10 +447,13 @@ void InspectorTab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen
         joint->setTransformFromParentBodyNode(transform);
         std::cerr << "not a free joint??" << std::endl;
     }
-
-    for (int i = 0; i < robot->getNumBodyNodes(); ++i) {
+/*
+    for (unsigned int i = 0; i < robot->getNumBodyNodes(); ++i) {
         robot->getBodyNode(i)->updateTransform();
-    }
+    }*/
+    robot->computeForwardKinematics( true, false, false );
+    // Update transforms, not vels, not accels
+
 }
 
 /**
