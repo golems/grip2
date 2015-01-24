@@ -47,7 +47,7 @@
 #include <dart/utils/sdf/SdfParser.h>
 #include <dart/collision/CollisionDetector.h>
 #include <dart/constraint/Constraint.h>
-#include <dart/constraint/ConstraintDynamics.h>
+#include <dart/constraint/ConstraintSolver.h>
 
 // osgDart includes
 #include "DartNode.h"
