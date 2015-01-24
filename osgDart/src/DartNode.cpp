@@ -98,8 +98,8 @@ void DartNode::_updateContactForces()
 
     // If we have a world and contraint handler, get all the contact forces and create OpenSceneGraph
     // vector to represent them
-    if (_world && _world->getConstraintHandler()) {
-        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+    if (_world && _world->getConstraintSolver()) {
+        size_t numContacts = _world->getConstraintSolver()->getCollisionDetector()->getNumContacts();
         std::vector<Eigen::Vector3d> contactPoints(numContacts);
         std::vector<Eigen::Vector3d> contactForces(numContacts);
         std::vector<float> forceVectorLengths(numContacts);
@@ -108,7 +108,7 @@ void DartNode::_updateContactForces()
 
         // Extract contact force from world
         for (size_t i = 0; i < numContacts; ++i) {
-            dart::collision::Contact contact = _world->getConstraintHandler()->getCollisionDetector()->getContact(i);
+            dart::collision::Contact contact = _world->getConstraintSolver()->getCollisionDetector()->getContact(i);
 
             contactPoints[i] = contact.point;
             contactForces[i] = contact.force/*.normalized() * .1 * log(contact.force.norm()*//*)*/;
@@ -168,8 +168,8 @@ void DartNode::setContactForcesVisible(bool makeVisible)
     if(_debug) {
         std::cerr << "[DartNode] " << (makeVisible ? "Showing " : "Hiding ") << "contact forces" << std::endl;
     }
-    if (_world && _world->getConstraintHandler()) {
-        size_t numContacts = _world->getConstraintHandler()->getCollisionDetector()->getNumContacts();
+    if (_world && _world->getConstraintSolver()) {
+        size_t numContacts = _world->getConstraintSolver()->getCollisionDetector()->getNumContacts();
         if(_debug) {
             std::cerr << "Number of contact forces: " << numContacts << std::endl;
         }
