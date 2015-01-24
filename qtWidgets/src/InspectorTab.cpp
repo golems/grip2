@@ -162,7 +162,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
              /// check if the joint is a free joint (6DoF)
              if(dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
              {
-                 if (item_selected->getParentBodyNode() == NULL && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
+                 if (item_selected->getParentBodyNode() == NULL && typeid(item_selected->getParentJoint()) == typeid(dart::dynamics::FreeJoint) ) /// double check, if the node is the root and free
                  {
                        pose(0) = _ui->positionSlider_1->getdsValue();
                        pose(1) = _ui->positionSlider_2->getdsValue();
@@ -220,10 +220,10 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
              }
              else
              {
-                     if (item_selected->getSkeletonIndex() !=0) /// double check, if the node is not the root
+                     if (item_selected->getParentBodyNode() !=NULL) /// double check, if the node is not the root
                      {
                          std::vector<int> indx;
-                         indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->getJoint(item_selected->getParentJoint()->getName())->getGenCoord(0)->getSkeletonIndex() );
+                         indx.push_back( _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->getJoint(item_selected->getParentJoint()->getName())->getIndexInSkeleton(0) );
                          Eigen::VectorXd config(1);
                          config[0] = DEG2RAD(_ui->positionSlider_0->getdsValue());
                          _simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)->setConfig(indx, config); //getSkeleton(i) - choose ith object
@@ -295,13 +295,13 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
                 ///joint max,min and decimal point setting
                 int joint_precision_decimal  = 2;
                 //std::cerr << "Joint is selected" << std::endl;
-                _ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),
-                                                                      RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()),joint_precision_decimal);
-                _ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMin()),RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_qMax()));
+                _ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getPositionLowerLimit(0)),
+                                                                      RAD2DEG(item_selected->getParentJoint()->getPositionUpperLimit(0)),joint_precision_decimal);
+                _ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getPositionLowerLimit(0)),RAD2DEG(item_selected->getParentJoint()->getPositionUpperLimit(0)));
                 _ui->positionSpinBox_0->setDecimals(joint_precision_decimal);
                 _ui->positionSpinBox_0->setSingleStep(pow(10,-joint_precision_decimal));
 
-                _ui->positionSlider_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+                _ui->positionSlider_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getPosition(0)));
                 //inspector_ui->positionSpinBox_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
                 ///enable joint slider only
                 _ui->Joint_Slider_GroupBox->setEnabled(true);
