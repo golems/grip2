@@ -411,7 +411,7 @@ Eigen::Matrix<double, 6, 1> InspectorTab::getRootTransform(dart::dynamics::Skele
     dart::dynamics::Joint *joint = robot->getRootBodyNode()->getParentJoint();
     Eigen::Matrix<double, 6, 1> pose;
 
-    if (joint->getJointType() == dart::dynamics::Joint::FREE) {
+    if ( typeid(joint) == typeid(dart::dynamics::FreeJoint)) {
         Eigen::Isometry3d Tf = dart::math::expMap( joint->get_q() );
         pose.head<3>() = Tf.translation();
         pose.tail<3>() = dart::math::matrixToEulerXYZ( Tf.linear() );
