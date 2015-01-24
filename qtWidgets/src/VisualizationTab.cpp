@@ -50,7 +50,7 @@
 
 // DART includes
 #include <dart/collision/CollisionDetector.h>
-#include <dart/constraint/ConstraintDynamics.h>
+#include <dart/constraint/ConstraintSolver.h>
 #include <dart/constraint/Constraint.h>
 
 VisualizationTab::VisualizationTab(osgDart::DartNode *worldNode, TreeView* treeView, MainWindow *parent)

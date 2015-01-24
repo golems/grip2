@@ -97,7 +97,7 @@ void TreeView::treeViewItemSelected(QTreeWidgetItem * item, int column)
     *_activeItem = *val;
 
     emit itemSelected(_activeItem);
-    for (int i = 0; i < _tabs->size(); ++i) {
+    for (unsigned int i = 0; i < _tabs->size(); ++i) {
         _tabs->at(i)->GRIPEventTreeViewSelectionChanged();
     }
 }
@@ -160,20 +160,19 @@ QTreeWidgetItem* TreeView::_buildTree(dart::dynamics::BodyNode* node, QTreeWidge
     QIcon icon;
 
     // Prismatic Joint: 1 DOF
-    dart::dynamics::Joint::JointType jointType = node->getParentJoint()->getJointType();
-    if (dart::dynamics::Joint::PRISMATIC == jointType)
+    if (typeid(*(node->getParentJoint())) == typeid(dart::dynamics::PrismaticJoint))
         icon = QIcon(prismIcon);
 
     // Revolute Joint: 1 DOF
-    else if (dart::dynamics::Joint::REVOLUTE == jointType)
+    else if ( typeid(*(node->getParentJoint())) == typeid(dart::dynamics::RevoluteJoint) )
         icon = QIcon(revolIcon);
 
     // Floating Joint: 6 DOF
-    else if (dart::dynamics::Joint::FREE == jointType)
+    else if  ( typeid(*(node->getParentJoint())) == typeid(dart::dynamics::FreeJoint) )
         icon = QIcon(freeIcon);
 
     //Fixed Joint: 0 DOF
-    else if (dart::dynamics::Joint::WELD == jointType)
+    else if ( typeid(*(node->getParentJoint())) == typeid(dart::dynamics::WeldJoint) )
         icon = QIcon(fixedIcon);
 
     else
@@ -194,7 +193,7 @@ QTreeWidgetItem* TreeView::_buildTree(dart::dynamics::BodyNode* node, QTreeWidge
     else
     {
         prev = new_parent = _addChildItem(node, parent, QIcon(icon), skeletonId);
-        for (int i=0; i<node->getNumChildBodyNodes(); i++)
+        for (unsigned int i=0; i<node->getNumChildBodyNodes(); i++)
             prev = _buildTree(node->getChildBodyNode(i), prev, new_parent, false, skeletonId);
     }
     return prev;
@@ -204,7 +203,7 @@ void TreeView::populateTreeView(dart::simulation::World *world)
 {
     QTreeWidgetItem* parent;
     QPixmap robotIcon((const char**) robot_xpm);
-    for (int i = 0; i<world->getNumSkeletons(); ++i)
+    for (unsigned int i = 0; i<world->getNumSkeletons(); ++i)
     {
         dart::dynamics::Skeleton* skel = world->getSkeleton(i);
         if(skel) {
