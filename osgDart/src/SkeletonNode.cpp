@@ -202,7 +202,7 @@ void SkeletonNode::update()
     _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getTransform()));
 
     // Then recursively update all the children of the root body node
-    for (int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
+    for( unsigned int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
         _updateRecursively(*_rootBodyNode.getChildBodyNode(i));
     }
 
@@ -253,7 +253,7 @@ void SkeletonNode::_addSkeletonVisuals()
 void SkeletonNode::_addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode& bodyNode)
 {
     // Add child BodyNodes to parent Joint
-    for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+    for( unsigned int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
         // Get child BodyNode and add its parent Joint to the grandparent Joint
         dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
         osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getTransform()));
@@ -275,7 +275,7 @@ void SkeletonNode::_updateRecursively(const dart::dynamics::BodyNode& bodyNode)
         _bodyNodeMatrixMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getTransform()));
         _bodyNodeVisualsMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getTransform()));
 
-        for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
+        for( unsigned int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
             _updateRecursively(*bodyNode.getChildBodyNode(i));
         }
     }
@@ -349,7 +349,7 @@ void SkeletonNode::_addVisualizationShapesFromBodyNode(const dart::dynamics::Bod
 {
 //    std::cerr << node.getSkeleton()->getName() << ". numShapes: " << node.getNumVisualizationShapes() << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
-    for (int i=0; i<node.getNumVisualizationShapes(); ++i) {
+    for( unsigned int i=0; i<node.getNumVisualizationShapes(); ++i) {
         switch (node.getVisualizationShape(i)->getShapeType()) {
             std::cerr << node.getName() << std::endl;
             case dart::dynamics::Shape::BOX:
@@ -380,7 +380,7 @@ void SkeletonNode::_addCollisionShapesFromBodyNode(const dart::dynamics::BodyNod
 {
 //    std::cerr << "[SkeletonNode] " << node.getName() << " has " << node.getNumCollisionShapes() << " collision shapes" << std::endl;
     // Loop through visualization shapes and create nodes and add them to a MatrixTransform
-    for (int i=0; i<node.getNumCollisionShapes(); ++i) {
+    for( unsigned int i=0; i<node.getNumCollisionShapes(); ++i) {
         switch (node.getCollisionShape(i)->getShapeType()) {
             case dart::dynamics::Shape::BOX:
             case dart::dynamics::Shape::ELLIPSOID:
