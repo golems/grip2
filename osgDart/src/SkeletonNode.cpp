@@ -198,8 +198,8 @@ void SkeletonNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node,
 void SkeletonNode::update()
 {
     // First update root joint transform, which places the skeleton relative to the world
-    _bodyNodeMatrixMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
-    _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    _bodyNodeMatrixMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getTransform()));
+    _bodyNodeVisualsMap.at(&_rootBodyNode)->setMatrix(osgGolems::eigToOsgMatrix(_rootBodyNode.getTransform()));
 
     // Then recursively update all the children of the root body node
     for (int i=0; i<_rootBodyNode.getNumChildBodyNodes(); ++i) {
@@ -229,7 +229,7 @@ void SkeletonNode::_createSkeleton()
 {
     // Get rootBodyNode's parent Joint, convert to osg::MatrixTransform,
     // add rootBodyNode to it, and then add child joint
-    osg::MatrixTransform* root =  new osg::MatrixTransform(osgGolems::eigToOsgMatrix(_rootBodyNode.getWorldTransform()));
+    osg::MatrixTransform* root =  new osg::MatrixTransform(osgGolems::eigToOsgMatrix(_rootBodyNode.getTransform()));
     root->addChild(_makeBodyNodeGroup(_rootBodyNode));
     root->addChild(_makeBodyNodeCollisionMeshGroup(_rootBodyNode));
     this->addChild(root);
@@ -256,7 +256,7 @@ void SkeletonNode::_addSkeletonObjectsRecursivley(const dart::dynamics::BodyNode
     for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
         // Get child BodyNode and add its parent Joint to the grandparent Joint
         dart::dynamics::BodyNode* childBodyNode = bodyNode.getChildBodyNode(i);
-        osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getWorldTransform()));
+        osg::MatrixTransform* childNodeTF = new osg::MatrixTransform(osgGolems::eigToOsgMatrix(childBodyNode->getTransform()));
         childNodeTF->addChild(_makeBodyNodeGroup(*childBodyNode));
         childNodeTF->addChild(_makeBodyNodeCollisionMeshGroup(*childBodyNode));
         this->addChild(childNodeTF);
@@ -272,8 +272,8 @@ void SkeletonNode::_updateRecursively(const dart::dynamics::BodyNode& bodyNode)
     // Get child node and update its transform. Then get its children and update theirs
     BodyNodeMatrixMap::const_iterator it = _bodyNodeMatrixMap.find(&bodyNode);
     if (it != _bodyNodeMatrixMap.end()) {
-        _bodyNodeMatrixMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
-        _bodyNodeVisualsMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getWorldTransform()));
+        _bodyNodeMatrixMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getTransform()));
+        _bodyNodeVisualsMap.at(&bodyNode)->setMatrix(osgGolems::eigToOsgMatrix(bodyNode.getTransform()));
 
         for (int i=0; i<bodyNode.getNumChildBodyNodes(); ++i) {
             _updateRecursively(*bodyNode.getChildBodyNode(i));
@@ -308,7 +308,7 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
 {
     osgDart::BodyNodeVisuals* visuals = new osgDart::BodyNodeVisuals;
 
-    visuals->setMatrix(osgGolems::eigToOsgMatrix(node.getWorldTransform()));
+    visuals->setMatrix(osgGolems::eigToOsgMatrix(node.getTransform()));
     visuals->addBodyNodesAxes();
     visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
