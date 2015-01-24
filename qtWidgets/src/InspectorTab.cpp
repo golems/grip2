@@ -309,7 +309,7 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
 //               inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
 
                 Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-                pose = getPoseFromTransform(item_selected->getWorldTransform());
+                pose = getPoseFromTransform(item_selected->getTransform());
                 _ui->positionSlider_1->setdsValue(pose(0));
                 _ui->positionSlider_2->setdsValue(pose(1));
                 _ui->positionSlider_3->setdsValue(pose(2));
