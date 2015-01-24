@@ -280,7 +280,7 @@ void InspectorTab::receiveSeletedItem(TreeViewReturn* active_item)
 
         //std::cerr << "ReceiveSelectedItem: BodyNode is selected" << std::endl;
 
-        if (item_selected->getSkeletonIndex() != 0) //double check, if the selected node's index is not zero
+        if (item_selected->getParentBodyNode() != NULL) //double check, if the selected node's index is not zero
         {
             _ui->parent_selected_display->setText( QString::fromStdString(item_selected->getParentBodyNode()->getName()) );
             _ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
