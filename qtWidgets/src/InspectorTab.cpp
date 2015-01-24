@@ -436,7 +436,7 @@ void InspectorTab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen
         transform.translation() = pose.head<3>();
         transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
         q = dart::math::logMap(transform);
-        joint->set_q( q );
+        joint->setPositions( q );
 
     }
     else {
