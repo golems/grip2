@@ -75,7 +75,7 @@ int testUrdfParsing()
     osg::Group* root = new osg::Group();
     if(1) {
         std::cerr << "Name: " << robot->getName() << "\n" << std::endl;
-        for(int i=0; i<robot->getNumBodyNodes(); ++i) {
+        for(unsigned int i=0; i<robot->getNumBodyNodes(); ++i) {
             dynamics::BodyNode* node = robot->getBodyNode(i);
             std::cerr << "BodyNode " << i << ": " << node->getName();
             if(node->getParentBodyNode()) {
@@ -85,13 +85,13 @@ int testUrdfParsing()
                 std::cerr << "\n\tParent Joint: " << node->getParentJoint()->getName();
                 std::cerr << "\n\tLocal TF: \n" << node->getParentJoint()->getLocalTransform().matrix();
                 std::cerr << "\n\tTF from Parent BodyNode: \n" << node->getParentJoint()->getTransformFromParentBodyNode().matrix() << std::endl;
-                std::cerr << "\n\tWorld TF: \n" << node->getWorldTransform().matrix();
+                std::cerr << "\n\tWorld TF: \n" << node->getTransform().matrix();
             }
-            for(int j=0; j<node->getNumChildBodyNodes(); ++j) {
+            for(unsigned int j=0; j<node->getNumChildBodyNodes(); ++j) {
                 std::cerr << "\n\tChild Node: " << node->getChildBodyNode(j)->getName();
             }
             if(node->getNumVisualizationShapes()) {
-            for(int j=0; j<node->getNumVisualizationShapes(); ++j) {
+            for(unsigned int j=0; j<node->getNumVisualizationShapes(); ++j) {
                 std::cerr << "\t\tj = " << j << std::endl;
                 dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(j);
                 const aiScene* mesh = meshShape->getMesh();
@@ -107,13 +107,13 @@ int testUrdfParsing()
     // Print world meta information
     if(0) {
         std::cerr << "Number of skeletons: " << world->getNumSkeletons() << std::endl;
-        for(int i=0; i<world->getNumSkeletons(); ++i) {
+        for(unsigned int i=0; i<world->getNumSkeletons(); ++i) {
             dynamics::Skeleton* skel = world->getSkeleton(i);
             std::cerr << "Number of BodyNodes in skeleton " << i << ": " << skel->getNumBodyNodes() << std::endl;
-            for(int j=0; j<skel->getNumBodyNodes(); ++j) {
+            for(unsigned int j=0; j<skel->getNumBodyNodes(); ++j) {
                 dynamics::BodyNode* node = skel->getBodyNode(j);
                 if(node->getNumVisualizationShapes()) {
-                    for(int k=0; k<node->getNumVisualizationShapes(); ++k) {
+                    for(unsigned int k=0; k<node->getNumVisualizationShapes(); ++k) {
                         dynamics::MeshShape* meshShape = (dynamics::MeshShape*)node->getVisualizationShape(k);
                         const aiScene* mesh = meshShape->getMesh();
                         osg::Node* n = osgAssimpSceneReader::traverseAIScene(mesh, mesh->mRootNode);
@@ -138,22 +138,18 @@ int testDartNode()
     osgDart::DartNode* dartNode = new osgDart::DartNode();
     dartNode->addSkeleton(*robot);
 
-    std::cerr << "Pre State\n" << robot->getConfig().transpose() << std::endl;
+    std::cerr << "Pre State\n" << robot->getPositions().transpose() << std::endl;
     std::cerr << "Pre TF\n" << robot->getJoint("LHP")->getTransformFromParentBodyNode().matrix() << std::endl;
 
-    Eigen::VectorXd qq(1);
-    qq[0] = M_PI/4;
+    double qq;
+    qq = M_PI/4;
 
-    std::vector<int> index(1);
-    index[0] = robot->getJoint("LHP")->getGenCoord(0)->getSkeletonIndex();
-    std::cerr << "index " << index[0] << std::endl;
-    robot->setConfig(index, qq);
+    robot->getJoint("LHP")->setPosition(0,qq);
     std::cerr << "supposedly LHP: " << robot->getJoint(3)->getName() << std::endl;
 
-    robot->getBodyNode("Body_LHP")->getChildBodyNode(0)->updateTransform();
-    robot->getBodyNode("Body_LHP")->updateTransform();
+    robot->computeForwardKinematics(true,false,false);
 
-    std::cerr << "Post State\n" << robot->getConfig().transpose() << std::endl;
+    std::cerr << "Post State\n" << robot->getPositions().transpose() << std::endl;
     std::cerr << "Post TF\n" << robot->getJoint("LHP")->getLocalTransform().matrix() << std::endl;
 
 
@@ -168,15 +164,14 @@ int testDart()
     dynamics::Skeleton* robot = getRobot();
     world->addSkeleton(robot);
     std::cerr << robot->getName() << "\n"
-              << "\thas " << robot->getNumGenCoords() << " generalized coordinate\n"
-              << "\tLHP: " << robot->getJoint("LHP")->get_q()
+              << "\thas " << robot->getNumDofs() << " generalized coordinate\n"
+              << "\tLHP: " << robot->getJoint("LHP")->getPosition(0)
               << std::endl;
 
-    Eigen::VectorXd q(1);
-    q[0] = M_PI/2;
-    robot->getJoint("LHP")->set_q(q);
+    double q = M_PI/2;
+    robot->getJoint("LHP")->setPosition(0,q);
 
-    std::cerr << "LHP: " << robot->getJoint("LHP")->get_q() << std::endl;
+    std::cerr << "LHP: " << robot->getJoint("LHP")->getPosition(0) << std::endl;
 
     Eigen::VectorXd config = robot->getState();
     std::cerr << "Robot config: \n" << config.transpose() << std::endl;

@@ -250,12 +250,12 @@ void GripMainWindow::slotSetWorldFromPlayback(int sliderTick)
 void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
 {
     // Before setting states, make sure the FreeJoints get their mT_Joints set
-    for (int i = 0; i < world->getNumSkeletons(); i++) {
+    for (unsigned int i = 0; i < world->getNumSkeletons(); i++) {
         int start = 2 * world->getIndex(i);
-        int size = 2 * (world->getSkeleton(i)->getNumGenCoords());
+        int size = 2 * (world->getSkeleton(i)->getNumDofs());
         Eigen::VectorXd q = _newState.segment(start, size / 2);
         // Set config calls updateTransform() [NO updateTransform_Issue122], which correctly initializes mT_Joint for FREE JOINT
-        world->getSkeleton(i)->setConfig(q);
+        world->getSkeleton(i)->setPositions(q);
         // The usual line. The line above is actually repeating some processing, but there is no other way, unless you want to touch DART itself
         world->getSkeleton(i)->setState(_newState.segment(start, size));
     }
