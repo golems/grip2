@@ -313,7 +313,7 @@ osgDart::BodyNodeVisuals* SkeletonNode::_makeBodyNodeVisuals(const dart::dynamic
     visuals->getBodyNodeAxesTF()->setNodeMask(0x0);
 
     if (node.getParentBodyNode() && node.getParentJoint()) {
-        if (node.getParentJoint()->getJointType() == dart::dynamics::Joint::REVOLUTE) {
+        if ( typeid(node.getParentJoint()) == typeid(dart::dynamics::RevoluteJoint) ) {
             dart::dynamics::RevoluteJoint* parentJoint =
                     dynamic_cast<dart::dynamics::RevoluteJoint*>(node.getParentJoint());
 
