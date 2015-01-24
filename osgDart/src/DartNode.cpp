@@ -72,7 +72,7 @@ DartNode::DartNode(bool debug)
 void DartNode::update()
 {
     SkeletonNodeMap::const_iterator it;
-    for (int i=0; i<_world->getNumSkeletons(); ++i) {
+    for (unsigned int i=0; i<_world->getNumSkeletons(); ++i) {
         it = _skelNodeMap.find(_world->getSkeleton(i));
         if (it != _skelNodeMap.end()) {
             _skelNodeMap.at(_world->getSkeleton(i))->update();
@@ -541,7 +541,7 @@ size_t DartNode::addWorld(dart::simulation::World* world)
         if (_debug) {
             std::cerr << "[DartNode] This DartNode already has a world object. Not going to create another one" << std::endl;
         }
-        for (int i=0; i<world->getNumSkeletons(); ++i) {
+        for (unsigned int i=0; i<world->getNumSkeletons(); ++i) {
             _world->addSkeleton(world->getSkeleton(i));
         }
     }
@@ -549,7 +549,7 @@ size_t DartNode::addWorld(dart::simulation::World* world)
     if (_debug) {
         std::cerr << "[DartNode] Added world with the following " << world->getNumSkeletons() << " objects:";
     }
-    for (int i=0; i<world->getNumSkeletons(); ++i) {
+    for (unsigned int i=0; i<world->getNumSkeletons(); ++i) {
         _skeletons.push_back(world->getSkeleton(i));
         if (_debug) {
             std::cerr << "    " << world->getSkeleton(i)->getName() << std::endl;
