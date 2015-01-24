@@ -162,7 +162,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
              /// check if the joint is a free joint (6DoF)
              if(dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
              {
-                 if (item_selected->getSkeletonIndex() == 0 && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
+                 if (item_selected->getParentBodyNode() == NULL && item_selected->getParentJoint()->getNumGenCoords() == 6 ) /// double check, if the node is the root and free
                  {
                        pose(0) = _ui->positionSlider_1->getdsValue();
                        pose(1) = _ui->positionSlider_2->getdsValue();
