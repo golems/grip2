@@ -78,7 +78,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
     switch (inputShape->getShapeType()) {
         case dart::dynamics::Shape::BOX: {
             dart::dynamics::BoxShape* shape = (dart::dynamics::BoxShape*) inputShape;
-            osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getDim());
+            osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getSize());
             osg::ShapeDrawable* osgBox =
                     new osg::ShapeDrawable(new osg::Box(osg::Vec3(0,0,0), size.x(), size.y(), size.z()));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
@@ -91,7 +91,7 @@ osg::Node* osgDart::convertShapeToOsgNode(dart::dynamics::Shape* inputShape)
         case dart::dynamics::Shape::ELLIPSOID: {
             dart::dynamics::EllipsoidShape* shape = (dart::dynamics::EllipsoidShape*) inputShape;
             osg::ShapeDrawable* osgEllipsoid =
-                    new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), shape->getDim()(0)));
+                    new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), shape->getSize()(0)));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
 //            std::cerr << "ellipsoid color: " << shape->getColor().transpose() << std::endl;
 //            std::cerr << "osgColor: " << color << std::endl;
