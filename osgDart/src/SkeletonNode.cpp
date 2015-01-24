@@ -42,6 +42,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <typeinfo>
+
 // Local includes
 #include "SkeletonNode.h"
 #include "osgUtils.h"

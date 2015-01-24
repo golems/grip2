@@ -42,6 +42,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <typeinfo>
+
 // Qt includes
 #include <QtGui>
 
