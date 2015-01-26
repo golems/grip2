@@ -48,8 +48,7 @@
  * Linux and Mac, and microsecond precision on Windows.
  */
 
-#ifndef TIMER_H_DEF
-#define TIMER_H_DEF
+#pragma once
 
 /// Include platform-specific headers
 #ifdef WIN32             // Windows system specific
@@ -98,4 +97,3 @@ namespace grip {
 
 } // end namespace grip
 
-#endif // TIMER_H_DEF

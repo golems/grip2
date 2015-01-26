@@ -34,4 +34,5 @@ file(GLOB srcs ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.h
 
 # Add Qt Widgets library as SHARED library to dynamically load icons during runtime
 add_library(qtWidgets SHARED ${srcs} ${UI} ${MOC} ${RESOURCES})
-target_link_libraries(qtWidgets  ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES} ${DART_LIBRARIES} osgDart)
+target_link_libraries(qtWidgets osgDart osgGolems ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES} ${DART_LIBRARIES} )
+set_target_properties( qtWidgets PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )

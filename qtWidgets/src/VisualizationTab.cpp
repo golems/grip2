@@ -44,6 +44,7 @@
 
 // Local includes
 #include "VisualizationTab.h"
+#include "ui_VisualizationTab.h"
 
 // C++ Standard includes
 #include <iostream>

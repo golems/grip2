@@ -44,6 +44,7 @@
 
 // Local includes
 #include "PlaybackWidget.h"
+#include "ui_PlaybackWidget.h"
 
 // C++ Standard includes
 #include <cmath>

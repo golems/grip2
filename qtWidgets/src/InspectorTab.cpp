@@ -63,6 +63,8 @@
 #include <QString>
 #include <QMetaMethod>
 
+#include "ui_InspectorTab.h"
+
 #include <typeinfo>
 
 //change units
@@ -155,14 +157,9 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
     
     if (_selectedTypeFromTree == Return_Type_Robot) //if robot, do nothing
       {
-	//dart::dynamics::Skeleton* item_selected;
-	//item_selected = (dart::dynamics::Skeleton*)treeview->getActiveItem()->object;
-	std::cerr << "ChangeXPosition: Skeleton itself is selected. Not movable." << std::endl;
-	
       }
     else if (_selectedTypeFromTree == Return_Type_Node) //if bodynode, change configuration using slider
       {
-	printf("Setting body node new joint position \n");
 	  dart::dynamics::BodyNode* item_selected;
 	  item_selected = (dart::dynamics::BodyNode*)_treeview->getActiveItem()->object;
 	  
@@ -177,13 +174,13 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
 	      pose(3) = DEG2RAD(_ui->orientationSlider_1->getdsValue());
 	      pose(4) = DEG2RAD(_ui->orientationSlider_2->getdsValue());
 	      pose(5) = DEG2RAD(_ui->orientationSlider_3->getdsValue());
-	      printf("Setting root transform \n");
+
 	      setRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId), pose);
 	    }
 	    
 	  }
 	  else {
-	    std::cerr << "Selected joint is not a free joint" << std::endl;
+		// Not a free joint to move
 	  }
         }
       else {
@@ -200,7 +197,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
  * \brief move the selected joint(other than root joint) only
  */
 void InspectorTab::changeSelectedJoint(int sliderValue){
-  printf("Change selected joint \n");
+
   if(_simWorld) {
     
     _selectedTypeFromTree = _treeview->getActiveItem()->dType;
@@ -210,7 +207,7 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
     }
     //If bodynode, change configuration using slider
     else if (_selectedTypeFromTree == Return_Type_Node) {
-      printf("A body node is selected \n");
+
       dart::dynamics::BodyNode* item_selected;
       item_selected = (dart::dynamics::BodyNode*)_treeview->getActiveItem()->object;
       //if the joint is fixed
@@ -220,7 +217,11 @@ void InspectorTab::changeSelectedJoint(int sliderValue){
       else {
 	/// double check, if the node is not the root
 	if (item_selected->getParentBodyNode() !=NULL) {
-	  double config = DEG2RAD(_ui->positionSlider_0->getdsValue());
+	  double config = _ui->positionSlider_0->getdsValue();
+	  if( typeid(*(item_selected->getParentJoint()) ) == typeid( dart::dynamics::RevoluteJoint ) ) {
+	    config = DEG2RAD( config );
+	  }
+	  
 	  item_selected->getParentJoint()->setPosition(0, config );
 	  item_selected->getSkeleton()->computeForwardKinematics(true,false,false);
 	}
@@ -259,8 +260,6 @@ void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
   if (_selectedTypeFromTree == Return_Type_Robot) {
     dart::dynamics::Skeleton* item_selected;
     item_selected = (dart::dynamics::Skeleton*)active_item->object;
-    
-    std::cerr << "ReceiveSelectedItem: Robot is selected" << std::endl;
 
     // Display position and orientation of root node
     Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
@@ -294,7 +293,7 @@ void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
       _ui->item_selected_display->setText( QString::fromStdString(item_selected->getName()) );
       
       ///if the joint is fixed, do nothing.
-      if ( typeid(dart::dynamics::WeldJoint*) == typeid(item_selected->getParentJoint()) ) {
+      if ( typeid(dart::dynamics::WeldJoint) == typeid(*(item_selected->getParentJoint()) ) ) {
 	std::cerr << "* A weldjoint is selected" << std::endl;
       }
       
@@ -303,18 +302,28 @@ void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
 	
 	///joint max,min and decimal point setting
 	int joint_precision_decimal  = 2;
-	_ui->positionSlider_0->setMinMaxDecimalValue(RAD2DEG(item_selected->getParentJoint()->getPositionLowerLimit(0)),
-							 RAD2DEG(item_selected->getParentJoint()->getPositionUpperLimit(0)),joint_precision_decimal);
-	_ui->positionSpinBox_0->setRange(RAD2DEG(item_selected->getParentJoint()->getPositionLowerLimit(0)),RAD2DEG(item_selected->getParentJoint()->getPositionUpperLimit(0)));
+
+	double qmin, qmax, q;
+	qmin = item_selected->getParentJoint()->getPositionLowerLimit(0);
+	qmax = item_selected->getParentJoint()->getPositionUpperLimit(0);
+	q = item_selected->getParentJoint()->getPosition(0);
+	
+	if( typeid(*(item_selected->getParentJoint())) == typeid(dart::dynamics::RevoluteJoint) ) {
+	  qmin = RAD2DEG(qmin);
+	  qmax = RAD2DEG(qmax);
+	  q = RAD2DEG(q);
+	}
+	_ui->positionSlider_0->setMinMaxDecimalValue( qmin, qmax, joint_precision_decimal);
+	_ui->positionSpinBox_0->setRange(qmin, qmax);
 	_ui->positionSpinBox_0->setDecimals(joint_precision_decimal);
 	_ui->positionSpinBox_0->setSingleStep(pow(10,-joint_precision_decimal));
 	
-	_ui->positionSlider_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getPosition(0)));
-	//inspector_ui->positionSpinBox_0->setdsValue(RAD2DEG(item_selected->getParentJoint()->getGenCoord(0)->get_q()));
+	
+	_ui->positionSlider_0->setdsValue(q);
+
 	///enable joint slider only
 	_ui->Joint_Slider_GroupBox->setEnabled(true);
-	//                inspector_ui->Position_Slider_GroupBox->setDisabled(true);
-	//               inspector_ui->Orientation_Slider_GroupBox->setDisabled(true);
+
 	
 	Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
 	pose = getPoseFromTransform(item_selected->getTransform());

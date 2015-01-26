@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(grip2)
+project(grip)
 
 # Define some colors for fun output
 if(NOT WIN32)
@@ -23,12 +23,8 @@ endif()
 #-----------------------------------------------
 #                COMPILE SETTINGS
 #-----------------------------------------------
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
-# set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
-# set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -48,12 +44,13 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
+
 #-----------------------------------------------
 #                FIND PACKAGES
 #-----------------------------------------------
 
-# add local include to include path (for source installs; should be cmake default)
-include_directories(/usr/local/include)
+# Add custom-made Find cmakes
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Find QT
 find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
@@ -61,45 +58,9 @@ add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
 
 # try to find the OpenSceneGraph cmake package 
-find_package(OpenSceneGraph 3.0 REQUIRED 
-    COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt)
-if(${OpenSceneGraph_FOUND})
-    message("Found OpenSceneGraph cmake package.")
-    include_directories(${OpenSceneGraph_INCLUDE_DIRS})
-    add_definitions(${OpenSourceGraph_DEFINITIONS})
-    set(OPENSCENEGRAPH_LIBRARIES ${OPENSCENEGRAPH_LIBRARIES} osgQt)
-else(${OpenSceneGraph_FOUND})
-    message("OpenSceneGraph cmake package not found.  Searching for library...")
-    find_library(OpenSceneGraph osg )
-    if(${OpenSceneGraph-NOTFOUND})
-        message("OpenSceneGraph library not found!")
-    else(${OpenSceneGraph-NOTFOUND})
-        message("Found installed OpenSceneGraph library." )
-        set( OpenSceneGraph_LIBRARIES ${OpenSceneGraph} )
-        message( "Libraries located in: ${OpenSceneGraph} ")
-    endif()
-    if(APPLE)
-        set(OSG_LIBRARY_PATH "/usr/local/lib") # works on OSX 10.9.4
-        set(LIB_SUFFIX "dylib")
-    else(APPLE)
-        # set(OSG_LIBRARY_PATH "/usr/local/lib64") # works on ubuntu 14.04, src install
-        set(OSG_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu") # works on ubuntu 14.04, apt-get install
-        set(LIB_SUFFIX "so")
-    endif()
-    set(OPENSCENEGRAPH_LIBRARIES ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgViewer.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgManipulator.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgGA.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgDB.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosgQt.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libosg.${LIB_SUFFIX}
-        ${OSG_LIBRARY_PATH}/libOpenThreads.${LIB_SUFFIX})
-endif()
+find_package( OpenSceneGraph REQUIRED COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt )
 
 # Find Eigen3
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Eigen REQUIRED)
 include_directories(${Eigen_INCLUDE_DIR})
 
@@ -111,31 +72,31 @@ link_directories(${DART_LIBRARY_DIRS})
 #-----------------------------------------------
 #      INCLUDES & SUBDIRECTORY LIBRARIRES
 #-----------------------------------------------
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+include_directories( ${CMAKE_SOURCE_DIR} )
 include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
 
-# Add QT Widgets library
-add_subdirectory(qtWidgets)
-include_directories(qtWidgets)
+# Add DART OSG library
+add_subdirectory(osgDart)
+include_directories(osgDart)
 
 # Add OpenSceneGraph Nodes library
 add_subdirectory(osgGolems)
 include_directories(osgGolems)
 
-# Add DART OSG library
-add_subdirectory(osgDart)
-include_directories(osgDart)
+# Add QT Widgets library
+add_subdirectory(qtWidgets)
+include_directories(qtWidgets)
 
 # Set project libraries variable
 set(project_libs qtWidgets osgGolems osgDart)
 
 # Add Main Window library
 QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
-file(GLOB GUI_SRC include/*.h src/*.cpp)
-LIST(REMOVE_ITEM GUI_SRC "${CMAKE_CURRENT_LIST_DIR}/include/TestMainWindow.h"
-                           "${CMAKE_CURRENT_LIST_DIR}/src/TestMainWindow.cpp")
-add_library(mainWindow SHARED ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainWindow ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${X11_THREADS_LIB})
+file(GLOB GUI_SRC include/*.h src/*.cpp )
+add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
+target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
@@ -143,20 +104,15 @@ set(project_libs ${project_libs} mainWindow)
 #-----------------------------------------------
 #                BUILD GRIP
 #-----------------------------------------------
-# QT4_WRAP_CPP(TEST_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/TestMainWindow.h)
-# FILE(GLOB TEST_SRC src/TestMainWindow.cpp)
-# add_library(grip-test SHARED ${TEST_MOC_HEADERS} ${TEST_SRC})
-# target_link_libraries(grip-test ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
-
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
 target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+set_target_properties( grip PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 
-FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp)
+# Added GripObjects here to avoid linking errors
+FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
 add_library(grip-core SHARED ${grip-srcs})
-target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
-
-add_library(grip-interface SHARED src/GripInterface.cpp include/GripInterface.h)
-target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip-core  ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+set_target_properties( grip-core PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 
 #-----------------------------------------------
 #                BUILD TESTS
@@ -182,38 +138,39 @@ endforeach(utest_src_file)
 #                 INSTALLATION
 #-----------------------------------------------
 # Install grip
-
-INSTALL(PROGRAMS "${EXECUTABLE_OUTPUT_PATH}/grip"
-        DESTINATION /usr/local/bin/)
+INSTALL(PROGRAMS bin/grip
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 
 # Install library of grips libraries
 INSTALL(TARGETS grip-core
-        DESTINATION lib/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )
 
 # Install header files by namespace and directory
 FILE(GLOB osgDartHeaders "osgDart/*.h")
 INSTALL(FILES ${osgDartHeaders}
-        DESTINATION include/grip/osgDart/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/grip/osgDart )
 
 FILE(GLOB osgGolemsHeaders "osgGolems/*.h")
 INSTALL(FILES ${osgGolemsHeaders}
-        DESTINATION include/grip/osgGolems/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/grip/osgGolems )
 
 FILE(GLOB qtWidgetsHeaders "qtWidgets/*.h")
 INSTALL(FILES ${qtWidgetsHeaders}
-        DESTINATION include/grip/qtWidgets/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/grip/qtWidgets)
 
 FILE(GLOB mainHeaders "include/*.h")
 INSTALL(FILES ${mainHeaders}
-        DESTINATION include/grip/include/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/grip)
 
 # Install cmake find file for grip
 INSTALL(FILES cmake/FindGRIP.cmake
-        DESTINATION share/cmake/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake )
 
 # Install desktop file to call grip from desktop
 INSTALL(FILES "doc/grip.desktop"
-        DESTINATION share/applications/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications/)
 
 INSTALL(FILES "src/icons/grip-icon.png"
-        DESTINATION share/icons/)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/)
+
+

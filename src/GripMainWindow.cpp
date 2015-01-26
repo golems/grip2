@@ -46,15 +46,18 @@
 #include "GripMainWindow.h"
 #include "ViewerWidget.h"
 #include "VisualizationTab.h"
-#include "ui_VisualizationTab.h"
 #include "InspectorTab.h"
 #include "ui_InspectorTab.h"
 #include "TreeView.h"
-#include "ui_TreeView.h"
 #include "DoubleSlider.h"
 #include "Grid.h"
 #include "Line.h"
 #include "DartNode.h"
+
+#include "ui_VisualizationTab.h"
+#include "ui_InspectorTab.h"
+#include "ui_TreeView.h"
+#include "ui_PlaybackWidget.h"
 
 // Qt includes
 #include <QtGui>
@@ -71,20 +74,20 @@
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/utils/urdf/DartLoader.h>
 
-GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) :
-    MainWindow(),
-    world(new dart::simulation::World()),
-    worldNode(new osgDart::DartNode(debug)),
-    pluginList(new QList<GripTab*>),
-    pluginMenu(new QMenu),
-    _debug(debug),
-    _simulating(false),
-    _playingBack(false),
-    _curPlaybackTick(0),
-    _playbackSpeed(5),
-    _simulationDirty(false),
-    _recordVideo(false)
-{
+GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) {
+    
+    world =new dart::simulation::World();
+    worldNode = new osgDart::DartNode(debug);
+    pluginList = new QList<GripTab*>;
+    pluginMenu = new QMenu;
+    _debug = debug;
+    _simulating = false;
+    _playingBack = false;
+    _curPlaybackTick = 0;
+    _playbackSpeed = 5;
+    _simulationDirty = false;
+    _recordVideo = false;
+
     /// object initialization
     world->setTime(0);
     playbackWidget = new PlaybackWidget(this);
@@ -367,11 +370,9 @@ void GripMainWindow::slotPlaybackTimeStep(bool playForward)
         this->setWorldState_Issue122(timeline->at(_curPlaybackTick).getState());
         playbackWidget->slotSetTimeDisplays(world->getTime(), 0);
 
-        std::cerr << "cur: " << _curPlaybackTick << ", " << _curPlaybackTick + _playbackSpeed << ", " << timeline->size()-1 << std::endl;
         if ((_curPlaybackTick == 0 && !playForward)
                 || (_curPlaybackTick == (timeline->size() - 1) && playForward)) {
             _playingBack = false;
-            std::cerr << "Done playing back" << std::endl;
         } else if (((_curPlaybackTick - _playbackSpeed) < 0 && !playForward)
                 || ((_curPlaybackTick + _playbackSpeed) > (timeline->size() - 1) && playForward)) {
             _curPlaybackTick = (playForward ? timeline->size() - 1 : 0); 
@@ -596,7 +597,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     if (plugin) {
         GripTab* gt = qobject_cast<GripTab*>(plugin);
         if (gt) {
-            gt->Load(treeviewer->getActiveItem(), viewWidget, world, timeline);
+            gt->Load(this);
 
             QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
             if (pluginWidget == NULL) {

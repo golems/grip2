@@ -47,8 +47,7 @@
  * \brief Main window for Grip
  */
 
-#ifndef GRIPMAINWINDOW_H
-#define GRIPMAINWINDOW_H
+#pragma once
 
 // C++ Standard includes
 #include <iostream>
@@ -58,19 +57,16 @@
 #include "MainWindow.h"
 
 // Local includes
-#include "ViewerWidget.h"
-#include "TreeView.h"
-#include "InspectorTab.h"
-#include "VisualizationTab.h"
-#include "PlaybackWidget.h"
-#include "ui_VisualizationTab.h"
-#include "ui_InspectorTab.h"
-#include "ui_TreeView.h"
-#include "ui_PlaybackWidget.h"
-#include "DartNode.h"
+#include "osgGolems/ViewerWidget.h"
+#include "qtWidgets/TreeView.h"
+#include "qtWidgets/InspectorTab.h"
+#include "qtWidgets/VisualizationTab.h"
+#include "qtWidgets/PlaybackWidget.h"
+#include "osgDart/DartNode.h"
 #include "GripSimulation.h"
-#include "GripTab.h"
+#include "qtWidgets/GripTab.h"
 #include "GripTimeslice.h"
+#include "GripObjects.h"
 
 // Qt includes
 #include <QDir>
@@ -81,7 +77,7 @@
  * \brief Class that subclasses MainWindow in order to create the whole
  * Grip interface.
  */
-class GripMainWindow : public MainWindow
+class GripMainWindow : public MainWindow, public GripObjects
 {
 public:
     /**
@@ -106,8 +102,7 @@ public:
      */
     dart::dynamics::Skeleton *createGround();
 
-    /// OpenSceneGraph Qt composite viewer widget, which can hold more than one view
-    ViewerWidget *viewWidget;
+    GripObjects* grip;
 
     /// OpenSceneGraph Qt composite viewer widget for recording the playback in a separate window
     ViewerWidget *recordViewWidget;
@@ -121,21 +116,9 @@ public:
     /// Tab for changing visualization settings of the render window
     VisualizationTab *visualizationTab;
 
-    /// Array of GripTimeSlice objects stored for simulation/kinematic playback
-    std::vector<GripTimeslice> *timeline;
-    
     /// Widget for playing back the simulation or kinematic states in the timeline
     PlaybackWidget *playbackWidget;
 
-    /// TreeViewReturn class is defined in tree_view.h
-    /// It contains two members: void* object and DataType dataType
-    /// void* object can store a dart Skeleton object or BodyNode object
-    /// DataType is an enumaration defined in tree_view.h which can take
-    /// the values Return_Type_Robot and Return_Type_Node
-    TreeViewReturn *activeItem;
-
-    /// The world object that is being rendered and simulated
-    dart::simulation::World *world;
 
     /// Main OpenSceneGraph node for the main view of the composite viewer
     osgDart::DartNode *worldNode;
@@ -447,4 +430,3 @@ protected:
 };
 
 
-#endif // GRIPMAINWINDOW_H

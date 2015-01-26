@@ -53,6 +53,7 @@
 
 // Local includes
 #include "TreeView.h"
+#include "ui_TreeView.h"
 
 //include icons
 #include "icons/fixed.xpm"
@@ -217,6 +218,37 @@ void TreeView::populateTreeView(dart::simulation::World *world)
     }
     _ui_treeWidget->setCurrentItem(parent, 0);
 }
+
+/**
+* @function updateTreeView
+ * @brief Check if any skeletons have been added
+ */
+void TreeView::updateTreeView( dart::simulation::World* _world ) {
+
+ QTreeWidgetItem* parent;
+ QPixmap robotIcon((const char**) robot_xpm);
+ for (int i = 0; i<_world->getNumSkeletons(); ++i)
+ {
+ dart::dynamics::Skeleton* skel = _world->getSkeleton(i);
+ // Check if it is already on the treeView
+ QList<QTreeWidgetItem *> temp;
+ QString name; name.fromStdString( skel->getName() );
+ temp = _ui_treeWidget->findItems( name, Qt::MatchExactly, 0 );
+
+ if( temp.size() == 0 ) {
+ if( skel ) {
+ parent = _addParent(skel, QIcon(robotIcon), i);
+ _buildTree(skel->getRootBodyNode(), parent, parent, false,i);
+ } else {
+ std::cerr << "Not a valid skeleton. Not building tree view. (Line " << __LINE__ << " of " << __FILE__ << std::endl;
+ }
+ }
+ }
+ _ui_treeWidget->setCurrentItem(parent, 0);
+}
+
+
+
 
 void TreeView::reset()
 {

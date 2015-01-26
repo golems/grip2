@@ -52,10 +52,11 @@
 #define VISUALIZATION_TAB_H
 
 // Local includes
-#include "ui_VisualizationTab.h"
-#include "DartNode.h"
-#include "TreeView.h"
+#include "osgDart/DartNode.h"
+#include "qtWidgets/TreeView.h"
 #include "MainWindow.h"
+
+namespace Ui { class VisualizationTab; }
 
 /**
  * \class VisualizationTab VisualizationTab.h

@@ -59,7 +59,7 @@
 
 //// Local includes
 #include "MainWindow.h"
-#include "GripTab.h"
+#include "qtWidgets/GripTab.h"
 #include "GripTimeslice.h"
 
 class GripMainWindow;
