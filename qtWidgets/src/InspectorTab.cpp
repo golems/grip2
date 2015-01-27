@@ -147,7 +147,7 @@ InspectorTab::InspectorTab( QWidget *parent, dart::simulation::World *simWorld,
  */
 void InspectorTab::changePositionAndOrientation(int sliderValue){
   
-  //  QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
+ //  QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
   Eigen::Matrix<double, 6, 1> pose;
   pose << 0, 0, 0, 0, 0, 0;
   
@@ -353,16 +353,14 @@ void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
 	// Root node is not fixed
 	else if  (dynamic_cast<dart::dynamics::FreeJoint*>(item_selected->getParentJoint()))
 	  {
-	    std::cerr << "** Root node is free to move" << std::endl;
 	    ///enable position and orientation sliders
 	    _ui->Joint_Slider_GroupBox->setDisabled(true);
 	    _ui->Position_Slider_GroupBox->setEnabled(true);
 	    _ui->Orientation_Slider_GroupBox->setEnabled(true);
 	    
 	    Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-	    //pose = getPoseFromTransform(item_selected->getWorldTransform());
 	    pose = getRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId));
-	    //std::cerr << "Pose: " << pose << std::endl;
+	
 	    _ui->positionSlider_1->setdsValue(pose(0));
 	    _ui->positionSlider_2->setdsValue(pose(1));
 	    _ui->positionSlider_3->setdsValue(pose(2));
@@ -426,19 +424,9 @@ void InspectorTab::initializeTab()
 
 Eigen::Matrix<double, 6, 1> InspectorTab::getRootTransform(dart::dynamics::Skeleton* robot)
 {
-    dart::dynamics::Joint *joint = robot->getRootBodyNode()->getParentJoint();
-    Eigen::Matrix<double, 6, 1> pose;
-
-    if ( typeid(*joint) == typeid(dart::dynamics::FreeJoint)) {
-        Eigen::Isometry3d Tf = dart::math::expMap( joint->getPositions() );
-        pose.head<3>() = Tf.translation();
-        pose.tail<3>() = dart::math::matrixToEulerXYZ( Tf.linear() );
-    }
-    else {
-        pose = getPoseFromTransform(joint->getTransformFromParentBodyNode());
-    }
-
-    return pose;
+    robot->computeForwardKinematics(true,false,false);
+    Eigen::Isometry3d Tf; Tf = robot->getRootBodyNode()->getTransform();
+    return getPoseFromTransform( Tf );
 }
 
 /**
@@ -447,30 +435,18 @@ Eigen::Matrix<double, 6, 1> InspectorTab::getRootTransform(dart::dynamics::Skele
 void InspectorTab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen::Matrix<double, 6, 1>& pose )
 {
     dart::dynamics::Joint* joint = robot->getRootBodyNode()->getParentJoint();
-    //dart::dynamics::Joint* joint = robot->getParentJoint();
     if (dynamic_cast<dart::dynamics::FreeJoint*>(joint)) {
         Eigen::Matrix<double, 6, 1> q;
-        Eigen::Isometry3d transform = Eigen::Isometry3d::Identity();
-        transform.translation() = pose.head<3>();
-        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
-        q = dart::math::logMap(transform);
+        q.tail<3>() = pose.head<3>();
+        Eigen::Matrix3d rot; rot = dart::math::eulerXYZToMatrix(pose.tail<3>());
+        q.head<3>() = dart::math::logMap(rot);
         joint->setPositions( q );
 
     }
     else {
-        Eigen::Isometry3d transform;
-        transform.makeAffine();
-        transform.linear() = dart::math::eulerXYZToMatrix(pose.tail<3>());
-        transform.translation() = pose.head<3>();
-        joint->setTransformFromParentBodyNode(transform);
-        std::cerr << "not a free joint??" << std::endl;
+        std::cerr << "It is not a free joint?" << std::endl;
     }
-/*
-    for (unsigned int i = 0; i < robot->getNumBodyNodes(); ++i) {
-        robot->getBodyNode(i)->updateTransform();
-    }*/
     robot->computeForwardKinematics( true, false, false );
-    // Update transforms, not vels, not accels
 
 }
 
