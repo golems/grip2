@@ -261,7 +261,8 @@ void GripMainWindow::setWorldState_Issue122(const Eigen::VectorXd &_newState)
         world->getSkeleton(i)->setPositions(q);
         // The usual line. The line above is actually repeating some processing, but there is no other way, unless you want to touch DART itself
         world->getSkeleton(i)->setState(_newState.segment(start, size));
-    }
+        world->getSkeleton(i)->computeForwardKinematics(true,false,false); 
+   }
 }
 
 void GripMainWindow::slotPlaybackStart()
