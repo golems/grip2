@@ -65,8 +65,6 @@
 class GripInterface
 {
 public:
-	int some_var;
-
     GripInterface();
 
     ~GripInterface();
@@ -126,8 +124,9 @@ public:
     void simulateSingleStep();
 
     /**
-     * \brief Returns the state of the world as std::vector, which can be
-     *        coerced to numpy array in cython bindings.
+     * \brief Returns the full state (position and velocity) of the
+     *        world as std::vector, which can be coerced to numpy 
+     *        array in cython bindings.
      * \return An std (not Eigen) vector containing the current state
      */
     std::vector<double> getState();
@@ -135,9 +134,35 @@ public:
     /**
      * \brief Sets the state of the world from an std::vector, which can be
      *        coerced from a numpy array in cython bindings.
-     * \return 
      */
     void setState(const std::vector<double> &state);
+
+    /**
+     * \brief Returns the indices of root node for each skeleton in the 
+     *        world state vector.  These are necessary for interpreting 
+     *        the output of getConfig(true), since the root node pose
+     *        will be transformed to EulerXYZ.
+     */
+    void getSkeletonRootIdxs();
+
+    /**
+     * \brief Returns the world configuration (excluding velocity) as a
+     *        std::vector, which can be coerced to numpy array in cython bindings.
+     *  \param fromEulerXYZ If true, convert the root pose parameters 
+     *                      for each skeleton to EulerXYZ, rather than 
+     *                      returning Dart's internal representation (ExpMap)
+     * \return An std (not Eigen) vector containing the current config
+     */
+    std::vector<double> getConfig(bool toEulerXYZ=false);
+
+    /**
+     * \brief Sets the world configuration from an std::vector, which 
+     *        can be coerced from a numpy array in cython bindings.
+     *  \param fromEulerXYZ If true, interpret the root pose parameters 
+     *                      for each skeleton as EulerXYZ rather than 
+     *                      ExpMap (Dart's internal representation)
+     */
+    void setConfigEulerXYZ(const std::vector<double> &state, bool fromEulerXYZ=false);
 
     /**
      * \brief Pass-through call to world collision checker

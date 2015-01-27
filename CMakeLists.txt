@@ -155,9 +155,6 @@ FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.
 add_library(grip-core SHARED ${grip-srcs})
 target_link_libraries(grip-core ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 
-# add_library(grip-interface SHARED src/GripInterface.cpp include/GripInterface.h)
-# target_link_libraries(grip-interface ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
-
 #-----------------------------------------------
 #                BUILD TESTS
 #-----------------------------------------------
@@ -190,9 +187,14 @@ INSTALL(PROGRAMS "${EXECUTABLE_OUTPUT_PATH}/grip"
 INSTALL(TARGETS grip-core
         DESTINATION lib/)
 
-# Install library of grip interface library
-# INSTALL(TARGETS grip-interface
-        # DESTINATION lib/)
+# Install grip support libraries
+message("HACK FOR INSTALLING PROJECT LIBRARIES: THIS NEEDS TO BE GENERALIZED!")
+message("LIBRARY_OUTPUT_PATH is ${LIBRARY_OUTPUT_PATH} ")
+# INSTALL(TARGETS ${project_libs} DESTINATION lib/)
+INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/libqtWidgets.so DESTINATION lib/)
+INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/libosgGolems.so DESTINATION lib/)
+INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/libosgDart.so DESTINATION lib/)
+INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/libmainWindow.so DESTINATION lib/)
 
 # Install header files by namespace and directory
 FILE(GLOB osgDartHeaders "osgDart/*.h")

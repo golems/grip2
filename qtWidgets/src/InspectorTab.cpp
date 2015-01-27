@@ -438,6 +438,16 @@ void InspectorTab::setRootTransform(dart::dynamics::Skeleton* robot, const Eigen
         q = dart::math::logMap(transform);
         joint->set_q( q );
 
+        std::cout << "pose: " << pose.transpose() << std::endl;
+        std::cout << "q: " << q.transpose() << std::endl;
+        // std::cout << "robot state: " << robot->getState().transpose() << std::endl;
+
+        Eigen::Isometry3d T = dart::math::expMap(q);
+        std::cout << "q as pose from transform: " << getPoseFromTransform(T).transpose() << std::endl;
+
+        Eigen::Matrix3d R = dart::math::expMapRot(q.topLeftCorner(3,1));
+        std::cout << "q rotation part as euler XYZ : " << dart::math::matrixToEulerXYZ(R).transpose() << std::endl;
+
     }
     else {
         Eigen::Isometry3d transform;

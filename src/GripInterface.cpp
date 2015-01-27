@@ -188,6 +188,24 @@ void GripInterface::setState(const std::vector<double> &state)
     _window->world->setState(_es);
 }
 
+void GripInterface::getSkeletonRootIdxs()
+{
+    // getNumSkeletons and getIndex
+    // return _window->world->mIndices;
+}
+
+std::vector<double> GripInterface::getConfig(bool toEulerXYZ)
+{
+    std::vector<double> state(1);
+    return state;
+}
+
+void GripInterface::setConfigEulerXYZ(const std::vector<double> &state, 
+                                      bool fromEulerXYZ)
+{
+
+}
+
 bool GripInterface::checkCollision()
 {
     return _window->world->checkCollision();
