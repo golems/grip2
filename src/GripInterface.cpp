@@ -200,6 +200,16 @@ std::vector<int> GripInterface::getSkeletonRootIdxs()
     return root_idxs;
 }
 
+std::vector<std::string> GripInterface::getSkeletonNames()
+{
+    std::vector<std::string> names(_window->world->getNumSkeletons());
+    for (int i = 0; i < _window->world->getNumSkeletons(); i++)
+        names[i] = _window->world->getSkeleton(i)->getName();
+        //names.push_back(_window->world->getSkeleton(i)->getName());
+
+    return names;
+}
+
 std::vector<double> GripInterface::getConfig(bool toEulerXYZ)
 {
     int n_genCoords = _window->world->getIndex(_window->world->getNumSkeletons() - 1) +

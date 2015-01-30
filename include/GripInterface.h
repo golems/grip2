@@ -146,6 +146,12 @@ public:
     std::vector<int> getSkeletonRootIdxs();
 
     /**
+     * \brief Returns the names of each skeleton currently loaded in the 
+     *        Dart world.  
+     */
+    std::vector<std::string> getSkeletonNames();
+
+    /**
      * \brief Returns the world configuration (excluding velocity) as a
      *        std::vector, which can be coerced to numpy array in cython bindings.
      *  \param fromEulerXYZ If true, convert the root pose parameters 

@@ -198,6 +198,12 @@ cdef class PyGrip:
         '''
         return self.thisptr.getSkeletonRootIdxs()
 
+    def getSkeletonNames(self):
+        '''
+        Retrieves the names of each skeleton in the dart state world.
+        '''
+        return self.thisptr.getSkeletonNames()
+
     def getConfig(self, toEulerXYZ=True):
         '''
         Gets the current world configuration in Dart/Grip.  Note that dart's 

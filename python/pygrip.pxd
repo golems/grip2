@@ -57,6 +57,7 @@ cdef extern from "../include/GripInterface.h":
         vector[double] getState()
         void setState(vector[double] state)
         vector[int] getSkeletonRootIdxs()
+        vector[string] getSkeletonNames()
         vector[double] getConfig(bint toEulerXYZ)
         void setConfig(vector[double] state, bint fromEulerXYZ)
         bint checkCollision()
