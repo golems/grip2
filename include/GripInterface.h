@@ -85,7 +85,7 @@ public:
 	/**
      * \brief Load the scene and renders it. This function resets everything
      * on each load.
-     * \param fileName Name of scene file to load
+     * \param fileame Name of scene file to load
      * \return void
      */
     void loadScene(std::string sceneFileName);
@@ -143,7 +143,7 @@ public:
      *        the output of getConfig(true), since the root node pose
      *        will be transformed to EulerXYZ.
      */
-    void getSkeletonRootIdxs();
+    std::vector<int> getSkeletonRootIdxs();
 
     /**
      * \brief Returns the world configuration (excluding velocity) as a
@@ -162,13 +162,33 @@ public:
      *                      for each skeleton as EulerXYZ rather than 
      *                      ExpMap (Dart's internal representation)
      */
-    void setConfigEulerXYZ(const std::vector<double> &state, bool fromEulerXYZ=false);
+    void setConfig(const std::vector<double> &config, bool fromEulerXYZ=false);
 
     /**
      * \brief Pass-through call to world collision checker
      * \return Boolean, true if a collision is detected, false otherwise
      */
     bool checkCollision();
+
+    /* \brief Static convenience method for converting from dart's internal
+     *        pose representaotion (exponential coordinates) to more user-friendly
+     *        Euler-angles (XYZRPY; order=XYZ)
+     * \param Euler pose as 6-element std::vector containing XYZRPY
+     * \return Exponential-map representation of the pose
+     */
+    static std::vector<double> getScrewFromPose(const std::vector<double> &pose);
+
+    /* \brief Static convenience method for converting to dart's internal
+     *        pose representaotion (exponential coordinates) from more user-friendly
+     *        Euler-angles (XYZRPY; order=XYZ)
+     * \param Exponential-map representation of the pose
+     * \return Euler pose as 6-element std::vector containing XYZRPY
+     */
+    static std::vector<double> getPoseFromScrew(const std::vector<double> &screw);
+
+    /*
+     * TODO: implement velocity transformations?  
+     */
 
 protected:
 	QApplication * _app;

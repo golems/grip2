@@ -176,7 +176,7 @@ std::vector<double> GripInterface::getState()
 
     Eigen::VectorXd _es = _window->world->getState();
     std::vector<double> state(_es.rows());
-    for (int i=0; i<_es.rows(); i++)
+    for (int i = 0; i < _es.rows(); i++)
         state[i] = _es[i];
     
     return state;
@@ -188,25 +188,97 @@ void GripInterface::setState(const std::vector<double> &state)
     _window->world->setState(_es);
 }
 
-void GripInterface::getSkeletonRootIdxs()
+std::vector<int> GripInterface::getSkeletonRootIdxs()
 {
-    // getNumSkeletons and getIndex
-    // return _window->world->mIndices;
+    /* Note: we want to return _window->world->mIndices, but this is
+     * protected so we have to extract it using accessor methods:
+     */
+    std::vector<int> root_idxs(_window->world->getNumSkeletons());
+    for (int i = 0; i < _window->world->getNumSkeletons(); i++)
+        root_idxs[i] = _window->world->getIndex(i);
+
+    return root_idxs;
 }
 
 std::vector<double> GripInterface::getConfig(bool toEulerXYZ)
 {
-    std::vector<double> state(1);
-    return state;
+    int n_genCoords = _window->world->getIndex(_window->world->getNumSkeletons() - 1) +
+        _window->world->getSkeleton(_window->world->getNumSkeletons() - 1)->getNumGenCoords();
+
+    Eigen::VectorXd config(n_genCoords);
+    for (int i = 0; i < _window->world->getNumSkeletons(); i++) {
+        int start = _window->world->getIndex(i);
+        int size = _window->world->getSkeleton(i)->getNumGenCoords();
+        config.segment(start, size) = _window->world->getSkeleton(i)->get_q();
+
+        if (toEulerXYZ && _window->world->getSkeleton(i)->getNumGenCoords() >= 6) {
+            Eigen::Isometry3d Tt = dart::math::expMap(config.segment(start, 6));
+            config.segment(start, 3) = Tt.translation();
+            config.segment(start+3, 3) = dart::math::matrixToEulerXYZ(Tt.linear());
+        }
+    }
+    
+    std::vector<double> _config(config.data(), config.data() + config.size());
+    return _config;
 }
 
-void GripInterface::setConfigEulerXYZ(const std::vector<double> &state, 
-                                      bool fromEulerXYZ)
+void GripInterface::setConfig(const std::vector<double> &config, 
+                              bool fromEulerXYZ)
 {
+    // Eigen::Map<const Eigen::VectorXd> _config(config.data(), config.size()); // can't mmap with euler over-write
+    Eigen::VectorXd _config(config.size());
+    for (int i = 0; i < _config.rows(); i++)
+        _config[i] = config[i];
 
+    for (int i = 0; i < _window->world->getNumSkeletons(); i++) {
+        int start = _window->world->getIndex(i);
+        int size = _window->world->getSkeleton(i)->getNumGenCoords();
+
+        if (fromEulerXYZ && _window->world->getSkeleton(i)->getNumGenCoords() >=     6) {
+            Eigen::Isometry3d Tf = Eigen::Isometry3d::Identity();
+            Tf.translation() = _config.segment(start, 3);
+            Tf.linear() = dart::math::eulerXYZToMatrix(_config.segment(start+3, 3));
+            _config.segment(start, 6) = dart::math::logMap(Tf);
+        }
+
+        _window->world->getSkeleton(i)->setConfig(_config.segment(start, size));
+    }
 }
 
 bool GripInterface::checkCollision()
 {
     return _window->world->checkCollision();
+}
+
+std::vector<double> GripInterface::getScrewFromPose(const std::vector<double> &pose)
+{
+    assert(pose.size() >= 6); // allow passing in longer state/config vectors
+    Eigen::Map<const Eigen::Vector6d> _pose(pose.data(), 6);
+    Eigen::Isometry3d Tf = Eigen::Isometry3d::Identity();
+    Tf.translation() = _pose.segment(0, 3);
+    Tf.linear() = dart::math::eulerXYZToMatrix(_pose.segment(3, 3));
+    Eigen::Vector6d _screw = dart::math::logMap(Tf);
+
+    std::vector<double> screw(6);
+    for (int i = 0; i < _screw.rows(); i++)
+        screw[i] = _screw[i];
+
+    return screw ;
+}
+
+std::vector<double> GripInterface::getPoseFromScrew(const std::vector<double> &screw)
+{
+    assert(screw.size() >= 6); // allow passing in longer state/config vectors
+    Eigen::Map<const Eigen::Vector6d> _screw(screw.data(), 6);
+    Eigen::Isometry3d Tt = dart::math::expMap(_screw);
+
+    Eigen::Vector6d _pose;
+    _pose.segment(0, 3) = Tt.translation(); 
+    _pose.segment(3, 3) = dart::math::matrixToEulerXYZ(Tt.linear());
+
+    std::vector<double> pose(6);
+    for (int i = 0; i < _pose.rows(); i++)
+        pose[i] = _pose[i];
+
+    return pose;
 }
