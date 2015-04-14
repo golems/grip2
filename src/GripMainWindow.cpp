@@ -80,6 +80,9 @@
 #include <dart/dynamics/WeldJoint.h>
 #include <dart/utils/urdf/DartLoader.h>
 
+#include <dlfcn.h>
+
+
 GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) {
     printf("Start GripMainWIndow constructor \n");
     world =new dart::simulation::World();
@@ -601,9 +604,19 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
     if (pluginList->size() == 0)
         pluginMenu->addSeparator();
     std::cerr << "File: " << pluginFileName.toStdString() << std::endl;
+
+    void* pin = 0; pin = dlopen( pluginFileName.toStdString().c_str(), RTLD_LAZY );
+      if( pin != NULL ) {
+     printf("Loaded library %s fine \n", pluginFileName.toStdString().c_str() );
+  } else {
+    printf("Did NOT load library %s fine \n", pluginFileName.toStdString().c_str());
+    printf("DLError: %s \n ", dlerror() );
+  }
+
     QPluginLoader loader(pluginFileName);
     QObject* plugin = loader.instance();
     if (plugin) {
+        printf("If plugin TRUE \n");
         GripTab* gt = qobject_cast<GripTab*>(plugin);
         if (gt) {
             gt->Load(this);
@@ -635,6 +648,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
             }
         }
     } else {
+        printf("If plugin FALSE \n");
         slotSetStatusBarMessage(tr(qPrintable("Couldn't load plugin. " + loader.errorString())));
         if (_debug) {
             std::cerr << "Plugin could not be loaded" << std::endl;

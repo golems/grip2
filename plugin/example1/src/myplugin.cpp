@@ -64,22 +64,8 @@ void MyPlugin::GRIPEventSceneLoaded()
     dart::dynamics::Skeleton* skel = _world->getSkeleton("GolemHubo");
 
     if (skel) {
-        // Get index of LSP (left shoulder pitch
-        std::vector<int> index(1);
-        index[0] = skel->getJoint("LSP")->getGenCoord(0)->getSkeletonIndex();
-
-        // Initialize joint value for LSP
-        Eigen::VectorXd jointValue(1);
-
-        // Move joint around
-        for (size_t i = 0; i < 200; ++i) {
-            // Set joint value
-            jointValue[0] = float(i) * 2 * M_PI / 200;
-            skel->setConfig(index, jointValue);
-
-            // Save world to timeline
-            _timeline->push_back(GripTimeslice(*_world));
-        }
+ 
+        
     } else {
         std::cerr << "No skeleton named GolemHubo" << std::endl;
     }
@@ -133,4 +119,4 @@ void MyPlugin::GRIPEventPlaybackStop() {}
 
 void MyPlugin::Refresh() {}
 
-Q_EXPORT_PLUGIN2(MyPlugin, MyPlugin)
+//Q_EXPORT_PLUGIN2(MyPlugin, MyPlugin)

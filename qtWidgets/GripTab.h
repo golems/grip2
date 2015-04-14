@@ -176,7 +176,6 @@ public:
     virtual void GRIPEventTreeViewSelectionChanged(){}
 };
 
-Q_DECLARE_INTERFACE(GripTab,
-                    "com.gatech.Grip2.GripTab/1.0")
+Q_DECLARE_INTERFACE(GripTab, "com.gatech.Grip2.GripTab/1.0")
 
 #endif // GRIPTAB_H

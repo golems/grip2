@@ -54,6 +54,7 @@
 class MyPlugin : public GripTab
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.gatech.Grip2.GripTab/1.0" )
     Q_INTERFACES(GripTab)
 
 public:

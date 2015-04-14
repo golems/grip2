@@ -24,7 +24,7 @@ endif()
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Release")
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${QtGui_EXECUTABLE_COMPILE_FLAGS}")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall -fPIC ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${QtGui_EXECUTABLE_COMPILE_FLAGS}")
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -63,7 +63,7 @@ find_package(Qt5Widgets REQUIRED )
 find_package( PkgConfig )
 set( ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig" )
 pkg_check_modules( OPENSCENEGRAPH REQUIRED openscenegraph  )
-
+message( STATUS "Open Scene graph libraries: ${OPENSCENEGREAPH_LIBRARIES}" )
 
 # Find Eigen3
 find_package(Eigen REQUIRED)
@@ -125,21 +125,21 @@ message( STATUS "Open scene graph libraries: ${OPENSCENEGRAPH_LIBRARIES}" )
 #                BUILD TESTS
 #-----------------------------------------------
 # Get test files
-file(GLOB unit_tests_source "test/*.cpp")
-LIST(SORT unit_tests_source)
+#file(GLOB unit_tests_source "test/*.cpp")
+#LIST(SORT unit_tests_source)
 
 # Build test programs
-message(STATUS "\n-- UNIT TEST: ")
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-foreach(utest_src_file ${unit_tests_source})
-    get_filename_component(test_base ${utest_src_file} NAME_WE)
-    message(STATUS "Adding test ${test_base}")
-    add_executable(${test_base} ${utest_src_file})
-    target_link_libraries(${test_base} ${project_libs} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
-    add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
-    add_custom_target(${test_base}.run ${test_base} ${ARGN})
-    add_dependencies(check ${test_base})
-endforeach(utest_src_file)
+#message(STATUS "\n-- UNIT TEST: ")
+#add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+#foreach(utest_src_file ${unit_tests_source})
+#    get_filename_component(test_base ${utest_src_file} NAME_WE)
+#    message(STATUS "Adding test ${test_base}")
+#    add_executable(${test_base} ${utest_src_file})
+#    target_link_libraries(${test_base} ${project_libs} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${QT_LIBRARIES})
+#    add_test(${test_base} ${EXECUTABLE_OUTPUT_PATH}/${test_base})
+#    add_custom_target(${test_base}.run ${test_base} ${ARGN})
+#    add_dependencies(check ${test_base})
+#endforeach(utest_src_file)
 
 #-----------------------------------------------
 #                 INSTALLATION
