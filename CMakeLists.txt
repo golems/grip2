@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.11)
 project(grip)
 
 # Define some colors for fun output
@@ -24,7 +24,7 @@ endif()
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Release")
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${QtGui_EXECUTABLE_COMPILE_FLAGS}")
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -53,12 +53,17 @@ add_custom_target(uninstall
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Find QT
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED) # Qt3Support
-add_definitions(${QT_DEFINITIONS})
-include(${QT_USE_FILE})
+find_package(Qt5Gui REQUIRED) 
+find_package(Qt5Core REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5Widgets REQUIRED )
 
-# try to find the OpenSceneGraph cmake package 
-find_package( OpenSceneGraph REQUIRED COMPONENTS osg osgViewer osgManipulator osgGA osgDB osgQt )
+#set( CMAKE_AUTOMOC ON )
+find_package( PkgConfig )
+set( ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig" )
+pkg_check_modules( OPENSCENEGRAPH REQUIRED openscenegraph  )
+
 
 # Find Eigen3
 find_package(Eigen REQUIRED)
@@ -93,10 +98,10 @@ include_directories(qtWidgets)
 set(project_libs qtWidgets osgGolems osgDart)
 
 # Add Main Window library
-QT4_WRAP_CPP(GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
+qt5_wrap_cpp( GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp )
-add_library(mainWindow ${GUI_MOC_HEADERS} ${GUI_SRC})
-target_link_libraries(mainWindow ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
+add_library(mainWindow  SHARED ${GUI_MOC_HEADERS}  ${GUI_SRC})
+target_link_libraries(mainWindow Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
@@ -105,15 +110,17 @@ set(project_libs ${project_libs} mainWindow)
 #                BUILD GRIP
 #-----------------------------------------------
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
-target_link_libraries(grip ${project_libs} ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip ${project_libs} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 set_target_properties( grip PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 
 # Added GripObjects here to avoid linking errors
 FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
 add_library(grip-core SHARED ${grip-srcs})
-target_link_libraries(grip-core  ${QT_LIBRARIES} ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip-core Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml  ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 set_target_properties( grip-core PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 
+
+message( STATUS "Open scene graph libraries: ${OPENSCENEGRAPH_LIBRARIES}" )
 #-----------------------------------------------
 #                BUILD TESTS
 #-----------------------------------------------

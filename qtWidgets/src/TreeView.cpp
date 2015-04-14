@@ -46,6 +46,7 @@
 
 // Qt includes
 #include <QtGui>
+#include <QHeaderView>
 
 // C++ Standard includes
 #include <iostream>
@@ -81,7 +82,7 @@ TreeView::TreeView(QWidget *parent, QList<GripTab*>* tabs) :QDockWidget(parent),
     _ui->setupUi(this);
     _ui_treeWidget = _ui->treeWidget;
     _ui_treeWidget->header()->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    _ui_treeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+    _ui_treeWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     _ui_treeWidget->header()->setStretchLastSection(false);
     connect(_ui_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(treeViewItemSelected(QTreeWidgetItem*,int)));
 

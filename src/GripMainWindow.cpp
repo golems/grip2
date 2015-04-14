@@ -63,6 +63,12 @@
 #include <QtGui>
 #include <QPixmap>
 
+#include <QMessageBox>
+#include <QToolBar>
+#include <QMenu>
+#include <QMenuBar>
+#include <QFileDialog>
+
 // OpenSceneGraph includes
 #include <osg/io_utils>
 
@@ -75,7 +81,7 @@
 #include <dart/utils/urdf/DartLoader.h>
 
 GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string configFile) {
-    
+    printf("Start GripMainWIndow constructor \n");
     world =new dart::simulation::World();
     worldNode = new osgDart::DartNode(debug);
     pluginList = new QList<GripTab*>;
@@ -122,6 +128,8 @@ GripMainWindow::GripMainWindow(bool debug, std::string sceneFile, std::string co
     if (!sceneFile.empty())
         this->doLoad(sceneFile);
     xga1024x768();
+
+printf("End GripMainWindow constructor \n");
 
 }
 
@@ -606,7 +614,7 @@ void GripMainWindow::loadPluginFile(QString pluginFileName)
                     std::cerr << "is NULL" << std::endl;
             } else {
                 this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
-                QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+                QList<QDockWidget *> dockwidgetList = this->findChildren<QDockWidget *>();
                 QDockWidget* bottomWidget;
                 bool bottomWidgetPresent = false;
                 if (dockwidgetList.size())
@@ -699,7 +707,7 @@ void GripMainWindow::createPluginMenu()
 {
     pluginMenu = menuBar()->addMenu(tr("&Widgets"));
 
-    QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+    QList<QDockWidget *> dockwidgetList = this->findChildren<QDockWidget *>();
     if (dockwidgetList.size()) {
         for (int i = 0; i < dockwidgetList.size(); ++i) {
                 pluginMenu->addAction(dockwidgetList.at(i)->toggleViewAction());
@@ -767,7 +775,7 @@ QDomDocument* GripMainWindow::generateWorkspaceXML()
 
     //add the location of each DockWidget
     QDomElement dockLocation = config->createElement("Location");
-    QList<QDockWidget *> dockwidgetList = qFindChildren<QDockWidget *>(this);
+    QList<QDockWidget *> dockwidgetList = this->findChildren<QDockWidget *>();
     if (dockwidgetList.size()) {
         for (int i = 0; i < dockwidgetList.size(); ++i) {
             QDomElement dockWidget = config->createElement("dockWidgetLocation");
@@ -806,7 +814,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
             QString dockWidgetName = dockWidget.attribute("name");
             bool isChecked = dockWidget.attribute("isChecked").toInt();
 
-            QList<QDockWidget *> dockWidgets = qFindChildren<QDockWidget *>(this);
+            QList<QDockWidget *> dockWidgets = this->findChildren<QDockWidget *>();
             if (dockWidgets.size()) {
                 for (int i = 0; i < dockWidgets.size(); ++i) {
                     if ( QString(dockWidgets.at(i)->windowTitle()).compare(dockWidgetName) == 0) {
@@ -837,7 +845,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
     QDomNodeList size = config.elementsByTagName("size");
     this->resize(size.at(0).toElement().attribute("width").toInt(), size.at(0).toElement().attribute("height").toInt());
 
-    QList<QDockWidget *> dockWidgets = qFindChildren<QDockWidget *>(this);
+    QList<QDockWidget *> dockWidgets = this->findChildren<QDockWidget *>();
     QDomNodeList dockLocation = config.elementsByTagName("dockWidgetLocation");
     for (int i = 0; i < dockLocation.count(); i++) {
         QDomElement dockWidget = dockLocation.at(i).toElement();
@@ -860,7 +868,7 @@ void GripMainWindow::parseConfig(QDomDocument config)
     }
 
     /// tabify all those dock widgets that are at the bottom of the window
-    QList<QDockWidget *> widgetList = qFindChildren<QDockWidget *>(this);
+    QList<QDockWidget *> widgetList = this->findChildren<QDockWidget *>();
     QDockWidget* bottomWidget;
     bool bottomWidgetPresent = false;
     if (widgetList.size()) {
@@ -903,7 +911,7 @@ void GripMainWindow::camera()
         fileNames = dialog.selectedFiles();
 
     if (!fileNames.isEmpty())
-        screenshot.save(fileNames.front(), format.toAscii());
+        screenshot.save(fileNames.front(), format.toLatin1());
     else
         std::cerr << "No file was selected" << std::endl;
 }
@@ -973,7 +981,7 @@ void GripMainWindow::saveVideo()
         return;
     } else {
         for(int i = 0; i < recordImageList->count(); ++i) {
-            recordImageList->at(i).save(fileName.sprintf("%s/image%06d", dirNames.front().toStdString().c_str(), i), format.toAscii());
+            recordImageList->at(i).save(fileName.sprintf("%s/image%06d", dirNames.front().toStdString().c_str(), i), format.toLatin1());
         }
     }
     delete recordImageList;

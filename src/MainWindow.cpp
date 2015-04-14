@@ -43,10 +43,20 @@
  */
 
 #include <QtGui>
+#include <QApplication>
+#include <QMenu>
+#include <QMenuBar>
+#include <QFileDialog>
+#include <QToolBar>
+#include <QAction>
+#include <QStatusBar>
 #include <iostream>
 #include <cstdio>
 #include <fstream>
 #include <QPluginLoader>
+
+#include <QMessageBox>
+#include <QProgressDialog>
 
 #include "MainWindow.h"
 
@@ -62,12 +72,13 @@
 #include "icons/rightSideView.xpm"
 
 MainWindow::MainWindow() : LAST_LOAD_FILE(QDir::homePath() + "/.griplastload")
-{
+{ printf("MainWIndow constructor \n");
     configFilePath = new QString(QDir::homePath() + QString("/default.gripconfig"));
     createActions();
     createMenus();
     setWindowTitle(tr("Grip"));
     resize(860, 700);
+printf("End main window constructor \n");
 }
 
 MainWindow::~MainWindow()
@@ -133,6 +144,8 @@ void MainWindow::loadPluginFileWithDialog()
         dialog.setNameFilters(filters);
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
         dialog.setFileMode(QFileDialog::ExistingFile);
+        dialog.setOption( QFileDialog::DontUseNativeDialog, true );
+
         if (dialog.exec()) {
             QString pluginPath = dialog.selectedFiles().at(0);
             std::cerr << "pluginPath: " << pluginPath.toStdString() << std::endl;
@@ -168,6 +181,7 @@ void MainWindow::loadPluginDirWithDialog()
 
 void MainWindow::loadScene()
 {
+
     QStringList fileNames; //stores the entire path of the file that it attempts to open
 
     QStringList filters; //setting file filters
@@ -182,6 +196,7 @@ void MainWindow::loadScene()
     dialog.setNameFilters(filters);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
     dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setOption( QFileDialog::DontUseNativeDialog, true );
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
@@ -189,6 +204,7 @@ void MainWindow::loadScene()
         std::cerr << "Attempting to open the following world file: " << fileNames.front().toStdString() << std::endl;
         doLoad(fileNames.front().toStdString());
     }
+
 }
 
 void MainWindow::quickLoad()

@@ -58,7 +58,10 @@ int main(int argc, char *argv[])
     // Start grip
 	QApplication app(argc, argv);
     GripMainWindow window(debug, sceneFilePath, configFilePath);
+printf("Start toolbar \n");
     window.Toolbar();
+printf("Call show \n");
     window.show();
+printf("Return exec \n");
     return app.exec();
 }

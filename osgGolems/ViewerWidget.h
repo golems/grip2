@@ -51,8 +51,8 @@
 #define VIEWER_WIDGET_H
 
 // QT includes
-#include <QtCore/QTimer>
-#include <QtGui/QGridLayout>
+#include <QTimer>
+#include <QGridLayout>
 
 // OpenSceneGraph includes
 #include <osgViewer/CompositeViewer>

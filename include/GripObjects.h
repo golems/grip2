@@ -9,6 +9,7 @@
 class GripObjects
 {
 public:
+    GripObjects() { viewWidget = 0; activeItem = 0; timeline = 0; world = 0; }
     ViewerWidget* getViewerWidget();
 
     TreeViewReturn* getTreeViewReturn();
