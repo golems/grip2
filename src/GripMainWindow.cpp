@@ -601,56 +601,47 @@ void GripMainWindow::loadPluginDirectory(QDir pluginsDirName)
 
 void GripMainWindow::loadPluginFile(QString pluginFileName)
 {
-    if (pluginList->size() == 0)
-        pluginMenu->addSeparator();
-    std::cerr << "File: " << pluginFileName.toStdString() << std::endl;
-
-    void* pin = 0; pin = dlopen( pluginFileName.toStdString().c_str(), RTLD_LAZY );
-      if( pin != NULL ) {
-     printf("Loaded library %s fine \n", pluginFileName.toStdString().c_str() );
+  if (pluginList->size() == 0)
+    pluginMenu->addSeparator();
+  
+  QPluginLoader loader(pluginFileName);
+  QObject* plugin = loader.instance();
+  if (plugin) {
+    printf("If plugin TRUE \n");
+    GripTab* gt = qobject_cast<GripTab*>(plugin);
+    if (gt) {
+      gt->Load(this);
+      
+      QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
+      if (pluginWidget == NULL) {
+	if (_debug)
+	  std::cerr << "is NULL" << std::endl;
+      } else {
+	this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
+	QList<QDockWidget *> dockwidgetList = this->findChildren<QDockWidget *>();
+	QDockWidget* bottomWidget;
+	bool bottomWidgetPresent = false;
+	if (dockwidgetList.size())
+	  for (int i = 0; i < dockwidgetList.size(); ++i)
+	    if (this->dockWidgetArea(dockwidgetList.at(i)) == 8) {
+	      bottomWidgetPresent = true;
+	      bottomWidget = dockwidgetList.at(i);
+	      break;
+	    }
+	if (bottomWidgetPresent)
+	  this->tabifyDockWidget(bottomWidget, pluginWidget);
+	
+	pluginList->append(gt);
+	std::cerr << "Plugins: " << pluginList->size() << std::endl;
+	pluginPathList->append(new QString(pluginFileName));
+	if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
+	pluginMenu->addAction(pluginWidget->toggleViewAction());
+      }
+    }
   } else {
-    printf("Did NOT load library %s fine \n", pluginFileName.toStdString().c_str());
-    printf("DLError: %s \n ", dlerror() );
-  }
-
-    QPluginLoader loader(pluginFileName);
-    QObject* plugin = loader.instance();
-    if (plugin) {
-        printf("If plugin TRUE \n");
-        GripTab* gt = qobject_cast<GripTab*>(plugin);
-        if (gt) {
-            gt->Load(this);
-
-            QDockWidget* pluginWidget = qobject_cast<QDockWidget*>(plugin);
-            if (pluginWidget == NULL) {
-                if (_debug)
-                    std::cerr << "is NULL" << std::endl;
-            } else {
-                this->addDockWidget(Qt::BottomDockWidgetArea, pluginWidget);
-                QList<QDockWidget *> dockwidgetList = this->findChildren<QDockWidget *>();
-                QDockWidget* bottomWidget;
-                bool bottomWidgetPresent = false;
-                if (dockwidgetList.size())
-                    for (int i = 0; i < dockwidgetList.size(); ++i)
-                        if (this->dockWidgetArea(dockwidgetList.at(i)) == 8) {
-                            bottomWidgetPresent = true;
-                            bottomWidget = dockwidgetList.at(i);
-                            break;
-                        }
-                if (bottomWidgetPresent)
-                    this->tabifyDockWidget(bottomWidget, pluginWidget);
-
-                pluginList->append(gt);
-                std::cerr << "Plugins: " << pluginList->size() << std::endl;
-                pluginPathList->append(new QString(pluginFileName));
-                if (_debug) std::cerr << "Plugin loaded " << (plugin->objectName()).toStdString() << std::endl;
-                pluginMenu->addAction(pluginWidget->toggleViewAction());
-            }
-        }
-    } else {
-        printf("If plugin FALSE \n");
-        slotSetStatusBarMessage(tr(qPrintable("Couldn't load plugin. " + loader.errorString())));
-        if (_debug) {
+    printf("If plugin FALSE \n");
+    slotSetStatusBarMessage(tr(qPrintable("Couldn't load plugin. " + loader.errorString())));
+    if (_debug) {
             std::cerr << "Plugin could not be loaded" << std::endl;
             std::cerr << "Error: " << (loader.errorString()).toStdString() << std::endl;
         }
@@ -921,6 +912,7 @@ void GripMainWindow::camera()
     dialog.setNameFilters(filters);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setOption( QFileDialog::DontUseNativeDialog, true );
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
