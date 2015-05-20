@@ -978,6 +978,7 @@ void GripMainWindow::saveVideo()
     dialog.setNameFilters(filters);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption( QFileDialog::DontUseNativeDialog, true );
     //dialog.setOption(QFileDialog::ShowDirsOnly, true);
     if (dialog.exec())
         dirNames = dialog.selectedFiles();

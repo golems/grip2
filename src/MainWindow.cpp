@@ -463,6 +463,8 @@ void MainWindow::saveNewWorkspace()
     dialog.setNameFilters(filters);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setOption( QFileDialog::DontUseNativeDialog, true );
+
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
@@ -489,6 +491,7 @@ void MainWindow::loadWorkspace(std::string workspaceFile)
         dialog.setNameFilters(filters);
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
         dialog.setFileMode(QFileDialog::ExistingFile);
+    	dialog.setOption( QFileDialog::DontUseNativeDialog, true );
         if (dialog.exec())
             fileNames = dialog.selectedFiles();
     } else {

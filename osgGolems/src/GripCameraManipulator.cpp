@@ -85,7 +85,7 @@ bool GripCameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter& ea, osg
 //                std::cerr << "KEYDOWN is detected" << std::endl;
             }
             else {
-                std::cerr << "KEYDOWN is detected but keyPressed is true. Something is wrong" << std::endl;
+                //std::cerr << "KEYDOWN is detected but keyPressed is true. Something is wrong" << std::endl; 
                 _keyPressed = true;
 //              return false;
             }
@@ -222,7 +222,7 @@ bool GripCameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA
             else {
                 _keyPressed = false;
                 _pressedKey = 0;
-                std::cerr << "KEYUP is detected but keyPressed is false. Something is wrong" << std::endl;
+               // std::cerr << "KEYUP is detected but keyPressed is false. Something is wrong" << std::endl;
             }
             return true;
             break;
