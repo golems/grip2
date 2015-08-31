@@ -156,8 +156,8 @@ void GripMainWindow::doLoad(std::string sceneFileName)
 
     world->setTimeStep(0.001);
 
-    world->addSkeleton(createGround());
-    worldNode->addWorld(world);
+    world->addSkeleton( std::shared_ptr<dart::dynamics::Skeleton>( createGround() ) );
+    worldNode->addWorld( std::shared_ptr<dart::simulation::World>(world) );
     worldNode->addWorld(sceneFileName);
 
     viewWidget->addNodeToScene(worldNode);
@@ -662,21 +662,26 @@ void GripMainWindow::createTabs()
 dart::dynamics::Skeleton* GripMainWindow::createGround()
 {
     // Add floor
-    dart::dynamics::Skeleton* ground = new dart::dynamics::Skeleton();
+    dart::dynamics::Skeleton::Properties p;
+    dart::dynamics::SkeletonPtr sp = dart::dynamics::Skeleton::create( p );
+    dart::dynamics::Skeleton* ground = sp.get();
     ground->setName("ground");
 
-    dart::dynamics::BodyNode* node = new dart::dynamics::BodyNode("ground");
+
+    dart::dynamics::WeldJoint::Properties pw;
+    dart::dynamics::Joint* joint = new dart::dynamics::WeldJoint(pw);
+    joint->setName("groundJoint");
+    joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
+    joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
+    node->setParentJoint(joint);
+
+    dart::dynamics::BodyNodePtr node = dart::dynamics::BodyNode.create("ground");
     node->setMass(1.0);
 
     dart::dynamics::Shape* shape = new dart::dynamics::BoxShape(Eigen::Vector3d(10.0, 10.0, 0.0001));
     shape->setColor(Eigen::Vector3d(0.5, 0.5, 1.0));
     node->addCollisionShape(shape);
 
-    dart::dynamics::Joint* joint = new dart::dynamics::WeldJoint();
-    joint->setName("groundJoint");
-    joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-    joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-    node->setParentJoint(joint);
 
     ground->addBodyNode(node);
     ground->setMobile(false);

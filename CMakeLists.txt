@@ -24,7 +24,8 @@ endif()
 #                COMPILE SETTINGS
 #-----------------------------------------------
 set(CMAKE_BUILD_TYPE "Release")
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -Wall -fPIC ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${QtGui_EXECUTABLE_COMPILE_FLAGS}")
+#list(APPEND
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -fPIC ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${QtGui_EXECUTABLE_COMPILE_FLAGS}")
 
 # Define preprocessor macro for Debug printing in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

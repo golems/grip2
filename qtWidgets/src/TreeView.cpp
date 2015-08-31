@@ -209,7 +209,7 @@ void TreeView::populateTreeView(dart::simulation::World *world)
     QPixmap robotIcon((const char**) robot_xpm);
     for (unsigned int i = 0; i<world->getNumSkeletons(); ++i)
     {
-        dart::dynamics::Skeleton* skel = world->getSkeleton(i);
+        dart::dynamics::Skeleton* skel = (world->getSkeleton(i)).get();
         if(skel) {
             parent = _addParent(skel,  QIcon(robotIcon), i);
             _buildTree(skel->getRootBodyNode(), parent, parent, false,i);
@@ -230,7 +230,7 @@ void TreeView::updateTreeView( dart::simulation::World* _world ) {
  QPixmap robotIcon((const char**) robot_xpm);
  for (int i = 0; i<_world->getNumSkeletons(); ++i)
  {
- dart::dynamics::Skeleton* skel = _world->getSkeleton(i);
+ dart::dynamics::Skeleton* skel = (_world->getSkeleton(i)).get();
  // Check if it is already on the treeView
  QList<QTreeWidgetItem *> temp;
  QString name; name.fromStdString( skel->getName() );

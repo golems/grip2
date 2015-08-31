@@ -260,11 +260,11 @@ void DartNode::setSkeletonWireFrameOn(bool enable)
     }
 }
 
-dart::dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
+dart::dynamics::SkeletonPtr DartNode::parseSkeletonUrdf(std::string urdfFile)
 {
     // Load robot model from urdf and check if valid
     dart::utils::DartLoader loader;
-    dart::dynamics::Skeleton* skeleton = loader.parseSkeleton(urdfFile);
+    dart::dynamics::SkeletonPtr skeleton = loader.parseSkeleton(urdfFile);
     if (!skeleton && _debug) {
         std::cerr << "[DartNode] Error parsing robot urdf " << urdfFile  << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
@@ -277,11 +277,11 @@ dart::dynamics::Skeleton* DartNode::parseSkeletonUrdf(std::string urdfFile)
     }
 }
 
-dart::simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
+dart::simulation::WorldPtr DartNode::parseWorldSdf(std::string sdfFile)
 {
     dart::utils::SdfParser loader;
-    dart::simulation::World* world = loader.readSdfFile(sdfFile);
-    if (!world && _debug) {
+    dart::simulation::WorldPtr world = loader.readSdfFile(sdfFile);
+    if ( !(bool)world && _debug) {
         std::cerr << "[[DartNode] Error parsing world sdf " << sdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
@@ -292,12 +292,12 @@ dart::simulation::World* DartNode::parseWorldSdf(std::string sdfFile)
     }
 }
 
-dart::simulation::World* DartNode::parseWorldUrdf(std::string urdfFile)
+dart::simulation::WorldPtr DartNode::parseWorldUrdf(std::string urdfFile)
 {
     // Load world model from urdf and check if valid
     dart::utils::DartLoader loader;
-    dart::simulation::World* world = loader.parseWorld(urdfFile);
-    if (!world && _debug) {
+    dart::simulation::WorldPtr world = loader.parseWorld(urdfFile);
+    if ( !(bool)world && _debug) {
         std::cerr << "[DartNode] Error parsing world urdf " << urdfFile << " on line " << __LINE__ << " of " << __FILE__ << std::endl;
         return NULL;
     } else {
@@ -315,11 +315,11 @@ size_t DartNode::addWorld(std::string file)
     std::string extension = file.substr(file.find_last_of(".") + 1);
     // If file is a URDF file, then try to parse its world, otherwise parse its skeleton
     if (extension == "urdf") {
-        dart::simulation::World* world = parseWorldUrdf(file);
+        dart::simulation::WorldPtr world = parseWorldUrdf(file);
         if (world) {
             this->addWorld(world);
         } else {
-            dart::dynamics::Skeleton* skel = parseSkeletonUrdf(file);
+            dart::dynamics::SkeletonPtr skel = parseSkeletonUrdf(file);
             if (skel) {
                 this->addSkeleton(*skel);
             } else {
@@ -331,7 +331,7 @@ size_t DartNode::addWorld(std::string file)
         }
     // else if it's an SDF file, try to parse its world
     } else if (extension == "sdf") {
-        dart::simulation::World* world = parseWorldSdf(file);
+        dart::simulation::WorldPtr world = parseWorldSdf(file);
         if (world) {
             this->addWorld(world);
         } else {
@@ -342,7 +342,7 @@ size_t DartNode::addWorld(std::string file)
         }
     // else if it's an SDF file, try to parse its world
     } else {
-        dart::simulation::World* world = parseWorldSdf(file);
+        dart::simulation::WorldPtr world = parseWorldSdf(file);
         if (world) {
             this->addWorld(world);
         } else {
@@ -368,11 +368,11 @@ size_t DartNode::addWorld(std::string file)
 
 size_t DartNode::addWorldFromSdf(std::string sdfFile)
 {
-    dart::simulation::World* world = parseWorldSdf(sdfFile);
+    dart::simulation::WorldPtr world = parseWorldSdf(sdfFile);
     if (world) {
         addWorld(world);
     } else {
-        delete world;
+        world.reset();
         std::cerr << "[DartNode] Not adding world on line " << __LINE__ << " of " << __FILE__ << std::endl;
     }
     return _skeletons.size();
@@ -380,7 +380,7 @@ size_t DartNode::addWorldFromSdf(std::string sdfFile)
 
 size_t DartNode::addSkeleton(std::string urdfFile)
 {
-    dart::dynamics::Skeleton* skeleton = parseSkeletonUrdf(urdfFile);
+    dart::dynamics::SkeletonPtr skeleton = parseSkeletonUrdf(urdfFile);
     if (skeleton) {
         addSkeleton(*skeleton);
         return _skeletons.size()-1;
@@ -395,14 +395,14 @@ size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
         if (_debug) {
             std::cerr << "[DartNode] Creating world in DartNode" << std::endl;
         }
-        _world = new dart::simulation::World();
+        _world = dart::simulation::WorldPtr( new dart::simulation::World() );
     }
-    _world->addSkeleton(&skeleton);
-    _skeletons.push_back(&skeleton);
+    _world->addSkeleton( std::shared_ptr<dart::dynamics::Skeleton>(&skeleton) );
+    _skeletons.push_back( std::shared_ptr<dart::dynamics::Skeleton>(&skeleton) );
 
     osg::ref_ptr<osgDart::SkeletonNode> skelNode = new osgDart::SkeletonNode(skeleton, _debug);
     _skeletonNodes.push_back(skelNode);
-    _skelNodeMap.insert(std::make_pair(&skeleton, skelNode));
+    _skelNodeMap.insert(std::make_pair( std::shared_ptr<dart::dynamics::Skeleton>(&skeleton), skelNode));
     this->addChild(skelNode);
     if (_debug) {
         std::cerr << "[DartNode] Added robot:\n\t" << skeleton.getName() << std::endl;
@@ -411,7 +411,7 @@ size_t DartNode::addSkeleton(dart::dynamics::Skeleton& skeleton)
     return _skeletons.size()-1;
 }
 
-dart::dynamics::Skeleton* DartNode::getSkeleton(size_t skeletonIndex)
+dart::dynamics::SkeletonPtr DartNode::getSkeleton(size_t skeletonIndex)
 {
     if (skeletonIndexIsValid(skeletonIndex)) {
         return _world->getSkeleton(skeletonIndex);;
@@ -424,7 +424,7 @@ dart::dynamics::Skeleton* DartNode::getSkeleton(size_t skeletonIndex)
     }
 }
 
-int DartNode::removeSkeleton(const dart::dynamics::Skeleton* skeletonToRemove)
+int DartNode::removeSkeleton(const dart::dynamics::SkeletonPtr skeletonToRemove)
 {
     try {
         this->removeChild(_skelNodeMap.at(skeletonToRemove));
@@ -476,9 +476,9 @@ void DartNode::hideSkeleton(int i)
     }
 }
 
-dart::simulation::World* DartNode::getWorld()
+dart::simulation::WorldPtr DartNode::getWorld()
 {
-    if (_world) {
+    if ( (bool)_world) {
         return _world;
     } else {
         if (_debug) {
@@ -511,18 +511,19 @@ void DartNode::printInfo()
 
 
 void DartNode::setSkeletonTransparency(const dart::dynamics::Skeleton& skel, float transparencyValue)
-{
+{ /*
     if (_world && _world->getSkeleton(skel.getName())) {
-        osgGolems::setTransparency(_skelNodeMap.at(&skel), transparencyValue);
+        osgGolems::setTransparency(_skelNodeMap.at( std::shared_ptr<const dart::dynamics::Skeleton>(skel) ), transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting Skeleton transparency" << std::endl;
-    }
+    }*/
 }
 
 void DartNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue)
 {
     if (_world && _world->getSkeleton(node.getSkeleton()->getName())) {
-        _skelNodeMap.at(node.getSkeleton())->setBodyNodeTransparency(node, transparencyValue);
+    dart::dynamics::SkeletonPtr mina;     
+   _skelNodeMap.at(mina); //node.getSkeleton()); //->setBodyNodeTransparency(node, transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting BodyNode transparency" << std::endl;
     }
@@ -533,7 +534,7 @@ size_t DartNode::getNumSkeletons()
     return _skeletons.size();
 }
 
-size_t DartNode::addWorld(dart::simulation::World* world)
+size_t DartNode::addWorld(dart::simulation::WorldPtr world)
 {
     if (!_world) {
         _world = world;

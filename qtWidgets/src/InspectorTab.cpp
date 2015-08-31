@@ -175,7 +175,7 @@ void InspectorTab::changePositionAndOrientation(int sliderValue){
 	      pose(4) = DEG2RAD(_ui->orientationSlider_2->getdsValue());
 	      pose(5) = DEG2RAD(_ui->orientationSlider_3->getdsValue());
 
-	      setRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId), pose);
+	      setRootTransform( (_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)).get(), pose);
 	    }
 	    
 	  }
@@ -359,7 +359,7 @@ void InspectorTab::receiveSelectedItem(TreeViewReturn* active_item)
 	    _ui->Orientation_Slider_GroupBox->setEnabled(true);
 	    
 	    Eigen::Matrix<double, 6, 1> pose = Eigen::Matrix<double, 6, 1>::Zero();
-	    pose = getRootTransform(_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId));
+	    pose = getRootTransform((_simWorld->getSkeleton(_treeview->getActiveItem()->skeletonId)).get());
 	
 	    _ui->positionSlider_1->setdsValue(pose(0));
 	    _ui->positionSlider_2->setdsValue(pose(1));

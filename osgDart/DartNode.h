@@ -76,7 +76,7 @@
 namespace osgDart {
 
 /// Definition of type SkeletonNodeMap, which maps dart::dynamics::Skeleton* to SkeletonNode*
-typedef std::map<const dart::dynamics::Skeleton*, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
+typedef std::map<const dart::dynamics::SkeletonPtr, osg::ref_ptr<SkeletonNode> > SkeletonNodeMap;
 
 
 /**
@@ -118,7 +118,7 @@ public:
      * \param urdfFile The name of the urdf file
      * \return Pointer to the dynamics::Skeleton object
      */
-    dart::dynamics::Skeleton* parseSkeletonUrdf(std::string urdfFile);
+    dart::dynamics::SkeletonPtr parseSkeletonUrdf(std::string urdfFile);
 
     /**
      * \brief Create a dart::simulation::World pointer from a world sdf file
@@ -126,7 +126,7 @@ public:
      * \param sdfFile The name of the world sdf file
      * \return Pointer to the simulation::World object
      */
-    dart::simulation::World* parseWorldSdf(std::string sdfFile);
+    dart::simulation::WorldPtr parseWorldSdf(std::string sdfFile);
 
     /**
      * \brief Create a dart::simulation::World pointer from a world urdf file
@@ -134,7 +134,7 @@ public:
      * \param urdfFile The name of the urdf file
      * \return Pointer to the simulation::World object
      */
-    dart::simulation::World* parseWorldUrdf(std::string urdfFile);
+    dart::simulation::WorldPtr parseWorldUrdf(std::string urdfFile);
 
     /**
      * \brief Add a dart::simulation::World to the DartNode using the name of
@@ -182,14 +182,14 @@ public:
      * that contains one or more dart::dynamics::Skeleton objects.
      * \return Index of the last object added
      */
-    size_t addWorld(dart::simulation::World* world);
+    size_t addWorld(dart::simulation::WorldPtr world);
 
     /**
      * \brief Get skeleton via index (size_t)
      * \param skeletonIndex Index of the skeleton you want
      * \return a dart::dynamics::Skeleton skeleton
      */
-    dart::dynamics::Skeleton* getSkeleton(size_t skeletonIndex=0);
+    dart::dynamics::SkeletonPtr getSkeleton(size_t skeletonIndex=0);
 
     /**
      * \brief Remove skeleton from DartNode by passing in the pointer to
@@ -197,7 +197,7 @@ public:
      * \param skeleton skeleton to remove from the DartNode
      * \return A success/fail integer. 1 = Success. 0 = Fail.
      */
-    int removeSkeleton(const dart::dynamics::Skeleton* skeletonToRemove);
+    int removeSkeleton(const dart::dynamics::SkeletonPtr skeletonToRemove);
 
     /**
      * \brief Remove skeleton from DartNode by passing in the index of the skeleton
@@ -218,7 +218,7 @@ public:
      * \brief Get a pointer to the World object in the DartNode.
      * \return simulation::World pointer
      */
-    dart::simulation::World* getWorld();
+    dart::simulation::WorldPtr getWorld();
 
     /**
      * \brief Get number of skeletons in the DartNode
@@ -332,10 +332,10 @@ protected:
     //---------------------------------------------------------------
 
     /// Standard vector of pointers to Skeletons
-    dart::simulation::World* _world;
+    dart::simulation::WorldPtr _world;
 
     /// Standard vector of pointers to dart::dynamics::Skeleton objects
-    std::vector<dart::dynamics::Skeleton*> _skeletons;
+    std::vector<dart::dynamics::SkeletonPtr> _skeletons;
 
     /// Standard vector of pointers to SkeletonNode objects
     std::vector<osg::ref_ptr<SkeletonNode> > _skeletonNodes;

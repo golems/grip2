@@ -70,14 +70,14 @@
 
 // TODO: get colors working for sdf files
 // TODO: find out what ellipsoid shapes are possible in DART. currently only doing spheres
-osg::Node* osgDart::convertShapeToOsgNode(const dart::dynamics::Shape* inputShape)
+osg::Node* osgDart::convertShapeToOsgNode( std::shared_ptr<const dart::dynamics::Shape> inputShape)
 {
     osg::Geode* geode = new osg::Geode;
     osg::Matrix shapeMatrix = osgGolems::eigToOsgMatrix(inputShape->getLocalTransform());
 
     switch (inputShape->getShapeType()) {
         case dart::dynamics::Shape::BOX: {
-            dart::dynamics::BoxShape* shape = (dart::dynamics::BoxShape*) inputShape;
+            std::shared_ptr<const dart::dynamics::BoxShape> shape = std::dynamic_pointer_cast<const dart::dynamics::BoxShape>( inputShape );
             osg::Vec3f size = osgGolems::eigToOsgVec3(shape->getSize());
             osg::ShapeDrawable* osgBox =
                     new osg::ShapeDrawable(new osg::Box(osg::Vec3(0,0,0), size.x(), size.y(), size.z()));
@@ -89,7 +89,7 @@ osg::Node* osgDart::convertShapeToOsgNode(const dart::dynamics::Shape* inputShap
             break;
         }
         case dart::dynamics::Shape::ELLIPSOID: {
-            dart::dynamics::EllipsoidShape* shape = (dart::dynamics::EllipsoidShape*) inputShape;
+           std::shared_ptr<const dart::dynamics::EllipsoidShape> shape = std::dynamic_pointer_cast< const dart::dynamics::EllipsoidShape>( inputShape );
             osg::ShapeDrawable* osgEllipsoid =
                     new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0,0,0), shape->getSize()(0)));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
@@ -100,7 +100,7 @@ osg::Node* osgDart::convertShapeToOsgNode(const dart::dynamics::Shape* inputShap
             break;
         }
         case dart::dynamics::Shape::CYLINDER: {
-            dart::dynamics::CylinderShape* shape = (dart::dynamics::CylinderShape*) inputShape;
+            std::shared_ptr<const dart::dynamics::CylinderShape> shape = std::dynamic_pointer_cast< const dart::dynamics::CylinderShape>( inputShape );
             osg::ShapeDrawable* osgCylinder =
                     new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0,0,0), (float)shape->getRadius(), (float)shape->getHeight()));
             osg::Vec4 color(osgGolems::eigToOsgVec3(shape->getColor()), 1.0);
@@ -126,9 +126,9 @@ osg::Node* osgDart::convertShapeToOsgNode(const dart::dynamics::Shape* inputShap
     return shapeTF.release();
 }
 
-osg::Node* osgDart::convertMeshToOsgNode(const dart::dynamics::Shape* mesh)
+osg::Node* osgDart::convertMeshToOsgNode( std::shared_ptr<const dart::dynamics::Shape> mesh)
 {
-    dart::dynamics::MeshShape* meshShape = (dart::dynamics::MeshShape*)mesh;
+    std::shared_ptr<const dart::dynamics::MeshShape> meshShape = std::dynamic_pointer_cast< const dart::dynamics::MeshShape>( mesh );
 //    std::cerr << "[osgDartShapes] Color of mesh: " << meshShape->getColor().transpose() << std::endl;
 //    std::cerr << "[osgDartShapes] Color of shap: " << mesh->getColor().transpose() << std::endl;
     const aiScene* aiscene = meshShape->getMesh();

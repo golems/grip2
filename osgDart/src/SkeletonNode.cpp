@@ -214,8 +214,8 @@ void SkeletonNode::update()
 void SkeletonNode::_updateSkeletonVisuals()
 {
     osg::Matrix comTF;
-    dart::dynamics::Skeleton* skel = const_cast<dart::dynamics::Skeleton*>( _rootBodyNode.getSkeleton() );
-    comTF.makeTranslate(osgGolems::eigToOsgVec3(skel->getWorldCOM()));
+    std::shared_ptr<const dart::dynamics::Skeleton> skel = _rootBodyNode.getSkeleton();
+    comTF.makeTranslate(osgGolems::eigToOsgVec3(skel->getCOM()));
     if (_skeletonVisuals->getCenterOfMassTF()) {
         _skeletonVisuals->getCenterOfMassTF()->setMatrix(comTF);
     }
