@@ -156,10 +156,13 @@ void GripMainWindow::doLoad(std::string sceneFileName)
 
     world->setTimeStep(0.001);
 
-    world->addSkeleton( std::shared_ptr<dart::dynamics::Skeleton>( createGround() ) );
+    printf("Adding world \n");
+    //world->addSkeleton( std::shared_ptr<dart::dynamics::Skeleton>( createGround() ) );
+    printf("About to add worldNode \n");
     worldNode->addWorld( std::shared_ptr<dart::simulation::World>(world) );
+    printf("Adding scene skeletons \n");
     worldNode->addWorld(sceneFileName);
-
+    printf("Adding view widget \n");
     viewWidget->addNodeToScene(worldNode);
 
     worldNode->printInfo();
@@ -661,30 +664,31 @@ void GripMainWindow::createTabs()
 
 dart::dynamics::Skeleton* GripMainWindow::createGround()
 {
-    // Add floor
+    // Add floor    
     dart::dynamics::Skeleton::Properties p;
     dart::dynamics::SkeletonPtr sp = dart::dynamics::Skeleton::create( p );
     dart::dynamics::Skeleton* ground = sp.get();
     ground->setName("ground");
-
-
-    dart::dynamics::WeldJoint::Properties pw;
-    dart::dynamics::Joint* joint = new dart::dynamics::WeldJoint(pw);
-    joint->setName("groundJoint");
-    joint->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-    joint->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-    node->setParentJoint(joint);
-
-    dart::dynamics::BodyNodePtr node = dart::dynamics::BodyNode.create("ground");
-    node->setMass(1.0);
-
-    dart::dynamics::Shape* shape = new dart::dynamics::BoxShape(Eigen::Vector3d(10.0, 10.0, 0.0001));
-    shape->setColor(Eigen::Vector3d(0.5, 0.5, 1.0));
-    node->addCollisionShape(shape);
-
-
-    ground->addBodyNode(node);
     ground->setMobile(false);
+
+    // Create node
+    dart::dynamics::BodyNode::Properties bn_prop;
+    bn_prop.mName = "ground";
+    bn_prop.mInertia.setMass(1.0);
+
+    dart::dynamics::ShapePtr shape( new dart::dynamics::BoxShape(Eigen::Vector3d(10.0, 10.0, 0.0001)) ); 
+    shape->setColor(Eigen::Vector3d(0.5, 0.5, 1.0));
+    bn_prop.mVizShapes.push_back( shape );
+    bn_prop.mColShapes.push_back( shape );
+
+    // Create joint 
+    dart::dynamics::WeldJoint::Properties prop; 
+    prop.mName = "groundJoint";
+    prop.mT_ParentBodyToJoint = Eigen::Isometry3d::Identity();
+    prop.mT_ChildBodyToJoint = Eigen::Isometry3d::Identity();
+    std::pair<dart::dynamics::Joint*, dart::dynamics::BodyNode*> pair;
+    pair = sp->createJointAndBodyNodePair<dart::dynamics::WeldJoint>( nullptr, prop, bn_prop ); 
+
     return ground;
 }
 

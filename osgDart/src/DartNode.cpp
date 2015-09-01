@@ -522,8 +522,8 @@ void DartNode::setSkeletonTransparency(const dart::dynamics::Skeleton& skel, flo
 void DartNode::setBodyNodeTransparency(const dart::dynamics::BodyNode& node, float transparencyValue)
 {
     if (_world && _world->getSkeleton(node.getSkeleton()->getName())) {
-    dart::dynamics::SkeletonPtr mina;     
-   _skelNodeMap.at(mina); //node.getSkeleton()); //->setBodyNodeTransparency(node, transparencyValue);
+    //dart::dynamics::SkeletonPtr mina;     
+   //_skelNodeMap.at(mina); //node.getSkeleton()); //->setBodyNodeTransparency(node, transparencyValue);
     } else {
         std::cerr << "[DartNode] Error setting BodyNode transparency" << std::endl;
     }
