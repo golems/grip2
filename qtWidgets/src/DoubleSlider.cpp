@@ -62,6 +62,10 @@ DoubleSlider::DoubleSlider (QWidget *parent)
 
 }
 
+DoubleSlider::~DoubleSlider () {
+ 
+}
+
 double DoubleSlider::changeTOdouble(int intvalue)
 {
 

@@ -115,8 +115,23 @@ target_link_libraries(grip ${project_libs} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::
 set_target_properties( grip PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 
 # Added GripObjects here to avoid linking errors
+
+# Qtwidgets is an special case ################################
+include_directories(${CMAKE_BINARY_DIR}/qtWidgets)
+FILE( GLOB QTWIDGETS_UI_FILES ${PROJECT_SOURCE_DIR}/qtWidgets/ui/*.ui )
+QT5_WRAP_UI( QTWIDGETS_UI_OUTPUT ${QTWIDGETS_UI_FILES} )
+
+# Wrap .moc files, but remove files with no implementation
+FILE( GLOB QTWIDGETS_MOC_FILES ${PROJECT_SOURCE_DIR}/qtWidgets/*.h)
+LIST(REMOVE_ITEM QTWIDGETS_MOC_FILES "${CMAKE_CURRENT_LIST_DIR}/./GripTab.h"
+                                     "${CMAKE_CURRENT_LIST_DIR}/./TreeViewReturn.h"
+                                     "${CMAKE_CURRENT_LIST_DIR}/./Plotting.h")
+QT5_WRAP_CPP(QTWIDGETS_MOC_OUTPUT ${QTWIDGETS_MOC_FILES})
+# Erased qrc resources as we don't use them here (do we?)
+################################################################
+
 FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
-add_library(grip-core SHARED ${grip-srcs})
+add_library(grip-core SHARED ${grip-srcs} ${QTWIDGETS_UI_OUTPUT} ${QTWIDGETS_MOC_OUTPUT} )
 target_link_libraries(grip-core Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml  ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 set_target_properties( grip-core PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 
