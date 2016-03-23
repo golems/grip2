@@ -17,7 +17,7 @@ if(APPLE)
     link_directories(/opt/X11/lib)
 else(APPLE)
     # linux uses rt for XInitThreads()
-    set(X11_THREADS_LIB "rt")
+    set(X11_THREADS_LIB "X11")
 endif()
 
 #-----------------------------------------------
@@ -64,7 +64,7 @@ find_package(Qt5Widgets REQUIRED )
 find_package( PkgConfig )
 set( ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib64/pkgconfig" )
 pkg_check_modules( OPENSCENEGRAPH REQUIRED openscenegraph  )
-message( STATUS "Open Scene graph libraries: ${OPENSCENEGREAPH_LIBRARIES}" )
+message( STATUS "Open Scene graph libraries: ${OPENSCENEGRAPH_LIBRARIES}" )
 
 # Find Eigen3
 find_package(Eigen REQUIRED)
