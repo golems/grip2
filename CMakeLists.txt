@@ -74,7 +74,7 @@ include_directories(${Eigen_INCLUDE_DIR})
 find_package(DART REQUIRED)
 include_directories(${DART_INCLUDE_DIRS})
 link_directories(${DART_LIBRARY_DIRS})
-
+message( STATUS "DART LIBRARIES: ${DART_LIBRARIES}")
 #-----------------------------------------------
 #      INCLUDES & SUBDIRECTORY LIBRARIRES
 #-----------------------------------------------
@@ -102,7 +102,7 @@ set(project_libs qtWidgets osgGolems osgDart)
 qt5_wrap_cpp( GUI_MOC_HEADERS ${PROJECT_SOURCE_DIR}/include/MainWindow.h ${PROJECT_SOURCE_DIR}/include/GripSimulation.h)
 file(GLOB GUI_SRC include/*.h src/*.cpp )
 add_library(mainWindow  SHARED ${GUI_MOC_HEADERS}  ${GUI_SRC})
-target_link_libraries(mainWindow Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml ${project_libs} ${DART_LIBRARIES} ${X11_THREADS_LIB})
+target_link_libraries(mainWindow Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml ${project_libs} dart-core ${DART_LIBRARIES} ${X11_THREADS_LIB})
 
 # Set project libraries variable
 set(project_libs ${project_libs} mainWindow)
@@ -111,7 +111,7 @@ set(project_libs ${project_libs} mainWindow)
 #                BUILD GRIP
 #-----------------------------------------------
 add_executable(grip ${PROJECT_SOURCE_DIR}/src/grip.cpp)
-target_link_libraries(grip ${project_libs} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip ${project_libs} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml dart-core ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 set_target_properties( grip PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 
 # Added GripObjects here to avoid linking errors
@@ -132,7 +132,7 @@ QT5_WRAP_CPP(QTWIDGETS_MOC_OUTPUT ${QTWIDGETS_MOC_FILES})
 
 FILE(GLOB grip-srcs osgGolems/*.h osgGolems/src/*.cpp osgDart/*.h osgDart/src/*.cpp qtWidgets/*.h qtWidgets/src/*.cpp src/GripObjects.cpp )
 add_library(grip-core SHARED ${grip-srcs} ${QTWIDGETS_UI_OUTPUT} ${QTWIDGETS_MOC_OUTPUT} )
-target_link_libraries(grip-core Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml  ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(grip-core Qt5::Widgets Qt5::Gui Qt5::Core Qt5::OpenGL Qt5::Xml dart-core dart-core ${DART_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES})
 set_target_properties( grip-core PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib )
 
 
